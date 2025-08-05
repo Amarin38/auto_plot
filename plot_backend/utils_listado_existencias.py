@@ -1,5 +1,7 @@
 import json
 import pandas as pd
+
+from pathlib import Path
 from typing import Dict, Union, List, Optional
 
 
@@ -7,6 +9,7 @@ from typing import Dict, Union, List, Optional
 class UtilsListadoExistencias:
     def __init__(self, file: str):
         self.file = file
+        self._main_path = Path.cwd()
 
 
     # --- UPDATE --- #
@@ -39,12 +42,13 @@ class UtilsListadoExistencias:
 
 
     # --- DELETE --- #
-    def delete_unnamed_cols(self):
-        df: pd.DataFrame = self.check_filetype(self.file)
-        df = df.loc[:, ~df.columns.str.contains("Unnamed")]
-        df = df.loc[:, ~df.columns.str.contains("Columna")]
+    def delete_unnamed_cols(self, df: Union[str, pd.DataFrame]) -> pd.DataFrame:
+        df_limpio: pd.DataFrame = self.check_filetype(df)
+        df_limpio = df_limpio.loc[:, ~df_limpio.columns.str.contains("Unnamed")]
+        df_limpio = df_limpio.loc[:, ~df_limpio.columns.str.contains("Columna")]
 
-        df.to_excel(f"excel/{self.file}.xlsx")
+        # df_limpio.to_excel(f"{self._main_path}excel/{self.file}.xlsx")
+        return df_limpio
 
 
     def delete_rows(self, delete_type: str, delete_by: List[str]) -> pd.DataFrame:
@@ -69,7 +73,7 @@ class UtilsListadoExistencias:
             case _:
                 return  pd.DataFrame()
         
-        df.to_excel(f"excel/{self.file}.xlsx")
+        # df.to_excel(f"{self._main_path}/excel/{self.file}.xlsx")
         return df
 
 

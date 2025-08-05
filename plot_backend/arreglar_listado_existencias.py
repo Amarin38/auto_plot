@@ -72,6 +72,10 @@ class ArreglarListadoExistencias:
             df_list: pd.DataFrame = pd.concat(df_list) # type: ignore
             df_list = self.modify_df(df_list)
 
+            # if df_list.columns.str.contains("Unnamed").any():
+            #     df_list = self._utils.delete_unnamed_cols(df_list)
+
+            df_list.to_excel(f'{self._main_path}/excel/{self.file}.xlsx', index=False)
             return df_list 
 
 
@@ -84,12 +88,8 @@ class ArreglarListadoExistencias:
             print(f"Ya existen las columnas, no se cambiarán | ---> {r}")
             pass
         except OSError as e:
-                print("No puede giar")
+                print("No puede encontrar el archivo")
                 print(f"OSError ---> {e}")
-
-
-        df_list.to_excel(f'excel/{self.file}.xlsx')
-
         return df_list
 
 
@@ -117,7 +117,9 @@ class ArreglarListadoExistencias:
                     (df.Movimiento.str.contains("Salida"))
                     ]
 
-                filtrado_df.to_excel(f"{self._main_path}/excel/{self.file}-S.xlsx")
+                if filtrado_df.columns.str.contains("Unnamed").any():
+                    filtrado_df = self._utils.delete_unnamed_cols(filtrado_df)
+                filtrado_df.to_excel(f"{self._main_path}/excel/{self.file}-S.xlsx", index=False)
 
             case "entradas":
                 df: pd.DataFrame = self._utils.delete_rows("interno", internos_devolucion)
@@ -128,7 +130,9 @@ class ArreglarListadoExistencias:
                     df.Movimiento.str.contains("Entrada ") 
                     ]
 
-                filtrado_df.to_excel(f"excel/{self.file}-E.xlsx")
+                if filtrado_df.columns.str.contains("Unnamed").any():
+                    filtrado_df = self._utils.delete_unnamed_cols(filtrado_df)
+                filtrado_df.to_excel(f"{self._main_path}/excel/{self.file}-E.xlsx", index=False)
 
             case "devoluciones":
                 df: pd.DataFrame = self.check_filetype(self.file)
@@ -137,7 +141,9 @@ class ArreglarListadoExistencias:
                     df.Movimiento.str.contains("Devolucion")
                     ]
             
-                filtrado_df.to_excel(f"excel/{self.file}-D.xlsx")     
+                if filtrado_df.columns.str.contains("Unnamed").any():
+                    filtrado_df = self._utils.delete_unnamed_cols(filtrado_df)
+                filtrado_df.to_excel(f"{self._main_path}/excel/{self.file}-D.xlsx", index=False)     
 
             case _:
                 return None
@@ -177,7 +183,7 @@ class ArreglarListadoExistencias:
 
     def check_filetype(self, file: Union[str, pd.DataFrame]):
         if isinstance(file, str):
-            df: pd.DataFrame = pd.read_excel(f"excel/{file}.xlsx", engine="calamine")
+            df: pd.DataFrame = pd.read_excel(f"{self._main_path}/excel/{file}.xlsx", engine="calamine", index_col=0)
         else:
             df: pd.DataFrame = pd.DataFrame(file)
         
@@ -185,12 +191,12 @@ class ArreglarListadoExistencias:
 
 
 if __name__ == '__main__':    
-    arreglar = ArreglarListadoExistencias("todos-vidrios", "todos vidrios")
+    arreglar = ArreglarListadoExistencias("todas-herramientas", "todas herramientas")
     # arreglar.append_df()
     # arreglar.basic_filter("salidas")
-    # arreglar.filter_by("repuesto", "startswith", "VIDRIO")
-    # arreglar.filter_by("repuesto", "startswith", "LUNETA")
-    # arreglar.filter_by("repuesto", "startswith", "PARABRISA")
+    arreglar.filter_by("repuesto", "contains", "")
+    # arreglar.filter_by("", "contains", "LUNETA")
+    # arreglar.filter_by("", "contains", "PARABRISA")
 
 
     # utils = UtilsListadoExistencias("inyectores-S")

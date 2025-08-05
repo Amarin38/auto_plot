@@ -117,7 +117,6 @@ class Autografico:
             df_rows.to_excel(f"{self._main_path}/excel/{self.nombre_archivo}-S.xlsx")
 
             self.utils.delete_rows("repuesto", ["CAÑO", "BOMBA"])
-            self.utils.delete_unnamed_cols()
 
         except (pd.errors.InvalidIndexError, AttributeError) as e:
             print(f"ERROR: {e}")
