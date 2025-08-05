@@ -17,7 +17,7 @@ class ArreglarListadoExistencias:
         self.xlsx_dir = xlsx_dir
         self._utils = UtilsListadoExistencias(self.file)
 
-        self._main_path = Path(__file__).parent.resolve()
+        self._main_path = Path.cwd()# Path(__file__).parent.resolve()
         self._xls_files = glob.glob("**/*.xls", recursive=True)
         self._xlsx_files = glob.glob(f"{self._main_path}/{self.xlsx_dir}/*.xlsx", recursive=True)
 

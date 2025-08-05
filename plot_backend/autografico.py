@@ -2,6 +2,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib.dates as pltdates
 
+from pathlib import Path
 from numpy import ndarray
 from typing import List, Dict, Union
 
@@ -17,6 +18,7 @@ class Autografico:
         self.meses_en_adelante = meses_en_adelante
         self.x1 = filas
         self.x2 = columnas
+        self._main_path = Path.cwd()
 
         self.arreglar = ArreglarListadoExistencias(self.nombre_archivo, carpeta_datos)
         self.utils = UtilsListadoExistencias(f"{self.nombre_archivo}-S")
@@ -49,12 +51,12 @@ class Autografico:
         #     axs = auto_reshape_2D(axs, x1, x2)
 
         if con_cero:
-            df_tendencia = pd.read_excel("excel/tendencia-ConCero.xlsx")
-            df_data = pd.read_excel("excel/data-ConCero.xlsx")
+            df_tendencia = pd.read_excel(f"{self._main_path}/excel/tendencia-ConCero.xlsx")
+            df_data = pd.read_excel(f"{self._main_path}/excel/data-ConCero.xlsx")
             fig.suptitle(f"Prevision de compras con cero a {self.meses_en_adelante} meses", fontsize=30, y=0.94)
         else:
-            df_tendencia = pd.read_excel("excel/tendencia-SinCero.xlsx")
-            df_data = pd.read_excel("excel/data-SinCero.xlsx")
+            df_tendencia = pd.read_excel(f"{self._main_path}/excel/tendencia-SinCero.xlsx")
+            df_data = pd.read_excel(f"{self._main_path}/excel/data-SinCero.xlsx")
             fig.suptitle(f"Prevision de compras sin cero a {self.meses_en_adelante} meses", fontsize=30, y=0.94)
 
         repuestos = iter(tuple(df_tendencia["Repuesto"].unique()))
@@ -112,7 +114,7 @@ class Autografico:
             self.arreglar.basic_filter("salidas")
             
             df_rows = self.utils.update_rows_by_dict(f"{self.nombre_archivo}-S", "motores", "Repuesto")
-            df_rows.to_excel(f"excel/{self.nombre_archivo}-S.xlsx")
+            df_rows.to_excel(f"{self._main_path}/excel/{self.nombre_archivo}-S.xlsx")
 
             self.utils.delete_rows("repuesto", ["CAÑO", "BOMBA"])
             self.utils.delete_unnamed_cols()

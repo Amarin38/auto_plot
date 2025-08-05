@@ -1,12 +1,13 @@
 import pandas as pd
-
+from pathlib import Path
 from numpy import ndarray
 from typing import List, Union
 
 class ArreglarFlota:
     def __init__(self, archivo: str) -> None:
         self.archivo = archivo
-        self.cabecera = pd.read_excel(f"excel_info/internos_asignados_cabecera.xlsx")["Cabecera"].unique()
+        self._main_path = Path.cwd()
+        self.cabecera = pd.read_excel(f"{self._main_path}/excel_info/internos_asignados_cabecera.xlsx")["Cabecera"].unique()
 
     def limpiar(self) -> pd.DataFrame:
         """
@@ -71,7 +72,7 @@ class ArreglarFlota:
             internos = internos_cabecera.loc[internos_cabecera["Cabecera"] == cab, "Interno"].tolist() # type: ignore
             df.loc[df["Interno"].isin(internos), ["Cabecera"]] = cab # asigno la cabecera al interno # type: ignore
 
-        # df.to_excel("internos_asignados.xlsx")
+        # df.to_excel(f"{self._main_path}/excel/internos_asignados.xlsx")
         return df
 
 
@@ -95,11 +96,12 @@ class ArreglarFlota:
                 }) # type: ignore
             
         df_contado: pd.DataFrame = pd.DataFrame(dict_contado)
-        df_contado.to_excel("motores_por_cabecera.xlsx")
+        # df_contado.to_excel(f"{self._main_path}/excel_info/motores_por_cabecera.xlsx")
         return df_contado
 
 
 if __name__ == "__main__":
     limpiar = ArreglarFlota("flota7")
-    limpiar.contar_motores_por_cabecera()
+    print(limpiar._main_path)
+    # limpiar.contar_motores_por_cabecera()
     

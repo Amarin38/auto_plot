@@ -1,12 +1,13 @@
 import pandas as pd
 
+from pathlib import Path
 from numpy import ndarray
 from typing import Dict, List, Union
 
 class MaxMin:
     def __init__(self, archivo: str, multiplicar_por: float) -> None:
-
-        self.df = self.transformar_fecha_completa_a_fecha_mes(pd.read_excel(f"excel/{archivo}-S.xlsx", engine="calamine")) 
+        self._main_path = Path.cwd()
+        self.df = self.transformar_fecha_completa_a_fecha_mes(pd.read_excel(f"{self._main_path}/excel/{archivo}-S.xlsx", engine="calamine")) 
         self.mult_por = multiplicar_por
         self.fecha_hoy = pd.Timestamp.today().strftime("%d-%m-%Y")
 
@@ -47,7 +48,7 @@ class MaxMin:
             })
 
         df_final = pd.concat((pd.DataFrame(lista_totales_mes), pd.DataFrame(lista_totales_rep)), axis=1) # type: ignore
-        df_final.to_excel(f"maxmin {self.fecha_hoy}.xlsx")
+        df_final.to_excel(f"{self._main_path}/excel/maxmin {self.fecha_hoy}.xlsx")
 
 
     def transformar_fecha_completa_a_fecha_mes(self, df):
@@ -58,4 +59,5 @@ class MaxMin:
 
 if __name__ == "__main__":
     maxmin = MaxMin("minmax", 2.5)
-    maxmin.calcular_max_min()
+    maxmin._main_path
+    # maxmin.calcular_max_min()

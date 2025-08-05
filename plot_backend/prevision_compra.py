@@ -2,13 +2,15 @@ import pandas as pd
 import numpy as np
 from typing import Union, Dict, List, Any
 
+from pathlib import Path
 from numpy import ndarray
 from numpy.polynomial import Polynomial
 
 
 class PrevisionCompra:
     def __init__(self, archivo_xlsx: str, con_cero: bool, meses_en_adelante: int = 6) -> None:
-        self.df = pd.read_excel(f"excel/{archivo_xlsx}.xlsx", engine="calamine")
+        self._main_path = Path.cwd() 
+        self.df = pd.read_excel(f"{self._main_path}/excel/{archivo_xlsx}.xlsx", engine="calamine")
         self.con_cero = con_cero
         self.meses_en_adelante = meses_en_adelante
         self.repuestos = self.df["Repuesto"].unique()
@@ -50,21 +52,21 @@ class PrevisionCompra:
             df_final["PromedioConCero"] = res_promedio_con_cero
             df_final["IndiceAnualConCero"] = self.calcular_indice_anual(df_final)
             df_final["IndiceEstacionalConCero"] = self.calcular_indice_estacional(df_final)
-            df_final.to_excel(f"excel/data-ConCero.xlsx")
+            df_final.to_excel(f"{self._main_path}/excel/data-ConCero.xlsx")
 
             df_tendencia: pd.DataFrame = pd.DataFrame(self.calcular_tendencia(df_final))
             df_tendencia["TendenciaEstacionalConCero"] = self.calcular_tendencia_estacional(df_final, df_tendencia)
-            df_tendencia.to_excel(f"excel/tendencia-ConCero.xlsx")
+            df_tendencia.to_excel(f"{self._main_path}/excel/tendencia-ConCero.xlsx")
 
         else:
             df_final["PromedioSinCero"] = self.calcular_sin_cero(df_final) # type: ignore
             df_final["IndiceAnualSinCero"] = self.calcular_indice_anual(df_final)
             df_final["IndiceEstacionalSinCero"] = self.calcular_indice_estacional(df_final)
-            df_final.to_excel(f"excel/data-SinCero.xlsx")
+            df_final.to_excel(f"{self._main_path}/excel/data-SinCero.xlsx")
             
             df_tendencia: pd.DataFrame = pd.DataFrame(self.calcular_tendencia(df_final))
             df_tendencia["TendenciaEstacionalSinCero"] = self.calcular_tendencia_estacional(df_final, df_tendencia)
-            df_tendencia.to_excel(f"excel/tendencia-SinCero.xlsx")
+            df_tendencia.to_excel(f"{self._main_path}/excel/tendencia-SinCero.xlsx")
 
 
     def calcular_sin_cero(self, df: pd.DataFrame) -> List[float]:
@@ -157,7 +159,7 @@ class PrevisionCompra:
         
         return pd.DataFrame(resultado)
         # df_f = pd.DataFrame(resultado)
-        # df_f.to_excel("tendencia.xlsx")
+        # df_f.to_excel("{self._main_path}/excel/tendencia.xlsx")
 
     def calcular_tendencia_estacional(self, df: pd.DataFrame, df_tendencia: pd.DataFrame) -> List[float]:
         indice_mes: List[str] = df_tendencia["Mes"].unique().tolist()

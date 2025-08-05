@@ -1,14 +1,15 @@
 import pandas as pd
-import json
 
+from pathlib import Path
 from numpy import ndarray
 from typing import Dict, List, Union, Any
 
 class IndiceConsumo:
     def __init__(self, file_consumo: str) -> None:
-        self.df_consumo = pd.read_excel(f"excel/{file_consumo}-S.xlsx", engine="calamine")
-        self.df_motores = pd.read_excel(f"excel_info/motores_por_cabecera.xlsx", engine="calamine")
-        self.df_coches = pd.read_excel(f"excel_info/coches_por_cabecera.xlsx", engine="calamine")
+        self._main_path = Path.cwd()
+        self.df_consumo = pd.read_excel(f"{self._main_path}/excel/{file_consumo}-S.xlsx", engine="calamine")
+        self.df_motores = pd.read_excel(f"{self._main_path}/excel_info/motores_por_cabecera.xlsx", engine="calamine")
+        self.df_coches = pd.read_excel(f"{self._main_path}/excel_info/coches_por_cabecera.xlsx", engine="calamine")
 
 
     def calcular_indice_por_coche(self) -> List[Union[pd.DataFrame, str]]:
@@ -33,7 +34,7 @@ class IndiceConsumo:
                 })
 
         df_indice: pd.DataFrame = pd.DataFrame(lista_indices)
-        df_indice.to_excel("excel/indice_por_coche.xlsx")
+        df_indice.to_excel(f"{self._main_path}/excel/indice_por_coche.xlsx")
         return [df_indice, self.fecha_titulo(self.df_consumo)]
 
 
@@ -66,7 +67,7 @@ class IndiceConsumo:
                 }) # type: ignore
         
         df_indice: pd.DataFrame = pd.DataFrame(indices)
-        df_indice.to_excel("excel/indice_por_motor.xlsx")
+        df_indice.to_excel(f"{self._main_path}/excel/indice_por_motor.xlsx")
         return [df_indice, self.fecha_titulo(self.df_consumo)]
 
 
@@ -88,7 +89,7 @@ class IndiceConsumo:
             return 0
 
 
-    def fecha_titulo(self, df: pd.DataFrame):
+    def fecha_titulo(self, df: pd.DataFrame) -> str:
         """
         Devuelve la fecha del titulo basandose en el archivo introducido.
         """
