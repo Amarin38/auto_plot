@@ -16,8 +16,9 @@ class IndiceConsumo:
         lista_indices: List[Dict[str, Union[Any, float]]] = []
 
         repuestos: ndarray = self.df_consumo["Repuesto"].unique() 
-        
-        for cab in self.df_coches["Cabecera"]:
+        cabeceras: ndarray = self.df_consumo["Cabecera"].unique()
+
+        for cab in cabeceras:
             cant_coches = self.df_coches.loc[self.df_coches["Cabecera"] == cab, 
                                              "CantidadCoches"].iloc[0] # type: ignore
             
@@ -26,11 +27,17 @@ class IndiceConsumo:
                                                                  (self.df_consumo["Cabecera"] == cab),
                                                                  ['Cantidad']].sum()
                 
+                total_coste_por_cabecera = self.df_consumo.loc[(self.df_consumo["Repuesto"] == rep) &
+                                                               (self.df_consumo["Cabecera"] == cab), 
+                                                               ['Precio']].sum()
+
                 indice_consumo: pd.Series[float] = (total_consumo_por_cabecera*100)/cant_coches
                 lista_indices.append({
                     "Cabecera":cab,
                     "Repuesto":rep,
-                    "IndiceConsumo":round(indice_consumo.iloc[0], 1)
+                    "TotalConsumo":total_consumo_por_cabecera.iloc[0],
+                    "TotalCoste":total_coste_por_cabecera.iloc[0],
+                    "IndiceConsumoCoches":round(indice_consumo.iloc[0], 1)
                 })
 
         df_indice: pd.DataFrame = pd.DataFrame(lista_indices)
@@ -63,7 +70,7 @@ class IndiceConsumo:
                 indices.append({
                     "Cabecera":cab,
                     "Repuesto":rep,
-                    "IndiceConsumo":float(round(indice_consumo, 1))    
+                    "IndiceConsumoMotores":float(round(indice_consumo, 1))    
                 }) # type: ignore
         
         df_indice: pd.DataFrame = pd.DataFrame(indices)
@@ -104,7 +111,7 @@ class IndiceConsumo:
 
 
 if __name__ == "__main__":
-    indice = IndiceConsumo("inyectores")
+    indice = IndiceConsumo("todos-vidrios")
     indice.calcular_indice_por_coche()
     # calcular_indice_consumo_por_motores("inyectores", "motores_por_cabecera")[0]
     ...

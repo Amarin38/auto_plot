@@ -17,9 +17,9 @@ class ArreglarListadoExistencias:
         self.xlsx_dir = xlsx_dir
         self._utils = UtilsListadoExistencias(self.file)
 
-        self._main_path = Path.cwd()# Path(__file__).parent.resolve()
+        self._main_path = Path.cwd()
         self._xls_files = glob.glob("**/*.xls", recursive=True)
-        self._xlsx_files = glob.glob(f"{self._main_path}/{self.xlsx_dir}/*.xlsx", recursive=True)
+        self._xlsx_files = glob.glob(f"{self._main_path}/{self.xlsx_dir}/**/*.xlsx", recursive=True)
 
     def __str__(self):
         return f"New file name: {self.file} | Selected xlsx directory: {self.xlsx_dir}"
@@ -117,7 +117,7 @@ class ArreglarListadoExistencias:
                     (df.Movimiento.str.contains("Salida"))
                     ]
 
-                filtrado_df.to_excel(f"excel/{self.file}-S.xlsx")
+                filtrado_df.to_excel(f"{self._main_path}/excel/{self.file}-S.xlsx")
 
             case "entradas":
                 df: pd.DataFrame = self._utils.delete_rows("interno", internos_devolucion)
@@ -143,23 +143,30 @@ class ArreglarListadoExistencias:
                 return None
 
 
-    def filter_by(self, column: str, filter: str) -> pd.DataFrame:
+    def filter_by(self, column: str, type: str, filter: str) -> pd.DataFrame:
         """
         Filters the file entered by string entered in the filters var.\n
-        Indicating the column is needed. 
-        Columns: repuesto, interno
+        Indicating the column is needed.\n 
+        Columns: repuesto, interno\n
+        Types: contains, startswith
         """
         df: pd.DataFrame = self.check_filetype(self.file)
 
         match column:
             case "repuesto":
-                filtered_df = df.loc[df.Repuesto.str.contains(filter, na=False)]
+                if type == "contains":
+                    filtered_df = df.loc[df.Repuesto.str.contains(filter, na=False)]
+                elif type == "startswith":
+                    filtered_df = df.loc[df.Repuesto.str.startswith(filter, na=False)]
             case "interno":
-                filtered_df = df.loc[df.Interno.str.contains(filter, na=False)]
+                if type == "contains":
+                    filtered_df = df.loc[df.Interno.str.contains(filter, na=False)]
+                elif type == "startswith":
+                    filtered_df = df.loc[df.Interno.str.startswith(filter, na=False)]
             case _:
                 return pd.DataFrame()
 
-        filtered_df.to_excel(f"excel/{filter}.xlsx")
+        filtered_df.to_excel(f"{self._main_path}/excel/{filter}.xlsx")
         return filtered_df
 
 
@@ -178,10 +185,14 @@ class ArreglarListadoExistencias:
 
 
 if __name__ == '__main__':    
-    arreglar = ArreglarListadoExistencias("minmax", "minmax")
-    print(arreglar)
+    arreglar = ArreglarListadoExistencias("todos-vidrios", "todos vidrios")
     # arreglar.append_df()
     # arreglar.basic_filter("salidas")
+    # arreglar.filter_by("repuesto", "startswith", "VIDRIO")
+    # arreglar.filter_by("repuesto", "startswith", "LUNETA")
+    # arreglar.filter_by("repuesto", "startswith", "PARABRISA")
+
+
     # utils = UtilsListadoExistencias("inyectores-S")
     # utils.rename_rows_by_dict("inyectores-S", "motores", "Repuesto")
     # utils.delete_rows("repuesto", "CAÑO")
