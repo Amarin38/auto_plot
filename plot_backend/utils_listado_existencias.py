@@ -1,5 +1,6 @@
 import json
 import pandas as pd
+import numpy as np
 
 from pathlib import Path
 from typing import Dict, Union, List
@@ -49,11 +50,11 @@ class UtilsListadoExistencias:
         return df_limpio
 
 
-    def delete_rows(self, delete_type: str, delete_by: List[str]) -> pd.DataFrame:
+    def delete_rows(self, delete_type: str, delete_by: np.ndarray) -> pd.DataFrame:
         """
         Deletes the row by entered string.\n
         Delete types: repuesto, fechacompleta.\n
-        Delete by: List[str]
+        Delete by: np.ndarray
         """
         
         df: pd.DataFrame = self.check_filetype(self.file)

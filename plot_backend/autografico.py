@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.dates as pltdates
 
@@ -19,7 +20,7 @@ except ModuleNotFoundError:
 
 class Autografico:
     def __init__(self, nombre_archivo_nuevo: str, carpeta_datos: str, filas: int, columnas: int, 
-                 meses_en_adelante: int = 6):
+                 tamaño_letra: float, tamaño_grafico: int = 60, meses_en_adelante: int = 6):
         self.nombre_archivo = nombre_archivo_nuevo
         self.meses_en_adelante = meses_en_adelante
         self.x1 = filas
@@ -30,9 +31,13 @@ class Autografico:
         self.utils = UtilsListadoExistencias(f"{self.nombre_archivo}-S")
         self.indice = IndiceConsumo(self.nombre_archivo)
 
-        self.divisor = 0.60*self.x2
+        self.divisor = 0.3*self.x2
+        self.tamaño_letra = tamaño_letra
+        self.tamaño_grafico = tamaño_grafico
         self.colores = iter(("#FFC300", "#FF5733", "#C70039", "#900C3F", "#5C6D70", 
-                             "#2C2C54", "#5FAD56", "#F2C14E", "#F78154", "#4D9078"))
+                             "#2C2C54", "#5FAD56", "#F2C14E", "#F78154", "#4D9078",
+                             "#4A1942", "#823329", "#3F7CAC", "#899878", "#5497A7", 
+                             "#883677", "#3A7D44", "#254D32", "#F7CE5B", "#F7B05B"))
 
 
     # ---- PLOTS ---- #
@@ -170,7 +175,7 @@ class Autografico:
             ax.tick_params("y", labelsize=15) # type: ignore
 
         else:
-            fig, axs = plt.subplots(self.x1, self.x2, figsize=(45*self.x1,80/self.x2), squeeze=False)
+            fig, axs = plt.subplots(self.x1, self.x2, figsize=(self.tamaño_grafico, self.tamaño_grafico), squeeze=False)#figsize=(45*self.x1,80/self.x2), squeeze=False)
             
             # if axs.ndim == 1: # Numero de dimensiones
                 # axs = auto_reshape_2D(axs, x1, x2)
@@ -193,20 +198,22 @@ class Autografico:
 
                     media_con_cero = self.indice.media_consumo(y_consumo.tolist(), con_cero=True)
                     axs[i,j].axhline(y=media_con_cero, linestyle="--", color="#618B4A")
-                    axs[i,j].text(x=1.01, y=media_con_cero, s=f"{media_con_cero}", color="black", va="center", transform=axs[i,j].get_yaxis_transform(), fontsize=15)
+                    axs[i,j].text(x=1.01, y=media_con_cero, s=f"{media_con_cero}", color="black", va="center", transform=axs[i,j].get_yaxis_transform(), fontsize=self.tamaño_letra*2)
 
                     media_sin_cero = self.indice.media_consumo(y_consumo.tolist(), con_cero=False)
                     axs[i,j].axhline(y=media_sin_cero, linestyle="--", color="#922D50")
-                    axs[i,j].text(x=1.01, y=media_sin_cero, s=f"{media_sin_cero}", color="black", va="center", transform=axs[i,j].get_yaxis_transform(), fontsize=15)
+                    axs[i,j].text(x=1.01, y=media_sin_cero, s=f"{media_sin_cero}", color="black", va="center", transform=axs[i,j].get_yaxis_transform(), fontsize=self.tamaño_letra*2)
 
-                    axs[i,j].legend(["Media con cero","Media sin cero"], fontsize=15/self.divisor, loc=2)
+                    axs[i,j].legend(["Media con cero","Media sin cero"], fontsize=self.tamaño_letra, loc=1)
                     axs[i,j].axhline(0, color="black")
                     axs[i,j].set_title(rep, fontsize=25)
                     axs[i,j].set_ylabel("Consumo", fontsize=20, labelpad=20)
-                    axs[i,j].tick_params("x", labelsize=10/self.divisor)
-                    axs[i,j].tick_params("y", labelsize=15)
 
-        fig.suptitle(f"Indice {lista_indice[1]}", fontsize=30, y=0.93)
+                    axs[i,j].tick_params("x", labelsize=self.tamaño_letra)
+                    axs[i,j].tick_params("y", labelsize=self.tamaño_letra*2)
+
+
+        fig.suptitle(f"Indice {lista_indice[1]}", fontsize=40, y=0.93)
         fig.subplots_adjust(wspace=0.10, hspace=0.3)
             
         
@@ -244,6 +251,7 @@ class Autografico:
  
 
 if __name__ == "__main__":
-    plot = Autografico("todas-herramientas", "todas herramientas", 2, 2)
+    # plot = Autografico("todas-herramientas", "todas herramientas", 2, 2)
     # plot.indice_barplot(False, False)
     # plot.prevision_plot(True)
+    ...

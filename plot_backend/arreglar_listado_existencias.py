@@ -103,15 +103,14 @@ class ArreglarListadoExistencias:
         Filter values: 'salidas', 'entradas', 'devoluciones'
         """
         
-        internos_devolucion: List[str] = ["C0488", "C0489", "C0500", "C0700", "C1400", 
-                                          "C4500", "C4900", "C6000", "C6700", "C9500",
-                                          "C9100", "C7000", "C5000", "C9000", "C3000",
-                                          "C4800", "C4700", "U4000", "C6600", "C6400",
-                                          "C0199", "C0599", "C0799", "C1499", "C4599", 
-                                          "C4999", "C6099", "C6799", "C9599", "C9199",
-                                          "C7099", "C5099", "C9099", "C3099", "C4899", 
-                                          "C4799", "C5599", "C6699", "C6199"]
-
+        internos_devolucion: np.ndarray = np.array(["C0488", "C0489", "C0500", "C0700", "C1400", 
+                                                    "C4500", "C4900", "C6000", "C6700", "C9500",
+                                                    "C9100", "C7000", "C5000", "C9000", "C3000",
+                                                    "C4800", "C4700", "U4000", "C6600", "C6400",
+                                                    "C0199", "C0599", "C0799", "C1499", "C4599", 
+                                                    "C4999", "C6099", "C6799", "C9599", "C9199",
+                                                    "C7099", "C5099", "C9099", "C3099", "C4899", 
+                                                    "C4799", "C5599", "C6699", "C6199"])
         match filter:
             case "salidas":
                 df: pd.DataFrame = self._utils.delete_rows("interno", internos_devolucion)
@@ -193,14 +192,13 @@ class ArreglarListadoExistencias:
             df: pd.DataFrame = pd.read_excel(f"{self._main_path}/excel/{file}.xlsx", engine="calamine", index_col=0)
         else:
             df: pd.DataFrame = pd.DataFrame(file)
-        
         return df
 
 
 if __name__ == '__main__':    
     arreglar = ArreglarListadoExistencias("todas-herramientas", "todas herramientas")
     # arreglar.append_df()
-    # arreglar.basic_filter("salidas")
+    arreglar.basic_filter("salidas")
     # arreglar.filter_by("codigo", "contains", 106.03997)
     # arreglar.filter_by("codigo", "contains", 106.03998)
 
@@ -208,14 +206,14 @@ if __name__ == '__main__':
     # arreglar.filter_by("", "contains", "PARABRISA")
 
 
-    utils = UtilsListadoExistencias("todas-herramientas")
-    utils.update_single_row_name("todas-herramientas", "Repuesto", 'PISTOLA NEUMATICA 1" REPARADA', 'PISTOLA NEUMATICA 1"')
-    utils.update_single_row_name("todas-herramientas", "Repuesto", 'PISTOLA NEUMATICA 1/2 REPARADA', 'PISTOLA NEUMATICA 1/2"')
-    utils.update_single_row_name("todas-herramientas", "Repuesto", 'PISTOLA NEUMATICA 3/4" REPARADA', 'PISTOLA NEUMATICA 3/4"')
+    # utils = UtilsListadoExistencias("todas-herramientas")
+    # utils.update_single_row_name("todas-herramientas", "Repuesto", 'PISTOLA NEUMATICA 1" REPARADA', 'PISTOLA NEUMATICA 1"')
+    # utils.update_single_row_name("todas-herramientas", "Repuesto", 'PISTOLA NEUMATICA 1/2 REPARADA', 'PISTOLA NEUMATICA 1/2"')
+    # utils.update_single_row_name("todas-herramientas", "Repuesto", 'PISTOLA NEUMATICA 3/4" REPARADA', 'PISTOLA NEUMATICA 3/4"')
 
-    utils.update_single_row_name("todas-herramientas", "Repuesto", 'PISTOLA NEUMATICA 1" NUEVA', 'PISTOLA NEUMATICA 1"')
-    utils.update_single_row_name("todas-herramientas", "Repuesto",'PISTOLA NEUMATICA 1/2" NUEVA', 'PISTOLA NEUMATICA 1/2"')
-    utils.update_single_row_name("todas-herramientas", "Repuesto",'PISTOLA NEUMATICA 3/4" NUEVA', 'PISTOLA NEUMATICA 3/4"')
+    # utils.update_single_row_name("todas-herramientas", "Repuesto", 'PISTOLA NEUMATICA 1" NUEVA', 'PISTOLA NEUMATICA 1"')
+    # utils.update_single_row_name("todas-herramientas", "Repuesto",'PISTOLA NEUMATICA 1/2" NUEVA', 'PISTOLA NEUMATICA 1/2"')
+    # utils.update_single_row_name("todas-herramientas", "Repuesto",'PISTOLA NEUMATICA 3/4" NUEVA', 'PISTOLA NEUMATICA 3/4"')
 
     # utils.update_rows_by_dict("todas-herramientas-S", "motores", "Repuesto")
     # utils.delete_rows("repuesto", "CAÑO")
