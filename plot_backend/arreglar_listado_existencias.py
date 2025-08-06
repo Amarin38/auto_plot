@@ -3,11 +3,15 @@ import glob
 import re
 
 import pandas as pd
+import numpy as np
 
 from pathlib import Path
 from typing import List, Union
 
-from utils_listado_existencias import UtilsListadoExistencias
+try:
+    from plot_backend.utils_listado_existencias import UtilsListadoExistencias
+except ModuleNotFoundError:
+    from utils_listado_existencias import UtilsListadoExistencias
 
 #TODO aplicar multithreading
 
@@ -75,7 +79,7 @@ class ArreglarListadoExistencias:
             # if df_list.columns.str.contains("Unnamed").any():
             #     df_list = self._utils.delete_unnamed_cols(df_list)
 
-            df_list.to_excel(f'{self._main_path}/excel/{self.file}.xlsx', index=False)
+            df_list.to_excel(f'{self._main_path}/excel/{self.file}.xlsx', index=True)
             return df_list 
 
 
@@ -103,10 +107,10 @@ class ArreglarListadoExistencias:
                                           "C4500", "C4900", "C6000", "C6700", "C9500",
                                           "C9100", "C7000", "C5000", "C9000", "C3000",
                                           "C4800", "C4700", "U4000", "C6600", "C6400",
-                                          "C0199", "C0599", "C0799", "C1499", "U2000",
-                                          "C4599", "C4999", "C6099", "C6799", "C9599",
-                                          "C9199", "C7099", "C5099", "C9099", "C3099",
-                                          "C4899", "C4799", "C5599", "C6699", "C6199"]
+                                          "C0199", "C0599", "C0799", "C1499", "C4599", 
+                                          "C4999", "C6099", "C6799", "C9599", "C9199",
+                                          "C7099", "C5099", "C9099", "C3099", "C4899", 
+                                          "C4799", "C5599", "C6699", "C6199"]
 
         match filter:
             case "salidas":
@@ -119,7 +123,7 @@ class ArreglarListadoExistencias:
 
                 if filtrado_df.columns.str.contains("Unnamed").any():
                     filtrado_df = self._utils.delete_unnamed_cols(filtrado_df)
-                filtrado_df.to_excel(f"{self._main_path}/excel/{self.file}-S.xlsx", index=False)
+                filtrado_df.to_excel(f"{self._main_path}/excel/{self.file}-S.xlsx", index=True)
 
             case "entradas":
                 df: pd.DataFrame = self._utils.delete_rows("interno", internos_devolucion)
@@ -132,7 +136,7 @@ class ArreglarListadoExistencias:
 
                 if filtrado_df.columns.str.contains("Unnamed").any():
                     filtrado_df = self._utils.delete_unnamed_cols(filtrado_df)
-                filtrado_df.to_excel(f"{self._main_path}/excel/{self.file}-E.xlsx", index=False)
+                filtrado_df.to_excel(f"{self._main_path}/excel/{self.file}-E.xlsx", index=True)
 
             case "devoluciones":
                 df: pd.DataFrame = self.check_filetype(self.file)
@@ -143,32 +147,35 @@ class ArreglarListadoExistencias:
             
                 if filtrado_df.columns.str.contains("Unnamed").any():
                     filtrado_df = self._utils.delete_unnamed_cols(filtrado_df)
-                filtrado_df.to_excel(f"{self._main_path}/excel/{self.file}-D.xlsx", index=False)     
+                filtrado_df.to_excel(f"{self._main_path}/excel/{self.file}-D.xlsx", index=True)     
 
             case _:
                 return None
 
 
-    def filter_by(self, column: str, type: str, filter: str) -> pd.DataFrame:
+    def filter_by(self, column: str, type: str, filter: Union[str, float]) -> pd.DataFrame:
         """
         Filters the file entered by string entered in the filters var.\n
         Indicating the column is needed.\n 
-        Columns: repuesto, interno\n
+        Columns: repuesto, interno, codigo\n
         Types: contains, startswith
         """
         df: pd.DataFrame = self.check_filetype(self.file)
 
         match column:
             case "repuesto":
-                if type == "contains":
+                if type == "contains" and isinstance(filter, str):
                     filtered_df = df.loc[df.Repuesto.str.contains(filter, na=False)]
-                elif type == "startswith":
+                elif type == "startswith" and isinstance(filter, str):
                     filtered_df = df.loc[df.Repuesto.str.startswith(filter, na=False)]
             case "interno":
-                if type == "contains":
+                if type == "contains" and isinstance(filter, str):
                     filtered_df = df.loc[df.Interno.str.contains(filter, na=False)]
-                elif type == "startswith":
+                elif type == "startswith" and isinstance(filter, str):
                     filtered_df = df.loc[df.Interno.str.startswith(filter, na=False)]
+            case "codigo":
+                if isinstance(filter, float):
+                    filtered_df = df.loc[df["Codigo"] == float(filter)]
             case _:
                 return pd.DataFrame()
 
@@ -194,13 +201,23 @@ if __name__ == '__main__':
     arreglar = ArreglarListadoExistencias("todas-herramientas", "todas herramientas")
     # arreglar.append_df()
     # arreglar.basic_filter("salidas")
-    arreglar.filter_by("repuesto", "contains", "")
+    # arreglar.filter_by("codigo", "contains", 106.03997)
+    # arreglar.filter_by("codigo", "contains", 106.03998)
+
     # arreglar.filter_by("", "contains", "LUNETA")
     # arreglar.filter_by("", "contains", "PARABRISA")
 
 
-    # utils = UtilsListadoExistencias("inyectores-S")
-    # utils.rename_rows_by_dict("inyectores-S", "motores", "Repuesto")
+    utils = UtilsListadoExistencias("todas-herramientas")
+    utils.update_single_row_name("todas-herramientas", "Repuesto", 'PISTOLA NEUMATICA 1" REPARADA', 'PISTOLA NEUMATICA 1"')
+    utils.update_single_row_name("todas-herramientas", "Repuesto", 'PISTOLA NEUMATICA 1/2 REPARADA', 'PISTOLA NEUMATICA 1/2"')
+    utils.update_single_row_name("todas-herramientas", "Repuesto", 'PISTOLA NEUMATICA 3/4" REPARADA', 'PISTOLA NEUMATICA 3/4"')
+
+    utils.update_single_row_name("todas-herramientas", "Repuesto", 'PISTOLA NEUMATICA 1" NUEVA', 'PISTOLA NEUMATICA 1"')
+    utils.update_single_row_name("todas-herramientas", "Repuesto",'PISTOLA NEUMATICA 1/2" NUEVA', 'PISTOLA NEUMATICA 1/2"')
+    utils.update_single_row_name("todas-herramientas", "Repuesto",'PISTOLA NEUMATICA 3/4" NUEVA', 'PISTOLA NEUMATICA 3/4"')
+
+    # utils.update_rows_by_dict("todas-herramientas-S", "motores", "Repuesto")
     # utils.delete_rows("repuesto", "CAÑO")
     # utils.drop_unnamed_cols("inyectores-S")
     # arreglar.append_df()

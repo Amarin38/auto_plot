@@ -58,6 +58,5 @@ class MaxMin:
 
 
 if __name__ == "__main__":
-    maxmin = MaxMin("minmax", 2.5)
-    maxmin._main_path
-    # maxmin.calcular_max_min()
+    maxmin = MaxMin("maxmin", 2.5)
+    maxmin.calcular_max_min()

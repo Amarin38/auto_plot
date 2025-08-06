@@ -6,15 +6,21 @@ from pathlib import Path
 from numpy import ndarray
 from typing import List, Dict, Union
 
-from plot_backend.prevision_compra import PrevisionCompra
-from plot_backend.indice_consumo import IndiceConsumo
-from arreglar_listado_existencias import ArreglarListadoExistencias
-from utils_listado_existencias import UtilsListadoExistencias
+try:
+    from plot_backend.prevision_compra import PrevisionCompra
+    from plot_backend.indice_consumo import IndiceConsumo
+    from plot_backend.arreglar_listado_existencias import ArreglarListadoExistencias
+    from plot_backend.utils_listado_existencias import UtilsListadoExistencias
+except ModuleNotFoundError:
+    from prevision_compra import PrevisionCompra
+    from indice_consumo import IndiceConsumo
+    from arreglar_listado_existencias import ArreglarListadoExistencias
+    from utils_listado_existencias import UtilsListadoExistencias
 
 class Autografico:
-    def __init__(self, nombre_archivo: str, carpeta_datos: str, filas: int, columnas: int, 
+    def __init__(self, nombre_archivo_nuevo: str, carpeta_datos: str, filas: int, columnas: int, 
                  meses_en_adelante: int = 6):
-        self.nombre_archivo = nombre_archivo
+        self.nombre_archivo = nombre_archivo_nuevo
         self.meses_en_adelante = meses_en_adelante
         self.x1 = filas
         self.x2 = columnas
@@ -31,7 +37,7 @@ class Autografico:
 
     # ---- PLOTS ---- #
     def prevision_plot(self, con_cero: bool) -> None:
-        self.prevision = PrevisionCompra(self.nombre_archivo, con_cero, self.meses_en_adelante)
+        prevision = PrevisionCompra(self.nombre_archivo, con_cero, self.meses_en_adelante)
 
         try:
             self.arreglar.append_df()
@@ -40,7 +46,7 @@ class Autografico:
             print(f"Error --> {e}")
             pass
         finally:
-            self.prevision.calcular_prevision_compra()
+            prevision.calcular_prevision_compra()
 
         # ------------- Graficos ---------------
         fig, axs = plt.subplots(self.x1, self.x2, figsize=(40,20), squeeze=False)
@@ -116,7 +122,7 @@ class Autografico:
             df_rows = self.utils.update_rows_by_dict(f"{self.nombre_archivo}-S", "motores", "Repuesto")
             df_rows.to_excel(f"{self._main_path}/excel/{self.nombre_archivo}-S.xlsx")
 
-            self.utils.delete_rows("repuesto", ["CAÑO", "BOMBA"])
+            # self.utils.delete_rows("repuesto", ["CAÑO", "BOMBA"])
 
         except (pd.errors.InvalidIndexError, AttributeError) as e:
             print(f"ERROR: {e}")
@@ -238,6 +244,6 @@ class Autografico:
  
 
 if __name__ == "__main__":
-    plot = Autografico("inyectores", "todos-inyectores", 2, 2)
+    plot = Autografico("todas-herramientas", "todas herramientas", 2, 2)
     # plot.indice_barplot(False, False)
     # plot.prevision_plot(True)

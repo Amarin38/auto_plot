@@ -94,7 +94,7 @@ class PrevisionCompra:
 
 
     # --- INDICES --- #
-    def calcular_indice_anual(self, df: pd.DataFrame) -> pd.Series[Any]:
+    def calcular_indice_anual(self, df: pd.DataFrame) -> pd.Series:
         if self.con_cero:
             return round((df["TotalMes"] / df["PromedioConCero"]).where(df["PromedioConCero"] != 0, 0),2)
         else:

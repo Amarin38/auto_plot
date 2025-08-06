@@ -2,8 +2,7 @@ import json
 import pandas as pd
 
 from pathlib import Path
-from typing import Dict, Union, List, Optional
-
+from typing import Dict, Union, List
 
 
 class UtilsListadoExistencias:
@@ -13,12 +12,12 @@ class UtilsListadoExistencias:
 
 
     # --- UPDATE --- #
-    def update_single_column(self, xlsx_file: str, column: str, old_name: str, new_name: str) -> pd.DataFrame:
+    def update_single_row_name(self, xlsx_file: str, column: str, old_name: str, new_name: str) -> pd.DataFrame:
         df: pd.DataFrame = self.check_filetype(xlsx_file)
 
         df[column] = df[column].replace(old_name, new_name)
         
-        df.to_excel(f"excel/{self.file}.xlsx")
+        df.to_excel(f"{self._main_path}/excel/{self.file}.xlsx", index=True)
         return df
 
 
@@ -36,7 +35,6 @@ class UtilsListadoExistencias:
         
         df: pd.DataFrame = self.check_filetype(xlsx_file)
         df[column] = df[column].replace(data)
-        print(df)
 
         return df
 
