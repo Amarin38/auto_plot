@@ -2,7 +2,7 @@ import pandas as pd
 from pathlib import Path
 from numpy import ndarray
 from typing import List, Union
-from plot_backend.utils_listado_existencias import GeneralUtils
+from plot_backend.general_utils import GeneralUtils
 
 class ArreglarFlota:
     def __init__(self, file: str) -> None:
@@ -39,17 +39,19 @@ class ArreglarFlota:
         """
         Assigns the 'Cabecera' to each 'Interno' number.
         """
-        df: pd.DataFrame = self.limpiar()
+        df: pd.DataFrame = self.limpiar_flota()
 
         for cab in self.cabecera.unique():
-            internos = self.cabecera.loc[self.cabecera["Cabecera"] == cab, "Interno"].tolist() # type: ignore
-            df.loc[df["Interno"].isin(internos), ["Cabecera"]] = cab # asigno la cabecera al interno # type: ignore
+            internos = self.cabecera.loc[self.cabecera["Cabecera"] == cab, 
+                                         "Interno"].tolist() # type: ignore
+            df.loc[df["Interno"].isin(internos), 
+                   ["Cabecera"]] = cab # asigno la cabecera al interno # type: ignore
 
         # self.df.to_excel(f"{self._main_path}/excel/internos_asignados.xlsx")
         return df
 
 
-    def limpiar(self) -> pd.DataFrame:
+    def limpiar_flota(self) -> pd.DataFrame:
         """
         Cleans the 'Flota'.xlsx files for statistics.
         """

@@ -1,15 +1,26 @@
 import json
+
 import pandas as pd
 import numpy as np
 
-from pathlib import Path
 from typing import Dict, Union, List
+from pathlib import Path
 
+from general_utils import GeneralUtils
+
+# TODO Separar en multiples clases 
 
 class UtilsListadoExistencias:
     def __init__(self, file: str):
         self.file = file
         self._main_path = Path.cwd()
+
+
+    def check_file_exists(self) -> bool:
+        """
+        Checks if the entered file name already exists.
+        """
+        return Path(f"{self._main_path}/excel/{self.file}.xlsx").exists()
 
 
     # --- UPDATE --- #
@@ -103,22 +114,4 @@ class UtilsListadoExistencias:
 
         df_internos: pd.DataFrame = pd.DataFrame(list_internos)
         df_internos.to_excel("internos_cabecera.xlsx")
-        return df
-    
-
-class GeneralUtils:
-    def __init__(self, file: Union[str, pd.DataFrame]) -> None:
-        self.file = file
-        self._main_path = Path.cwd()
-    
-    def check_filetype(self):
-        """
-        Checks whereas the file entered is a string and converts it to dataframe \n
-        and returns it or is already a dataframe and returns it.
-        """
-        if isinstance(self.file, str):
-            df: pd.DataFrame = pd.read_excel(f"excel/{self.file}.xlsx", engine="calamine")
-        else:
-            df: pd.DataFrame = pd.DataFrame(self.file)
-        
         return df

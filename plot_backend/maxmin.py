@@ -9,9 +9,9 @@ class MaxMin:
         self._main_path = Path.cwd()
         self.multiplicar_por = multiplicar_por
 
+        self.base_df = pd.read_excel(f"{self._main_path}/excel/{archivo}-S.xlsx", engine="calamine")
         self.df = self.transformar_fecha_completa_a_fecha_mes() 
         self.fecha_hoy = pd.Timestamp.today().strftime("%d-%m-%Y")
-        self.base_df = pd.read_excel(f"{self._main_path}/excel/{archivo}-S.xlsx", engine="calamine")
 
     def calcular_max_min(self) -> None:
         """
@@ -61,7 +61,6 @@ class MaxMin:
         """ Genero un dataframe nuevo con la fecha modificada en formato %Y-%m """
         self.base_df["FechaCompleta"] = pd.DatetimeIndex(pd.to_datetime(self.base_df["FechaCompleta"])).strftime("%Y-%m")
         return self.base_df
-        
 
 
 if __name__ == "__main__":

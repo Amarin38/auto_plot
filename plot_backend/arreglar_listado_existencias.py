@@ -8,56 +8,22 @@ import numpy as np
 from pathlib import Path
 from typing import List, Union
 
-try:
-    from plot_backend.utils_listado_existencias import UtilsListadoExistencias, GeneralUtils
-except ModuleNotFoundError:
-    from utils_listado_existencias import UtilsListadoExistencias, GeneralUtils
+from plot_backend.general_utils import GeneralUtils
+from plot_backend.utils_listado_existencias import UtilsListadoExistencias
 
-#TODO aplicar multithreading
 
 class ArreglarListadoExistencias:
     def __init__(self, filename: str, xlsx_dir: str):
         self.file = filename
+        self._main_path = Path.cwd()
         self.xlsx_dir = xlsx_dir
 
         self._utils = GeneralUtils(self.file)
         self._utils_listado = UtilsListadoExistencias(self.file)
-        self._main_path = Path.cwd()
-        self._xls_files = glob.glob("**/*.xls", recursive=True)
         self._xlsx_files = glob.glob(f"{self._main_path}/{self.xlsx_dir}/**/*.xlsx", recursive=True)
 
     def __str__(self):
         return f"New file name: {self.file} | Selected xlsx directory: {self.xlsx_dir}"
-
-
-    def check_file_exists(self) -> bool:
-        """
-        Checks if the entered file name already exists.
-        """
-        try:
-            if os.path.exists(f"{self._main_path}/excel/{self.file}.xlsx"):
-                return True
-        except FileNotFoundError:
-            return False
-        else:
-            return False
-
-
-    def xls_to_xlsx(self) -> None:
-        """
-        Converts all the .xls files in the current directory into a fully working .xlsx file\n
-        deleting all the errors within the excel .xls file.
-        """
-        
-        for file in self._xls_files:
-            df: pd.DataFrame = pd.read_excel(file, engine="xlrd")
-            # Leer el archivo y eliminar caracteres nulos
-            
-            df["pronom"] = [self.delete_error_bytes(str(string), "\x00") if pd.notnull(string) else string for string in df["pronom"]]
-
-            file_mod = file.replace(".xls", "")
-            df.to_excel(f"{file_mod}.xlsx")
-            os.remove(file)
 
 
     def append_df(self) -> pd.DataFrame:
@@ -65,11 +31,11 @@ class ArreglarListadoExistencias:
         Appends all the xlsx files into one single file with 
         the name entered. 
         """
-        if self.check_file_exists():
+        if self._utils_listado.check_file_exists():
             print(f"Ya existe el archivo {self.file}")
             return pd.DataFrame()
         else:
-            self.xls_to_xlsx()
+            self._utils.xls_to_xlsx()
             df_list: List[str] = [] # type: ignore
 
             for file in self._xlsx_files:
@@ -174,17 +140,8 @@ class ArreglarListadoExistencias:
         return filtered_df
 
 
-    # --- UTILS --- #
-    def delete_error_bytes(self, string: str, eliminar: str) -> str:
-        return re.sub(fr"{eliminar}", "", string)
+class ModificarExcel:
+    pass
 
-
-
-
-if __name__ == '__main__':    
-    arreglar = ArreglarListadoExistencias("todas-herramientas", "todas herramientas")
-    utils = UtilsListadoExistencias("todas-herramientas")
-    
-    # arreglar.append_df()
-    # arreglar.basic_filter("salidas")
-    ...
+class FiltrarExcel:
+    pass

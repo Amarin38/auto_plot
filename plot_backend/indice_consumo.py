@@ -86,8 +86,8 @@ class IndiceConsumo:
         if con_cero:
             cantidad_indices = len(indice_consumo)
         else:
-            for ind in indice_consumo:
-                if ind != 0:
+            for indice in indice_consumo:
+                if indice != 0:
                     cantidad_indices += 1
             
 

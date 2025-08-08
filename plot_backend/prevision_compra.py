@@ -11,7 +11,9 @@ class PrevisionCompra:
     def __init__(self, archivo_xlsx: str, con_cero: bool, meses_en_adelante: int = 6) -> None:
         self._main_path = Path.cwd() 
         self.df = pd.read_excel(f"{self._main_path}/excel/{archivo_xlsx}.xlsx", engine="calamine")
+        
         self.con_cero = con_cero
+
         self.meses_en_adelante = meses_en_adelante
         self.repuestos = self.df["Repuesto"].unique()
         self.años = self.df["FechaCompleta"].dt.year.unique() 
@@ -59,7 +61,7 @@ class PrevisionCompra:
             df_tendencia.to_excel(f"{self._main_path}/excel/tendencia-ConCero.xlsx")
 
         else:
-            df_final["PromedioSinCero"] = self.calcular_sin_cero(df_final) # type: ignore
+            df_final["PromedioSinCero"] = self.calcular_sin_cero(df_final)
             df_final["IndiceAnualSinCero"] = self.calcular_indice_anual(df_final)
             df_final["IndiceEstacionalSinCero"] = self.calcular_indice_estacional(df_final)
             df_final.to_excel(f"{self._main_path}/excel/data-SinCero.xlsx")
@@ -79,9 +81,13 @@ class PrevisionCompra:
                 rep_comparado: pd.Series[bool] = df["Repuesto"] == rep
                 año_comparado: pd.Series[bool] = df["Año"] == año_mes.year
 
-                suma_total_año = df.loc[rep_comparado & año_comparado, ["TotalMes"]].sum().iloc[0]
+                suma_total_año = df.loc[rep_comparado & 
+                                        año_comparado, 
+                                        ["TotalMes"]].sum().iloc[0]
 
-                cont_sin_cero = df.loc[rep_comparado & año_comparado & (df["TotalMes"] != 0)].count().iloc[0]
+                cont_sin_cero = df.loc[rep_comparado & 
+                                       año_comparado & 
+                                       (df["TotalMes"] != 0)].count().iloc[0]
 
                 if cont_sin_cero != 0:
                     promedio_sin_cero = suma_total_año/cont_sin_cero
@@ -89,16 +95,15 @@ class PrevisionCompra:
                     promedio_sin_cero = 0.0
         
                 resultado.append(round(float(promedio_sin_cero), 1))
-
         return resultado
 
 
     # --- INDICES --- #
     def calcular_indice_anual(self, df: pd.DataFrame) -> pd.Series:
         if self.con_cero:
-            return round((df["TotalMes"] / df["PromedioConCero"]).where(df["PromedioConCero"] != 0, 0),2)
+            return round((df["TotalMes"] / df["PromedioConCero"]).where(df["PromedioConCero"] != 0, 0), 2)
         else:
-            return round((df["TotalMes"] / df["PromedioSinCero"]).where(df["PromedioSinCero"] != 0, 0),2)
+            return round((df["TotalMes"] / df["PromedioSinCero"]).where(df["PromedioSinCero"] != 0, 0), 2)
 
     def calcular_indice_estacional(self, df: pd.DataFrame) -> List[float]:
         años = df["Año"].unique()
@@ -113,14 +118,15 @@ class PrevisionCompra:
                     mes_comparado = df["Mes"] == mes
 
                     if self.con_cero:
-                        resultado.append(float(
-                            df.loc[rep_comparado & mes_comparado, ["IndiceAnualConCero"]].sum().iloc[0] / len(años)
-                                ))
+                        resultado.append(float(df.loc[rep_comparado & 
+                                                      mes_comparado, 
+                                                      ["IndiceAnualConCero"]].sum().iloc[0] / len(años)
+                                                      ))
                     else:
-                        resultado.append(float(
-                            df.loc[rep_comparado & mes_comparado, ["IndiceAnualSinCero"]].sum().iloc[0] / len(años)
-                            ))
-
+                        resultado.append(float(df.loc[rep_comparado & 
+                                                      mes_comparado, 
+                                                      ["IndiceAnualSinCero"]].sum().iloc[0] / len(años)
+                                                      ))
         return resultado
 
 
@@ -158,8 +164,6 @@ class PrevisionCompra:
                     })
         
         return pd.DataFrame(resultado)
-        # df_f = pd.DataFrame(resultado)
-        # df_f.to_excel("{self._main_path}/excel/tendencia.xlsx")
 
     def calcular_tendencia_estacional(self, df: pd.DataFrame, df_tendencia: pd.DataFrame) -> List[float]:
         indice_mes: List[str] = df_tendencia["Mes"].unique().tolist()
@@ -167,18 +171,25 @@ class PrevisionCompra:
         tendencia_estacional: List[float] = []
 
         for rep in self.repuestos:
-            rep_comparado_tendencia: bool = df_tendencia["Repuesto"] == rep
-            rep_comparado_df: bool = df["Repuesto"] == rep
+            rep_comparado_tendencia: pd.Series[bool] = df_tendencia["Repuesto"] == rep
+            rep_comparado_df: pd.Series[bool] = df["Repuesto"] == rep
 
             for mes in indice_mes:
                 mes_comparado_tendencia: pd.Series[bool] = df_tendencia["Mes"] == mes
                 mes_comparado_df: pd.Series[bool] = df["Mes"] == mes
                 
                 if self.con_cero:
-                    indice_estacional_mes: int = df.loc[rep_comparado_df & mes_comparado_df, "IndiceEstacionalConCero"].iloc[0]
+                    indice_estacional_mes: int = df.loc[rep_comparado_df & 
+                                                        mes_comparado_df, 
+                                                        "IndiceEstacionalConCero"].iloc[0]
                 else:
-                    indice_estacional_mes: int = df.loc[rep_comparado_df & mes_comparado_df, "IndiceEstacionalSinCero"].iloc[0]
-                tendencia_mes: pd.Series[int] = df_tendencia.loc[rep_comparado_tendencia & mes_comparado_tendencia, "Tendencia"]
+                    indice_estacional_mes: int = df.loc[rep_comparado_df & 
+                                                        mes_comparado_df, 
+                                                        "IndiceEstacionalSinCero"].iloc[0]
+                    
+                tendencia_mes: pd.Series[int] = df_tendencia.loc[rep_comparado_tendencia & 
+                                                                 mes_comparado_tendencia, 
+                                                                 "Tendencia"]
 
                 tendencia_estacional.append(round((indice_estacional_mes * tendencia_mes).iloc[0], 0))
         
@@ -207,6 +218,4 @@ class PrevisionCompra:
 
 
 if __name__ == "__main__":
-    # calcular_prevision_compra("prevision-retenes-S", True, 12) # -> funciona hasta 12 meses
-    # calcular_prevision_compra("prevision-retenes-S", False, 12)
     ...

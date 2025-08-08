@@ -7,16 +7,10 @@ from pathlib import Path
 from numpy import ndarray
 from typing import List, Dict, Union
 
-try:
-    from plot_backend.prevision_compra import PrevisionCompra
-    from plot_backend.indice_consumo import IndiceConsumo
-    from plot_backend.arreglar_listado_existencias import ArreglarListadoExistencias
-    from plot_backend.utils_listado_existencias import UtilsListadoExistencias
-except ModuleNotFoundError:
-    from prevision_compra import PrevisionCompra
-    from indice_consumo import IndiceConsumo
-    from arreglar_listado_existencias import ArreglarListadoExistencias
-    from utils_listado_existencias import UtilsListadoExistencias
+from plot_backend.prevision_compra import PrevisionCompra
+from plot_backend.indice_consumo import IndiceConsumo
+from plot_backend.arreglar_listado_existencias import ArreglarListadoExistencias
+from plot_backend.utils_listado_existencias import UtilsListadoExistencias
 
 
 class Autografico:
@@ -219,7 +213,8 @@ class Autografico:
             
         
     # ---------------- UTILS ---------------- #
-    def auto_annotate_on_line(self, x_data: List[str], y_data: List[str], axs, color: str, divisor: float) -> None:
+    @staticmethod
+    def auto_annotate_on_line(x_data: List[str], y_data: List[str], axs, color: str, divisor: float) -> None:
         """
             Returns an axs.annotate object with the data and color entered
             displayed above the offset points.
@@ -237,7 +232,8 @@ class Autografico:
                         color=color
                     )
 
-    def auto_reshape_2D(self, axs, x1: int, x2: int) -> None:
+    @staticmethod
+    def auto_reshape_2D(axs, x1: int, x2: int) -> None:
         """
         Automatically reshapes the plot if its 1D.
         """
