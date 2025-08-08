@@ -4,6 +4,8 @@ from pathlib import Path
 from numpy import ndarray
 from typing import Dict, List, Union, Any
 
+# TODO agregar mas abstraccion de clases, sacar fecha_titulo y media_consumo
+
 class IndiceConsumo:
     def __init__(self, file_consumo: str) -> None:
         self._main_path = Path.cwd()
@@ -108,11 +110,9 @@ class IndiceConsumo:
 
         return f"{fechas_min} a {fechas_max}"
 
-# --------------------------------------------
 
+class IndicePorCoche:
+    pass
 
-if __name__ == "__main__":
-    indice = IndiceConsumo("todas-herramientas")
-    indice.calcular_indice_por_coche()
-    # calcular_indice_consumo_por_motores("inyectores", "motores_por_cabecera")[0]
-    ...
+class IndicePorMotor:
+    pass

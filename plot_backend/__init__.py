@@ -6,4 +6,4 @@ from .consumo_gomeria import ConsumoGomeria
 from .general_utils import GeneralUtils
 from .indice_consumo import IndiceConsumo
 from .maxmin import MaxMin
-from .prevision_compra import PrevisionCompra
+from .prevision_compra import CalcularPrevisionCompra, CalcularTendecia, CalcularIndice

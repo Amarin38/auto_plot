@@ -57,8 +57,8 @@ class ArreglarFlota:
         """
         # el - es el "not"
         self.df = self.df.loc[-self.df["Motor modelo"].isin(["HTM3500", "SCANNIA 6 CIL", "DC 09 142 280CV", "MBENZ"]),
-                    ["Linea", "Interno", "Dominio", "Chasis Modelo", "Chasis N°", 
-                    "Chasis Año", "Motor modelo", "Motor N° de serie"]]
+                              ["Linea", "Interno", "Dominio", "Chasis Modelo", "Chasis N°", 
+                               "Chasis Año", "Motor modelo", "Motor N° de serie"]]
 
         self.df = self.df.drop(self.df.loc[
             (self.df["Chasis Año"].isin([0])) | 
@@ -101,8 +101,4 @@ class ArreglarFlota:
         return self.df
     
 
-if __name__ == "__main__":
-    limpiar = ArreglarFlota("flota7")
-    print(limpiar._main_path)
-    # limpiar.contar_motores_por_cabecera()
     

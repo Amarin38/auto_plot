@@ -3,115 +3,77 @@ import json
 import pandas as pd
 import numpy as np
 
-from typing import Dict, Union, List
+from typing import Dict, Union
 from pathlib import Path
 
 from general_utils import GeneralUtils
 
-# TODO Separar en multiples clases 
 
-class UtilsListadoExistencias:
-    def __init__(self, file: str):
+class UpdateListadoExistencias:
+    def __init__(self, file: Union[str, pd.DataFrame]):
         self.file = file
+        self.df = GeneralUtils(file).check_filetype()
         self._main_path = Path.cwd()
 
 
-    def check_file_exists(self) -> bool:
-        """
-        Checks if the entered file name already exists.
-        """
-        return Path(f"{self._main_path}/excel/{self.file}.xlsx").exists()
-
-
-    # --- UPDATE --- #
-    def update_single_row_name(self, xlsx_file: str, column: str, old_name: str, new_name: str) -> pd.DataFrame:
+    def update_single_row_name(self, column: str, old_name: str, new_name: str) -> pd.DataFrame:
         """ Updates a single row by an 'old_name' var to a 'new_name' in the column specified """
-        utils = GeneralUtils(xlsx_file)
-        df: pd.DataFrame = utils.check_filetype()
 
-        df[column] = df[column].replace(old_name, new_name)
+        self.df[column] = self.df[column].replace(old_name, new_name)
         
-        df.to_excel(f"{self._main_path}/excel/{self.file}.xlsx", index=True)
-        return df
+        self.df.to_excel(f"{self._main_path}/excel/{self.file}.xlsx", index=True)
+        return self.df
+    
 
-
-    def update_column_by_dict(self, xlsx_file: Union[str, pd.DataFrame], archivo_json: str) -> pd.DataFrame:
+    def update_column_by_dict(self, json_file: str) -> pd.DataFrame:
         " Updates all the columns by the json file indicated"
-        with open(f"json/{archivo_json}.json", "r", encoding="utf-8") as file:
+        with open(f"json/{json_file}.json", "r", encoding="utf-8") as file:
             data: Dict[str, str] = json.load(file) 
        
-        utils = GeneralUtils(xlsx_file)
-        df: pd.DataFrame = utils.check_filetype()
-        return df.rename(columns=data)
+        return self.df.rename(columns=data)
 
 
-    def update_rows_by_dict(self, xlsx_file: Union[str, pd.DataFrame], json_file: str, column: str ) -> pd.DataFrame:
+    def update_rows_by_dict(self, json_file: str, column: str ) -> pd.DataFrame:
         """ Updates rows in the column specified by the json file indicated. """
         with open(f"json/{json_file}.json", "r", encoding="utf-8") as file:
             data: Dict[str, str] = json.load(file)
         
-        utils = GeneralUtils(xlsx_file)
-        df: pd.DataFrame = utils.check_filetype()
-        df[column] = df[column].replace(data)
-        return df
+        self.df[column] = self.df[column].replace(data)
+        return self.df
 
 
-    # --- DELETE --- #
-    def delete_unnamed_cols(self, df: Union[str, pd.DataFrame]) -> pd.DataFrame:
+class DeleteListadoExistencias:
+    def __init__(self, file: Union[str, pd.DataFrame]) -> None:
+        self.df = GeneralUtils(file).check_filetype()
+        self._main_path = Path.cwd()
+
+    def delete_unnamed_cols(self) -> pd.DataFrame:
         """ Deletes all the 'Unnamed' columns. """
+        self.df = self.df.loc[:, ~self.df.columns.str.contains("Unnamed")]
+        self.df = self.df.loc[:, ~self.df.columns.str.contains("Columna")]
 
-        utils = GeneralUtils(df)
-        df_limpio: pd.DataFrame = utils.check_filetype()
-        df_limpio = df_limpio.loc[:, ~df_limpio.columns.str.contains("Unnamed")]
-        df_limpio = df_limpio.loc[:, ~df_limpio.columns.str.contains("Columna")]
-
-        # df_limpio.to_excel(f"{self._main_path}excel/{self.file}.xlsx")
-        return df_limpio
+        # self.df.to_excel(f"{self._main_path}excel/{self.file}.xlsx")
+        return self.df
 
 
     def delete_rows(self, delete_type: str, delete_by: np.ndarray) -> pd.DataFrame:
         """
         Deletes the row by entered string.\n
         Delete types: repuesto, fechacompleta.\n
-        Delete by: np.ndarray
+        Delete by: (np.ndarray)
         """
-        utils = GeneralUtils(self.file)
-        df: pd.DataFrame = utils.check_filetype()
-
         match delete_type:
             case "repuesto":
                 for delete in delete_by:
-                    df = df.loc[-df.Repuesto.str.contains(delete, na=False)] # guardo indices de los elementos para borrar
+                    self.df = self.df.loc[~self.df.Repuesto.str.contains(delete, na=False)] # guardo indices de los elementos para borrar
             case "fechacompleta":
                 for delete in delete_by:
-                    df = df.loc[-df.FechaCompleta.str.contains(delete, na=False)]
+                    self.df = self.df.loc[~self.df.FechaCompleta.str.contains(delete, na=False)]
             case "interno":
                 for delete in delete_by:
-                    df = df.loc[-df.Interno.str.contains(delete, na=False)]
+                    self.df = self.df.loc[~self.df.Interno.str.contains(delete, na=False)]
             case _:
-                return  pd.DataFrame()
-        
-        # df.to_excel(f"{self._main_path}/excel/{self.file}.xlsx")
-        return df
-
-
-    def separar_internos_cabecera(self) -> pd.DataFrame:
-        utils = GeneralUtils(self.file)
-        df: pd.DataFrame = utils.check_filetype()
-
-        cabeceras = df["Cabecera"].unique()
-
-        list_internos: List[Dict[str, int]] = []
-
-        for cab in cabeceras:
-            internos_cabecera: List[int] = df.loc[df["Cabecera"] == cab, "Interno"].dropna().unique().tolist() # type: ignore
-
-            for inter in internos_cabecera:
-                list_internos.append({
-                    "Cabecera":cab,
-                    "Interno":inter
-                })
-
-        df_internos: pd.DataFrame = pd.DataFrame(list_internos)
-        df_internos.to_excel("internos_cabecera.xlsx")
-        return df
+                return pd.DataFrame()
+            
+        # self.df.to_excel(f"{self._main_path}/excel/{self.file}.xlsx")
+        return self.df

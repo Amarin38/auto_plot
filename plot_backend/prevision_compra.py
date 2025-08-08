@@ -7,7 +7,7 @@ from numpy import ndarray
 from numpy.polynomial import Polynomial
 
 
-class PrevisionCompra:
+class CalcularPrevisionCompra:
     def __init__(self, archivo_xlsx: str, con_cero: bool, meses_en_adelante: int = 6) -> None:
         self._main_path = Path.cwd() 
         self.df = pd.read_excel(f"{self._main_path}/excel/{archivo_xlsx}.xlsx", engine="calamine")
@@ -217,5 +217,8 @@ class PrevisionCompra:
             return fecha.day
 
 
-if __name__ == "__main__":
-    ...
+class CalcularIndice:
+    pass
+
+class CalcularTendecia:
+    pass

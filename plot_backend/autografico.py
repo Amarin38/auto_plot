@@ -7,11 +7,12 @@ from pathlib import Path
 from numpy import ndarray
 from typing import List, Dict, Union
 
-from plot_backend.prevision_compra import PrevisionCompra
+from plot_backend.prevision_compra import CalcularPrevisionCompra
 from plot_backend.indice_consumo import IndiceConsumo
 from plot_backend.arreglar_listado_existencias import ArreglarListadoExistencias
-from plot_backend.utils_listado_existencias import UtilsListadoExistencias
-
+from plot_backend.utils_listado_existencias import UpdateListadoExistencias, DeleteListadoExistencias
+from plot_backend.general_utils import GeneralUtils
+from plot_backend.constants import COLORES
 
 class Autografico:
     def __init__(self, nombre_archivo_nuevo: str, carpeta_datos: str, filas: int, columnas: int, 
@@ -22,17 +23,15 @@ class Autografico:
         self.x2 = columnas
         self._main_path = Path.cwd()
 
-        self.arreglar = ArreglarListadoExistencias(self.nombre_archivo, carpeta_datos)
-        self.utils = UtilsListadoExistencias(f"{self.nombre_archivo}-S")
-        self.indice = IndiceConsumo(self.nombre_archivo)
+        self._arreglar = ArreglarListadoExistencias(self.nombre_archivo, carpeta_datos)
+        self._utils = GeneralUtils()
+        
+        self._utils = UtilsListadoExistencias(f"{self.nombre_archivo}-S")
+        self._indice = IndiceConsumo(self.nombre_archivo)
 
         self.divisor = 0.3*self.x2
         self.tamaño_letra = tamaño_letra
         self.tamaño_grafico = tamaño_grafico
-        self.colores = iter(("#FFC300", "#FF5733", "#C70039", "#900C3F", "#5C6D70", 
-                             "#2C2C54", "#5FAD56", "#F2C14E", "#F78154", "#4D9078",
-                             "#4A1942", "#823329", "#3F7CAC", "#899878", "#5497A7", 
-                             "#883677", "#3A7D44", "#254D32", "#F7CE5B", "#F7B05B"))
 
 
     # ---- PLOTS ---- #
@@ -138,7 +137,7 @@ class Autografico:
 
         # ---------------------------- GRAFICO ---------------------------- #
         repuestos = iter(tuple(df_indices_consumo["Repuesto"].unique())) # type: ignore
-
+        
         if stacked_barplot:
             fig, ax = plt.subplots(figsize=(40,30), squeeze=False)
             
@@ -156,7 +155,7 @@ class Autografico:
                 zorder: int = round((100/max(y_consumo))*10, 0) # type: ignore
             
                 try:
-                    color = next(self.colores) # itero sobre los colores
+                    color = next(COLORES) # itero sobre los colores
                 except StopIteration:
                     pass
                 
@@ -179,7 +178,7 @@ class Autografico:
                 for j in range(axs.shape[1]):
                     try:
                         rep = next(repuestos) # itero en los repuestos
-                        color = next(self.colores) # itero sobre los colores
+                        color = next(COLORES) # itero sobre los colores
                     except StopIteration:
                         rep = ""
                     
@@ -246,6 +245,14 @@ class Autografico:
         return axs
 
  
+class PlotUtils:
+    pass
+
+class AutoIndicePlot:
+    pass
+
+class AutoPrevisionPlot:
+    pass
 
 if __name__ == "__main__":
     # plot = Autografico("todas-herramientas", "todas herramientas", 2, 2)

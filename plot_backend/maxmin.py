@@ -4,6 +4,8 @@ from pathlib import Path
 from numpy import ndarray
 from typing import Dict, List, Union
 
+# TODO agregar mas abstracción
+
 class MaxMin:
     def __init__(self, archivo: str, multiplicar_por: float) -> None:
         self._main_path = Path.cwd()
