@@ -18,6 +18,7 @@ except ModuleNotFoundError:
     from arreglar_listado_existencias import ArreglarListadoExistencias
     from utils_listado_existencias import UtilsListadoExistencias
 
+
 class Autografico:
     def __init__(self, nombre_archivo_nuevo: str, carpeta_datos: str, filas: int, columnas: int, 
                  tamaño_letra: float, tamaño_grafico: int = 60, meses_en_adelante: int = 6):

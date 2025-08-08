@@ -14,7 +14,9 @@ class UtilsListadoExistencias:
 
     # --- UPDATE --- #
     def update_single_row_name(self, xlsx_file: str, column: str, old_name: str, new_name: str) -> pd.DataFrame:
-        df: pd.DataFrame = self.check_filetype(xlsx_file)
+        """ Updates a single row by an 'old_name' var to a 'new_name' in the column specified """
+        utils = GeneralUtils(xlsx_file)
+        df: pd.DataFrame = utils.check_filetype()
 
         df[column] = df[column].replace(old_name, new_name)
         
@@ -23,26 +25,32 @@ class UtilsListadoExistencias:
 
 
     def update_column_by_dict(self, xlsx_file: Union[str, pd.DataFrame], archivo_json: str) -> pd.DataFrame:
+        " Updates all the columns by the json file indicated"
         with open(f"json/{archivo_json}.json", "r", encoding="utf-8") as file:
             data: Dict[str, str] = json.load(file) 
-
-        df: pd.DataFrame = self.check_filetype(xlsx_file)
+       
+        utils = GeneralUtils(xlsx_file)
+        df: pd.DataFrame = utils.check_filetype()
         return df.rename(columns=data)
 
 
     def update_rows_by_dict(self, xlsx_file: Union[str, pd.DataFrame], json_file: str, column: str ) -> pd.DataFrame:
+        """ Updates rows in the column specified by the json file indicated. """
         with open(f"json/{json_file}.json", "r", encoding="utf-8") as file:
             data: Dict[str, str] = json.load(file)
         
-        df: pd.DataFrame = self.check_filetype(xlsx_file)
+        utils = GeneralUtils(xlsx_file)
+        df: pd.DataFrame = utils.check_filetype()
         df[column] = df[column].replace(data)
-
         return df
 
 
     # --- DELETE --- #
     def delete_unnamed_cols(self, df: Union[str, pd.DataFrame]) -> pd.DataFrame:
-        df_limpio: pd.DataFrame = self.check_filetype(df)
+        """ Deletes all the 'Unnamed' columns. """
+
+        utils = GeneralUtils(df)
+        df_limpio: pd.DataFrame = utils.check_filetype()
         df_limpio = df_limpio.loc[:, ~df_limpio.columns.str.contains("Unnamed")]
         df_limpio = df_limpio.loc[:, ~df_limpio.columns.str.contains("Columna")]
 
@@ -56,8 +64,8 @@ class UtilsListadoExistencias:
         Delete types: repuesto, fechacompleta.\n
         Delete by: np.ndarray
         """
-        
-        df: pd.DataFrame = self.check_filetype(self.file)
+        utils = GeneralUtils(self.file)
+        df: pd.DataFrame = utils.check_filetype()
 
         match delete_type:
             case "repuesto":
@@ -77,7 +85,9 @@ class UtilsListadoExistencias:
 
 
     def separar_internos_cabecera(self) -> pd.DataFrame:
-        df: pd.DataFrame = self.check_filetype(self.file)
+        utils = GeneralUtils(self.file)
+        df: pd.DataFrame = utils.check_filetype()
+
         cabeceras = df["Cabecera"].unique()
 
         list_internos: List[Dict[str, int]] = []
@@ -96,11 +106,19 @@ class UtilsListadoExistencias:
         return df
     
 
-    # --- UTILS --- #
-    def check_filetype(self, file: Union[str, pd.DataFrame]):
-        if isinstance(file, str):
-            df: pd.DataFrame = pd.read_excel(f"excel/{file}.xlsx", engine="calamine")
+class GeneralUtils:
+    def __init__(self, file: Union[str, pd.DataFrame]) -> None:
+        self.file = file
+        self._main_path = Path.cwd()
+    
+    def check_filetype(self):
+        """
+        Checks whereas the file entered is a string and converts it to dataframe \n
+        and returns it or is already a dataframe and returns it.
+        """
+        if isinstance(self.file, str):
+            df: pd.DataFrame = pd.read_excel(f"excel/{self.file}.xlsx", engine="calamine")
         else:
-            df: pd.DataFrame = pd.DataFrame(file)
+            df: pd.DataFrame = pd.DataFrame(self.file)
         
         return df
