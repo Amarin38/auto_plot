@@ -5,7 +5,7 @@ import os
 import pandas as pd
 
 from pathlib import Path
-from typing import Union, Optional
+from typing import Union, Optional, List
 
 
 class GeneralUtils:
@@ -28,11 +28,14 @@ class GeneralUtils:
         Checks whereas the file entered is a string and converts it to dataframe \n
         and returns it or is already a dataframe and returns it.
         """
-        if isinstance(self.file, str):
-            df: pd.DataFrame = pd.read_excel(f"{self._main_path}/excel/{self.file}.xlsx", engine="calamine")
-        else:
-            df: pd.DataFrame = pd.DataFrame(self.file)
-        
+        try:
+            if isinstance(self.file, str):
+                df: pd.DataFrame = pd.read_excel(f"{self._main_path}/excel/{self.file}.xlsx", engine="calamine")
+            else:
+                df: pd.DataFrame = pd.DataFrame(self.file)
+        except FileNotFoundError as e:
+            print(f"No existe el archivo para checkear -> {e}")
+
         return df
 
     

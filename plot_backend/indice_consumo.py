@@ -112,7 +112,17 @@ class IndiceConsumo:
 
 
 class IndicePorCoche:
-    pass
+    def __init__(self, file_consumo: str) -> None:
+        self._main_path = Path.cwd()
+        self.file_consumo = file_consumo
+
+        self.df_coches = pd.read_excel(f"{self._main_path}/excel_info/coches_por_cabecera.xlsx", engine="calamine")
+        self.df_consumo = pd.read_excel(f"{self._main_path}/excel/{self.file_consumo}-S.xlsx", engine="calamine")
 
 class IndicePorMotor:
-    pass
+    def __init__(self, file_consumo) -> None:
+        self._main_path = Path.cwd()
+        self.file_consumo = file_consumo
+
+        self.df_motores = pd.read_excel(f"{self._main_path}/excel_info/motores_por_cabecera.xlsx", engine="calamine")
+        self.df_consumo = pd.read_excel(f"{self._main_path}/excel/{self.file_consumo}-S.xlsx", engine="calamine")

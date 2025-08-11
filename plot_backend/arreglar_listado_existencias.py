@@ -1,7 +1,7 @@
 import pandas as pd
 
 from pathlib import Path
-from typing import Union
+from typing import Union, Optional
 
 from plot_backend.general_utils import GeneralUtils
 from plot_backend.utils_listado_existencias import UpdateListadoExistencias, DeleteListadoExistencias
@@ -22,11 +22,15 @@ class ArreglarListadoExistencias:
     
 
     def modify_df(self, df_list: pd.DataFrame) -> pd.DataFrame:
-        _update_listado = UpdateListadoExistencias(df_list)
+        """Applies the base modification to the 'Listado de existencias'"""
 
         try:
             df_list.drop(columns=["ficdep", "fictra", "artipo", "ficpro", "pronom", "ficrem", "ficfac", "corte", "signo", "transfe", "ficmov"], inplace=True, axis=0)
+            
+            _update_listado = UpdateListadoExistencias(df_list)
             df_list = _update_listado.update_column_by_dict("columnas")
+
+            _update_listado = UpdateListadoExistencias(df_list)
             df_list = _update_listado.update_rows_by_dict("depositos", "Cabecera")
         except KeyError as r:
             print(f"Ya existen las columnas, no se cambiarán | ---> {r}")
@@ -39,54 +43,12 @@ class ArreglarListadoExistencias:
         return df_list
 
 
-    def basic_filter(self, filter: str) -> None:
-        """
-        Filters the main xlsx file into the desired replacement part movement type.\n
-        Filter values: 'salidas', 'entradas', 'devoluciones'
-        """
-        _delete_listado = DeleteListadoExistencias(self.file)
-        
-        match filter:
-            case "salidas":
-                df: pd.DataFrame = _delete_listado.delete_rows("interno", INTERNOS_DEVOLUCION)
-                name: str = f"{self.file}-S"
-
-                filtrado_df: pd.DataFrame = df.loc[
-                    (df.Movimiento.str.contains("Transf al Dep ")) | 
-                    (df.Movimiento.str.contains("Salida"))
-                    ]
-            case "entradas":
-                df: pd.DataFrame = _delete_listado.delete_rows("interno", INTERNOS_DEVOLUCION)
-                name: str = f"{self.file}-E"
-
-                filtrado_df: pd.DataFrame = df.loc[
-                    (df.Movimiento.str.contains("Tranf desde ")) |
-                    (df.Movimiento.str.contains("Transf Recibida")) | 
-                    (df.Movimiento.str.contains("Entrada "))
-                    ]
-            case "devoluciones":
-                df: pd.DataFrame = self._utils.check_filetype()
-                name: str = f"{self.file}-D"
-
-                filtrado_df: pd.DataFrame = df.loc[
-                    df.Movimiento.str.contains("Devolucion")
-                    ]
-            case _:
-                return None
-
-        if filtrado_df.columns.str.contains("Unnamed").any():
-            _delete_listado = DeleteListadoExistencias(filtrado_df)
-            
-            filtrado_df = _delete_listado.delete_unnamed_cols()
-            filtrado_df.to_excel(f"{self._main_path}/excel/{name}.xlsx", index=True)
-
-
-    def filter_by(self, column: str, type: str, filter: Union[str, float]) -> pd.DataFrame:
+    def filter(self, column: str, filter: Union[str, float], type: Optional[str] = None) -> pd.DataFrame:
         """
         Filters the file entered by string entered in the filters var.\n
         Indicating the column is needed.\n 
-        Columns: repuesto, interno, codigo\n
-        Types: contains, startswith
+        Columns: movimiento, repuesto, interno, codigo\n
+        Types: None, contains, startswith
         """
 
         df = self._utils.check_filetype()
@@ -104,10 +66,46 @@ class ArreglarListadoExistencias:
             case "codigo":
                 if isinstance(filter, float):
                     filtered_df = df.loc[df["Codigo"] == float(filter)]
+            case "movimiento":
+                _delete_listado = DeleteListadoExistencias(self.file)
+        
+                match filter:
+                    case "salidas":
+                        df: pd.DataFrame = _delete_listado.delete_rows("interno", INTERNOS_DEVOLUCION)
+                        name: str = f"{self.file}-S"
+
+                        filtered_df: pd.DataFrame = df.loc[
+                            (df.Movimiento.str.contains("Transf al Dep ")) | 
+                            (df.Movimiento.str.contains("Salida"))
+                            ]
+                    case "entradas":
+                        df: pd.DataFrame = _delete_listado.delete_rows("interno", INTERNOS_DEVOLUCION)
+                        name: str = f"{self.file}-E"
+
+                        filtered_df: pd.DataFrame = df.loc[
+                            (df.Movimiento.str.contains("Tranf desde ")) |
+                            (df.Movimiento.str.contains("Transf Recibida")) | 
+                            (df.Movimiento.str.contains("Entrada "))
+                            ]
+                    case "devoluciones":
+                        df: pd.DataFrame = self._utils.check_filetype()
+                        name: str = f"{self.file}-D"
+
+                        filtered_df: pd.DataFrame = df.loc[
+                            df.Movimiento.str.contains("Devolucion")
+                            ]
+                    case _:
+                        return pd.DataFrame()
             case _:
                 return pd.DataFrame()
 
-        filtered_df.to_excel(f"{self._main_path}/excel/{filter}.xlsx")
+        if filtered_df.columns.str.contains("Unnamed").any():
+            _delete_listado = DeleteListadoExistencias(filtered_df)
+            
+            filtered_df = _delete_listado.delete_unnamed_cols()
+            filtered_df.to_excel(f"{self._main_path}/excel/{name}.xlsx", index=True) 
+        else:
+            filtered_df.to_excel(f"{self._main_path}/excel/{filter}.xlsx")
         return filtered_df
 
 

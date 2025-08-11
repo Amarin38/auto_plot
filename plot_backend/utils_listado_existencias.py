@@ -6,7 +6,7 @@ import numpy as np
 from typing import Dict, Union
 from pathlib import Path
 
-from general_utils import GeneralUtils
+from plot_backend.general_utils import GeneralUtils
 
 
 class UpdateListadoExistencias:
