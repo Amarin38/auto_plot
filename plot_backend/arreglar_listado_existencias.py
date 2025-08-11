@@ -1,25 +1,38 @@
 import pandas as pd
 
-from pathlib import Path
 from typing import Union, Optional
 
 from plot_backend.general_utils import GeneralUtils
 from plot_backend.utils_listado_existencias import UpdateListadoExistencias, DeleteListadoExistencias
-from plot_backend.constants import INTERNOS_DEVOLUCION
+from plot_backend.constants import INTERNOS_DEVOLUCION, MAIN_PATH
 
 # TODO abstraer mas el programa y aplicar 
 
 class ArreglarListadoExistencias:
-    def __init__(self, filename: str, xlsx_dir: str):
+    def __init__(self, filename: str, dir_files: str):
         self.file = filename
-        self._main_path = Path.cwd()
-        self.xlsx_dir = xlsx_dir
+        self.xlsx_dir = dir_files
 
         self._utils = GeneralUtils(self.file, self.xlsx_dir)
+
 
     def __str__(self):
         return f"New file name: {self.file} | Selected xlsx directory: {self.xlsx_dir}"
     
+
+    def arreglar_listado(self) -> None:
+        try:
+            df = self._utils.append_df()
+            self.modify_df(df)
+            self.filter("movimiento", "salidas")
+            
+        except pd.errors.InvalidIndexError as e:
+            print(f"InvalidIndex -> {e}")
+        except AttributeError as e:
+            print(f"ERROR, atributo no encontrado -> {e}")
+        except KeyError:
+            print("ERROR: No existen las columnas, no se puede concatenar")
+
 
     def modify_df(self, df_list: pd.DataFrame) -> pd.DataFrame:
         """Applies the base modification to the 'Listado de existencias'"""
@@ -27,19 +40,19 @@ class ArreglarListadoExistencias:
         try:
             df_list.drop(columns=["ficdep", "fictra", "artipo", "ficpro", "pronom", "ficrem", "ficfac", "corte", "signo", "transfe", "ficmov"], inplace=True, axis=0)
             
-            _update_listado = UpdateListadoExistencias(df_list)
+            _update_listado = UpdateListadoExistencias(df_list, self.xlsx_dir)
             df_list = _update_listado.update_column_by_dict("columnas")
 
-            _update_listado = UpdateListadoExistencias(df_list)
+            _update_listado = UpdateListadoExistencias(df_list, self.xlsx_dir)
             df_list = _update_listado.update_rows_by_dict("depositos", "Cabecera")
         except KeyError as r:
-            print(f"Ya existen las columnas, no se cambiarán | ---> {r}")
+            # print(f"Ya existen las columnas, no se cambiarán | ---> {r}")
             pass
         except OSError as e:
                 print("No puede encontrar el archivo")
                 print(f"OSError ---> {e}")
         
-        df_list.to_excel(f'{self._main_path}/excel/{self.file}.xlsx', index=True)
+        df_list.to_excel(f'{MAIN_PATH}/excel/{self.file}.xlsx', index=True)
         return df_list
 
 
@@ -51,7 +64,7 @@ class ArreglarListadoExistencias:
         Types: None, contains, startswith
         """
 
-        df = self._utils.check_filetype()
+        df = self._utils.check_filetype() # type: ignore
         match column:
             case "repuesto":
                 if type == "contains" and isinstance(filter, str):
@@ -88,7 +101,7 @@ class ArreglarListadoExistencias:
                             (df.Movimiento.str.contains("Entrada "))
                             ]
                     case "devoluciones":
-                        df: pd.DataFrame = self._utils.check_filetype()
+                        df: pd.DataFrame = self._utils.check_filetype() # type: ignore
                         name: str = f"{self.file}-D"
 
                         filtered_df: pd.DataFrame = df.loc[
@@ -103,14 +116,7 @@ class ArreglarListadoExistencias:
             _delete_listado = DeleteListadoExistencias(filtered_df)
             
             filtered_df = _delete_listado.delete_unnamed_cols()
-            filtered_df.to_excel(f"{self._main_path}/excel/{name}.xlsx", index=True) 
+            filtered_df.to_excel(f"{MAIN_PATH}/excel/{name}.xlsx", index=True) 
         else:
-            filtered_df.to_excel(f"{self._main_path}/excel/{filter}.xlsx")
+            filtered_df.to_excel(f"{MAIN_PATH}/excel/{filter}.xlsx")
         return filtered_df
-
-
-class ModificarExcel:
-    pass
-
-class FiltrarExcel:
-    pass

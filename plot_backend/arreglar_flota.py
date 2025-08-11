@@ -1,17 +1,22 @@
 import pandas as pd
-from pathlib import Path
+
 from numpy import ndarray
 from typing import List, Union
+
 from plot_backend.general_utils import GeneralUtils
+from plot_backend.constants import MAIN_PATH
 
 class ArreglarFlota:
     def __init__(self, file: str) -> None:
-        self._main_path = Path.cwd()
         self.df = GeneralUtils(file).check_filetype()
-        self.cabecera = pd.read_excel(f"{self._main_path}/excel_info/internos_asignados_cabecera.xlsx")["Cabecera"]
+        self.cabecera = pd.read_excel(f"{MAIN_PATH}/excel_info/internos_asignados_cabecera.xlsx")["Cabecera"]
 
 
     def contar_motores_por_cabecera(self) -> pd.DataFrame:
+        """
+        ### Cuenta la cantidad de motores por cabecera y las asigna\n
+        ### en un nuevo archivo separado por motor.
+        """
         df_flota: pd.DataFrame = self.asignar_cabecera()
         dict_contado: List[Union[str, int]] = []
         
@@ -37,7 +42,7 @@ class ArreglarFlota:
 
     def asignar_cabecera(self) -> pd.DataFrame:
         """
-        Assigns the 'Cabecera' to each 'Interno' number.
+        ### Asigna la 'Cabecera' a cada numero de 'Interno'.
         """
         df: pd.DataFrame = self.limpiar_flota()
 
@@ -56,7 +61,7 @@ class ArreglarFlota:
         Cleans the 'Flota'.xlsx files for statistics.
         """
         # el - es el "not"
-        self.df = self.df.loc[-self.df["Motor modelo"].isin(["HTM3500", "SCANNIA 6 CIL", "DC 09 142 280CV", "MBENZ"]),
+        self.df = self.df.loc[-self.df["Motor modelo"].isin(["HTM3500", "SCANNIA 6 CIL", "DC 09 142 280CV", "MBENZ"]), # type: ignore
                               ["Linea", "Interno", "Dominio", "Chasis Modelo", "Chasis N°", 
                                "Chasis Año", "Motor modelo", "Motor N° de serie"]]
 

@@ -2,15 +2,14 @@ import pandas as pd
 import numpy as np
 from typing import Union, Dict, List, Any
 
-from pathlib import Path
 from numpy import ndarray
 from numpy.polynomial import Polynomial
 
+from plot_backend.constants import MAIN_PATH
 
 class CalcularPrevisionCompra:
     def __init__(self, archivo_xlsx: str, con_cero: bool, meses_en_adelante: int = 6) -> None:
-        self._main_path = Path.cwd() 
-        self.df = pd.read_excel(f"{self._main_path}/excel/{archivo_xlsx}.xlsx", engine="calamine")
+        self.df = pd.read_excel(f"{MAIN_PATH}/excel/{archivo_xlsx}.xlsx", engine="calamine")
         
         self.con_cero = con_cero
 
@@ -18,6 +17,10 @@ class CalcularPrevisionCompra:
         self.repuestos = self.df["Repuesto"].unique()
         self.años = self.df["FechaCompleta"].dt.year.unique() 
         self.años_meses = (pd.date_range(start=f"1/1/{self.años[0]}", end=f"31/12/{self.años[-1]}", freq="ME")).to_period("M")
+
+        self.tendencia = CalcularTendecia(self.meses_en_adelante, self.repuestos, self.con_cero)
+        self.indice = CalcularIndice(self.repuestos, self.con_cero)
+
 
     def calcular_prevision_compra(self) -> None:
         fecha_periodo: pd.Series[pd.Period] = self.df["FechaCompleta"].dt.to_period("M")
@@ -52,23 +55,23 @@ class CalcularPrevisionCompra:
         df_final = pd.DataFrame(resultado)
         if self.con_cero:
             df_final["PromedioConCero"] = res_promedio_con_cero
-            df_final["IndiceAnualConCero"] = self.calcular_indice_anual(df_final)
-            df_final["IndiceEstacionalConCero"] = self.calcular_indice_estacional(df_final)
-            df_final.to_excel(f"{self._main_path}/excel/data-ConCero.xlsx")
+            df_final["IndiceAnualConCero"] = self.indice.calcular_anual(df_final)
+            df_final["IndiceEstacionalConCero"] = self.indice.calcular_estacional(df_final)
+            df_final.to_excel(f"{MAIN_PATH}/excel/data-ConCero.xlsx")
 
-            df_tendencia: pd.DataFrame = pd.DataFrame(self.calcular_tendencia(df_final))
-            df_tendencia["TendenciaEstacionalConCero"] = self.calcular_tendencia_estacional(df_final, df_tendencia)
-            df_tendencia.to_excel(f"{self._main_path}/excel/tendencia-ConCero.xlsx")
+            df_tendencia: pd.DataFrame = pd.DataFrame(self.tendencia.calcular(df_final))
+            df_tendencia["TendenciaEstacionalConCero"] = self.tendencia.calcular_estacional(df_final, df_tendencia)
+            df_tendencia.to_excel(f"{MAIN_PATH}/excel/tendencia-ConCero.xlsx")
 
         else:
             df_final["PromedioSinCero"] = self.calcular_sin_cero(df_final)
-            df_final["IndiceAnualSinCero"] = self.calcular_indice_anual(df_final)
-            df_final["IndiceEstacionalSinCero"] = self.calcular_indice_estacional(df_final)
-            df_final.to_excel(f"{self._main_path}/excel/data-SinCero.xlsx")
+            df_final["IndiceAnualSinCero"] = self.indice.calcular_anual(df_final)
+            df_final["IndiceEstacionalSinCero"] = self.indice.calcular_estacional(df_final)
+            df_final.to_excel(f"{MAIN_PATH}/excel/data-SinCero.xlsx")
             
-            df_tendencia: pd.DataFrame = pd.DataFrame(self.calcular_tendencia(df_final))
-            df_tendencia["TendenciaEstacionalSinCero"] = self.calcular_tendencia_estacional(df_final, df_tendencia)
-            df_tendencia.to_excel(f"{self._main_path}/excel/tendencia-SinCero.xlsx")
+            df_tendencia: pd.DataFrame = pd.DataFrame(self.tendencia.calcular(df_final))
+            df_tendencia["TendenciaEstacionalSinCero"] = self.tendencia.calcular_estacional(df_final, df_tendencia)
+            df_tendencia.to_excel(f"{MAIN_PATH}/excel/tendencia-SinCero.xlsx")
 
 
     def calcular_sin_cero(self, df: pd.DataFrame) -> List[float]:
@@ -98,14 +101,20 @@ class CalcularPrevisionCompra:
         return resultado
 
 
-    # --- INDICES --- #
-    def calcular_indice_anual(self, df: pd.DataFrame) -> pd.Series:
+class CalcularIndice:
+    def __init__(self, repuestos: ndarray, con_cero: bool) -> None:
+        self.repuestos = repuestos
+        self.con_cero = con_cero
+
+
+    def calcular_anual(self, df: pd.DataFrame) -> pd.Series:
         if self.con_cero:
             return round((df["TotalMes"] / df["PromedioConCero"]).where(df["PromedioConCero"] != 0, 0), 2)
         else:
             return round((df["TotalMes"] / df["PromedioSinCero"]).where(df["PromedioSinCero"] != 0, 0), 2)
 
-    def calcular_indice_estacional(self, df: pd.DataFrame) -> List[float]:
+
+    def calcular_estacional(self, df: pd.DataFrame) -> List[float]:
         años = df["Año"].unique()
         meses = df["Mes"].unique()
 
@@ -130,9 +139,15 @@ class CalcularPrevisionCompra:
         return resultado
 
 
-    # --- TENDENCIAS --- #
-    def calcular_tendencia(self, df: pd.DataFrame) -> pd.DataFrame:
-        meses_en_adelante = self.calcular_fecha_tendencia()
+class CalcularTendecia:
+    def __init__(self, meses_en_adelante: int, repuestos: ndarray, con_cero: bool) -> None:
+        self.meses_en_adelante = meses_en_adelante
+        self.repuestos = repuestos
+        self.con_cero = con_cero
+
+
+    def calcular(self, df: pd.DataFrame) -> pd.DataFrame:
+        meses_en_adelante = _PrevisionUtils._calcular_fecha_tendencia(self.meses_en_adelante)
         resultado: List[Dict[str, Union[Any, int]]] = []
 
         # -------------------------
@@ -165,7 +180,8 @@ class CalcularPrevisionCompra:
         
         return pd.DataFrame(resultado)
 
-    def calcular_tendencia_estacional(self, df: pd.DataFrame, df_tendencia: pd.DataFrame) -> List[float]:
+
+    def calcular_estacional(self, df: pd.DataFrame, df_tendencia: pd.DataFrame) -> List[float]:
         indice_mes: List[str] = df_tendencia["Mes"].unique().tolist()
     
         tendencia_estacional: List[float] = []
@@ -196,17 +212,20 @@ class CalcularPrevisionCompra:
         return tendencia_estacional
 
 
-    def calcular_fecha_tendencia(self) -> pd.PeriodIndex:
+class _PrevisionUtils:
+    @staticmethod
+    def _calcular_fecha_tendencia(meses_en_adelante: int) -> pd.PeriodIndex:
         fecha_actual: pd.Timestamp = pd.Timestamp(pd.to_datetime('today').strftime("%Y-%m"))
 
-        dias_en_adelante: int = 30 * (self.meses_en_adelante + 1)
+        dias_en_adelante: int = 30 * (meses_en_adelante + 1)
         fecha_inicio: pd.Timestamp = fecha_actual + pd.Timedelta(days=1)
         fecha_final: pd.Timestamp = fecha_actual + pd.Timedelta(days=dias_en_adelante)
 
         return pd.date_range(fecha_inicio, fecha_final, freq="ME").to_period("M")
 
 
-    def fecha_completa_a(self, tipo: str, fecha_completa: str) -> int:
+    @staticmethod
+    def _fecha_completa_a(tipo: str, fecha_completa: str) -> int:
         fecha: pd.Timestamp = pd.to_datetime(fecha_completa, format="%Y-%m")
         
         if tipo == "año":
@@ -215,10 +234,3 @@ class CalcularPrevisionCompra:
             return fecha.month
         else:
             return fecha.day
-
-
-class CalcularIndice:
-    pass
-
-class CalcularTendecia:
-    pass

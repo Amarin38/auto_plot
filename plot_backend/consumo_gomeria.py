@@ -1,17 +1,18 @@
-from typing import Dict
-from pathlib import Path 
+import json
 
 import pandas as pd
-import json
+
+from typing import Dict
+
+from plot_backend.constants import MAIN_PATH
 
 
 class ConsumoGomeria:
     def __init__(self, archivo: str, meses_diferencia: int) -> None:
         self.archivo = archivo
-        self._main_path = Path.cwd() 
         self.meses_diferencia = meses_diferencia
-        self.df = pd.read_excel(f"{self.archivo}.xlsx",engine="calamine")
-        self.data_consumo = pd.read_excel(f"{self._main_path}/excel_info/cubiertas_consumo_{self.archivo}.xlsx", engine="calamine")
+        self.df = pd.read_excel(f"{self.archivo}.xlsx", engine="calamine")
+        self.data_consumo = pd.read_excel(f"{MAIN_PATH}/excel_info/cubiertas_consumo_{self.archivo}.xlsx", engine="calamine")
 
 
     def calcular_consumo_por_mes_gomeria(self) -> None:
@@ -39,14 +40,14 @@ class ConsumoGomeria:
                                             "Coste":[consumo_coste]
                                               })
         
-        df_final.to_excel(f"{self._main_path}/excel_info/cubiertas_consumo_{self.archivo}.xlsx")
+        df_final.to_excel(f"{MAIN_PATH}/excel_info/cubiertas_consumo_{self.archivo}.xlsx")
 
 
     def actualizar_valores_cubiertas(self) -> Dict[str, float]:
-        meses: pd.Index = self.generar_lista_meses()
+        meses: pd.Index = self._generar_lista_meses()
         indice_consumo_por_mes: Dict[str, float] = {}
 
-        with open(f"{self._main_path}/json/cubiertas_armadas.json", "r") as f1:
+        with open(f"{MAIN_PATH}/json/cubiertas_armadas.json", "r") as f1:
             data_armadas = json.load(f1)
         
         for m in meses:
@@ -56,12 +57,8 @@ class ConsumoGomeria:
         return indice_consumo_por_mes
 
 
-    def generar_lista_meses(self) -> pd.Index:
+    def _generar_lista_meses(self) -> pd.Index:
         hoy = pd.Timestamp.today()
         diferencia = pd.date_range(hoy - pd.Timedelta(days=30*self.meses_diferencia))
 
         return pd.DatetimeIndex(diferencia.strftime("%Y-%B").unique())
-
-
-if __name__ == "__main__":
-    ...

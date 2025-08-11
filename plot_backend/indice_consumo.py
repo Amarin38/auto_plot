@@ -1,21 +1,19 @@
 import pandas as pd
 
-from pathlib import Path
 from numpy import ndarray
 from typing import Dict, List, Union, Any
 
-# TODO agregar mas abstraccion de clases, sacar fecha_titulo y media_consumo
+from plot_backend.constants import MAIN_PATH
 
-class IndiceConsumo:
+class IndicePorCoche:
     def __init__(self, file_consumo: str) -> None:
-        self._main_path = Path.cwd()
         self.file_consumo = file_consumo
-        self.df_motores = pd.read_excel(f"{self._main_path}/excel_info/motores_por_cabecera.xlsx", engine="calamine")
-        self.df_coches = pd.read_excel(f"{self._main_path}/excel_info/coches_por_cabecera.xlsx", engine="calamine")
-        self.df_consumo = pd.read_excel(f"{self._main_path}/excel/{self.file_consumo}-S.xlsx", engine="calamine")
-        
 
-    def calcular_indice_por_coche(self) -> List[Union[pd.DataFrame, str]]:
+        self.df_coches = pd.read_excel(f"{MAIN_PATH}/excel_info/coches_por_cabecera.xlsx", engine="calamine")
+        self.df_consumo = pd.read_excel(f"{MAIN_PATH}/excel/{self.file_consumo}-S.xlsx", engine="calamine")
+
+
+    def calcular(self) -> List[Union[pd.DataFrame, str]]:
         lista_indices: List[Dict[str, Union[Any, float]]] = []
 
         repuestos: ndarray = self.df_consumo["Repuesto"].unique() 
@@ -44,11 +42,19 @@ class IndiceConsumo:
                 })
 
         df_indice: pd.DataFrame = pd.DataFrame(lista_indices)
-        df_indice.to_excel(f"{self._main_path}/excel/indice_por_coche.xlsx")
-        return [df_indice, self.fecha_titulo(self.df_consumo)]
+        df_indice.to_excel(f"{MAIN_PATH}/excel/indice_por_coche.xlsx")
+        return [df_indice, _IndiceUtils()._fecha_titulo(self.df_consumo)]
 
 
-    def calcular_indice_por_motores(self) -> List[Union[pd.DataFrame, str]]:
+class IndicePorMotor:
+    def __init__(self, file_consumo: str) -> None:
+        self.file_consumo = file_consumo
+
+        self.df_motores = pd.read_excel(f"{MAIN_PATH}/excel_info/motores_por_cabecera.xlsx", engine="calamine")
+        self.df_consumo = pd.read_excel(f"{MAIN_PATH}/excel/{self.file_consumo}-S.xlsx", engine="calamine")
+
+
+    def calcular(self) -> List[Union[pd.DataFrame, str]]:
         indices: List[str] = []
 
         cabeceras: ndarray = self.df_motores["Cabecera"].unique()
@@ -77,11 +83,13 @@ class IndiceConsumo:
                 }) # type: ignore
         
         df_indice: pd.DataFrame = pd.DataFrame(indices)
-        df_indice.to_excel(f"{self._main_path}/excel/indice_por_motor.xlsx")
-        return [df_indice, self.fecha_titulo(self.df_consumo)]
+        df_indice.to_excel(f"{MAIN_PATH}/excel/indice_por_motor.xlsx")
+        return [df_indice, _IndiceUtils()._fecha_titulo(self.df_consumo)]
 
 
-    def media_consumo(self, indice_consumo: List[int], con_cero: bool) -> float:
+class _IndiceUtils:
+    @staticmethod
+    def _media_consumo(indice_consumo: List[int], con_cero: bool) -> float:
         total_consumo = sum(indice_consumo)
         cantidad_indices = 0
 
@@ -98,8 +106,8 @@ class IndiceConsumo:
         else:
             return 0
 
-
-    def fecha_titulo(self, df: pd.DataFrame) -> str:
+    @staticmethod
+    def _fecha_titulo(df: pd.DataFrame) -> str:
         """
         Devuelve la fecha del titulo basandose en el archivo introducido.
         """
@@ -109,20 +117,3 @@ class IndiceConsumo:
         fechas_max = fechas.max().strftime("%Y-%m")
 
         return f"{fechas_min} a {fechas_max}"
-
-
-class IndicePorCoche:
-    def __init__(self, file_consumo: str) -> None:
-        self._main_path = Path.cwd()
-        self.file_consumo = file_consumo
-
-        self.df_coches = pd.read_excel(f"{self._main_path}/excel_info/coches_por_cabecera.xlsx", engine="calamine")
-        self.df_consumo = pd.read_excel(f"{self._main_path}/excel/{self.file_consumo}-S.xlsx", engine="calamine")
-
-class IndicePorMotor:
-    def __init__(self, file_consumo) -> None:
-        self._main_path = Path.cwd()
-        self.file_consumo = file_consumo
-
-        self.df_motores = pd.read_excel(f"{self._main_path}/excel_info/motores_por_cabecera.xlsx", engine="calamine")
-        self.df_consumo = pd.read_excel(f"{self._main_path}/excel/{self.file_consumo}-S.xlsx", engine="calamine")

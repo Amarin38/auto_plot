@@ -1,21 +1,21 @@
 import pandas as pd
 
-from pathlib import Path
 from numpy import ndarray
 from typing import Dict, List, Union
 
-# TODO agregar mas abstracción
+from plot_backend.constants import MAIN_PATH
+
 
 class MaxMin:
-    def __init__(self, archivo: str, multiplicar_por: float) -> None:
-        self._main_path = Path.cwd()
+    def __init__(self, file: str, multiplicar_por: float) -> None:
         self.multiplicar_por = multiplicar_por
 
-        self.base_df = pd.read_excel(f"{self._main_path}/excel/{archivo}-S.xlsx", engine="calamine")
-        self.df = self.transformar_fecha_completa_a_fecha_mes() 
+        self.base_df = pd.read_excel(f"{MAIN_PATH}/excel/{file}.xlsx", engine="calamine")
+        self.df = self._transformar_fecha_completa_a_fecha_mes() 
         self.fecha_hoy = pd.Timestamp.today().strftime("%d-%m-%Y")
 
-    def calcular_max_min(self) -> None:
+
+    def calcular(self) -> None:
         """
         Calcula el nuevo minimo y maximo de cada repuesto y\n
         multiplica al minimo por el valor asignado. 
@@ -56,15 +56,11 @@ class MaxMin:
             })
 
         df_final = pd.concat((pd.DataFrame(lista_totales_mes), pd.DataFrame(lista_totales_rep)), axis=1) # type: ignore
-        df_final.to_excel(f"{self._main_path}/excel/maxmin {self.fecha_hoy}.xlsx")
+        df_final.to_excel(f"{MAIN_PATH}/excel/maxmin {self.fecha_hoy}.xlsx")
 
 
-    def transformar_fecha_completa_a_fecha_mes(self) -> pd.DataFrame:
+    def _transformar_fecha_completa_a_fecha_mes(self) -> pd.DataFrame:
         """ Genero un dataframe nuevo con la fecha modificada en formato %Y-%m """
         self.base_df["FechaCompleta"] = pd.DatetimeIndex(pd.to_datetime(self.base_df["FechaCompleta"])).strftime("%Y-%m")
         return self.base_df
 
-
-if __name__ == "__main__":
-    maxmin = MaxMin("maxmin", 2.5)
-    maxmin.calcular_max_min()

@@ -4,16 +4,15 @@ import pandas as pd
 import numpy as np
 
 from typing import Dict, Union
-from pathlib import Path
 
 from plot_backend.general_utils import GeneralUtils
-
+from plot_backend.constants import MAIN_PATH
 
 class UpdateListadoExistencias:
-    def __init__(self, file: Union[str, pd.DataFrame]):
+    def __init__(self, file: Union[str, pd.DataFrame], dir_file: str):
         self.file = file
-        self.df = GeneralUtils(file).check_filetype()
-        self._main_path = Path.cwd()
+        self.dir_file = dir_file
+        self.df: pd.DataFrame = GeneralUtils(self.file, self.dir_file).check_filetype() # type: ignore
 
 
     def update_single_row_name(self, column: str, old_name: str, new_name: str) -> pd.DataFrame:
@@ -21,7 +20,7 @@ class UpdateListadoExistencias:
 
         self.df[column] = self.df[column].replace(old_name, new_name)
         
-        self.df.to_excel(f"{self._main_path}/excel/{self.file}.xlsx", index=True)
+        self.df.to_excel(f"{MAIN_PATH}/excel/{self.file}.xlsx", index=True)
         return self.df
     
 
@@ -44,15 +43,14 @@ class UpdateListadoExistencias:
 
 class DeleteListadoExistencias:
     def __init__(self, file: Union[str, pd.DataFrame]) -> None:
-        self.df = GeneralUtils(file).check_filetype()
-        self._main_path = Path.cwd()
+        self.df: pd.DataFrame = GeneralUtils(file).check_filetype() # type: ignore
 
     def delete_unnamed_cols(self) -> pd.DataFrame:
         """ Deletes all the 'Unnamed' columns. """
-        self.df = self.df.loc[:, ~self.df.columns.str.contains("Unnamed")]
+        self.df = self.df.loc[:, ~self.df.columns.str.contains("Unnamed")] 
         self.df = self.df.loc[:, ~self.df.columns.str.contains("Columna")]
 
-        # self.df.to_excel(f"{self._main_path}excel/{self.file}.xlsx")
+        # self.df.to_excel(f"{MAIN_PATH}excel/{self.file}.xlsx")
         return self.df
 
 
@@ -71,9 +69,9 @@ class DeleteListadoExistencias:
                     self.df = self.df.loc[~self.df.FechaCompleta.str.contains(delete, na=False)]
             case "interno":
                 for delete in delete_by:
-                    self.df = self.df.loc[~self.df.Interno.str.contains(delete, na=False)]
+                    self.df = self.df.loc[-self.df.Interno.str.contains(delete, na=False)]
             case _:
                 return pd.DataFrame()
             
-        # self.df.to_excel(f"{self._main_path}/excel/{self.file}.xlsx")
+        # self.df.to_excel(f"{MAIN_PATH}/excel/{self.file}.xlsx")
         return self.df

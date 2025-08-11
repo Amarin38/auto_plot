@@ -2,56 +2,57 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib.dates as pltdates
 
-from pathlib import Path
 from numpy import ndarray
 from typing import List, Dict, Union
 
 from plot_backend.prevision_compra import CalcularPrevisionCompra
-from plot_backend.indice_consumo import IndiceConsumo
+from plot_backend.indice_consumo import IndicePorCoche, IndicePorMotor, _IndiceUtils
 from plot_backend.arreglar_listado_existencias import ArreglarListadoExistencias
 from plot_backend.utils_listado_existencias import UpdateListadoExistencias, DeleteListadoExistencias
-from plot_backend.general_utils import GeneralUtils
-from plot_backend.constants import COLORES
+from plot_backend.constants import COLORES, MAIN_PATH
 
 class AutoPrevisionPlot:
     def __init__(self, nombre_archivo_nuevo: str, carpeta_datos: str, filas: int, columnas: int, con_cero: bool, 
-                 tamaño_letra: float, tamaño_grafico: int = 60, meses_en_adelante: int = 6):
+                 tamaño_letra: float, ancho: int = 60, largo: int = 60, meses_en_adelante: int = 6):
         self.nombre_archivo = nombre_archivo_nuevo
         self.carpeta_datos = carpeta_datos
         self.meses_en_adelante = meses_en_adelante
         self.x1 = filas
         self.x2 = columnas
         self._con_cero = con_cero
-        self._main_path = Path.cwd()
 
         self._arreglar = ArreglarListadoExistencias(self.nombre_archivo, self.carpeta_datos)
-        self._update = UpdateListadoExistencias(self.nombre_archivo)
+        self._update = UpdateListadoExistencias(self.nombre_archivo, self.carpeta_datos)
         self._delete = DeleteListadoExistencias(self.nombre_archivo)
-        self._indice = IndiceConsumo(self.nombre_archivo)
+        
         self._prevision = CalcularPrevisionCompra(self.nombre_archivo, self._con_cero, self.meses_en_adelante)
 
 
         self.divisor = 0.3*self.x2
         self.tamaño_letra = tamaño_letra
-        self.tamaño_grafico = tamaño_grafico
+        self.ancho = ancho
+        self.largo = largo
 
 
-    # ---- PLOTS ---- #
     def graficar(self) -> None:
-        PlotUtils(self.nombre_archivo, self.carpeta_datos).cargar_datos_grafico()
+        """
+        ### Grafica la prevision de consumo.
+        """
+
+        self._arreglar.arreglar_listado()
         self._prevision.calcular_prevision_compra()
 
         # ------------- Graficos ---------------
-        fig, axs = plt.subplots(self.x1, self.x2, figsize=(40,20), squeeze=False)
+        fig, axs = plt.subplots(self.x1, self.x2, figsize=(self.ancho, self.largo), squeeze=False)
         fig.subplots_adjust(wspace=0.10, hspace=0.15)
 
         if self._con_cero:
-            df_tendencia = pd.read_excel(f"{self._main_path}/excel/tendencia-ConCero.xlsx")
-            df_data = pd.read_excel(f"{self._main_path}/excel/data-ConCero.xlsx")
+            df_tendencia = pd.read_excel(f"{MAIN_PATH}/excel/tendencia-ConCero.xlsx")
+            df_data = pd.read_excel(f"{MAIN_PATH}/excel/data-ConCero.xlsx")
             fig.suptitle(f"Prevision de compras con cero a {self.meses_en_adelante} meses", fontsize=30, y=0.94)
         else:
-            df_tendencia = pd.read_excel(f"{self._main_path}/excel/tendencia-SinCero.xlsx")
-            df_data = pd.read_excel(f"{self._main_path}/excel/data-SinCero.xlsx")
+            df_tendencia = pd.read_excel(f"{MAIN_PATH}/excel/tendencia-SinCero.xlsx")
+            df_data = pd.read_excel(f"{MAIN_PATH}/excel/data-SinCero.xlsx")
             fig.suptitle(f"Prevision de compras sin cero a {self.meses_en_adelante} meses", fontsize=30, y=0.94)
 
         repuestos = iter(tuple(df_tendencia["Repuesto"].unique()))
@@ -77,8 +78,8 @@ class AutoPrevisionPlot:
                     axs[i,j].plot(y_data, x_data, color="#2e7d32", marker="o", linestyle="-")
                     axs[i,j].plot(y_tendencia, x_tendencia, color="#c62828", marker="s", linestyle="--")
                     
-                    PlotUtils.auto_annotate_on_line(x_data, y_data, axs[i,j], '#2e7d32', self.divisor) # type: ignore
-                    PlotUtils.auto_annotate_on_line(x_tendencia, y_tendencia, axs[i,j], '#c62828', self.divisor) # type: ignore
+                    _PlotUtils._auto_annotate_on_line(x_data, y_data, axs[i,j], '#2e7d32', self.divisor) # type: ignore
+                    _PlotUtils._auto_annotate_on_line(x_tendencia, y_tendencia, axs[i,j], '#c62828', self.divisor) # type: ignore
                     
                     bbox = dict(boxstyle ="round", fc ="0.8")
                     axs[i,j].legend(["Consumo temporal","Tendencia de consumo"], fontsize=20/self.divisor, loc=2)
@@ -96,40 +97,44 @@ class AutoPrevisionPlot:
 
 class AutoIndicePlot:
     def __init__(self, nombre_archivo_nuevo: str, carpeta_datos: str, filas: int, columnas: int, 
-                 tamaño_letra: int = 15, tamaño_grafico: int = 60) -> None:
+                 tamaño_letra: int = 15, ancho: int = 60, largo: int = 60) -> None:
         self.nombre_archivo = nombre_archivo_nuevo
         self.carpeta_datos = carpeta_datos
         self.x1 = filas
         self.x2 = columnas
-        self._main_path = Path.cwd()
 
         self._arreglar = ArreglarListadoExistencias(self.nombre_archivo, self.carpeta_datos)
-        self._update = UpdateListadoExistencias("self.nombre_archivo")
-        self._delete = DeleteListadoExistencias("self.nombre_archivo")
-        self._indice = IndiceConsumo(self.nombre_archivo)
+        self._update = UpdateListadoExistencias(self.nombre_archivo, self.carpeta_datos)
+        self._delete = DeleteListadoExistencias(self.nombre_archivo)
 
         self.divisor = 0.3*self.x2
         self.tamaño_letra = tamaño_letra
-        self.tamaño_grafico = tamaño_grafico
-    
+        self.ancho = ancho
+        self.largo = largo
+
 
     def graficar(self, stacked_barplot: bool, con_motor: bool) -> None:
         """
-        nombre_archivo --> str (archivo a usar)\n
-        stacked_barplot --> True/False (grafico apilado)\n
-        con_motor --> True/False (usar el indice en base a motores o no)\n
-                    --> Si es False, por defecto usa cantidad de coches\n
-        x1, x2 --> int, int (cantidad de graficos)\n
+        ### Grafica el índice de consumo.\n
+        #### Args:\n
+            stacked_barplot (bool):\n
+                - True -> un solo grafico apilado\n
+                - False -> multiples graficos\n
+            con_motor (bool): \n
+                - True -> indice con motores totales por cabecera\n
+                - False -> indice con coches totales por cabecera\n
+        #### Returns:
+            None
         """
         
-        PlotUtils(self.nombre_archivo, self.carpeta_datos).cargar_datos_grafico()
+        self._arreglar.arreglar_listado()
         
         if con_motor:
-            df_rows = self._update.update_rows_by_dict("self.nombre_archivo", "motores")
-            df_rows.to_excel(f"{self._main_path}/excel/{self.nombre_archivo}-S.xlsx")
-            lista_indice: List[Union[pd.DataFrame, str]] = self._indice.calcular_indice_por_motores() # calculo el indice por motores
+            df_rows = self._update.update_rows_by_dict(self.nombre_archivo, "motores")
+            df_rows.to_excel(f"{MAIN_PATH}/excel/{self.nombre_archivo}-S.xlsx")
+            lista_indice: List[Union[pd.DataFrame, str]] = IndicePorMotor(self.nombre_archivo).calcular() # calculo el indice por motores
         else:
-            lista_indice: List[Union[pd.DataFrame, str]] = self._indice.calcular_indice_por_coche() # calculo el indice por coche
+            lista_indice: List[Union[pd.DataFrame, str]] = IndicePorCoche(self.nombre_archivo).calcular() # calculo el indice por coche
         
         df_indices_consumo: Union[pd.DataFrame, str] = lista_indice[0]
 
@@ -137,7 +142,7 @@ class AutoIndicePlot:
         repuestos = iter(tuple(df_indices_consumo["Repuesto"].unique())) # type: ignore
         
         if stacked_barplot:
-            fig, ax = plt.subplots(figsize=(40,30), squeeze=False)
+            fig, ax = plt.subplots(figsize=(self.ancho, self.largo), squeeze=False)
             
             y_dict_consumo: Dict[str, int] = {}
             
@@ -167,16 +172,13 @@ class AutoIndicePlot:
             ax.tick_params("y", labelsize=15) # type: ignore
 
         else:
-            fig, axs = plt.subplots(self.x1, self.x2, figsize=(self.tamaño_grafico, self.tamaño_grafico), squeeze=False)#figsize=(45*self.x1,80/self.x2), squeeze=False)
-            
-            # if axs.ndim == 1: # Numero de dimensiones
-                # axs = auto_reshape_2D(axs, x1, x2)
+            fig, axs = plt.subplots(self.x1, self.x2, figsize=(self.ancho, self.largo), squeeze=False)
             
             for i in range(axs.shape[0]):
                 for j in range(axs.shape[1]):
                     try:
-                        rep = next(repuestos) # itero en los repuestos
-                        color = next(COLORES) # itero sobre los colores
+                        rep = next(repuestos)
+                        color = next(COLORES)
                     except StopIteration:
                         rep = ""
                     
@@ -188,11 +190,11 @@ class AutoIndicePlot:
                     bars = axs[i,j].bar(x_cabecera, y_consumo, color=color) # type: ignore
                     axs[i,j].bar_label(bars, fontsize=17)
 
-                    media_con_cero = self._indice.media_consumo(y_consumo.tolist(), con_cero=True)
+                    media_con_cero = _IndiceUtils._media_consumo(y_consumo.tolist(), con_cero=True)
                     axs[i,j].axhline(y=media_con_cero, linestyle="--", color="#618B4A")
                     axs[i,j].text(x=1.01, y=media_con_cero, s=f"{media_con_cero}", color="black", va="center", transform=axs[i,j].get_yaxis_transform(), fontsize=self.tamaño_letra*2)
 
-                    media_sin_cero = self._indice.media_consumo(y_consumo.tolist(), con_cero=False)
+                    media_sin_cero = _IndiceUtils._media_consumo(y_consumo.tolist(), con_cero=False)
                     axs[i,j].axhline(y=media_sin_cero, linestyle="--", color="#922D50")
                     axs[i,j].text(x=1.01, y=media_sin_cero, s=f"{media_sin_cero}", color="black", va="center", transform=axs[i,j].get_yaxis_transform(), fontsize=self.tamaño_letra*2)
 
@@ -208,31 +210,20 @@ class AutoIndicePlot:
         fig.subplots_adjust(wspace=0.10, hspace=0.3)
 
 
-class PlotUtils:
-    def __init__(self, nombre_archivo: str, carpeta_datos: str) -> None:
-        self.nombre_archivo = nombre_archivo
-        self.carpeta_datos = carpeta_datos
-
-        self._arreglar = ArreglarListadoExistencias(self.nombre_archivo, self.carpeta_datos)
-        self._utils = GeneralUtils(self.nombre_archivo, self.carpeta_datos)
-        
-
-    def cargar_datos_grafico(self) -> None:
-        try:
-            self._arreglar.modify_df(self._utils.append_df())
-            self._arreglar.filter("movimiento", "salidas")
-            
-        except (pd.errors.InvalidIndexError, AttributeError) as e:
-            print(f"ERROR: {e}")
-        except KeyError:
-            print("ERROR: No existen las columnas, no se puede concatenar")    
-        
-
+class _PlotUtils:
     @staticmethod
-    def auto_annotate_on_line(x_data: List[str], y_data: List[str], axs, color: str, divisor: float) -> None:
+    def _auto_annotate_on_line(x_data: List[str], y_data: List[str], axs, color: str, divisor: float) -> None:
         """
-            Returns an axs.annotate object with the data and color entered
-            displayed above the offset points.
+            ### Returns an axs.annotate object with the data and color entered
+            ### displayed above the offset points.\n
+            #### Args:\n
+                x_data (List[str]) -> Data from the x axis\n
+                y_data (List[str]) -> Data from the y axis\n
+                axs (plt.subplots) -> The ax selected for annotation\n
+                color (str) -> The color used in the line\n
+                divisor (float) -> Number to divide the size number on the line
+            #### Returns:\n
+                axs.annotate 
         """
 
         for y, x in zip(y_data, x_data): # labels tendencia
@@ -248,12 +239,12 @@ class PlotUtils:
                     )
 
     @staticmethod
-    def auto_reshape_2D(axs, x1: int, x2: int) -> None:
+    def _auto_reshape_2D(axs, x1: int, x2: int) -> None:
         """
         Automatically reshapes the plot if its 1D.
         
-        # if axs.ndim == 1:
-        #     axs = auto_reshape_2D(axs, x1, x2)
+        if axs.ndim == 1:
+            axs = auto_reshape_2D(axs, x1, x2)
 
         """
         if x1 == 1:

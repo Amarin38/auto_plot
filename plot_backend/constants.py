@@ -1,5 +1,7 @@
 import numpy as np
+
 from typing import Iterator, Any
+from pathlib import Path
 
 INTERNOS_DEVOLUCION: np.ndarray = np.array(["C0488", "C0489", "C0500", "C0700", "C1400", 
                                             "C4500", "C4900", "C6000", "C6700", "C9500",
@@ -15,3 +17,4 @@ COLORES: Iterator[Any] = iter(np.array(["#FFC300", "#FF5733", "#C70039", "#900C3
                                         "#4A1942", "#823329", "#3F7CAC", "#899878", "#5497A7", 
                                         "#883677", "#3A7D44", "#254D32", "#F7CE5B", "#F7B05B"]))
 
+MAIN_PATH = Path().cwd()
