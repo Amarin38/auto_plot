@@ -3,6 +3,7 @@ import glob
 import os
 
 import pandas as pd
+import pyexcel as pe
 
 from pathlib import Path
 from typing import Union, Optional, List
@@ -49,22 +50,24 @@ class GeneralUtils:
         _xls_files = glob.glob("**/*.xls", recursive=True)
         
         for file in _xls_files:
-            df: pd.DataFrame = pd.read_excel(file, engine="xlrd")
-            # Leer el archivo y eliminar caracteres nulos
-            
-            df["pronom"] = [self._delete_error_bytes(str(string), "\x00") if pd.notnull(string) else string for string in df["pronom"]]
-
             file_mod = file.replace(".xls", "")
-            df.to_excel(f"{file_mod}.xlsx")
+
+            try:
+                df: pd.DataFrame = pd.read_excel(file, engine="xlrd")
+                df["pronom"] = [self._delete_error_bytes(str(string), "\x00") if pd.notnull(string) else string for string in df["pronom"]]
+                df.to_excel(f"{file_mod}.xlsx")
+            except AssertionError:
+                sheet = pe.get_sheet(file_name=file)
+                sheet.save_as(file_mod)
+
             os.remove(file)
 
 
-    def append_df(self) -> pd.DataFrame:
+    def append_df(self, guardar: bool) -> Optional[pd.DataFrame]:
         """
         Appends all the xlsx files into one single file with 
         the name entered. 
         """
-        _xlsx_files = glob.glob(f"{MAIN_PATH}/{self._xlsx_dir}/**/*.xlsx", recursive=True)
 
         if self.check_file_exists():
             return pd.DataFrame()
@@ -72,12 +75,17 @@ class GeneralUtils:
             self.xls_to_xlsx()
             df_list: List[str] = [] # type: ignore
 
+            _xlsx_files = glob.glob(f"{MAIN_PATH}/{self._xlsx_dir}/**/*.xlsx", recursive=True)
+
             for file in _xlsx_files:
                 df_list.append(pd.read_excel(file, engine="calamine")) # type: ignore
             
             df_list: pd.DataFrame = pd.concat(df_list) # type: ignore
 
-            return df_list
+            if guardar:
+                df_list.to_excel("appended_df.xlsx", index=False)
+            else:
+                return df_list
     
 
     @staticmethod

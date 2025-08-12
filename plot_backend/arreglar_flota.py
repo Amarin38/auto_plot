@@ -58,7 +58,7 @@ class ArreglarFlota:
 
     def limpiar_flota(self) -> pd.DataFrame:
         """
-        Cleans the 'Flota'.xlsx files for statistics.
+        ### Cleans the 'Flota'.xlsx files for statistics.
         """
         # el - es el "not"
         self.df = self.df.loc[-self.df["Motor modelo"].isin(["HTM3500", "SCANNIA 6 CIL", "DC 09 142 280CV", "MBENZ"]), # type: ignore
@@ -104,6 +104,4 @@ class ArreglarFlota:
         ] = "MWM 4C"
 
         return self.df
-    
-
     

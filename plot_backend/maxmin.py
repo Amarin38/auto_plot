@@ -6,6 +6,12 @@ from typing import Dict, List, Union
 from plot_backend.constants import MAIN_PATH
 
 
+"""
+- Se descargan los consumos de x fecha hacia atrás de los productos que se queira evaluar el  maxmin.
+- Se procesa el archivo y quedan solo las salidas.
+- Se pasa por el programa
+"""
+
 class MaxMin:
     def __init__(self, file: str, multiplicar_por: float) -> None:
         self.multiplicar_por = multiplicar_por
@@ -21,8 +27,8 @@ class MaxMin:
         multiplica al minimo por el valor asignado. 
         """
 
-        lista_totales_mes: List[Dict[str, Union[str, float, int, pd.Timestamp]]]= []
-        lista_totales_rep: List[Dict[str, Union[str, float, int, pd.Timestamp]]]= []
+        lista_totales_mes: List[Dict[str, Union[str, float, int, pd.Timestamp]]] = []
+        lista_totales_rep: List[Dict[str, Union[str, float, int, pd.Timestamp]]] = []
         repuestos: ndarray = self.df["Repuesto"].unique()
 
         fecha_rango_unico = pd.date_range(self.df["FechaCompleta"].min(), 
@@ -61,6 +67,7 @@ class MaxMin:
 
     def _transformar_fecha_completa_a_fecha_mes(self) -> pd.DataFrame:
         """ Genero un dataframe nuevo con la fecha modificada en formato %Y-%m """
+
         self.base_df["FechaCompleta"] = pd.DatetimeIndex(pd.to_datetime(self.base_df["FechaCompleta"])).strftime("%Y-%m")
         return self.base_df
 

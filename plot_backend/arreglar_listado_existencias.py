@@ -1,6 +1,6 @@
 import pandas as pd
 
-from typing import Union, Optional
+from typing import Union, Optional, List
 
 from plot_backend.general_utils import GeneralUtils
 from plot_backend.utils_listado_existencias import UpdateListadoExistencias, DeleteListadoExistencias
@@ -22,8 +22,8 @@ class ArreglarListadoExistencias:
 
     def arreglar_listado(self) -> None:
         try:
-            df = self._utils.append_df()
-            self.modify_df(df)
+            df = self._utils.append_df(False)
+            self.modify_df(df) # type: ignore
             self.filter("movimiento", "salidas")
             
         except pd.errors.InvalidIndexError as e:
@@ -56,12 +56,12 @@ class ArreglarListadoExistencias:
         return df_list
 
 
-    def filter(self, column: str, filter: Union[str, float], type: Optional[str] = None) -> pd.DataFrame:
+    def filter(self, column: str, filter: Union[str, float, List[float]], type: Optional[str] = None) -> pd.DataFrame:
         """
-        Filters the file entered by string entered in the filters var.\n
-        Indicating the column is needed.\n 
-        Columns: movimiento, repuesto, interno, codigo\n
-        Types: None, contains, startswith
+        #### Filters the file entered by string entered in the filters var.\n
+        #### Indicating the column is needed.\n 
+         Columns: movimiento, repuesto, interno, codigo, lista_codigos\n
+         Types: None, contains, startswith
         """
 
         df = self._utils.check_filetype() # type: ignore
@@ -79,6 +79,16 @@ class ArreglarListadoExistencias:
             case "codigo":
                 if isinstance(filter, float):
                     filtered_df = df.loc[df["Codigo"] == float(filter)]
+                
+            case "lista_codigos":
+                if isinstance(filter, list):
+                    filtered_df_list = []
+                    
+                    for codigo in filter:
+                        filtered_df_list.append(df.loc[df["Codigo"] == float(codigo)])
+                    
+                    filtered_df = pd.concat(filtered_df_list)
+
             case "movimiento":
                 _delete_listado = DeleteListadoExistencias(self.file)
         
@@ -113,10 +123,17 @@ class ArreglarListadoExistencias:
                 return pd.DataFrame()
 
         if filtered_df.columns.str.contains("Unnamed").any():
-            _delete_listado = DeleteListadoExistencias(filtered_df)
-            
-            filtered_df = _delete_listado.delete_unnamed_cols()
-            filtered_df.to_excel(f"{MAIN_PATH}/excel/{name}.xlsx", index=True) 
+            if not isinstance(filter, list):
+                _delete_listado = DeleteListadoExistencias(filtered_df)
+                
+                filtered_df = _delete_listado.delete_unnamed_cols()
+                filtered_df.to_excel(f"{MAIN_PATH}/excel/{name}.xlsx", index=True)
+            else:
+                filtered_df.to_excel(f"{MAIN_PATH}/excel/lista.xlsx")
         else:
-            filtered_df.to_excel(f"{MAIN_PATH}/excel/{filter}.xlsx")
+            if not isinstance(filter, list):
+                filtered_df.to_excel(f"{MAIN_PATH}/excel/{filter}.xlsx")
+            else:
+                filtered_df.to_excel(f"{MAIN_PATH}/excel/lista.xlsx")
+                
         return filtered_df
