@@ -21,9 +21,13 @@ class UtilsMaxMin:
         self.archivo_html = archivo_html
 
 
-    def generar_lista_codigos(self) -> List[str]:
+    def generar_lista_codigos(self, web: bool) -> List[str]:
         lista_aux = []
-        lista_codigos = self.scrapear_licitaciones()
+
+        if web:
+            lista_codigos = self.scrapear_licitaciones_web()
+        else:
+            lista_codigos = self.scrapear_licitaciones_local()
 
         for codigo in lista_codigos:
             lista_aux.append(self.limpiar_codigo(codigo))
@@ -34,7 +38,7 @@ class UtilsMaxMin:
         return lista_aux
 
 
-    def obtener_html(self):
+    def scrapear_licitaciones_web(self):
         try:
             driver = webdriver.Firefox()
         except:
@@ -95,8 +99,7 @@ class UtilsMaxMin:
         return lista_resultado_final
     
 
-
-    def scrapear_licitaciones(self) -> List[str]:
+    def scrapear_licitaciones_local(self) -> List[str]:
         lista_codigos: list[str] = []
 
         with open(f"{MAIN_PATH}/extracted.html", "r") as txt:
@@ -122,5 +125,5 @@ class UtilsMaxMin:
 
 if __name__ == "__main__":
     utils = UtilsMaxMin("licitaciones1")
-    utils.obtener_html()
+    utils.scrapear_licitaciones_web()
     # utils.generar_lista_codigos()
