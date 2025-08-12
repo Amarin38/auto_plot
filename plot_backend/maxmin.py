@@ -17,7 +17,7 @@ class MaxMin:
         self.multiplicar_por = multiplicar_por
 
         self.base_df = pd.read_excel(f"{MAIN_PATH}/excel/{file}.xlsx", engine="calamine")
-        self.df = self._transformar_fecha_completa_a_fecha_mes() 
+        self.df = self._fecha_completa_a_mes() 
         self.fecha_hoy = pd.Timestamp.today().strftime("%d-%m-%Y")
 
 
@@ -65,7 +65,7 @@ class MaxMin:
         df_final.to_excel(f"{MAIN_PATH}/excel/maxmin {self.fecha_hoy}.xlsx")
 
 
-    def _transformar_fecha_completa_a_fecha_mes(self) -> pd.DataFrame:
+    def _fecha_completa_a_mes(self) -> pd.DataFrame:
         """ Genero un dataframe nuevo con la fecha modificada en formato %Y-%m """
 
         self.base_df["FechaCompleta"] = pd.DatetimeIndex(pd.to_datetime(self.base_df["FechaCompleta"])).strftime("%Y-%m")

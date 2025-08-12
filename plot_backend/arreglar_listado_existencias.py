@@ -46,7 +46,7 @@ class ArreglarListadoExistencias:
             _update_listado = UpdateListadoExistencias(df_list, self.xlsx_dir)
             df_list = _update_listado.update_rows_by_dict("depositos", "Cabecera")
         except KeyError as r:
-            # print(f"Ya existen las columnas, no se cambiarán | ---> {r}")
+            print(f"Ya existen las columnas, no se cambiarán | ---> {r}")
             pass
         except OSError as e:
                 print("No puede encontrar el archivo")
@@ -56,7 +56,7 @@ class ArreglarListadoExistencias:
         return df_list
 
 
-    def filter(self, column: str, filter: Union[str, float, List[float]], type: Optional[str] = None) -> pd.DataFrame:
+    def filter(self, column: str, filter: Union[str, float, List[str]], type: Optional[str] = None) -> pd.DataFrame:
         """
         #### Filters the file entered by string entered in the filters var.\n
         #### Indicating the column is needed.\n 

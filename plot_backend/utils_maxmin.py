@@ -17,15 +17,17 @@ class UtilsMaxMin:
         self.archivo_html = archivo_html
 
 
-    def generar_archivo_final(self) -> None:
+    def generar_lista_codigos(self) -> List[str]:
         lista_aux = []
         lista_codigos = self.scrapear_licitaciones()
 
         for codigo in lista_codigos:
             lista_aux.append(self.limpiar_codigo(codigo))
         
-        df = pd.DataFrame({"Codigos":lista_aux})
-        df.to_excel(f"{self.archivo_html}.xlsx")
+        # df = pd.DataFrame({"Codigos":lista_aux})
+        # df.to_excel(f"{self.archivo_html}.xlsx")
+
+        return lista_aux
 
 
     def scrapear_licitaciones(self) -> List[str]:
@@ -54,4 +56,4 @@ class UtilsMaxMin:
 
 if __name__ == "__main__":
     utils = UtilsMaxMin("licitaciones1")
-    utils.generar_archivo_final()
+    utils.generar_lista_codigos()
