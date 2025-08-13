@@ -16,17 +16,20 @@ from plot_backend.utils_maxmin import UtilsMaxMin
 """
 
 class MaxMin:
-    def __init__(self, file: str, multiplicar_por: float, fecha: str = date.today().strftime("%d/%m/%Y")) -> None:
+    def __init__(self, file: str = "filtrado", dir: str = "todo maxmin", multiplicar_por: float = 2, 
+                 fecha: str = date.today().strftime("%d/%m/%Y")) -> None:
+        self.dir = dir
+        self.file = file      
         self.fecha = fecha
         self.multiplicar_por = multiplicar_por
-        
+
         self.fecha_hoy = pd.Timestamp.today().strftime("%d-%m-%Y")
-        self.base_df = pd.read_excel(f"{MAIN_PATH}/excel/{file}.xlsx", engine="calamine")
+        self.base_df = pd.read_excel(f"{MAIN_PATH}/excel/{self.file}.xlsx", engine="calamine")
         self.df = self._fecha_completa_a_mes() 
 
 
     def generar_maxmin(self):
-        arreglar = ArreglarListadoExistencias("maxmin", "todo maxmin")
+        arreglar = ArreglarListadoExistencias("maxmin", self.dir)
         arreglar.arreglar_listado()
 
         utils = UtilsMaxMin(self.fecha, True)

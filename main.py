@@ -1,4 +1,4 @@
-from plot_backend import MaxMin, ArreglarListadoExistencias, UtilsMaxMin
+from plot_backend import MaxMin, ArreglarListadoExistencias
 
 
 

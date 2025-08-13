@@ -132,11 +132,11 @@ class ArreglarListadoExistencias:
             if not isinstance(filter, list):
                 filtered_df.to_excel(f"{MAIN_PATH}/excel/{name}.xlsx", index=True)
             else:
-                filtered_df.to_excel(f"{MAIN_PATH}/excel/lista.xlsx")
+                filtered_df.to_excel(f"{MAIN_PATH}/excel/filtrado.xlsx")
         else:
             if not isinstance(filter, list):
                 filtered_df.to_excel(f"{MAIN_PATH}/excel/{filter}.xlsx")
             else:
-                filtered_df.to_excel(f"{MAIN_PATH}/excel/lista.xlsx")
+                filtered_df.to_excel(f"{MAIN_PATH}/excel/filtrado.xlsx")
                 
         return filtered_df
