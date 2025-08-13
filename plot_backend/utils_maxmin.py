@@ -4,9 +4,10 @@ import datetime
 
 import pandas as pd
 
+from itertools import chain
 from selenium import webdriver
 from selenium.webdriver.common.by import By
-from selenium.common.exceptions import NoSuchElementException
+from selenium.common.exceptions import NoSuchElementException, WebDriverException
 
 from bs4 import BeautifulSoup
 from typing import List
@@ -17,33 +18,42 @@ from constants import MAIN_PATH
 # la funcion scrapear_licitaciones
 
 class UtilsMaxMin:
-    def __init__(self, archivo_html: str) -> None:
+    def __init__(self, archivo_html: str, web: bool) -> None:
         self.archivo_html = archivo_html
+        self.web = web
 
+    def generar_lista_codigos(self) -> List[str]:
+        lista_final = []
 
-    def generar_lista_codigos(self, web: bool) -> List[str]:
-        lista_aux = []
-
-        if web:
+        if self.web:
             lista_codigos = self.scrapear_licitaciones_web()
         else:
             lista_codigos = self.scrapear_licitaciones_local()
 
         for codigo in lista_codigos:
-            lista_aux.append(self.limpiar_codigo(codigo))
+            lista_final.append(self.limpiar_codigo(codigo))
         
         # df = pd.DataFrame({"Codigos":lista_aux})
         # df.to_excel(f"{self.archivo_html}.xlsx")
 
-        return lista_aux
+        return lista_final
 
 
-    def scrapear_licitaciones_web(self):
+    def scrapear_licitaciones_web(self) -> List[str]:
+        lista_codigos: List[str] = []
+
         try:
-            driver = webdriver.Firefox()
-        except:
-            driver = webdriver.Chrome()
-        
+            options = webdriver.FirefoxOptions()
+            driver = webdriver.Firefox(options=options)
+        except WebDriverException:
+            try:
+                options = webdriver.ChromeOptions()
+                driver = webdriver.Chrome(options=options)
+            except WebDriverException:
+                options = webdriver.EdgeOptions()
+                driver = webdriver.Edge(options=options)
+
+        options.page_load_strategy = 'eager'
         driver.get("https://dota.sistemasanantonio.com.ar/licitaciones/login.aspx")
         
         email = driver.find_element(By.NAME, "inputEmail")
@@ -53,10 +63,11 @@ class UtilsMaxMin:
 
         login = driver.find_element(By.ID, "btn_iniciar")
         login.click()
-        time.sleep(2)
+        time.sleep(1)
 
         licitaciones = driver.find_element(By.XPATH, "//a[@href='#']//div[@class='hover thumbnail']//div[@class='caption']")
         licitaciones.click()
+        time.sleep(1)
         
         try:
             fecha_input = driver.find_element(By.NAME, "ctl00$MainContent$txt_fecha_desde")
@@ -64,7 +75,7 @@ class UtilsMaxMin:
             fecha_input = driver.find_element(By.ID, "MainContent_txt_fecha_desde")
 
         fecha_input.clear()
-        fecha_input.send_keys(datetime.date.today().strftime("%d/%m/%Y"))
+        fecha_input.send_keys("12/08/2025")#send_keys(datetime.date.today().strftime("%d/%m/%Y"))
         time.sleep(1)
 
         buscar_boton = driver.find_element(By.ID, "MainContent_btn_buscar")
@@ -76,27 +87,20 @@ class UtilsMaxMin:
         busqueda_input.send_keys("Finalizada Ningún pedido realizado")
         time.sleep(1)
 
-        numeros_licitaciones = driver.find_elements(By.CLASS_NAME, "sorting_1")
-        
-        lista_numeros_licitaciones: List[str] = [p.text for p in numeros_licitaciones]
-        lista_final: List[List[str]] = []
+        codigos_licitaciones = driver.find_elements(By.CLASS_NAME, "sorting_1")
+        lista_numeros_licitaciones: List[str] = [codigo.text for codigo in codigos_licitaciones]
 
         for numero in lista_numeros_licitaciones:
             driver.get(f"https://dota.sistemasanantonio.com.ar/licitaciones/licitacion_sel.aspx?id={numero}")
 
-            cod = driver.find_element(By.XPATH, "//th[@aria-label='cod: Activar para ordenar la columna de manera ascendente']")
-            cod.click()
+            ordenar_columna = driver.find_element(By.XPATH, "//th[@aria-label='cod: Activar para ordenar la columna de manera ascendente']")
+            ordenar_columna.click()
 
-            numero_lic = driver.find_elements(By.CLASS_NAME, "sorting_1")
+            codigo_repuesto = driver.find_elements(By.CLASS_NAME, "sorting_1")
 
-            lista_aux = [num.text for num in numero_lic]
-            lista_final.append(lista_aux)
-        
-        lista_resultado_final = []
-        for lista in lista_final:
-            lista_resultado_final += lista
-        
-        return lista_resultado_final
+            lista_codigos += [codigo.text for codigo in codigo_repuesto]
+        driver.quit()
+        return lista_codigos
     
 
     def scrapear_licitaciones_local(self) -> List[str]:
@@ -114,16 +118,16 @@ class UtilsMaxMin:
         return lista_codigos
     
 
-    def limpiar_codigo(self, filtro: str) -> str:
+    def limpiar_codigo(self, codigo: str) -> str:
         total_ceros = 5
-        filtro_spliteado = filtro.split(".")
-        diferencia_ceros = total_ceros-len(filtro_spliteado[1])
+        codigo_spliteado = codigo.split(".")
+        diferencia_ceros = total_ceros-len(codigo_spliteado[1])
         
-        return f"{filtro_spliteado[0]}.{"0"*diferencia_ceros}{filtro_spliteado[1]}"  
-
+        return f"{codigo_spliteado[0]}.{"0"*diferencia_ceros}{codigo_spliteado[1]}"  
 
 
 if __name__ == "__main__":
-    utils = UtilsMaxMin("licitaciones1")
-    utils.scrapear_licitaciones_web()
+    utils = UtilsMaxMin("licitaciones1", True)
+
+    print(utils.generar_lista_codigos())
     # utils.generar_lista_codigos()
