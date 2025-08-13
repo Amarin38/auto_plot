@@ -1,29 +1,24 @@
 import re
 import time
-import datetime
 
-import pandas as pd
+from typing import List
+from datetime import date
+from bs4 import BeautifulSoup
 
-from itertools import chain
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.common.exceptions import NoSuchElementException, WebDriverException
 
-from bs4 import BeautifulSoup
-from typing import List
-
 from constants import MAIN_PATH
 
-# TODO arreglar el webscraper para que funcione mejor y sacar el codigo que no es necesario y ver de eliminar
-# la funcion scrapear_licitaciones
 
 class UtilsMaxMin:
     def __init__(self, archivo_html: str, web: bool) -> None:
         self.archivo_html = archivo_html
         self.web = web
 
-    def generar_lista_codigos(self) -> List[str]:
-        lista_final = []
+    def generar_lista_codigos(self, excel: bool) -> List[str]:
+        lista_final: List[str] = []
 
         if self.web:
             lista_codigos = self.scrapear_licitaciones_web()
@@ -33,8 +28,11 @@ class UtilsMaxMin:
         for codigo in lista_codigos:
             lista_final.append(self.limpiar_codigo(codigo))
         
-        # df = pd.DataFrame({"Codigos":lista_aux})
-        # df.to_excel(f"{self.archivo_html}.xlsx")
+        if excel:
+            import pandas as pd
+
+            df = pd.DataFrame({"Codigos":lista_final})
+            df.to_excel(f"{self.archivo_html}.xlsx")
 
         return lista_final
 
@@ -75,7 +73,7 @@ class UtilsMaxMin:
             fecha_input = driver.find_element(By.ID, "MainContent_txt_fecha_desde")
 
         fecha_input.clear()
-        fecha_input.send_keys("12/08/2025")#send_keys(datetime.date.today().strftime("%d/%m/%Y"))
+        fecha_input.send_keys(date.today().strftime("%d/%m/%Y"))
         time.sleep(1)
 
         buscar_boton = driver.find_element(By.ID, "MainContent_btn_buscar")
@@ -107,6 +105,7 @@ class UtilsMaxMin:
         lista_codigos: list[str] = []
 
         with open(f"{MAIN_PATH}/extracted.html", "r") as txt:
+
             soup = BeautifulSoup(txt, 'lxml')
             td_list = list(soup.find_all(class_="sorting_1"))
             
@@ -114,7 +113,6 @@ class UtilsMaxMin:
                 eliminar_td = re.sub('</td>', "", td.get_text())
                 eliminar_td = re.sub('<td class="sorting_1">', "", eliminar_td)
                 lista_codigos.append(eliminar_td)
-            
         return lista_codigos
     
 
@@ -129,5 +127,5 @@ class UtilsMaxMin:
 if __name__ == "__main__":
     utils = UtilsMaxMin("licitaciones1", True)
 
-    print(utils.generar_lista_codigos())
+    print(utils.generar_lista_codigos(excel=False))
     # utils.generar_lista_codigos()
