@@ -1,7 +1,7 @@
 import re
 import time
 
-from typing import List
+from typing import List, Optional
 from bs4 import BeautifulSoup
 
 from selenium import webdriver
@@ -15,7 +15,7 @@ except ModuleNotFoundError:
 
 
 class UtilsMaxMin:
-    def __init__(self, fecha_desde: str, archivo_html: str, web: bool) -> None:
+    def __init__(self, fecha_desde: str, web: bool, archivo_html: Optional[str] = None) -> None:
         self.fecha_desde = fecha_desde
         self.archivo_html = archivo_html
         self.web = web
@@ -31,7 +31,7 @@ class UtilsMaxMin:
         for codigo in lista_codigos:
             lista_final.append(tuple(map(int, codigo.split(".")))) #type: ignore
         
-        if excel:
+        if excel and self.archivo_html is not None:
             import pandas as pd
 
 
@@ -130,7 +130,7 @@ class UtilsMaxMin:
 
 
 if __name__ == "__main__":
-    utils = UtilsMaxMin("12/08/2025", "licitaciones", True)
+    utils = UtilsMaxMin("12/08/2025", True, "licitaciones")
     utils.generar_lista_codigos(excel=True)
     # utils.generar_lista_codigos()
     ...

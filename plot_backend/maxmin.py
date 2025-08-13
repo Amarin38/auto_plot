@@ -1,9 +1,12 @@
 import pandas as pd
 
+
 from numpy import ndarray
+from datetime import date
 from typing import Dict, List, Union
 
 from plot_backend.constants import MAIN_PATH
+from plot_backend.arreglar_listado_existencias import ArreglarListadoExistencias
 from plot_backend.utils_maxmin import UtilsMaxMin
 
 """
@@ -13,12 +16,25 @@ from plot_backend.utils_maxmin import UtilsMaxMin
 """
 
 class MaxMin:
-    def __init__(self, file: str, multiplicar_por: float) -> None:
+    def __init__(self, file: str, multiplicar_por: float, fecha: str = date.today().strftime("%d/%m/%Y")) -> None:
+        self.fecha = fecha
         self.multiplicar_por = multiplicar_por
-
+        
+        self.fecha_hoy = pd.Timestamp.today().strftime("%d-%m-%Y")
         self.base_df = pd.read_excel(f"{MAIN_PATH}/excel/{file}.xlsx", engine="calamine")
         self.df = self._fecha_completa_a_mes() 
-        self.fecha_hoy = pd.Timestamp.today().strftime("%d-%m-%Y")
+
+
+    def generar_maxmin(self):
+        arreglar = ArreglarListadoExistencias("maxmin", "todo maxmin")
+        arreglar.arreglar_listado()
+
+        utils = UtilsMaxMin(self.fecha, True)
+        arreglar = ArreglarListadoExistencias("maxmin-S")
+
+        arreglar.filter("lista_codigos", utils.generar_lista_codigos(False))
+
+        self.calcular()
 
 
     def calcular(self) -> None:
@@ -31,10 +47,9 @@ class MaxMin:
         lista_totales_rep: List[Dict[str, Union[str, float, int, pd.Timestamp]]] = []
         repuestos: ndarray = self.df["Repuesto"].unique()
 
-        fecha_max = pd.to_datetime(self.df["FechaCompleta"].max())+ pd.Timedelta(days=30)
+        fecha_max = pd.to_datetime(self.df["FechaCompleta"].max()) + pd.Timedelta(days=30)
         fecha_rango_unico = pd.date_range(self.df["FechaCompleta"].min(), fecha_max,freq="ME").unique().strftime("%Y-%m")
 
-        print(fecha_rango_unico)
         for repuesto in repuestos:
             fam_rep = self.df.loc[self.df["Repuesto"] == repuesto, ["Familia"]].iloc[0].values[0]
             art_rep = self.df.loc[self.df["Repuesto"] == repuesto, ["Articulo"]].iloc[0].values[0]
@@ -47,8 +62,8 @@ class MaxMin:
                 
                 total_repuesto_final += total_repuesto_mes
 
-                lista_totales_mes.append({ # type: ignore
-                    "Familia":fam_rep, # type: ignore
+                lista_totales_mes.append({
+                    "Familia":fam_rep,
                     "Articulo":art_rep,
                     "Repuesto":repuesto,
                     "FechaCompleta":fecha,
@@ -56,8 +71,8 @@ class MaxMin:
                 })
 
             minimo = round(total_repuesto_final/len(fecha_rango_unico), 1)
-            lista_totales_rep.append({#type: ignore
-                " ":"", # espacio entre las tablas
+            lista_totales_rep.append({
+                " ":"",
                 "Familia":fam_rep, 
                 "Articulo":art_rep,
                 "RepuestoUnico":repuesto,
@@ -65,7 +80,7 @@ class MaxMin:
                 "Maximo": minimo*(self.multiplicar_por*2)
             })
 
-        df_final = pd.concat((pd.DataFrame(lista_totales_mes), pd.DataFrame(lista_totales_rep)), axis=1) # type: ignore
+        df_final = pd.concat((pd.DataFrame(lista_totales_mes), pd.DataFrame(lista_totales_rep)), axis=1)
         df_final.to_excel(f"{MAIN_PATH}/excel/maxmin {self.fecha_hoy}.xlsx")
 
 
