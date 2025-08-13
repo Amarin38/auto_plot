@@ -4,7 +4,7 @@ from numpy import ndarray
 from typing import Dict, List, Union
 
 from plot_backend.constants import MAIN_PATH
-
+from plot_backend.utils_maxmin import UtilsMaxMin
 
 """
 - Se descargan los consumos de x fecha hacia atrás de los productos que se queira evaluar el  maxmin.
@@ -35,7 +35,8 @@ class MaxMin:
                                           self.df["FechaCompleta"].max(), freq="ME").unique().strftime("%Y-%m")
         
         for repuesto in repuestos:
-            cod_rep = self.df.loc[self.df["Repuesto"] == repuesto, ["Codigo"]].iloc[0].values[0]# type: ignore
+            fam_rep = self.df.loc[self.df["Repuesto"] == repuesto, ["Familia"]].iloc[0].values[0]
+            art_rep = self.df.loc[self.df["Repuesto"] == repuesto, ["Articulo"]].iloc[0].values[0]
 
             total_repuesto_final: int = 0
             for fecha in fecha_rango_unico:
@@ -46,7 +47,8 @@ class MaxMin:
                 total_repuesto_final += total_repuesto_mes
 
                 lista_totales_mes.append({ # type: ignore
-                    "Codigo":str(cod_rep), # type: ignore
+                    "Familia":fam_rep, # type: ignore
+                    "Articulo":art_rep,
                     "Repuesto":repuesto,
                     "FechaCompleta":fecha,
                     "TotalMes":total_repuesto_mes
@@ -55,7 +57,8 @@ class MaxMin:
             minimo = round(total_repuesto_final/len(fecha_rango_unico), 1)
             lista_totales_rep.append({#type: ignore
                 " ":"", # espacio entre las tablas
-                "CodigoUnico":str(cod_rep), # type: ignore
+                "Familia":fam_rep, 
+                "Articulo":art_rep,
                 "RepuestoUnico":repuesto,
                 "Minimo": minimo*self.multiplicar_por,
                 "Maximo": minimo*(self.multiplicar_por*2)

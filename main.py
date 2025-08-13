@@ -1,29 +1,19 @@
-from plot_backend import MaxMin, ArreglarListadoExistencias, GeneralUtils, UtilsMaxMin
+from plot_backend import MaxMin, ArreglarListadoExistencias, UtilsMaxMin
 
-
-
-if __name__ == "__main__":
-    # arreglar = ArreglarListadoExistencias("141 a 513-S", "todo maxmin")
-
+def calc_maxmin():
+    # arreglar = ArreglarListadoExistencias("maxmin", "todo maxmin")
     # arreglar.arreglar_listado()
 
+    utils = UtilsMaxMin("12/08/2025", "a", True)
+    arreglar = ArreglarListadoExistencias("maxmin-S")
 
+    arreglar.filter("lista_codigos", utils.generar_lista_codigos(False))
 
-    # utils = UtilsMaxMin("licitaciones1")
-    # utils2 = UtilsMaxMin("licitaciones2")
-
-    # print(utils2.generar_lista_codigos())
-
-
-    # arreglar.filter("lista_codigos", utils2.generar_lista_codigos())
-
-    # general = GeneralUtils("maxmin-S", "maxmin")
-    # general.append_df(True)
-
-    maxmin = MaxMin("maxmin-S", 2.5)
+    maxmin = MaxMin("lista", 2.5)
     maxmin.calcular()
 
-
+if __name__ == "__main__":
+    calc_maxmin()
     ...
 
 

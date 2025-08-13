@@ -2,18 +2,21 @@ import re
 import time
 
 from typing import List
-from datetime import date
 from bs4 import BeautifulSoup
 
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.common.exceptions import NoSuchElementException, WebDriverException
 
-from constants import MAIN_PATH
+try:
+    from constants import MAIN_PATH
+except ModuleNotFoundError:
+    from plot_backend.constants import MAIN_PATH
 
 
 class UtilsMaxMin:
-    def __init__(self, archivo_html: str, web: bool) -> None:
+    def __init__(self, fecha_desde: str, archivo_html: str, web: bool) -> None:
+        self.fecha_desde = fecha_desde
         self.archivo_html = archivo_html
         self.web = web
 
@@ -26,12 +29,14 @@ class UtilsMaxMin:
             lista_codigos = self.scrapear_licitaciones_local()
 
         for codigo in lista_codigos:
-            lista_final.append(self.limpiar_codigo(codigo))
+            lista_final.append(tuple(map(int, codigo.split(".")))) #type: ignore
         
         if excel:
             import pandas as pd
 
-            df = pd.DataFrame({"Codigos":lista_final})
+
+            df = pd.DataFrame({"Familia":[fam[0] for fam in lista_final], 
+                               "Articulo":[art[1] for art in lista_final]})
             df.to_excel(f"{self.archivo_html}.xlsx")
 
         return lista_final
@@ -73,7 +78,7 @@ class UtilsMaxMin:
             fecha_input = driver.find_element(By.ID, "MainContent_txt_fecha_desde")
 
         fecha_input.clear()
-        fecha_input.send_keys(date.today().strftime("%d/%m/%Y"))
+        fecha_input.send_keys(self.fecha_desde)
         time.sleep(1)
 
         buscar_boton = driver.find_element(By.ID, "MainContent_btn_buscar")
@@ -116,16 +121,16 @@ class UtilsMaxMin:
         return lista_codigos
     
 
-    def limpiar_codigo(self, codigo: str) -> str:
-        total_ceros = 5
-        codigo_spliteado = codigo.split(".")
-        diferencia_ceros = total_ceros-len(codigo_spliteado[1])
+    # def limpiar_codigo(self, codigo: str) -> str:
+    #     total_ceros = 5
+    #     codigo_spliteado = codigo.split(".")
+    #     diferencia_ceros = total_ceros-len(codigo_spliteado[1])
         
-        return f"{codigo_spliteado[0]}.{"0"*diferencia_ceros}{codigo_spliteado[1]}"  
+    #     return f"{codigo_spliteado[0]}.{"0"*diferencia_ceros}{codigo_spliteado[1]}"  
 
 
 if __name__ == "__main__":
-    utils = UtilsMaxMin("licitaciones1", True)
-
-    print(utils.generar_lista_codigos(excel=False))
+    utils = UtilsMaxMin("12/08/2025", "licitaciones", True)
+    utils.generar_lista_codigos(excel=True)
     # utils.generar_lista_codigos()
+    ...

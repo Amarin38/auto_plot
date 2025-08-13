@@ -9,7 +9,7 @@ from plot_backend.constants import INTERNOS_DEVOLUCION, MAIN_PATH
 # TODO abstraer mas el programa y aplicar 
 
 class ArreglarListadoExistencias:
-    def __init__(self, filename: str, dir_files: str):
+    def __init__(self, filename: str, dir_files: Optional[str] = None):
         self.file = filename
         self.xlsx_dir = dir_files
 
@@ -40,10 +40,10 @@ class ArreglarListadoExistencias:
         try:
             df_list.drop(columns=["ficdep", "fictra", "artipo", "ficpro", "pronom", "ficrem", "ficfac", "corte", "signo", "transfe", "ficmov"], inplace=True, axis=0)
             
-            _update_listado = UpdateListadoExistencias(df_list, self.xlsx_dir)
+            _update_listado = UpdateListadoExistencias(df_list, self.xlsx_dir) #type: ignore
             df_list = _update_listado.update_column_by_dict("columnas")
 
-            _update_listado = UpdateListadoExistencias(df_list, self.xlsx_dir)
+            _update_listado = UpdateListadoExistencias(df_list, self.xlsx_dir) #type: ignore
             df_list = _update_listado.update_rows_by_dict("depositos", "Cabecera")
         except KeyError as r:
             print(f"Ya existen las columnas, no se cambiarán | ---> {r}")
@@ -84,8 +84,11 @@ class ArreglarListadoExistencias:
                 if isinstance(filter, list):
                     filtered_df_list = []
                     
-                    for codigo in filter:
-                        filtered_df_list.append(df.loc[df["Codigo"] == float(codigo)])
+                    for fam, art in filter:
+                        filtered_df_list.append(df.loc[
+                            (df["Familia"] == fam) & #type: ignore
+                            (df["Articulo"] == art)
+                            ])
                     
                     filtered_df = pd.concat(filtered_df_list)
 
@@ -123,10 +126,10 @@ class ArreglarListadoExistencias:
                 return pd.DataFrame()
 
         if filtered_df.columns.str.contains("Unnamed").any():
+            _delete_listado = DeleteListadoExistencias(filtered_df)
+            filtered_df = _delete_listado.delete_unnamed_cols()
+
             if not isinstance(filter, list):
-                _delete_listado = DeleteListadoExistencias(filtered_df)
-                
-                filtered_df = _delete_listado.delete_unnamed_cols()
                 filtered_df.to_excel(f"{MAIN_PATH}/excel/{name}.xlsx", index=True)
             else:
                 filtered_df.to_excel(f"{MAIN_PATH}/excel/lista.xlsx")
