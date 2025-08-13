@@ -31,9 +31,10 @@ class MaxMin:
         lista_totales_rep: List[Dict[str, Union[str, float, int, pd.Timestamp]]] = []
         repuestos: ndarray = self.df["Repuesto"].unique()
 
-        fecha_rango_unico = pd.date_range(self.df["FechaCompleta"].min(), 
-                                          self.df["FechaCompleta"].max(), freq="ME").unique().strftime("%Y-%m")
-        
+        fecha_max = pd.to_datetime(self.df["FechaCompleta"].max())+ pd.Timedelta(days=30)
+        fecha_rango_unico = pd.date_range(self.df["FechaCompleta"].min(), fecha_max,freq="ME").unique().strftime("%Y-%m")
+
+        print(fecha_rango_unico)
         for repuesto in repuestos:
             fam_rep = self.df.loc[self.df["Repuesto"] == repuesto, ["Familia"]].iloc[0].values[0]
             art_rep = self.df.loc[self.df["Repuesto"] == repuesto, ["Articulo"]].iloc[0].values[0]

@@ -1,8 +1,8 @@
 from plot_backend import MaxMin, ArreglarListadoExistencias, UtilsMaxMin
 
 def calc_maxmin():
-    # arreglar = ArreglarListadoExistencias("maxmin", "todo maxmin")
-    # arreglar.arreglar_listado()
+    arreglar = ArreglarListadoExistencias("maxmin", "todo maxmin")
+    arreglar.arreglar_listado()
 
     utils = UtilsMaxMin("12/08/2025", "a", True)
     arreglar = ArreglarListadoExistencias("maxmin-S")
