@@ -5,8 +5,11 @@ import pandas as pd
 from numpy import ndarray
 from typing import Dict, List, Union, Any
 
-from src.config.constants import MAIN_PATH
+from src.config import MAIN_PATH
+from utils.indice_utils import IndiceUtils
 
+
+# TODO refactorizar y separar en 3 archivos con una clase por archivo
 class IndicePorCoche:
     def __init__(self, file_consumo: str) -> None:
         self.file_consumo = file_consumo
@@ -45,7 +48,7 @@ class IndicePorCoche:
 
         df_indice: pd.DataFrame = pd.DataFrame(lista_indices)
         df_indice.to_excel(f"{MAIN_PATH}/out/indice_por_coche.xlsx")
-        return [df_indice, _IndiceUtils()._fecha_titulo(self.df_consumo)]
+        return [df_indice, IndiceUtils()._fecha_titulo(self.df_consumo)]
 
 
 class IndicePorMotor:
@@ -86,7 +89,7 @@ class IndicePorMotor:
         
         df_indice: pd.DataFrame = pd.DataFrame(indices)
         df_indice.to_excel(f"{MAIN_PATH}/out/indice_por_motor.xlsx")
-        return [df_indice, _IndiceUtils()._fecha_titulo(self.df_consumo)]
+        return [df_indice, IndiceUtils()._fecha_titulo(self.df_consumo)]
 
 
 class IndiceGomeria:
@@ -126,7 +129,7 @@ class IndiceGomeria:
 
 
     def actualizar_valores_cubiertas(self) -> Dict[str, float]:
-        meses: pd.Index = _IndiceUtils()._generar_lista_meses(self.meses_diferencia)
+        meses: pd.Index = IndiceUtils()._generar_lista_meses(self.meses_diferencia)
         indice_consumo_por_mes: Dict[str, float] = {}
 
         with open(f"{MAIN_PATH}/json/cubiertas_armadas.json", "r") as f1:
@@ -137,42 +140,3 @@ class IndiceGomeria:
             indice_consumo_por_mes.update({m:total_consumo})
         
         return indice_consumo_por_mes
-
-
-class _IndiceUtils:
-    @staticmethod
-    def _media_consumo(indice_consumo: List[int], con_cero: bool) -> float:
-        total_consumo = sum(indice_consumo)
-        cantidad_indices = 0
-
-        if con_cero:
-            cantidad_indices = len(indice_consumo)
-        else:
-            for indice in indice_consumo:
-                if indice != 0:
-                    cantidad_indices += 1
-            
-
-        if cantidad_indices != 0:
-            return round(total_consumo/cantidad_indices,2)
-        else:
-            return 0
-
-    @staticmethod
-    def _fecha_titulo(df: pd.DataFrame) -> str:
-        """
-        Devuelve la fecha del titulo basandose en el archivo introducido.
-        """
-        df["FechaCompleta"] = pd.to_datetime(df["FechaCompleta"], errors="coerce")
-        fechas: ndarray = df["FechaCompleta"].unique()
-        fechas_min = fechas.min().strftime("%Y-%m")
-        fechas_max = fechas.max().strftime("%Y-%m")
-
-        return f"{fechas_min} a {fechas_max}"
-    
-    @staticmethod
-    def _generar_lista_meses(meses_diferencia) -> pd.Index:
-        hoy = pd.Timestamp.today()
-        diferencia = pd.date_range(hoy - pd.Timedelta(days=30*meses_diferencia))
-
-        return pd.DatetimeIndex(diferencia.strftime("%Y-%B").unique())

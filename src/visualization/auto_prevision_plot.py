@@ -3,7 +3,8 @@ import matplotlib.pyplot as plt
 import matplotlib.dates as pltdates
 
 from src.config.constants import MAIN_PATH
-
+from src.services import ArreglarListadoExistencias, UpdateListadoExistencias, DeleteListadoExistencias
+from src.services import CalcularPrevisionCompra
 
 class AutoPrevisionPlot:
     def __init__(self, nombre_archivo_nuevo: str, carpeta_datos: str, filas: int, columnas: int, con_cero: bool, 

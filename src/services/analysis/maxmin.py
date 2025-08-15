@@ -5,9 +5,9 @@ from numpy import ndarray
 from datetime import date
 from typing import Dict, List, Union
 
-from src.config.constants import MAIN_PATH
-from plot_backend.arreglar.arreglar_listado_existencias import ArreglarListadoExistencias
-from plot_backend.utils.utils_maxmin import UtilsMaxMin
+from src.config import MAIN_PATH
+from src.services import ArreglarListadoExistencias
+from src.services import UtilsMaxMin
 
 """
 - Se descargan los consumos de x fecha hacia atrás de los productos que se queira evaluar el  maxmin.

@@ -5,7 +5,7 @@ import numpy as np
 
 from typing import Dict, Union
 
-from plot_backend.utils.general_utils import GeneralUtils
+from src.services import GeneralUtils
 from src.config.constants import MAIN_PATH
 
 class UpdateListadoExistencias:

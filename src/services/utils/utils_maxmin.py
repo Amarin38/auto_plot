@@ -142,9 +142,3 @@ class UtilsMaxMin:
         
     #     return f"{codigo_spliteado[0]}.{"0"*diferencia_ceros}{codigo_spliteado[1]}"  
 
-
-if __name__ == "__main__":
-    # utils = UtilsMaxMin("15/08/2025", True, "licitaciones-15-08-2025")
-    # utils.generar_lista_codigos(out=True)
-    # utils.generar_lista_codigos()
-    ...

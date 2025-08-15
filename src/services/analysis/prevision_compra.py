@@ -5,7 +5,8 @@ from typing import Union, Dict, List, Any
 from numpy import ndarray
 from numpy.polynomial import Polynomial
 
-from src.config.constants import MAIN_PATH
+from src.config import MAIN_PATH
+from src.services import PrevisionUtils
 
 class CalcularPrevisionCompra:
     def __init__(self, archivo_xlsx: str, con_cero: bool, meses_en_adelante: int = 6) -> None:
@@ -18,8 +19,8 @@ class CalcularPrevisionCompra:
         self.años = self.df["FechaCompleta"].dt.year.unique() 
         self.años_meses = (pd.date_range(start=f"1/1/{self.años[0]}", end=f"31/12/{self.años[-1]}", freq="ME")).to_period("M")
 
-        self.tendencia = _CalcularTendecia(self.meses_en_adelante, self.repuestos, self.con_cero)
-        self.indice = _CalcularIndice(self.repuestos, self.con_cero)
+        self.tendencia = CalcularTendecia(self.meses_en_adelante, self.repuestos, self.con_cero)
+        self.indice = CalcularIndice(self.repuestos, self.con_cero)
 
 
     def calcular_prevision_compra(self) -> None:
@@ -101,7 +102,7 @@ class CalcularPrevisionCompra:
         return resultado
 
 
-class _CalcularIndice:
+class CalcularIndice:
     def __init__(self, repuestos: ndarray, con_cero: bool) -> None:
         self.repuestos = repuestos
         self.con_cero = con_cero
@@ -139,7 +140,7 @@ class _CalcularIndice:
         return resultado
 
 
-class _CalcularTendecia:
+class CalcularTendecia:
     def __init__(self, meses_en_adelante: int, repuestos: ndarray, con_cero: bool) -> None:
         self.meses_en_adelante = meses_en_adelante
         self.repuestos = repuestos
@@ -147,7 +148,7 @@ class _CalcularTendecia:
 
 
     def calcular(self, df: pd.DataFrame) -> pd.DataFrame:
-        meses_en_adelante = _PrevisionUtils._calcular_fecha_tendencia(self.meses_en_adelante)
+        meses_en_adelante = PrevisionUtils._calcular_fecha_tendencia(self.meses_en_adelante)
         resultado: List[Dict[str, Union[Any, int]]] = []
 
         # -------------------------
@@ -210,27 +211,4 @@ class _CalcularTendecia:
                 tendencia_estacional.append(round((indice_estacional_mes * tendencia_mes).iloc[0], 0))
         
         return tendencia_estacional
-
-
-class _PrevisionUtils:
-    @staticmethod
-    def _calcular_fecha_tendencia(meses_en_adelante: int) -> pd.PeriodIndex:
-        fecha_actual: pd.Timestamp = pd.Timestamp(pd.to_datetime('today').strftime("%Y-%m"))
-
-        dias_en_adelante: int = 30 * (meses_en_adelante + 1)
-        fecha_inicio: pd.Timestamp = fecha_actual + pd.Timedelta(days=1)
-        fecha_final: pd.Timestamp = fecha_actual + pd.Timedelta(days=dias_en_adelante)
-
-        return pd.date_range(fecha_inicio, fecha_final, freq="ME").to_period("M")
-
-
-    @staticmethod
-    def _fecha_completa_a(tipo: str, fecha_completa: str) -> int:
-        fecha: pd.Timestamp = pd.to_datetime(fecha_completa, format="%Y-%m")
-        
-        if tipo == "año":
-            return fecha.year
-        elif tipo == "mes":
-            return fecha.month
-        else:
-            return fecha.day
+    

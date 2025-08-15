@@ -5,9 +5,8 @@ from numpy import ndarray
 from typing import List, Dict, Union
 
 from src.config.constants import COLORES, MAIN_PATH
-from src.services import
-from utils.general_plot_utils import PlotUtils
-
+from src.services import IndiceUtils, IndicePorMotor, IndicePorCoche
+from src.services import ArreglarListadoExistencias, UpdateListadoExistencias, DeleteListadoExistencias 
 
 class AutoIndicePlot:
     def __init__(self, nombre_archivo_nuevo: str, carpeta_datos: str, filas: int, columnas: int, 
@@ -53,14 +52,15 @@ class AutoIndicePlot:
         df_indices_consumo: Union[pd.DataFrame, str] = lista_indice[0]
 
         # ---------------------------- GRAFICO ---------------------------- #
-        repuestos = iter(tuple(df_indices_consumo["Repuesto"].unique())) # type: ignore
+        iterador_repuestos = iter(tuple(df_indices_consumo["Repuesto"].unique())) # type: ignore
+        iterador_colores = iter(COLORES)
         
         if stacked_barplot:
             fig, ax = plt.subplots(figsize=(self.ancho, self.largo), squeeze=False)
             
             y_dict_consumo: Dict[str, int] = {}
             
-            for rep in repuestos:
+            for rep in iterador_repuestos:
                 rep_comparado: bool = df_indices_consumo["Repuesto"] == rep # type: ignore
 
                 x_cabecera: List[str] = df_indices_consumo.loc[rep_comparado, "Cabecera"] # type: ignore
@@ -72,7 +72,7 @@ class AutoIndicePlot:
                 zorder: int = round((100/max(y_consumo))*10, 0) # type: ignore
             
                 try:
-                    color = next(COLORES) # itero sobre los colores
+                    color = next(iterador_colores) # itero sobre los colores
                 except StopIteration:
                     pass
                 
@@ -91,8 +91,8 @@ class AutoIndicePlot:
             for i in range(axs.shape[0]):
                 for j in range(axs.shape[1]):
                     try:
-                        rep = next(repuestos)
-                        color = next(COLORES)
+                        rep = next(iterador_repuestos)
+                        color = next(iterador_colores)
                     except StopIteration:
                         rep = ""
                     
@@ -104,11 +104,11 @@ class AutoIndicePlot:
                     bars = axs[i,j].bar(x_cabecera, y_consumo, color=color) # type: ignore
                     axs[i,j].bar_label(bars, fontsize=17)
 
-                    media_con_cero = _IndiceUtils._media_consumo(y_consumo.tolist(), con_cero=True)
+                    media_con_cero = IndiceUtils._media_consumo(y_consumo.tolist(), con_cero=True)
                     axs[i,j].axhline(y=media_con_cero, linestyle="--", color="#618B4A")
                     axs[i,j].text(x=1.01, y=media_con_cero, s=f"{media_con_cero}", color="black", va="center", transform=axs[i,j].get_yaxis_transform(), fontsize=self.tamaño_letra*2)
 
-                    media_sin_cero = _IndiceUtils._media_consumo(y_consumo.tolist(), con_cero=False)
+                    media_sin_cero = IndiceUtils._media_consumo(y_consumo.tolist(), con_cero=False)
                     axs[i,j].axhline(y=media_sin_cero, linestyle="--", color="#922D50")
                     axs[i,j].text(x=1.01, y=media_sin_cero, s=f"{media_sin_cero}", color="black", va="center", transform=axs[i,j].get_yaxis_transform(), fontsize=self.tamaño_letra*2)
 
