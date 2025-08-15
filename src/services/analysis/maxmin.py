@@ -7,7 +7,7 @@ from typing import Dict, List, Union
 
 from src.config import MAIN_PATH
 from src.services import ArreglarListadoExistencias
-from src.services import UtilsMaxMin
+from src.services import MaxMinUtils
 
 """
 - Se descargan los consumos de x fecha hacia atrás de los productos que se queira evaluar el  maxmin.
@@ -33,7 +33,7 @@ class MaxMin:
         arreglar.arreglar_listado()
 
 
-        utils = UtilsMaxMin(self.fecha, web=True)
+        utils = MaxMinUtils(self.fecha, web=True)
         arreglar = ArreglarListadoExistencias(f"{self.file}-S")
 
         arreglar.filter("lista_codigos", utils.generar_lista_codigos(False))

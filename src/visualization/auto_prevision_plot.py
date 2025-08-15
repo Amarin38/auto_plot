@@ -4,7 +4,7 @@ import matplotlib.dates as pltdates
 
 from src.config.constants import MAIN_PATH
 from src.services import ArreglarListadoExistencias, UpdateListadoExistencias, DeleteListadoExistencias
-from src.services import CalcularPrevisionCompra
+from src.services import PrevisionCompraSinCero, PrevisionCompraConCero
 
 class AutoPrevisionPlot:
     def __init__(self, nombre_archivo_nuevo: str, carpeta_datos: str, filas: int, columnas: int, con_cero: bool, 
@@ -20,8 +20,11 @@ class AutoPrevisionPlot:
         self._update = UpdateListadoExistencias(self.nombre_archivo, self.carpeta_datos)
         self._delete = DeleteListadoExistencias(self.nombre_archivo)
         
-        self._prevision = CalcularPrevisionCompra(self.nombre_archivo, self._con_cero, self.meses_en_adelante)
-
+        if self._con_cero:
+            self._prevision = PrevisionCompraConCero(self.nombre_archivo, self.meses_en_adelante)
+        else:
+            self._prevision = PrevisionCompraSinCero(self.nombre_archivo, self.meses_en_adelante)
+            
 
         self.divisor = 0.3*self.x2
         self.tamaño_letra = tamaño_letra

@@ -9,7 +9,7 @@ from src.services import GeneralUtils
 class ArreglarFlota:
     def __init__(self, file: str) -> None:
         self.df = GeneralUtils(file).check_filetype()
-        self.cabecera = pd.read_excel(f"{MAIN_PATH}/excel_info/internos_asignados_cabecera.xlsx")["Cabecera"]
+        self.cabecera = pd.read_excel(f"{MAIN_PATH}/src/data/excel_data/internos_asignados_cabecera.xlsx")["Cabecera"]
 
 
     def contar_motores_por_cabecera(self) -> pd.DataFrame:
@@ -36,7 +36,7 @@ class ArreglarFlota:
                 }) # type: ignore
             
         df_contado: pd.DataFrame = pd.DataFrame(dict_contado)
-        # df_contado.to_excel(f"{self._main_path}/excel_info/motores_por_cabecera.xlsx")
+        # df_contado.to_excel(f"{self._main_path}/src/data/excel_data/motores_por_cabecera.xlsx")
         return df_contado
 
 
