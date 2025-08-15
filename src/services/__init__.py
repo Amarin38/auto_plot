@@ -1,4 +1,4 @@
-from .analysis import IndicePorMotor, IndiceGomeria, IndicePorCoche, MaxMin, CalcularPrevisionCompra, IndiceUtils, PrevisionUtils
-from .data_cleaning import ArreglarFlota, ArreglarListadoExistencias
-from .utils import GeneralUtils, UpdateListadoExistencias, DeleteListadoExistencias, UtilsMaxMin
+from .analysis import IndicePorMotor, IndiceGomeria, IndicePorCoche, MaxMin, PrevisionCompra, IndiceUtils, PrevisionUtils, MaxMinUtils
+from .data_cleaning import ArreglarFlota, ArreglarListadoExistencias, UpdateListadoExistencias, DeleteListadoExistencias
+from .utils.general_utils import GeneralUtils
  

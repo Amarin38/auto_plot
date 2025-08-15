@@ -3,8 +3,8 @@ import pandas as pd
 from numpy import ndarray
 from typing import List, Union
 
-from plot_backend.utils.general_utils import GeneralUtils
-from src.config.constants import MAIN_PATH
+from src.config import MAIN_PATH
+from src.services import GeneralUtils
 
 class ArreglarFlota:
     def __init__(self, file: str) -> None:

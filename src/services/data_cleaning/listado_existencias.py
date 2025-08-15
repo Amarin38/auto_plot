@@ -2,11 +2,10 @@ import pandas as pd
 
 from typing import Union, Optional, List
 
-from plot_backend.utils.general_utils import GeneralUtils
-from plot_backend.utils.utils_listado_existencias import UpdateListadoExistencias, DeleteListadoExistencias
-from src.config.constants import INTERNOS_DEVOLUCION, MAIN_PATH
+from src.config import INTERNOS_DEVOLUCION, MAIN_PATH
+from src.services import GeneralUtils
+from src.services import UpdateListadoExistencias, DeleteListadoExistencias
 
-# TODO abstraer mas el programa y aplicar 
 
 class ArreglarListadoExistencias:
     def __init__(self, filename: str, dir_files: Optional[str] = None):
@@ -92,7 +91,7 @@ class ArreglarListadoExistencias:
                     
                     for fam, art in filter:
                         filtered_df_list.append(df.loc[
-                            (df["Familia"] == fam) & #type: ignore
+                            (df["Familia"] == fam) & 
                             (df["Articulo"] == art)
                             ])
                     

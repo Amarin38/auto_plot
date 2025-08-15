@@ -1,12 +1,11 @@
 import json
 
 import pandas as pd
-import numpy as np
 
-from typing import Dict, Union
+from typing import Dict, Union, Tuple
 
 from src.services import GeneralUtils
-from src.config.constants import MAIN_PATH
+from src.config import MAIN_PATH
 
 class UpdateListadoExistencias:
     def __init__(self, file: Union[str, pd.DataFrame], dir_file: str):
@@ -54,7 +53,7 @@ class DeleteListadoExistencias:
         return self.df
 
 
-    def delete_rows(self, delete_type: str, delete_by: np.ndarray) -> pd.DataFrame:
+    def delete_rows(self, delete_type: str, delete_by: Tuple[str, ...]) -> pd.DataFrame:
         """
         Deletes the row by entered string.\n
         Delete types: repuesto, fechacompleta.\n

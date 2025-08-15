@@ -8,7 +8,7 @@ from numpy.polynomial import Polynomial
 from src.config import MAIN_PATH
 from src.services import PrevisionUtils
 
-class CalcularPrevisionCompra:
+class PrevisionCompra:
     def __init__(self, archivo_xlsx: str, con_cero: bool, meses_en_adelante: int = 6) -> None:
         self.df = pd.read_excel(f"{MAIN_PATH}/out/{archivo_xlsx}.xlsx", engine="calamine")
         

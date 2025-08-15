@@ -15,7 +15,7 @@ except ModuleNotFoundError:
     from src.config.constants import MAIN_PATH
 
 
-class UtilsMaxMin:
+class MaxMinUtils:
     def __init__(self, fecha_desde: str, web: bool, archivo_html: Optional[str] = None) -> None:
         self.fecha_desde = fecha_desde
         self.archivo_html = archivo_html
