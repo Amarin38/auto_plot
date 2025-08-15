@@ -5,7 +5,7 @@ from typing import Union, Dict, List, Any
 from numpy import ndarray
 from numpy.polynomial import Polynomial
 
-from plot_backend.constants import MAIN_PATH
+from src.config.constants import MAIN_PATH
 
 class CalcularPrevisionCompra:
     def __init__(self, archivo_xlsx: str, con_cero: bool, meses_en_adelante: int = 6) -> None:

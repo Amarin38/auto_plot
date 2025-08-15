@@ -3,8 +3,8 @@ import pandas as pd
 from typing import Union, Optional, List
 
 from plot_backend.general_utils import GeneralUtils
-from plot_backend.utils_listado_existencias import UpdateListadoExistencias, DeleteListadoExistencias
-from plot_backend.constants import INTERNOS_DEVOLUCION, MAIN_PATH
+from plot_backend.utils.utils_listado_existencias import UpdateListadoExistencias, DeleteListadoExistencias
+from src.config.constants import INTERNOS_DEVOLUCION, MAIN_PATH
 
 # TODO abstraer mas el programa y aplicar 
 

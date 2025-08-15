@@ -6,7 +6,7 @@ import numpy as np
 from typing import Dict, Union
 
 from plot_backend.general_utils import GeneralUtils
-from plot_backend.constants import MAIN_PATH
+from src.config.constants import MAIN_PATH
 
 class UpdateListadoExistencias:
     def __init__(self, file: Union[str, pd.DataFrame], dir_file: str):

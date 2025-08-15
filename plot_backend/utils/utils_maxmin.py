@@ -10,9 +10,9 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import NoSuchElementException, WebDriverException
 
 try:
-    from constants import MAIN_PATH
+    from src.config.constants import MAIN_PATH
 except ModuleNotFoundError:
-    from plot_backend.constants import MAIN_PATH
+    from src.config.constants import MAIN_PATH
 
 
 class UtilsMaxMin:

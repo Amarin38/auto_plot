@@ -8,7 +8,7 @@ import pyexcel as pe
 from pathlib import Path
 from typing import Union, Optional, List
 
-from plot_backend.constants import MAIN_PATH
+from src.config.constants import MAIN_PATH
 
 class GeneralUtils:
     def __init__(self, file: Union[str, pd.DataFrame], xlsx_dir: Optional[str] = None) -> None:

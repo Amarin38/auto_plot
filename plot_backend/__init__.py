@@ -1,9 +1,8 @@
-from .arreglar_flota import ArreglarFlota
-from .arreglar_listado_existencias import ArreglarListadoExistencias 
-from .utils_listado_existencias import UpdateListadoExistencias, DeleteListadoExistencias
-from .autografico import AutoIndicePlot, AutoPrevisionPlot
-from .consumo_gomeria import ConsumoGomeria
+from .arreglar.arreglar_flota import ArreglarFlota
+from .arreglar.arreglar_listado_existencias import ArreglarListadoExistencias 
+from .utils.utils_listado_existencias import UpdateListadoExistencias, DeleteListadoExistencias
+from ..src.visualization.autografico import AutoIndicePlot, AutoPrevisionPlot
 from .general_utils import GeneralUtils
-from .indice_consumo import IndicePorCoche, IndicePorMotor
+from .indice_consumo import IndicePorCoche, IndicePorMotor, ConsumoGomeria
 from .maxmin import MaxMin
 from .prevision_compra import CalcularPrevisionCompra

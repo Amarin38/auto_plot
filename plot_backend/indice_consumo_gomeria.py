@@ -4,7 +4,7 @@ import pandas as pd
 
 from typing import Dict
 
-from plot_backend.constants import MAIN_PATH
+from src.config.constants import MAIN_PATH
 
 
 class ConsumoGomeria:

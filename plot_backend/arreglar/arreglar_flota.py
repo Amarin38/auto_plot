@@ -4,7 +4,7 @@ from numpy import ndarray
 from typing import List, Union
 
 from plot_backend.general_utils import GeneralUtils
-from plot_backend.constants import MAIN_PATH
+from src.config.constants import MAIN_PATH
 
 class ArreglarFlota:
     def __init__(self, file: str) -> None:

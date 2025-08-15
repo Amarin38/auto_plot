@@ -7,9 +7,9 @@ from typing import List, Dict, Union
 
 from plot_backend.prevision_compra import CalcularPrevisionCompra
 from plot_backend.indice_consumo import IndicePorCoche, IndicePorMotor, _IndiceUtils
-from plot_backend.arreglar_listado_existencias import ArreglarListadoExistencias
-from plot_backend.utils_listado_existencias import UpdateListadoExistencias, DeleteListadoExistencias
-from plot_backend.constants import COLORES, MAIN_PATH
+from plot_backend.arreglar.arreglar_listado_existencias import ArreglarListadoExistencias
+from plot_backend.utils.utils_listado_existencias import UpdateListadoExistencias, DeleteListadoExistencias
+from src.config.constants import COLORES, MAIN_PATH
 
 class AutoPrevisionPlot:
     def __init__(self, nombre_archivo_nuevo: str, carpeta_datos: str, filas: int, columnas: int, con_cero: bool, 
