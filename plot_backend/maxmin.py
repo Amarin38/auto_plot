@@ -16,26 +16,28 @@ from plot_backend.utils_maxmin import UtilsMaxMin
 """
 
 class MaxMin:
-    def __init__(self, file: str = "filtrado", dir: str = "todo maxmin", multiplicar_por: float = 2, 
-                 fecha: str = date.today().strftime("%d/%m/%Y")) -> None:
+    def __init__(self, file: str, dir: str = "todo maxmin", 
+                 multiplicar_por: float = 2.5, fecha: str = date.today().strftime("%d/%m/%Y")) -> None:
         self.dir = dir
         self.file = file      
         self.fecha = fecha
         self.multiplicar_por = multiplicar_por
-
         self.fecha_hoy = pd.Timestamp.today().strftime("%d-%m-%Y")
-        self.base_df = pd.read_excel(f"{MAIN_PATH}/excel/{self.file}.xlsx", engine="calamine")
-        self.df = self._fecha_completa_a_mes() 
 
-
-    def generar_maxmin(self):
-        arreglar = ArreglarListadoExistencias("maxmin", self.dir)
+    
+    def generar_maxmin(self) -> None:
+        """
+        Genera el archivo completo con los maxmin.
+        """
+        arreglar = ArreglarListadoExistencias(self.file, self.dir)
         arreglar.arreglar_listado()
 
-        utils = UtilsMaxMin(self.fecha, True)
-        arreglar = ArreglarListadoExistencias("maxmin-S")
+
+        utils = UtilsMaxMin(self.fecha, web=True)
+        arreglar = ArreglarListadoExistencias(f"{self.file}-S")
 
         arreglar.filter("lista_codigos", utils.generar_lista_codigos(False))
+        self.df = self._convertir_fecha_completa_a_mes(pd.read_excel(f"{MAIN_PATH}/excel/filtrado.xlsx", engine="calamine")) 
 
         self.calcular()
 
@@ -87,9 +89,9 @@ class MaxMin:
         df_final.to_excel(f"{MAIN_PATH}/excel/maxmin {self.fecha_hoy}.xlsx")
 
 
-    def _fecha_completa_a_mes(self) -> pd.DataFrame:
+    def _convertir_fecha_completa_a_mes(self, base_df) -> pd.DataFrame:
         """ Genero un dataframe nuevo con la fecha modificada en formato %Y-%m """
 
-        self.base_df["FechaCompleta"] = pd.DatetimeIndex(pd.to_datetime(self.base_df["FechaCompleta"])).strftime("%Y-%m")
-        return self.base_df
+        base_df["FechaCompleta"] = pd.DatetimeIndex(pd.to_datetime(base_df["FechaCompleta"])).strftime("%Y-%m")
+        return base_df
 

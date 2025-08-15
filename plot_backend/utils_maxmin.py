@@ -1,11 +1,12 @@
 import re
-import time
 
 from typing import List, Optional
 from bs4 import BeautifulSoup
 
 from selenium import webdriver
 from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import NoSuchElementException, WebDriverException
 
 try:
@@ -21,6 +22,10 @@ class UtilsMaxMin:
         self.web = web
 
     def generar_lista_codigos(self, excel: bool) -> List[str]:
+        """
+        Genera automáticamente la lista de códigos a los que sacarles el máximo y mínimo.
+        - Tiene la posibilidad de pasarlo o no a un excel.
+        """
         lista_final: List[str] = []
 
         if self.web:
@@ -34,9 +39,10 @@ class UtilsMaxMin:
         if excel and self.archivo_html is not None:
             import pandas as pd
 
-
-            df = pd.DataFrame({"Familia":[fam[0] for fam in lista_final], 
-                               "Articulo":[art[1] for art in lista_final]})
+            df = pd.DataFrame({
+                "Familia":[fam[0] for fam in lista_final], 
+                "Articulo":[art[1] for art in lista_final]
+                })
             df.to_excel(f"{self.archivo_html}.xlsx")
 
         return lista_final
@@ -59,6 +65,8 @@ class UtilsMaxMin:
         options.page_load_strategy = 'eager'
         driver.get("https://dota.sistemasanantonio.com.ar/licitaciones/login.aspx")
         
+        wait = WebDriverWait(driver, 10) 
+
         email = driver.find_element(By.NAME, "inputEmail")
         email.send_keys("garantias")
         passwd = driver.find_element(By.NAME, "inputPassword")
@@ -66,12 +74,14 @@ class UtilsMaxMin:
 
         login = driver.find_element(By.ID, "btn_iniciar")
         login.click()
-        time.sleep(1)
+        
+        esperar_lici = wait.until(EC.presence_of_element_located((By.XPATH, "//a[@href='#']//div[@class='hover thumbnail']//div[@class='caption']")))
 
         licitaciones = driver.find_element(By.XPATH, "//a[@href='#']//div[@class='hover thumbnail']//div[@class='caption']")
         licitaciones.click()
-        time.sleep(1)
         
+        esperar_fecha_input = wait.until(EC.presence_of_element_located((By.NAME, "ctl00$MainContent$txt_fecha_desde")))
+
         try:
             fecha_input = driver.find_element(By.NAME, "ctl00$MainContent$txt_fecha_desde")
         except NoSuchElementException:
@@ -79,16 +89,19 @@ class UtilsMaxMin:
 
         fecha_input.clear()
         fecha_input.send_keys(self.fecha_desde)
-        time.sleep(1)
+
+        esperar_buscar_boton = wait.until(EC.presence_of_element_located((By.ID, "MainContent_btn_buscar")))
 
         buscar_boton = driver.find_element(By.ID, "MainContent_btn_buscar")
         buscar_boton.click()
-        time.sleep(1)
+
+        esperar_busqueda_input = wait.until(EC.presence_of_element_located((By.XPATH, "//input[@type='search']")))
 
         busqueda_input = driver.find_element(By.XPATH, "//input[@type='search']")
         busqueda_input.clear()
-        busqueda_input.send_keys("Finalizada Ningún pedido realizado")
-        time.sleep(1)
+        busqueda_input.send_keys("Finalizada Ningún pedido realizado Pompeya")
+
+        esperar_codigo_lici = wait.until(EC.presence_of_element_located((By.CLASS_NAME, "sorting_1")))
 
         codigos_licitaciones = driver.find_elements(By.CLASS_NAME, "sorting_1")
         lista_numeros_licitaciones: List[str] = [codigo.text for codigo in codigos_licitaciones]
@@ -103,6 +116,7 @@ class UtilsMaxMin:
 
             lista_codigos += [codigo.text for codigo in codigo_repuesto]
         driver.quit()
+
         return lista_codigos
     
 
@@ -130,7 +144,7 @@ class UtilsMaxMin:
 
 
 if __name__ == "__main__":
-    utils = UtilsMaxMin("12/08/2025", True, "licitaciones")
-    utils.generar_lista_codigos(excel=True)
+    # utils = UtilsMaxMin("15/08/2025", True, "licitaciones-15-08-2025")
+    # utils.generar_lista_codigos(excel=True)
     # utils.generar_lista_codigos()
     ...

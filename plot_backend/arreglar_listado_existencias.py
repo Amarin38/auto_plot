@@ -21,6 +21,13 @@ class ArreglarListadoExistencias:
     
 
     def arreglar_listado(self) -> None:
+        """
+        Arregla el listado de existencias de la siguiente forma:
+        - Transforma todos los xls a xlsx.
+        - Concatena todos los archivos en uno solo.
+        - Elimina las columnas innecesarias.
+        - Filtra por salida.
+        """
         try:
             df = self._utils.append_df(False)
             self.modify_df(df) # type: ignore
@@ -58,11 +65,11 @@ class ArreglarListadoExistencias:
 
     def filter(self, column: str, filter: Union[str, float, List[str]], type: Optional[str] = None) -> pd.DataFrame:
         """
-        #### Filters the file entered by string entered in the filters var.\n
-        #### Indicating the column is needed.\n 
-         Columns: movimiento, repuesto, interno, codigo, lista_codigos\n
-         Types: None, contains, startswith
+        Filters the file entered.\n
+        - Columns: movimiento, repuesto, interno, codigo, lista_codigos\n
+        - Types: None, contains, startswith
         """
+        name: str = f"{self.file}-S"
 
         df = self._utils.check_filetype() # type: ignore
         match column:
@@ -79,7 +86,6 @@ class ArreglarListadoExistencias:
             case "codigo":
                 if isinstance(filter, float):
                     filtered_df = df.loc[df["Codigo"] == float(filter)]
-                
             case "lista_codigos":
                 if isinstance(filter, list):
                     filtered_df_list = []
@@ -91,14 +97,12 @@ class ArreglarListadoExistencias:
                             ])
                     
                     filtered_df = pd.concat(filtered_df_list)
-
             case "movimiento":
                 _delete_listado = DeleteListadoExistencias(self.file)
         
                 match filter:
                     case "salidas":
                         df: pd.DataFrame = _delete_listado.delete_rows("interno", INTERNOS_DEVOLUCION)
-                        name: str = f"{self.file}-S"
 
                         filtered_df: pd.DataFrame = df.loc[
                             (df.Movimiento.str.contains("Transf al Dep ")) | 
@@ -135,7 +139,7 @@ class ArreglarListadoExistencias:
                 filtered_df.to_excel(f"{MAIN_PATH}/excel/filtrado.xlsx")
         else:
             if not isinstance(filter, list):
-                filtered_df.to_excel(f"{MAIN_PATH}/excel/{filter}.xlsx")
+                filtered_df.to_excel(f"{MAIN_PATH}/excel/{name}.xlsx")
             else:
                 filtered_df.to_excel(f"{MAIN_PATH}/excel/filtrado.xlsx")
                 
