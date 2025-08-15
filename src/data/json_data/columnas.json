@@ -1,0 +1,12 @@
+{
+    "ficfam":"Familia", 
+    "ficart":"Articulo", 
+    "codigo":"Codigo", 
+    "artnom":"Repuesto", 
+    "ficfec":"FechaCompleta", 
+    "depnom":"Cabecera", 
+    "movnom":"Movimiento", 
+    "ficcan":"Cantidad", 
+    "ficusu":"Interno",
+    "ficuni":"Precio"
+}
