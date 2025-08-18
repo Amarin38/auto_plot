@@ -10,9 +10,9 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import NoSuchElementException, WebDriverException
 
 try:
-    from src.config.constants import MAIN_PATH
+    from config import MAIN_PATH
 except ModuleNotFoundError:
-    from src.config.constants import MAIN_PATH
+    from config import MAIN_PATH
 
 
 class MaxMinUtils:

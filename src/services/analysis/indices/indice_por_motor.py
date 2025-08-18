@@ -27,8 +27,7 @@ class IndicePorMotor:
         df_con_motor = agrupado.merge(self.df_motores, on=["Cabecera", "Repuesto"], how="right") # hago join con la cantidad de coches para hacer el cálculo
         df_con_motor["IndiceConsumo"] = round((df_con_motor["Cantidad"]*100) / df_con_motor["CantidadMotores"], 1) # hago el cálculo y se lo asigno a una nueva columna
 
-        df_indice = df_con_motor.rename(columns={'Cantidad':'TotalConsumo'})[['Cabecera', 'Repuesto', 'IndiceConsumo']]
-        
+        df_indice = df_con_motor[['Cabecera', 'Repuesto', 'IndiceConsumo']]
         df_indice["IndiceConsumo"].replace([np.inf, -np.inf], np.nan, inplace=True)
         df_indice.dropna(subset=["IndiceConsumo"], inplace=True)
         
