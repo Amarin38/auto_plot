@@ -4,8 +4,8 @@ import pandas as pd
 
 from typing import Dict
 
-from src.config import MAIN_PATH
-from src.services import IndiceUtils
+from config.constants import MAIN_PATH
+from services.analysis.indices.utils.indice_utils import IndiceUtils
 
 class IndiceGomeria:
     def __init__(self, archivo: str, meses_diferencia: int) -> None:
