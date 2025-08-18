@@ -12,7 +12,7 @@ class UpdateListadoExistencias:
     def __init__(self, file: Union[str, pd.DataFrame], dir_file: str):
         self.file = file
         self.dir_file = dir_file
-        self.df: pd.DataFrame = GeneralUtils(self.file, self.dir_file).check_filetype() # type: ignore
+        self.df: pd.DataFrame = GeneralUtils(self.file, self.dir_file).convert_to_df() # type: ignore
 
 
     def update_single_row_name(self, column: str, old_name: str, new_name: str) -> pd.DataFrame:

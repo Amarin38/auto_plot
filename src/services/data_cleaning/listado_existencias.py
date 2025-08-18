@@ -70,7 +70,7 @@ class ArreglarListadoExistencias:
         """
         name: str = f"{self.file}-S"
 
-        df = self._utils.check_filetype() # type: ignore
+        df = self._utils.convert_to_df() # type: ignore
         match column:
             case "repuesto":
                 if type == "contains" and isinstance(filter, str):
@@ -117,7 +117,7 @@ class ArreglarListadoExistencias:
                             (df.Movimiento.str.contains("Entrada "))
                             ]
                     case "devoluciones":
-                        df: pd.DataFrame = self._utils.check_filetype() # type: ignore
+                        df: pd.DataFrame = self._utils.convert_to_df() # type: ignore
                         name: str = f"{self.file}-D"
 
                         filtered_df: pd.DataFrame = df.loc[

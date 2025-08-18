@@ -6,7 +6,7 @@ from src.services import GeneralUtils
 
 class DeleteListadoExistencias:
     def __init__(self, file: Union[str, pd.DataFrame]) -> None:
-        self.df: pd.DataFrame = GeneralUtils(file).check_filetype() # type: ignore
+        self.df: pd.DataFrame = GeneralUtils(file).convert_to_df() # type: ignore
 
     def delete_unnamed_cols(self) -> pd.DataFrame:
         """ Deletes all the 'Unnamed' columns. """

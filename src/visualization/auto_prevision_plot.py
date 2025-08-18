@@ -5,6 +5,7 @@ import matplotlib.dates as pltdates
 from src.config.constants import MAIN_PATH
 from src.services import ArreglarListadoExistencias, UpdateListadoExistencias, DeleteListadoExistencias
 from src.services import PrevisionCompraSinCero, PrevisionCompraConCero
+from src.visualization import GeneralPlotUtils
 
 class AutoPrevisionPlot:
     def __init__(self, nombre_archivo_nuevo: str, carpeta_datos: str, filas: int, columnas: int, con_cero: bool, 
@@ -19,7 +20,8 @@ class AutoPrevisionPlot:
         self._arreglar = ArreglarListadoExistencias(self.nombre_archivo, self.carpeta_datos)
         self._update = UpdateListadoExistencias(self.nombre_archivo, self.carpeta_datos)
         self._delete = DeleteListadoExistencias(self.nombre_archivo)
-        
+        self._plot_utils = GeneralPlotUtils()
+
         if self._con_cero:
             self._prevision = PrevisionCompraConCero(self.nombre_archivo, self.meses_en_adelante)
         else:
@@ -76,8 +78,8 @@ class AutoPrevisionPlot:
                     axs[i,j].plot(y_data, x_data, color="#2e7d32", marker="o", linestyle="-")
                     axs[i,j].plot(y_tendencia, x_tendencia, color="#c62828", marker="s", linestyle="--")
                     
-                    _PlotUtils._auto_annotate_on_line(x_data, y_data, axs[i,j], '#2e7d32', self.divisor) # type: ignore
-                    _PlotUtils._auto_annotate_on_line(x_tendencia, y_tendencia, axs[i,j], '#c62828', self.divisor) # type: ignore
+                    self._plot_utils.auto_annotate_on_line(x_data, y_data, axs[i,j], '#2e7d32', self.divisor) # type: ignore
+                    self._plot_utils.auto_annotate_on_line(x_tendencia, y_tendencia, axs[i,j], '#c62828', self.divisor) # type: ignore
                     
                     bbox = dict(boxstyle ="round", fc ="0.8")
                     axs[i,j].legend(["Consumo temporal","Tendencia de consumo"], fontsize=20/self.divisor, loc=2)

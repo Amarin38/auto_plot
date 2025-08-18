@@ -1,6 +1,3 @@
-from .indices import IndicePorMotor, IndiceGomeria, IndicePorCoche
-from .utils.indice_utils import IndiceUtils
-from .utils.prevision_utils import PrevisionUtils
-from .utils.maxmin_utils import MaxMinUtils
-from .maxmin import MaxMin
-from .prevision import PrevisionCompraConCero, PrevisionCompraSinCero, IndicePrevisionCompra, TendeciaPrevisionCompra
+from .indices import IndicePorMotor, IndiceGomeria, IndicePorCoche, IndiceUtils
+from .maxmin import MaxMin, MaxMinUtils
+from .prevision import PrevisionCompraConCero, PrevisionCompraSinCero, IndicePrevisionCompra, TendeciaPrevisionCompra, PrevisionUtils

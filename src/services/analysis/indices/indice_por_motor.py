@@ -3,7 +3,7 @@ import pandas as pd
 from typing import List, Union
 
 from src.config import MAIN_PATH
-from utils.indice_utils import IndiceUtils
+from src.services.analysis.indices.utils.indice_utils import IndiceUtils
 
 
 class IndicePorMotor:

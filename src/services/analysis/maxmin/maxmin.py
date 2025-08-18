@@ -1,6 +1,5 @@
 import pandas as pd
 
-
 from numpy import ndarray
 from datetime import date
 from typing import Dict, List, Union
@@ -25,7 +24,7 @@ class MaxMin:
         self.fecha_hoy = pd.Timestamp.today().strftime("%d-%m-%Y")
 
     
-    def generar_maxmin(self) -> None:
+    def generar_maxmin_completo(self) -> None:
         """
         Genera el archivo completo con los maxmin.
         """

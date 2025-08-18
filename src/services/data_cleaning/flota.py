@@ -8,7 +8,7 @@ from src.services import GeneralUtils
 
 class ArreglarFlota:
     def __init__(self, file: str) -> None:
-        self.df = GeneralUtils(file).check_filetype()
+        self.df = GeneralUtils(file).convert_to_df()
         self.cabecera = pd.read_excel(f"{MAIN_PATH}/src/data/excel_data/internos_asignados_cabecera.xlsx")["Cabecera"]
 
 
@@ -61,7 +61,7 @@ class ArreglarFlota:
         ### Cleans the 'Flota'.xlsx files for statistics.
         """
         # el - es el "not"
-        self.df = self.df.loc[-self.df["Motor modelo"].isin(["HTM3500", "SCANNIA 6 CIL", "DC 09 142 280CV", "MBENZ"]), # type: ignore
+        self.df = self.df.loc[~self.df["Motor modelo"].isin(["HTM3500", "SCANNIA 6 CIL", "DC 09 142 280CV", "MBENZ"]), # type: ignore
                               ["Linea", "Interno", "Dominio", "Chasis Modelo", "Chasis N°", 
                                "Chasis Año", "Motor modelo", "Motor N° de serie"]]
 

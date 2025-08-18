@@ -1,7 +1,7 @@
 from typing import List
 
 
-class PlotUtils:
+class GeneralPlotUtils:
     @staticmethod
     def auto_annotate_on_line(x_data: List[str], y_data: List[str], axs, color: str, divisor: float) -> None:
         """

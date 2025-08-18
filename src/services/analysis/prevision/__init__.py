@@ -1,4 +1,5 @@
-from .indice_prevision_compra import IndicePrevisionCompra
-from .tendencia_prevision_compra import TendeciaPrevisionCompra
+from .utils.prevision_utils import PrevisionUtils
+from .utils.indice_prevision_compra import IndicePrevisionCompra
+from .utils.tendencia_prevision_compra import TendeciaPrevisionCompra
 from .prevision_compra_con_cero import PrevisionCompraConCero
 from .prevision_compra_sin_cero import PrevisionCompraSinCero

@@ -26,7 +26,7 @@ class GeneralUtils:
             print("O la carpeta no existe o no se ingresó ninguna carpeta como parámetro")                         
 
 
-    def check_filetype(self) -> Optional[pd.DataFrame]:
+    def convert_to_df(self) -> Optional[pd.DataFrame]:
         """
         Checks whereas the file entered is a string and converts it to dataframe \n
         and returns it or is already a dataframe and returns it.
@@ -49,15 +49,15 @@ class GeneralUtils:
         _xls_files = glob.glob("**/*.xls", recursive=True)
         
         for file in _xls_files:
-            file_mod = file.replace(".xls", "")
+            file_mod_name = file.replace(".xls", "")
 
             try:
                 df: pd.DataFrame = pd.read_excel(file, engine="xlrd")
                 df["pronom"] = [self._delete_error_bytes(str(string), "\x00") if pd.notnull(string) else string for string in df["pronom"]]
-                df.to_excel(f"{file_mod}.xlsx")
+                df.to_excel(f"{file_mod_name}.xlsx")
             except AssertionError:
                 sheet = pe.get_sheet(file_name=file)
-                sheet.save_as(file_mod)
+                sheet.save_as(file_mod_name)
 
             os.remove(file)
 

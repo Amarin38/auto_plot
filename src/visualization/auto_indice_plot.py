@@ -8,9 +8,12 @@ from src.config.constants import COLORES, MAIN_PATH
 from src.services import IndiceUtils, IndicePorMotor, IndicePorCoche
 from src.services import ArreglarListadoExistencias, UpdateListadoExistencias, DeleteListadoExistencias 
 
+
+# TODO modificar para simplificar más
+
 class AutoIndicePlot:
     def __init__(self, nombre_archivo_nuevo: str, carpeta_datos: str, filas: int, columnas: int, 
-                 tamaño_letra: int = 15, ancho: int = 60, largo: int = 60) -> None:
+                 tamaño_letra: int = 15, ancho: int = 70, largo: int = 70) -> None:
         self.nombre_archivo = nombre_archivo_nuevo
         self.carpeta_datos = carpeta_datos
         self.x1 = filas
@@ -58,7 +61,7 @@ class AutoIndicePlot:
         if stacked_barplot:
             fig, ax = plt.subplots(figsize=(self.ancho, self.largo), squeeze=False)
             
-            y_dict_consumo: Dict[str, int] = {}
+            y_dict_consumo: Dict[str, ndarray] = {}
             
             for rep in iterador_repuestos:
                 rep_comparado: bool = df_indices_consumo["Repuesto"] == rep # type: ignore
@@ -68,8 +71,8 @@ class AutoIndicePlot:
                     rep:df_indices_consumo.loc[rep_comparado, "IndiceConsumo"] # type: ignore
                     })
 
-            for repuesto, y_consumo in y_dict_consumo.items():  # type: ignore
-                zorder: int = round((100/max(y_consumo))*10, 0) # type: ignore
+            for repuesto, y_consumo in y_dict_consumo.items():  
+                zorder: int = round((100/max(y_consumo))*10, 0) 
             
                 try:
                     color = next(iterador_colores) # itero sobre los colores
@@ -94,7 +97,7 @@ class AutoIndicePlot:
                         rep = next(iterador_repuestos)
                         color = next(iterador_colores)
                     except StopIteration:
-                        rep = ""
+                        pass
                     
                     rep_comparado: bool = df_indices_consumo["Repuesto"] == rep # type: ignore
 
@@ -106,11 +109,13 @@ class AutoIndicePlot:
 
                     media_con_cero = IndiceUtils._media_consumo(y_consumo.tolist(), con_cero=True)
                     axs[i,j].axhline(y=media_con_cero, linestyle="--", color="#618B4A")
-                    axs[i,j].text(x=1.01, y=media_con_cero, s=f"{media_con_cero}", color="black", va="center", transform=axs[i,j].get_yaxis_transform(), fontsize=self.tamaño_letra*2)
+                    axs[i,j].text(x=1.01, y=media_con_cero, s=f"{media_con_cero}", color="black", va="center", 
+                                  transform=axs[i,j].get_yaxis_transform(), fontsize=self.tamaño_letra*2)
 
                     media_sin_cero = IndiceUtils._media_consumo(y_consumo.tolist(), con_cero=False)
                     axs[i,j].axhline(y=media_sin_cero, linestyle="--", color="#922D50")
-                    axs[i,j].text(x=1.01, y=media_sin_cero, s=f"{media_sin_cero}", color="black", va="center", transform=axs[i,j].get_yaxis_transform(), fontsize=self.tamaño_letra*2)
+                    axs[i,j].text(x=1.01, y=media_sin_cero, s=f"{media_sin_cero}", color="black", va="center", 
+                                  transform=axs[i,j].get_yaxis_transform(), fontsize=self.tamaño_letra*2)
 
                     axs[i,j].legend(["Media con cero","Media sin cero"], fontsize=self.tamaño_letra, loc=1)
                     axs[i,j].axhline(0, color="black")
