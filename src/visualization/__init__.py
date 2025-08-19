@@ -1,3 +1,3 @@
-from .auto_indice_plot import AutoIndicePlot
-from .auto_prevision_plot import AutoPrevisionPlot
-from .utils.general_plot_utils import GeneralPlotUtils
+from .auto_rate_plotter import AutoRatePlotter
+from .auto_forecast_plotter import AutoForecastPlotter
+from .utils.common_plot_utils import CommonPlotUtils

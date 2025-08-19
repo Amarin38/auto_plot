@@ -1,1 +1,1 @@
-from .constants import COLORES, INTERNOS_DEVOLUCION, MAIN_PATH
+from .constants import COLORS, INTERNOS_DEVOLUCION, MAIN_PATH

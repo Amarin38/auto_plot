@@ -16,12 +16,12 @@ except ModuleNotFoundError:
 
 
 class MaxMinUtils:
-    def __init__(self, fecha_desde: str, web: bool, archivo_html: Optional[str] = None) -> None:
+    def __init__(self, fecha_desde: str, web: bool, html_file: Optional[str] = None) -> None:
         self.fecha_desde = fecha_desde
-        self.archivo_html = archivo_html
+        self.html_file = html_file
         self.web = web
 
-    def generar_lista_codigos(self, out: bool) -> List[str]:
+    def create_code_list(self, out: bool) -> List[str]:
         """
         Genera automáticamente la lista de códigos a los que sacarles el máximo y mínimo.
         - Tiene la posibilidad de pasarlo o no a un out.
@@ -29,26 +29,26 @@ class MaxMinUtils:
         lista_final: List[str] = []
 
         if self.web:
-            lista_codigos = self.scrapear_licitaciones_web()
+            lista_codigos = self.scrap_web()
         else:
-            lista_codigos = self.scrapear_licitaciones_local()
+            lista_codigos = self.scrap_local()
 
         for codigo in lista_codigos:
             lista_final.append(tuple(map(int, codigo.split(".")))) #type: ignore
         
-        if out and self.archivo_html is not None:
+        if out and self.html_file is not None:
             import pandas as pd
 
             df = pd.DataFrame({
                 "Familia":[fam[0] for fam in lista_final], 
                 "Articulo":[art[1] for art in lista_final]
                 })
-            df.to_excel(f"{self.archivo_html}.xlsx")
+            df.to_excel(f"{self.html_file}.xlsx")
 
         return lista_final
 
 
-    def scrapear_licitaciones_web(self) -> List[str]:
+    def scrap_web(self) -> List[str]:
         lista_codigos: List[str] = []
 
         try:
@@ -120,7 +120,7 @@ class MaxMinUtils:
         return lista_codigos
     
 
-    def scrapear_licitaciones_local(self) -> List[str]:
+    def scrap_local(self) -> List[str]:
         lista_codigos: list[str] = []
 
         with open(f"{MAIN_PATH}/extracted.html", "r") as txt:
