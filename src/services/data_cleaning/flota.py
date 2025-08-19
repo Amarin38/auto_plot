@@ -1,43 +1,26 @@
 import pandas as pd
 
-from numpy import ndarray
-from typing import List, Union
 
-from src.config import MAIN_PATH
-from src.services import GeneralUtils
+from config.constants import MAIN_PATH
+from services.utils.general_utils import GeneralUtils
 
 class ArreglarFlota:
     def __init__(self, file: str) -> None:
         self.df = GeneralUtils(file).convert_to_df()
-        self.cabecera = pd.read_excel(f"{MAIN_PATH}/src/data/excel_data/internos_asignados_cabecera.xlsx")["Cabecera"]
+        self.cabecera = pd.read_excel(f"{MAIN_PATH}/src/data/excel_data/internos_asignados_cabecera.xlsx")
 
 
-    def contar_motores_por_cabecera(self) -> pd.DataFrame:
+    def contar_motores_por_cabecera(self) -> None:
         """
         ### Cuenta la cantidad de motores por cabecera y las asigna\n
         ### en un nuevo archivo separado por motor.
         """
-        df_flota: pd.DataFrame = self.asignar_cabecera()
-        dict_contado: List[Union[str, int]] = []
-        
-        repuestos: ndarray = df_flota["Motor modelo"].unique() 
-        
-        for cab in self.cabecera.unique():
-            for rep in repuestos:
-                rep_comparado: bool = df_flota["Motor modelo"] == rep
-                cab_comparada: bool = df_flota["Cabecera"] == cab
+        df_flota: pd.DataFrame =  self.asignar_cabecera()
 
-                cantidad_rep = df_flota.loc[rep_comparado & cab_comparada, ["Motor modelo"]].count().iloc[0] # type:ignore
-
-                dict_contado.append({
-                    "Cabecera":cab,
-                    "Repuesto":rep,
-                    "Cantidad":int(cantidad_rep)
-                }) # type: ignore
-            
-        df_contado: pd.DataFrame = pd.DataFrame(dict_contado)
-        # df_contado.to_excel(f"{self._main_path}/src/data/excel_data/motores_por_cabecera.xlsx")
-        return df_contado
+        df_flota["Motores"] = df_flota["Motor modelo"]
+        df_agrupado = df_flota.groupby(["Cabecera", "Motores"]).agg({"Motor modelo":"count"}).reset_index()
+        df_agrupado = df_agrupado.rename(columns={"Motor modelo":"Cantidad Motores"})[["Cabecera", "Motores", "Cantidad Motores"]]
+        df_agrupado.to_excel(f"{MAIN_PATH}/src/data/excel_data/motores_por_cabecera.xlsx")
 
 
     def asignar_cabecera(self) -> pd.DataFrame:
@@ -46,14 +29,10 @@ class ArreglarFlota:
         """
         df: pd.DataFrame = self.limpiar_flota()
 
-        for cab in self.cabecera.unique():
-            internos = self.cabecera.loc[self.cabecera["Cabecera"] == cab, 
-                                         "Interno"].tolist() # type: ignore
-            df.loc[df["Interno"].isin(internos), 
-                   ["Cabecera"]] = cab # asigno la cabecera al interno # type: ignore
+        columnas = self.cabecera[["Cabecera", "Interno"]]
+        merged = df.merge(columnas)
 
-        # self.df.to_excel(f"{self._main_path}/out/internos_asignados.xlsx")
-        return df
+        return merged
 
 
     def limpiar_flota(self) -> pd.DataFrame:
@@ -77,7 +56,7 @@ class ArreglarFlota:
 
         self.df.loc[
             (self.df["Chasis Año"] > 2016) & 
-            (self.df["Chasis Modelo"].str.contains("27")) , 
+            (self.df["Chasis Modelo"].str.contains("27")), 
             ["Motor modelo"]
         ] = "CUMMINS ISL MT27 6C"
         

@@ -2,7 +2,7 @@ import pandas as pd
 
 from typing import Union, Tuple
 
-from src.services import GeneralUtils
+from services.utils.general_utils import GeneralUtils
 
 class DeleteListadoExistencias:
     def __init__(self, file: Union[str, pd.DataFrame]) -> None:

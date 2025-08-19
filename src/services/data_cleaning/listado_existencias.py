@@ -2,9 +2,10 @@ import pandas as pd
 
 from typing import Union, Optional, List
 
-from src.config import INTERNOS_DEVOLUCION, MAIN_PATH
-from src.services import GeneralUtils
-from src.services import UpdateListadoExistencias, DeleteListadoExistencias
+from config.constants import INTERNOS_DEVOLUCION, MAIN_PATH
+from services.utils.general_utils import GeneralUtils
+from services.data_cleaning.utils.update_listado_existencias import UpdateListadoExistencias 
+from services.data_cleaning.utils.delete_listado_existencias import DeleteListadoExistencias
 
 
 class ArreglarListadoExistencias:
@@ -40,6 +41,7 @@ class ArreglarListadoExistencias:
             print("ERROR: No existen las columnas, no se puede concatenar")
 
 
+    # TODO probar con replace
     def modify_df(self, df_list: pd.DataFrame) -> pd.DataFrame:
         """Applies the base modification to the 'Listado de existencias'"""
 

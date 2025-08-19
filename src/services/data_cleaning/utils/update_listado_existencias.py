@@ -4,8 +4,8 @@ import pandas as pd
 
 from typing import Dict, Union
 
-from src.services import GeneralUtils
-from src.config import MAIN_PATH
+from services.utils.general_utils import GeneralUtils
+from config.constants import MAIN_PATH
 
 
 class UpdateListadoExistencias:
