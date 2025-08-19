@@ -9,10 +9,9 @@ from config.constants import MAIN_PATH
 
 
 class InventoryUpdate:
-    def __init__(self, file: Union[str, pd.DataFrame], dir_file: str):
+    def __init__(self, file: Union[str, pd.DataFrame, None] = None, dir_file: str = ""):
         self.file = file
-        self.dir_file = dir_file
-        self.df: pd.DataFrame = CommonUtils(self.file, self.dir_file).convert_to_df() # type: ignore
+        self.df: pd.DataFrame = CommonUtils(self.file, dir_file).convert_to_df() # type: ignore
 
 
     def update_single_row_name(self, column: str, old_name: str, new_name: str) -> pd.DataFrame:
@@ -32,7 +31,7 @@ class InventoryUpdate:
         return self.df.rename(columns=data)
 
 
-    def update_rows_by_dict(self, json_file: str, column: str ) -> pd.DataFrame:
+    def update_rows_by_dict(self, json_file: str, column: str) -> pd.DataFrame:
         """ Updates rows in the column specified by the json file indicated. """
         with open(f"{MAIN_PATH}/src/data/json_data/{json_file}.json", "r", encoding="utf-8") as file:
             data: Dict[str, str] = json.load(file)

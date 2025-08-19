@@ -1,2 +1,2 @@
-from .visualization import AutoRatePlotter, AutoForecastPlotter
-from .services import RateByVehicle, RateByMotor, RateGomeria, CommonUtils, MaxMin, ForecastWithZero, ForecastWithoutZero
+from .visualization import AutoIndexPlotter, AutoForecastPlotter
+from .services import IndexByVehicle, IndexByMotor, IndexGomeria, CommonUtils, MaxMin, ForecastWithZero, ForecastWithoutZero

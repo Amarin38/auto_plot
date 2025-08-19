@@ -1,3 +1,3 @@
-from .auto_rate_plotter import AutoRatePlotter
+from .auto_index_plotter import AutoIndexPlotter
 from .auto_forecast_plotter import AutoForecastPlotter
 from .utils.common_plot_utils import CommonPlotUtils

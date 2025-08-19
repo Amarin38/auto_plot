@@ -16,3 +16,6 @@ COLORS: Tuple[str, ...] = ("#FFC300", "#FF5733", "#C70039", "#900C3F", "#5C6D70"
                             "#883677", "#3A7D44", "#254D32", "#F7CE5B", "#F7B05B")
 
 MAIN_PATH = Path().cwd()
+DIVISOR_FACTOR = 0.3
+ZORDER_MULTIPLIER = 10
+ZORDER_BASE = 100

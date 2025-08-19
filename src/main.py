@@ -1,5 +1,5 @@
 from services import MaxMin
-from services import RateByVehicle
+from services import IndexByVehicle
 from services import FleetDataCleaner
 # from services import ForecastWithZero, ForecastWithoutZero
 
@@ -10,7 +10,7 @@ if __name__ == "__main__":
     
     flota = FleetDataCleaner("flota7")
     flota.count_motors_by_cabecera()
-    # indice = RateByVehicle("flotantes_gasoil", "todos flotantes gasoil")
+    # indice = IndexByVehicle("flotantes_gasoil", "todos flotantes gasoil")
     # indice.calcular()
     ...
 

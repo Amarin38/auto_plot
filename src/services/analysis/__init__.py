@@ -1,7 +1,7 @@
-from .consumption_rate.rate_by_vehicle import RateByVehicle
-from .consumption_rate.rate_by_motor import RateByMotor
-from .consumption_rate.rate_gomeria import RateGomeria
-from .consumption_rate.utils.rate_utils import RateUtils
+from .consumption_index.index_by_vehicle import IndexByVehicle
+from .consumption_index.index_by_motor import IndexByMotor
+from .consumption_index.index_gomeria import IndexGomeria
+from .consumption_index.utils.index_utils import IndexUtils
 
 from .maxmin.maxmin import MaxMin
 from .maxmin.utils.maxmin_utils import MaxMinUtils
