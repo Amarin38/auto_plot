@@ -3,7 +3,7 @@ import pandas as pd
 from datetime import date
 
 from config.constants import MAIN_PATH
-from src.services.data_cleaning.inventory_data_cleaner import InventoryDataCleaner
+from services.data_cleaning.inventory_data_cleaner import InventoryDataCleaner
 from services.analysis.maxmin.utils.maxmin_utils import MaxMinUtils
 
 """

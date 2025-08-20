@@ -21,7 +21,7 @@ class MaxMinUtils:
         self.html_file = html_file
         self.web = web
 
-    def create_code_list(self, out: bool) -> List[str]:
+    def create_code_list(self, excel: bool) -> List[str]:
         """
         Genera automáticamente la lista de códigos a los que sacarles el máximo y mínimo.
         - Tiene la posibilidad de pasarlo o no a un out.
@@ -36,14 +36,14 @@ class MaxMinUtils:
         for codigo in lista_codigos:
             lista_final.append(tuple(map(int, codigo.split(".")))) #type: ignore
         
-        if out and self.html_file is not None:
+        if excel:
             import pandas as pd
 
             df = pd.DataFrame({
                 "Familia":[fam[0] for fam in lista_final], 
                 "Articulo":[art[1] for art in lista_final]
                 })
-            df.to_excel(f"{self.html_file}.xlsx")
+            df.to_excel(f"codigos_maxmin.xlsx")
 
         return lista_final
 
