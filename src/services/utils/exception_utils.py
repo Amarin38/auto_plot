@@ -1,17 +1,14 @@
+from config.dataclasses import TextColors
 
 # TODO ver como implementar
 class ExceptionHandler:
-    def __init__(self, func, *args, **kwargs) -> None:
-        self.func = func
-        self.args = args
-        self.kwargs = kwargs
-
-    def execute_safely(self) -> None:
+    @staticmethod
+    def execute_safely(func, *args, **kwargs) -> None:
         try:
-            return self.func(self.args, self.kwargs)
+            return func(*args, **kwargs)
         except Exception as e:
             print(f"""
-                  Excepción: {e}
-                  Falló la funcion: {self.func}(args: {self.args} | kwargs: {self.kwargs})
-                """)
+Excepción: {TextColors.RED}{e}{TextColors.RESET}
+Falló la funcion: {TextColors.GREEN}{func.__self__.__class__.__name__}(){TextColors.RESET}.{TextColors.YELLOW}{func.__name__}{TextColors.RESET}(args: {TextColors.BLUE}{args}{TextColors.RESET} | kwargs: {TextColors.MAGENTA}{kwargs}{TextColors.RESET})
+                  """)
             return None
