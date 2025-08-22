@@ -1,9 +1,8 @@
 from typing import List
 
-
-class CommonPlotUtils:
+class PlotUtils:
     @staticmethod
-    def auto_annotate_on_line(x_data: List[str], y_data: List[str], axs, color: str, divisor: float) -> None:
+    def _auto_annotate_on_line(x_data: List[str], y_data: List[str], axs, color: str, divisor: float) -> None:
         """
             ### Returns an axs.annotate object with the data and color entered
             ### displayed above the offset points.\n
@@ -30,19 +29,18 @@ class CommonPlotUtils:
                     )
 
     @staticmethod
-    def auto_reshape_2D(axs, x1: int, x2: int) -> None:
+    def _auto_reshape_2D(axs, x1: int, x2: int) -> None:
         """
         Automatically reshapes the plot if its 1D.
         
         if axs.ndim == 1:
-            axs = auto_reshape_2D(axs, x1, x2)
+            axs = _auto_reshape_2D(axs, x1, x2)
 
         """
-        if x1 == 1:
+        if x1 == 1 and x2 != 1:
             axs = axs.reshape(-1, x2)
-        elif x2 == 1:
+        elif x1 != 1 and x2 == 1:
             axs =  axs.reshape(x1, -1)
         else:
             axs =  axs.reshape(-1, -1)
         return axs
-    
