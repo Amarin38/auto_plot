@@ -20,8 +20,8 @@ from .scrapping.scrap_maxmin import ScrapMaxMin
 # Utils
 from .utils.index_utils import IndexUtils
 
-from .utils.forecast_index import ForecastIndex
-from .utils.forecast_trend import ForecastTrend
+from .analysis.forecast.forecast_index import ForecastIndex
+from .analysis.forecast.forecast_trend import ForecastTrend
 from .utils.forecast_utils import ForecastUtils
 
 from .utils.maxmin_utils import MaxMinUtils

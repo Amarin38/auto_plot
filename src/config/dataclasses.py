@@ -32,7 +32,7 @@ class PlotConfig:
     figure_width: int = 208
     figure_height: int = 70
 
-    text_font_size: int = 18
+    text_font_size: int = 20
     suptitle_font_size: int = 40
     plot_title_fontsize: int = 35
     legend_fonsize: int = 20

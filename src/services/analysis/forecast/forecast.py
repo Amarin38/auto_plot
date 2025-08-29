@@ -2,8 +2,8 @@ import pandas as pd
 
 from config.constants import OUT_PATH
 from config.enums import WithZeroEnum
-from services.utils.forecast_index import ForecastIndex 
-from services.utils.forecast_trend import ForecastTrend
+from src.services.analysis.forecast.forecast_index import ForecastIndex 
+from src.services.analysis.forecast.forecast_trend import ForecastTrend
 from services.data_cleaning.inventory_data_cleaner import InventoryDataCleaner
 
 

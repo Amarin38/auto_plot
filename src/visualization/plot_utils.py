@@ -49,7 +49,7 @@ class PlotUtils:
 
 
     @staticmethod
-    def _auto_median_line(ax, median_data, additional_text = "") -> None:
+    def _auto_median_line(ax, median_data: float, additional_text = "") -> None:
         """Creates a straight line with the median next to it"""
         
         ax.axhline(y=median_data, linestyle="--", color="#922D50")

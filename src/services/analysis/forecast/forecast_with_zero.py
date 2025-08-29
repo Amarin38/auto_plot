@@ -2,8 +2,8 @@ import pandas as pd
 from typing import Union, Dict, List
 
 from config.constants import OUT_PATH
-from services.utils.forecast_index import ForecastIndex 
-from services.utils.forecast_trend import ForecastTrend
+from services.analysis.forecast.forecast_index import ForecastIndex 
+from services.analysis.forecast.forecast_trend import ForecastTrend
 from services.data_cleaning.inventory_data_cleaner import InventoryDataCleaner
 
 

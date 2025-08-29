@@ -12,107 +12,50 @@ from visualization.plot_utils import PlotUtils
 from services.utils.index_utils import IndexUtils
 from services.utils.exception_utils import execute_safely
 
-
-class PlotTypeEnum(Enum):
-    STACKED = "stacked"
-    UNSTACKED = "unstacked"
-
-
 class AutoIndexPlotter:
-    def __init__(self, file: str, dir: str, rows: int, columns: int, 
-                 plot_type: PlotTypeEnum, index_type: str) -> None:
+    def __init__(self, file: str, dir: str, rows: int, columns: int, index_type: str) -> None:
         self.file = file
         self.dir = dir
         self.n_rows = rows
         self.n_cols = columns
-        self.plot_type = plot_type 
-        self.index_type = index_type
+
+        self.lista_indices: pd.DataFrame = IndexUtils._prepare_data(index_type, file, dir) #type:ignore
+        self.df_indices_consumo = self.lista_indices[0]
+        self.title = self.lista_indices[1]
+        self.iterador_repuestos = iter(tuple(self.df_indices_consumo["Repuesto"].unique()))
 
         self.divisor = PlotConfig.divisor_factor*self.n_cols
         self.iterador_colores = iter(COLORS)
 
+
     @execute_safely
-    def create_plot(self) -> None:
+    def barplot(self) -> None:
         """
         ### Grafica el índice de consumo.\n
         #### Args:\n
-            stacked_barplot (bool):\n
-                - True -> un solo grafico apilado\n
-                - False -> multiples graficos\n
             con_motor (bool): \n
-                - True -> indice con motores totales por cabecera\n
-                - False -> indice con coches totales por cabecera\n
+                - motor -> indice con motores totales por cabecera\n
+                - vehicle -> indice con coches totales por cabecera\n
         #### Returns:
             None
         """
-        if self.plot_type == PlotTypeEnum.STACKED.value:
-            self.barplot_stacked(IndexUtils._prepare_data(self.index_type, self.file, self.dir)) #type: ignore
-        elif self.plot_type == PlotTypeEnum.UNSTACKED.value:
-            self.barplot_unstacked(IndexUtils._prepare_data(self.index_type, self.file, self.dir)) #type: ignore
-        else:
-            raise ValueError(f"Tipo de grafico no soportado: {self.plot_type}")
-
-    # FIXME: no funciona el stacked
-    @execute_safely
-    def barplot_stacked(self, lista_indice) -> None:
-        df_indices_consumo: pd.DataFrame = lista_indice[0]
-        iterador_repuestos = iter(tuple(df_indices_consumo["Repuesto"].unique()))
-
-        fig, ax = plt.subplots(figsize=(PlotConfig.figure_width, PlotConfig.figure_height), squeeze=False)
-        
-        y_dict_consumo: Dict[str, np.ndarray] = {}
-        
-        for rep in iterador_repuestos:
-            rep_comparado: bool = df_indices_consumo["Repuesto"] == rep
-
-            x_cabecera = df_indices_consumo.loc[rep_comparado, "Cabecera"]
-            y_dict_consumo.update({rep:df_indices_consumo.loc[rep_comparado, "IndiceConsumo"]})
-
-
-        for repuesto, y_consumo in y_dict_consumo.items():
-            zorder: int = round((PlotConfig.zorder_base/max(y_consumo))*PlotConfig.zorder_multiplier, 0)
-            try:
-                color = next(self.iterador_colores) # itero sobre los colores
-            except StopIteration:
-                pass
-            
-            bars = ax.bar(x_cabecera, y_consumo, label=repuesto, color=color, zorder=zorder) # type: ignore
-            
-            ax.bar_label(bars, fontsize=PlotConfig.label_fontsize) # type: ignore
-        
-        ax.legend(loc="upper right", fontsize=PlotConfig.legend_fonsize) # type: ignore
-        ax.tick_params("x", labelsize=PlotConfig.x_tick_fontsize/self.divisor) # type: ignore
-        ax.tick_params("y", labelsize=PlotConfig.y_tick_fontsize) # type: ignore
-
-        fig.suptitle(f"Indice {lista_indice[1]}", fontsize=PlotConfig.suptitle_font_size, y=0.93)
-        fig.subplots_adjust(wspace=PlotConfig.wspace, hspace=PlotConfig.hspace)
-
-        plt.savefig(f"{self.file}.png")
-        plt.show(block=True)
-
-
-    @execute_safely
-    def barplot_unstacked(self, lista_indice) -> None:
-        df_indices_consumo: pd.DataFrame = lista_indice[0]
-        iterador_repuestos = iter(tuple(df_indices_consumo["Repuesto"].unique()))
-
         fig, axs = plt.subplots(self.n_rows, self.n_cols, figsize=(PlotConfig.figure_width, PlotConfig.figure_height), squeeze=False)
-        fig.suptitle(f"Indice {lista_indice[1]}", fontsize=PlotConfig.suptitle_font_size, y=PlotConfig.title_position)
+        fig.suptitle(f"Indice {self.title}", fontsize=PlotConfig.suptitle_font_size, y=PlotConfig.title_position)
         fig.subplots_adjust(wspace=PlotConfig.wspace, hspace=PlotConfig.hspace)
 
         for i in range(axs.shape[0]):
             for j in range(axs.shape[1]):
                 try:
-                    rep = next(iterador_repuestos)
+                    rep = next(self.iterador_repuestos)
                     color = next(self.iterador_colores)
                 except StopIteration:
                     continue
                 
-                rep_comparado: pd.Series[bool] = df_indices_consumo["Repuesto"] == rep
+                rep_comparado: pd.Series[bool] = self.df_indices_consumo["Repuesto"] == rep
 
                 # Data
-                x_cabecera = df_indices_consumo.loc[rep_comparado, "Cabecera"]
-                y_consumo = df_indices_consumo.loc[rep_comparado, "IndiceConsumo"]
+                x_cabecera = self.df_indices_consumo.loc[rep_comparado, "Cabecera"]
+                y_consumo = self.df_indices_consumo.loc[rep_comparado, "IndiceConsumo"]
                 
                 # Bars
                 bars = axs[i,j].bar(x_cabecera, y_consumo, color=color)
@@ -121,15 +64,6 @@ class AutoIndexPlotter:
                 # Mean
                 media_sin_cero = round(y_consumo.replace(0, np.nan).mean(), 2)
                 PlotUtils._auto_median_line(axs[i,j], media_sin_cero)
-                
-                # axs[i,j].axhline(y=media_sin_cero, linestyle="--", color="#922D50")
-                # axs[i,j].text(x=1.01, 
-                #               y=media_sin_cero, 
-                #               s=f"{media_sin_cero}", 
-                #               color="black", 
-                #               va="center", 
-                #               transform=axs[i,j].get_yaxis_transform(), 
-                #               fontsize=PlotConfig.text_font_size*2)
 
                 # General config.
                 axs[i,j].legend(["Media sin cero"], fontsize=PlotConfig.legend_fonsize, loc=1)

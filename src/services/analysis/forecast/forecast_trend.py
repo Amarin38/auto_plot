@@ -4,7 +4,7 @@ from numpy.polynomial import Polynomial
 
 from typing import List, Dict, Union, Any
 
-from ..utils.forecast_utils import ForecastUtils
+from ...utils.forecast_utils import ForecastUtils
 
 class ForecastTrend:
     def __init__(self, meses_en_adelante: int, repuestos, con_cero: bool) -> None:
