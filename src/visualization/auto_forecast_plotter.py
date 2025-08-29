@@ -2,8 +2,10 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib.dates as pltdates
 
-from services import ForecastUtils
-from visualization import PlotUtils, PlotConfig
+from services.utils.forecast_utils import ForecastUtils
+from services.utils.exception_utils import execute_safely
+from config.dataclasses import PlotConfig
+from .plot_utils import PlotUtils
 
 
 class AutoForecastPlotter:
@@ -18,12 +20,13 @@ class AutoForecastPlotter:
 
         self._plot_utils = PlotUtils()
 
-
+    @execute_safely
     def create_plot(self) -> None:
-        df_tendencia, df_data = ForecastUtils._prepare_data(self.file, self.dir, self.with_zero, self.months_to_forecast)
+        df_tendencia, df_data = ForecastUtils()._prepare_data(self.file, self.dir, self.with_zero, self.months_to_forecast) # type:ignore
         self.plot_forecast(df_tendencia, df_data)
 
 
+    @execute_safely
     def plot_forecast(self, df_tendencia: pd.DataFrame, df_data: pd.DataFrame):
         fig, axs = plt.subplots(self.n_rows, self.n_cols, figsize=(PlotConfig.figure_width, PlotConfig.figure_height), squeeze=False)
        
@@ -37,11 +40,6 @@ class AutoForecastPlotter:
                 for j in range(axs.shape[1]):
                     rep = next(repuestos) # itero en los repuestos
                     
-                    # if self._con_cero:
-                    #     x_tendencia = df_tendencia.loc[df_tendencia["Repuesto"] == rep, "TendenciaEstacionalConCero"]
-                    # else:
-                    #     x_tendencia = df_tendencia.loc[df_tendencia["Repuesto"] == rep, "TendenciaEstacionalSinCero"]
-
                     x_data = df_data.loc[df_data["Repuesto"] == rep, "TotalMes"]
                     y_data = df_data.loc[df_data["Repuesto"] == rep, "FechaCompleta"].tolist() # type: ignore
                     y_data: pd.DatetimeIndex = pd.to_datetime(y_data, format="%Y-%m")

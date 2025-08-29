@@ -1,33 +1,33 @@
 import pandas as pd
 
 from config.constants import MAIN_PATH
-from src.services.utils.common_utils import CommonUtils
-
+from ..utils.common_utils import CommonUtils
+from ..utils.exception_utils import execute_safely
 
 class FleetDataCleaner:
     def __init__(self, file: str) -> None:
-        self.df = CommonUtils(file).convert_to_df()
-        self.cabecera = pd.read_excel(f"{MAIN_PATH}/src/data/excel_data/internos_asignados_cabecera.xlsx")
+        self.df = CommonUtils()._convert_to_df(file)
+        self.cabecera = pd.read_excel(f"{MAIN_PATH}/data/excel_data/internos_asignados_cabecera.xlsx")
 
-
+    @execute_safely
     def count_motors_by_cabecera(self) -> None:
         """
         ### Cuenta la cantidad de motores por cabecera y las asigna\n
         ### en un nuevo file separado por motor.
         """
-        df_fleet: pd.DataFrame =  self.assign_cabecera()
+        df_fleet: pd.DataFrame =  self.assign_cabecera() # type: ignore
 
         df_fleet["Motores"] = df_fleet["Motor modelo"]
         df_grouped = df_fleet.groupby(["Cabecera", "Motores"]).agg({"Motor modelo":"count"}).reset_index()
         df_grouped = df_grouped.rename(columns={"Motor modelo":"Cantidad Motores"})[["Cabecera", "Motores", "Cantidad Motores"]]
-        df_grouped.to_excel(f"{MAIN_PATH}/src/data/excel_data/motores_por_cabecera.xlsx")
+        df_grouped.to_excel(f"{MAIN_PATH}/data/excel_data/motores_por_cabecera.xlsx")
 
-
+    @execute_safely
     def assign_cabecera(self) -> pd.DataFrame:
         """
         ### Asigna la 'Cabecera' a cada numero de 'Interno'.
         """
-        df: pd.DataFrame = self.clean_fleet()
+        df: pd.DataFrame = self.clean_fleet() # type: ignore
 
         columns = self.cabecera[["Cabecera", "Interno"]]
         merged = df.merge(columns)
@@ -35,6 +35,7 @@ class FleetDataCleaner:
         return merged
 
 
+    @execute_safely
     def clean_fleet(self) -> pd.DataFrame:
         """
         ### Cleans the 'Flota'.xlsx files for statistics.

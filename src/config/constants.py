@@ -11,8 +11,12 @@ INTERNOS_DEVOLUCION: Tuple[str, ...] = ("C0488", "C0489", "C0500", "C0700", "C14
                                         "C4799", "C5599", "C6699", "C6199", "U1111")
 
 COLORS: Tuple[str, ...] = ("#FFC300", "#FF5733", "#C70039", "#900C3F", "#5C6D70",
-                            "#2C2C54", "#5FAD56", "#F2C14E", "#F78154", "#4D9078",
-                            "#4A1942", "#823329", "#3F7CAC", "#899878", "#5497A7", 
-                            "#883677", "#3A7D44", "#254D32", "#F7CE5B", "#F7B05B")
+                           "#2C2C54", "#5FAD56", "#F2C14E", "#F78154", "#4D9078",
+                           "#4A1942", "#823329", "#3F7CAC", "#899878", "#5497A7", 
+                           "#883677", "#3A7D44", "#254D32", "#F7CE5B", "#F7B05B")
 
 MAIN_PATH = Path().cwd()
+
+OUT_PATH = f"{Path.home()}\\Documents\\Programas\\auto_plot\\out"
+JSON_PATH = f"{MAIN_PATH}/data/json_data"
+EXCEL_PATH = f"{MAIN_PATH}/data/excel_data"

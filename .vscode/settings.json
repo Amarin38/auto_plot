@@ -1,3 +1,25 @@
 {
-    "python.analysis.typeCheckingMode": "basic"
+    "python.analysis.typeCheckingMode": "basic",
+    "folder-color.pathColors": [
+        {
+            "folderPath": "auto_plot\\src\\config\\",
+            "color": "foldercolorizer.color_66ccff"
+        },
+        {
+            "folderPath": "auto_plot\\src\\config\\__init__.py\\",
+            "color": "foldercolorizer.color_66ccff"
+        },
+        {
+            "folderPath": "auto_plot\\src\\config\\constants.py\\",
+            "color": "foldercolorizer.color_66ccff"
+        },
+        {
+            "folderPath": "auto_plot\\src\\config\\dataclasses.py\\",
+            "color": "foldercolorizer.color_66ccff"
+        },
+        {
+            "folderPath": "auto_plot\\src\\config\\enums.py\\",
+            "color": "foldercolorizer.color_66ccff"
+        }
+    ]
 }

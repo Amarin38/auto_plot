@@ -1,16 +1,16 @@
 import pandas as pd
 from typing import Union, Dict, List
 
-from config.constants import MAIN_PATH
-from src.services.analysis.forecast.utils.forecast_rate import ForecastRate 
-from src.services.analysis.forecast.utils.forecast_trend import ForecastTrend
-from src.services.data_cleaning.inventory_data_cleaner import InventoryDataCleaner
+from config.constants import OUT_PATH
+from services.utils.forecast_index import ForecastIndex 
+from services.utils.forecast_trend import ForecastTrend
+from services.data_cleaning.inventory_data_cleaner import InventoryDataCleaner
 
 
-# TODO cambiar a groupby 
+# TODO: cambiar a groupby 
 class ForecastWithZero:
     def __init__(self, file: str, dir: str, meses_en_adelante: int = 6) -> None:
-        self.df = pd.read_excel(f"{MAIN_PATH}/out/{file}.xlsx", engine="calamine")
+        self.df = pd.read_excel(f"{OUT_PATH}/{file}.xlsx", engine="calamine")
         
         self.meses_en_adelante = meses_en_adelante
         self.repuestos = self.df["Repuesto"].unique()
@@ -18,7 +18,7 @@ class ForecastWithZero:
         self.años_meses = (pd.date_range(start=f"1/1/{self.años[0]}", end=f"31/12/{self.años[-1]}", freq="ME")).to_period("M")
 
         self.tendencia = ForecastTrend(self.meses_en_adelante, self.repuestos, con_cero=True)
-        self.indice = ForecastRate(self.repuestos, con_cero=True)
+        self.indice = ForecastIndex(self.repuestos, con_cero=True)
         self.listado = InventoryDataCleaner(file, dir)
 
     def calculate_forecast(self) -> None:
@@ -55,8 +55,8 @@ class ForecastWithZero:
         df_final["PromedioConCero"] = res_promedio_con_cero
         df_final["IndiceAnualConCero"] = self.indice.calculate_anual_rate(df_final)
         df_final["IndiceEstacionalConCero"] = self.indice.calculate_seasonal_rate(df_final)
-        df_final.to_excel(f"{MAIN_PATH}/out/data-ConCero.xlsx")
+        df_final.to_excel(f"{OUT_PATH}/data-ConCero.xlsx")
 
         df_tendencia: pd.DataFrame = pd.DataFrame(self.tendencia.calculate_trend(df_final))
         df_tendencia["TendenciaEstacionalConCero"] = self.tendencia.calculate_seasonal_rate(df_final, df_tendencia)
-        df_tendencia.to_excel(f"{MAIN_PATH}/out/tendencia-ConCero.xlsx")
+        df_final.to_excel(f"{OUT_PATH}/tendencia-ConCero.xlsx")
