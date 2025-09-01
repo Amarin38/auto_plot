@@ -1,8 +1,10 @@
+import inspect
+
 import pandas as pd
 
-from typing import Union, Optional, List
+from typing import Union, Optional, List, Tuple
 
-from config.constants import INTERNOS_DEVOLUCION, OUT_PATH
+from config.constants import INTERNOS_DEVOLUCION, OUT_PATH, MOV_SALIDAS, MOV_ENTRADAS, MOV_DEVOLUCIONES, DEL_COLUMNS
 from ..utils.common_utils import CommonUtils
 from ..utils.inventory_update import InventoryUpdate 
 from ..utils.inventory_delete import InventoryDelete
@@ -13,9 +15,15 @@ class InventoryDataCleaner:
         self.file = file
         self.dir = dir
 
+        self.utils = CommonUtils()
+
+        self.nombre_funcion = inspect.currentframe().f_code.co_name # type: ignore
+
+
     def __str__(self):
         return f"New file name: {self.file} | Selected xlsx directory: {self.dir}"
     
+
     def run_all(self) -> None:
         """
         Arregla el listado de existencias de la siguiente forma:
@@ -24,105 +32,134 @@ class InventoryDataCleaner:
         - Elimina las columns innecesarias.
         - Filtra por salida.
         """
-        df = CommonUtils()._append_df(self.file, self.dir, save=True) # type: ignore
-        print(df)
+        df = self.utils.append_df(self.file, self.dir, save="GUARDAR") # type: ignore
         self.transform(df) # type: ignore
-        self.filter("movimiento", "salidas")
+        self.filter_mov_salidas()
 
 
-
-    # TODO: probar con replace
     @execute_safely
     def transform(self, df_list: pd.DataFrame) -> pd.DataFrame:
         """Applies the base modification to the 'Listado de existencias'"""
 
-        try:
-            df_list.drop(columns=["ficdep", "fictra", "artipo", "ficpro", "pronom", "ficrem", 
-                                  "ficfac", "corte", "signo", "transfe", "ficmov"], inplace=True, axis=0)
-        except KeyError or AttributeError:
-            pass
+        df_list.drop(columns=DEL_COLUMNS, inplace=True, axis=0)
 
         inv_upd = InventoryUpdate(df_list)
         df_updated = inv_upd._update_column_by_dict("columns")
-        inv_upd = InventoryUpdate(df_updated)
+
+        df_updated["FechaCompleta"] = pd.to_datetime(df_updated["FechaCompleta"], format="%d/%m/%Y", errors="coerce", dayfirst=True)
+        df_updated["Fecha"] = df_updated["FechaCompleta"].dt.strftime("%Y-%m")
+
+        inv_upd = InventoryUpdate(df_updated) # actualizo el objeto
         df_updated = inv_upd._update_rows_by_dict("depositos", "Cabecera")
 
+        print(df_updated)
         
         df_updated.to_excel(f'{OUT_PATH}/{self.file}.xlsx', index=True) # type:ignore
         return df_updated # type: ignore
 
 
     @execute_safely
-    def filter(self, column: str, filter: Union[str, float, List[str]], type: Optional[str] = None) -> pd.DataFrame:
-        """
-        Filters the file entered.\n
-        - Columns: movimiento, repuesto, interno, codigo, lista_codigos\n
-        - Types: None, contains, startswith
-        """
-        df: pd.DataFrame = CommonUtils()._convert_to_df(self.file) # type: ignore
+    def filter_repuesto(self, filter_args: str, filter_type: str) -> pd.DataFrame:
+        df: pd.DataFrame = self.utils._convert_to_df(self.file) # type: ignore
 
-        match column:
-            case "repuesto":
-                if type == "contains" and isinstance(filter, str):
-                    filtered_df = df.loc[df.Repuesto.str.contains(filter, na=False)]
-                elif type == "startswith" and isinstance(filter, str):
-                    filtered_df = df.loc[df.Repuesto.str.startswith(filter, na=False)]
-            case "interno":
-                if type == "contains" and isinstance(filter, str):
-                    filtered_df = df.loc[df.Interno.str.contains(filter, na=False)]
-                elif type == "startswith" and isinstance(filter, str):
-                    filtered_df = df.loc[df.Interno.str.startswith(filter, na=False)]
-            case "codigo":
-                if isinstance(filter, float):
-                    filtered_df = df.loc[df["Codigo"] == filter]
-            case "lista_codigos":
-                if isinstance(filter, list):
-                    # filtered_df_list = []
-                    
-                    filtered_df = pd.concat([df.loc[(df["Familia"] == fam) & 
-                                                    (df["Articulo"] == art)] for fam, art in filter])
-                    # for fam, art in filter:
-                    #     filtered_df_list.append(df.loc[
-                    #         (df["Familia"] == fam) & 
-                    #         (df["Articulo"] == art)
-                    #         ])
-                    # filtered_df = pd.concat(filtered_df_list)
-            case "movimiento":
-                delete_listado = InventoryDelete(self.file)
-                df_del: pd.DataFrame = delete_listado._delete_rows("interno", INTERNOS_DEVOLUCION) # type: ignore
+        if filter_type == "contains":
+            filtered_df = df.loc[df.Repuesto.str.contains(filter_args, na=False)]
+        elif filter_type == "startswith":
+            filtered_df = df.loc[df.Repuesto.str.startswith(filter_args, na=False)]
+        
+        if filtered_df.columns.str.contains("Unnamed").any():
+            delete = InventoryDelete(filtered_df)
+            filtered_df = delete._delete_unnamed_cols() # type: ignore
 
-                match filter:
-                    case "salidas":
-                        name: str = f"{self.file}-S"
+        filtered_df.to_excel(f"{OUT_PATH}/{self.nombre_funcion}.xlsx")
+        return filtered_df
 
-                        filtered_df: pd.DataFrame = df_del.loc[
-                            (df_del.Movimiento.str.contains("Transf al Dep ")) | 
-                            (df_del.Movimiento.str.contains("Salida"))
-                            ]
-                    case "entradas":
-                        name: str = f"{self.file}-E"
 
-                        filtered_df: pd.DataFrame = df_del.loc[
-                            (df_del.Movimiento.str.contains("Tranf desde ")) |
-                            (df_del.Movimiento.str.contains("Transf Recibida")) | 
-                            (df_del.Movimiento.str.contains("Entrada "))
-                            ]
-                    case "devoluciones":
-                        name: str = f"{self.file}-D"
+    @execute_safely
+    def filter_interno(self, filter_args: str, filter_type: str) -> pd.DataFrame:
+        df: pd.DataFrame = self.utils._convert_to_df(self.file) # type: ignore
 
-                        filtered_df: pd.DataFrame = df.loc[df.Movimiento.str.contains("Devolucion")]
-                    case _:
-                        return pd.DataFrame()
-            case _:
-                return pd.DataFrame()
+        if filter_type == "contains":
+            filtered_df = df.loc[df.Interno.str.contains(filter_args, na=False)]
+        elif filter_type == "startswith":
+            filtered_df = df.loc[df.Interno.str.startswith(filter_args, na=False)]
 
         if filtered_df.columns.str.contains("Unnamed").any():
             delete = InventoryDelete(filtered_df)
             filtered_df = delete._delete_unnamed_cols() # type: ignore
 
-        if not isinstance(filter, list):
-            filtered_df.to_excel(f"{OUT_PATH}/{name}.xlsx", index=True)
-        else:
-            filtered_df.to_excel(f"{OUT_PATH}/filtrado.xlsx")
-        
+        filtered_df.to_excel(f"{OUT_PATH}/{self.nombre_funcion}.xlsx")
         return filtered_df
+
+
+    @execute_safely
+    def filter_codigo(self, filter_args: float) -> pd.DataFrame:
+        df: pd.DataFrame = self.utils._convert_to_df(self.file) # type: ignore
+
+        filtered_df = df.loc[df["Codigo"] == filter_args]
+
+        if filtered_df.columns.str.contains("Unnamed").any():
+            delete = InventoryDelete(filtered_df)
+            filtered_df = delete._delete_unnamed_cols() # type: ignore
+
+        filtered_df.to_excel(f"{OUT_PATH}/{self.nombre_funcion}.xlsx")
+        return filtered_df
+        
+    
+    @execute_safely
+    def filter_lista_codigos(self, filter_args: Union[List, Tuple]) -> pd.DataFrame:
+        df: pd.DataFrame = self.utils._convert_to_df(self.file) # type: ignore
+
+        filtered_df = pd.concat([df.loc[(df["Familia"] == fam) & 
+                                        (df["Articulo"] == art)] 
+                                        for fam, art in filter_args])
+        
+        if filtered_df.columns.str.contains("Unnamed").any():
+            delete = InventoryDelete(filtered_df)
+            filtered_df = delete._delete_unnamed_cols() # type: ignore
+
+        filtered_df.to_excel(f"{OUT_PATH}/{self.nombre_funcion}.xlsx")
+        return filtered_df
+
+
+    @execute_safely
+    def filter_mov_salidas(self) -> pd.DataFrame:
+        df_del: pd.DataFrame = InventoryDelete(self.file)._delete_rows("interno", INTERNOS_DEVOLUCION)
+
+        filtered_df: pd.DataFrame = df_del.loc[df_del.Movimiento.str.contains(MOV_SALIDAS, regex=True)]
+
+        if filtered_df.columns.str.contains("Unnamed").any():
+            delete = InventoryDelete(filtered_df)
+            filtered_df = delete._delete_unnamed_cols() # type: ignore
+
+        filtered_df.to_excel(f"{OUT_PATH}/{self.file}-S.xlsx")
+        return filtered_df
+
+
+    @execute_safely
+    def filter_mov_entradas(self) -> pd.DataFrame:
+        df_del: pd.DataFrame = InventoryDelete(self.file)._delete_rows("interno", INTERNOS_DEVOLUCION)
+
+        filtered_df: pd.DataFrame = df_del.loc[df_del.Movimiento.str.contains(MOV_ENTRADAS, regex=True)]
+
+        if filtered_df.columns.str.contains("Unnamed").any():
+            delete = InventoryDelete(filtered_df)
+            filtered_df = delete._delete_unnamed_cols() # type: ignore
+
+        filtered_df.to_excel(f"{OUT_PATH}/{self.file}-E.xlsx")
+        return filtered_df
+
+
+    @execute_safely
+    def filter_mov_devoluciones(self) -> pd.DataFrame:
+        df: pd.DataFrame = self.utils._convert_to_df(self.file) # type: ignore
+
+        filtered_df: pd.DataFrame = df.loc[df.Movimiento.str.contains(MOV_DEVOLUCIONES, regex=True)]
+        
+        if filtered_df.columns.str.contains("Unnamed").any():
+            delete = InventoryDelete(filtered_df)
+            filtered_df = delete._delete_unnamed_cols() # type: ignore
+
+        filtered_df.to_excel(f"{OUT_PATH}/{self.file}-D.xlsx")
+        return filtered_df
+
