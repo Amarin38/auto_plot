@@ -26,5 +26,4 @@ class DeviationTrend:
         choices = ("Encima", "Muy por encima", "Igual", "Debajo", "Muy por debajo")
         media_cabecera["DesviacionPor"] = np.select(conditions, choices, default="Debajo")
         media_cabecera.to_excel(f"{OUT_PATH}/Desviacion_por_cabecera.xlsx")
-        print(media_cabecera)
     

@@ -17,8 +17,9 @@ class InventoryDataCleaner:
         self.directory = directory
         self.save = save
         self.utils = CommonUtils()
+        self.delete = InventoryDelete()
+        self.update = InventoryUpdate()
         self.df = self.utils.convert_to_df(self.file)
-        self.df_interno = InventoryDelete(file).delete_interno(INTERNOS_DEVOLUCION)
     
     def __str__(self):
         return f"New file name: {self.file} | Selected xlsx directoryectory: {self.directory}"
@@ -33,23 +34,30 @@ class InventoryDataCleaner:
         - Filtra por salida.
         """
         df = self.utils.append_df(self.file, self.directory, self.save) # type: ignore
-        df = self._transform(df) # type: ignore
-        return self.filter_mov(df, "salida")
+        df = self._transform(df)
+        df = self.delete.unnamed_cols(df) # type: ignore
+
+        if df is not None:
+            return self.filter_mov(df, "salida")
+        return pd.DataFrame()
 
 
     @execute_safely
-    def _transform(self, df_list: pd.DataFrame) -> pd.DataFrame:
-        df_list.drop(columns=DEL_COLUMNS, inplace=True, axis=0)
+    def _transform(self, df_list: pd.DataFrame) -> Optional[pd.DataFrame]:
+        try:
+            df_list.drop(columns=DEL_COLUMNS, inplace=True, axis=0)
+        except KeyError:
+            print("No se pueden eliminar las columnas, no existen.")
+            pass
 
-        inv_upd = InventoryUpdate(df_list)
-        df_updated = inv_upd._update_column_by_dict("columns")
 
+        df_updated = self.update.column_by_dict(df_list, "columns")
+    
         df_updated["FechaCompleta"] = pd.to_datetime(df_updated["FechaCompleta"], format="%d/%m/%Y", errors="coerce", dayfirst=True)
         df_updated["Fecha"] = df_updated["FechaCompleta"].dt.strftime("%Y-%m")
 
-        inv_upd = InventoryUpdate(df_updated)
-        df_updated = inv_upd._update_rows_by_dict("depositos", "Cabecera")
-
+        df_updated = self.update.rows_by_dict(df_updated, "depositos", "Cabecera")
+        
         if self.save == SaveEnum.SAVE.value:
             df_updated.to_excel(f'{OUT_PATH}/{self.file}.xlsx', index=True)
         return df_updated
@@ -65,7 +73,7 @@ class InventoryDataCleaner:
             case "startswith" if self.df is not None:
                 filtered_df = self.df.loc[self.df[column].str.startswith(filter_args, na=False)]
 
-        filtered_df = InventoryDelete(filtered_df).delete_unnamed_cols()
+        filtered_df = self.delete.unnamed_cols(filtered_df)
 
         if self.save == SaveEnum.SAVE.value:
             filtered_df.to_excel(f"{OUT_PATH}/{nombre_funcion}.xlsx")
@@ -79,7 +87,7 @@ class InventoryDataCleaner:
         if self.df is not None:
             filtered_df = self.df.loc[self.df["Codigo"] == filter_args]
 
-        filtered_df = InventoryDelete(filtered_df).delete_unnamed_cols()
+        filtered_df = self.delete.unnamed_cols(filtered_df)
 
         if self.save == SaveEnum.SAVE.value:
             filtered_df.to_excel(f"{OUT_PATH}/{nombre_funcion}.xlsx")
@@ -95,25 +103,26 @@ class InventoryDataCleaner:
             filtered_df = pd.concat([self.df.loc[(self.df["Familia"] == fam) & 
                                                  (self.df["Articulo"] == art)] for fam, art in filter_args])
             
-        filtered_df = InventoryDelete(filtered_df).delete_unnamed_cols()
+        filtered_df = self.delete.unnamed_cols(filtered_df)
     
         if self.save == SaveEnum.SAVE.value:
             filtered_df.to_excel(f"{OUT_PATH}/{nombre_funcion}.xlsx")
         return filtered_df
 
     
-
     @execute_safely
     def filter_mov(self, file: Union[pd.DataFrame, str], mov: Literal["salida", "entrada", "devolucion"]) -> pd.DataFrame:
+        df_interno = self.delete.by_content(file, "Interno", INTERNOS_DEVOLUCION)
+        
         match mov:
             case "salida":
-                df = self.df_interno.loc[self.df_interno["Movimiento"].str.contains(MOV_SALIDAS, regex=True, na=False)]
+                df = df_interno.loc[df_interno["Movimiento"].str.contains(MOV_SALIDAS, regex=True, na=False)]
             case "entrada":
-                df = self.df_interno.loc[self.df_interno["Movimiento"].str.contains(MOV_ENTRADAS, regex=True, na=False)]
+                df = df_interno.loc[df_interno["Movimiento"].str.contains(MOV_ENTRADAS, regex=True, na=False)]
             case "devolucion" if self.df is not None:
                 df = self.df.loc[self.df["Movimiento"].str.contains(MOV_DEVOLUCIONES, regex=True, na=False)]
 
-        df = InventoryDelete(df).delete_unnamed_cols()
+        df = self.delete.unnamed_cols(df)
 
         if self.save == SaveEnum.SAVE.value:
             df.to_excel(f"{OUT_PATH}/{file}-mov.xlsx")

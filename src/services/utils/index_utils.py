@@ -57,7 +57,7 @@ class IndexUtils:
         df = InventoryDataCleaner(file, directory, save="NO GUARDAR").run_all()
 
         if index_type == IndexTypeEnum.BY_MOTOR.value:
-            df_updated = InventoryUpdate(df)._update_rows_by_dict(file, "motores") #FIXME: le paso un file normal pero del otro lado es un json
+            df_updated = InventoryUpdate().rows_by_dict(df, file, "motores") #FIXME: le paso un file normal pero del otro lado es un json
             df_updated.to_excel(f"{OUT_PATH}/{file}-S.xlsx")
             
             IndexByMotor(file, directory, tipo_repuesto).calculate_index()

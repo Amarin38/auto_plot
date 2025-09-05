@@ -45,7 +45,6 @@ class IndexByVehicle:
 
             df_rate.dropna(subset=['IndiceConsumo'], inplace=True)
             df_rate.insert(2, 'TipoRepuesto', self.tipo)
-            print(df_rate)
 
         if self.filtro is not None:
             df_rate = InventoryDataCleaner(df_rate).filter("Repuesto", self.filtro, "startswith")

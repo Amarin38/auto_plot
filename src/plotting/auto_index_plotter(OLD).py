@@ -20,7 +20,7 @@ class AutoIndexPlotter:
         self.n_cols = columns
         self.colors = COLORS
 
-        self.df_indices_consumo, self.title = IndexUtils().prepare_data(index_type, self.file, directory, tipo_rep)
+        self.df_indices_consumo, self.title = IndexUtils().prepare_data(index_type, self.file, directory, tipo_rep) # type: ignore
 
         self.iterador_repuestos = iter(tuple(self.df_indices_consumo["Repuesto"].unique())) #type: ignore
         self.iterador_colores = itertools.cycle(self.colors) # ciclo infinito

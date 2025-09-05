@@ -4,7 +4,7 @@ import pandas as pd
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
 from src.db import Base, engine
-from src.db.crud import create_indice_repuesto, delete_indice_repuesto, df_to_sql, read_all
+from src.db.crud import delete_indice_repuesto, df_to_sql
 from src.services.data_cleaning.inventory_data_cleaner import InventoryDataCleaner
 from src.services.analysis.maxmin import MaxMin
 
