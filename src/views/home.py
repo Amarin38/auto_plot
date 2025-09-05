@@ -18,7 +18,7 @@ def main():
         layout="wide",
         )
     
-    col1, col2 = st.columns([1, 18], vertical_alignment="center", gap="small")
+    col1, col2 = st.columns([1, 15], vertical_alignment="center", gap="small")
     
     # inicializo el estado del boton 
     if "active_page" not in st.session_state:
