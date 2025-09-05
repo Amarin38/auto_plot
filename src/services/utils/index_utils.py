@@ -1,12 +1,12 @@
 import pandas as pd
 
 from numpy import ndarray
-from typing import List, Union
+from typing import List, Optional
 from enum import Enum
 
-from config import OUT_PATH
-from services.data_cleaning.inventory_data_cleaner import InventoryDataCleaner
-from services.utils.inventory_update import InventoryUpdate
+from src.config.constants import OUT_PATH, TODAY_FOR_DELTA
+from src.services.data_cleaning.inventory_data_cleaner import InventoryDataCleaner
+from src.services.utils.inventory_update import InventoryUpdate
 
 class IndexTypeEnum(Enum):
     BY_MOTOR = "motor"
@@ -34,41 +34,38 @@ class IndexUtils:
 
     
     @staticmethod
-    def _create_title_date(df: pd.DataFrame) -> str:
+    def create_title_date(df: pd.DataFrame) -> str:
         """
         Devuelve la fecha del titulo basandose en el file introducido.
         """
-        df["FechaCompleta"] = pd.to_datetime(df["FechaCompleta"], errors="coerce", dayfirst=True)
-        dates: ndarray = df["FechaCompleta"].unique()
-        min_date = dates.min().strftime("%Y-%m")
-        max_date = dates.max().strftime("%Y-%m")
-
-        return f"{min_date} a {max_date}"
+        dates: ndarray = df["Fecha"].unique()
+        return f"{dates.min()} a {dates.max()}"
     
     
     @staticmethod
-    def _create_months_list(diff_months) -> pd.Index:
-        diff = pd.date_range(pd.Timestamp.today() - pd.Timedelta(days=30*diff_months))
+    def create_months_list(diff_months) -> pd.Index:
+        diff = pd.date_range(TODAY_FOR_DELTA - pd.Timedelta(days=30*diff_months))
 
         return pd.DatetimeIndex(diff.strftime("%Y-%B").unique())
     
 
     @staticmethod
-    def _prepare_data(index_type: str, file, dir) -> List[pd.DataFrame | str]:
-        from services.analysis.consumption_index.index_by_motor import IndexByMotor
-        from services.analysis.consumption_index.index_by_vehicle import IndexByVehicle 
+    def prepare_data(index_type: str, file: str, directory: str, tipo_repuesto: str, filtro: Optional[str] = None) -> None:
+        from src.services.analysis.consumption_index.index_by_motor import IndexByMotor
+        from src.services.analysis.consumption_index.index_by_vehicle import IndexByVehicle 
 
-        InventoryDataCleaner(file, dir).run_all()
+        df = InventoryDataCleaner(file, directory, save="NO GUARDAR").run_all()
 
         if index_type == IndexTypeEnum.BY_MOTOR.value:
-            df_updated = InventoryUpdate()._update_rows_by_dict(file, "motores")
+            df_updated = InventoryUpdate(df)._update_rows_by_dict(file, "motores") #FIXME: le paso un file normal pero del otro lado es un json
             df_updated.to_excel(f"{OUT_PATH}/{file}-S.xlsx")
-            index_list: List[Union[pd.DataFrame, str]] = IndexByMotor(file, dir).calculate_index()
+            
+            IndexByMotor(file, directory, tipo_repuesto).calculate_index()
+        
         
         elif index_type == IndexTypeEnum.BY_VEHICLE.value:
-            index_list: List[Union[pd.DataFrame, str]] = IndexByVehicle(file, dir).calculate_index()
+            IndexByVehicle(df, directory, tipo_repuesto, filtro).calculate_index()
         
         else:
             raise ValueError(f"Tipo de indice no soportado: {index_type}")
 
-        return index_list

@@ -1,18 +1,16 @@
 import pandas as pd
 
-from config import OUT_PATH
-from config.enums import WithZeroEnum
+from src.config.constants import OUT_PATH, TODAY_FOR_DELTA 
+from src.config.enums import WithZeroEnum
 
-from services.data_cleaning.inventory_data_cleaner import InventoryDataCleaner
+from src.services.data_cleaning.inventory_data_cleaner import InventoryDataCleaner
 
 class ForecastUtils:
     @staticmethod
     def _calculate_date_trend(meses_en_adelante: int) -> pd.PeriodIndex:
-        fecha_actual: pd.Timestamp = pd.Timestamp(pd.to_datetime('today').strftime("%Y-%m"))
-
         dias_en_adelante: int = 30 * (meses_en_adelante + 1)
-        fecha_inicio: pd.Timestamp = fecha_actual + pd.Timedelta(days=1)
-        fecha_final: pd.Timestamp = fecha_actual + pd.Timedelta(days=dias_en_adelante)
+        fecha_inicio: pd.Timestamp = TODAY_FOR_DELTA + pd.Timedelta(days=1)
+        fecha_final: pd.Timestamp = TODAY_FOR_DELTA + pd.Timedelta(days=dias_en_adelante)
 
         return pd.date_range(fecha_inicio, fecha_final, freq="ME").to_period("M")
 
@@ -30,21 +28,21 @@ class ForecastUtils:
 
 
     @staticmethod
-    def _prepare_data(file: str, dir: str, with_zero: str, months_to_forecast: int = 6) -> tuple[pd.DataFrame, pd.DataFrame]:
-        from services.analysis.forecast.forecast_without_zero import ForecastWithoutZero
-        from services.analysis.forecast.forecast_with_zero import ForecastWithZero
+    def prepare_data(file: str, directory: str, with_zero: str, months_to_forecast: int = 6) -> tuple[pd.DataFrame, pd.DataFrame]:
+        from src.services.analysis.forecast.forecast_without_zero import ForecastWithoutZero
+        from src.services.analysis.forecast.forecast_with_zero import ForecastWithZero
 
         """
         ### Prepara los datos para graficar.
         """
-        InventoryDataCleaner(file, dir).run_all()
+        InventoryDataCleaner(file, directory).run_all()
 
         if with_zero == WithZeroEnum.ZERO:
-            ForecastWithZero(file, dir, months_to_forecast).calculate_forecast()
+            ForecastWithZero(file, directory, months_to_forecast).calculate_forecast()
             df_tendencia = pd.read_excel(f"{OUT_PATH}/tendencia_ConCero.xlsx")
             df_data = pd.read_excel(f"{OUT_PATH}/data_ConCero.xlsx")
         elif with_zero == WithZeroEnum.NON_ZERO:
-            ForecastWithoutZero(file, dir, months_to_forecast).calculate_forecast()
+            ForecastWithoutZero(file, directory, months_to_forecast).calculate_forecast()
             df_tendencia = pd.read_excel(f"{OUT_PATH}/tendencia_SinCero.xlsx")
             df_data = pd.read_excel(f"{OUT_PATH}/data_SinCero.xlsx")
         else:

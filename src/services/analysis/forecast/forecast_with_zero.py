@@ -1,15 +1,15 @@
 import pandas as pd
 from typing import Union, Dict, List
 
-from config.constants import OUT_PATH
-from services.analysis.forecast.forecast_index import ForecastIndex 
-from services.analysis.forecast.forecast_trend import ForecastTrend
-from services.data_cleaning.inventory_data_cleaner import InventoryDataCleaner
+from src.config.constants import OUT_PATH
+from src.services.analysis.forecast.forecast_index import ForecastIndex 
+from src.services.analysis.forecast.forecast_trend import ForecastTrend
+from src.services.data_cleaning.inventory_data_cleaner import InventoryDataCleaner
 
 
 # TODO: cambiar a groupby 
 class ForecastWithZero:
-    def __init__(self, file: str, dir: str, meses_en_adelante: int = 6) -> None:
+    def __init__(self, file: str, directory: str, meses_en_adelante: int = 6) -> None:
         self.df = pd.read_excel(f"{OUT_PATH}/{file}.xlsx", engine="calamine")
         
         self.meses_en_adelante = meses_en_adelante
@@ -19,7 +19,7 @@ class ForecastWithZero:
 
         self.tendencia = ForecastTrend(self.meses_en_adelante, self.repuestos, con_cero=True)
         self.indice = ForecastIndex(self.repuestos, con_cero=True)
-        self.listado = InventoryDataCleaner(file, dir)
+        self.listado = InventoryDataCleaner(file, directory)
 
     def calculate_forecast(self) -> None:
         self.listado.run_all()
@@ -55,8 +55,8 @@ class ForecastWithZero:
         df_final["PromedioConCero"] = res_promedio_con_cero
         df_final["IndiceAnualConCero"] = self.indice.calculate_anual_rate(df_final)
         df_final["IndiceEstacionalConCero"] = self.indice.calculate_seasonal_rate(df_final)
-        df_final.to_excel(f"{OUT_PATH}/data-ConCero.xlsx")
+        df_final.to_excel(f"{OUT_PATH}/data_con_cero.xlsx")
 
         df_tendencia: pd.DataFrame = pd.DataFrame(self.tendencia.calculate_trend(df_final))
         df_tendencia["TendenciaEstacionalConCero"] = self.tendencia.calculate_seasonal_rate(df_final, df_tendencia)
-        df_final.to_excel(f"{OUT_PATH}/tendencia-ConCero.xlsx")
+        df_final.to_excel(f"{OUT_PATH}/tendencia_con_cero.xlsx")

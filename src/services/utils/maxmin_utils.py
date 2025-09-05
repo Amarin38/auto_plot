@@ -1,6 +1,6 @@
 from typing import List, Optional
 from enum import Enum
-from services.scrapping.scrap_maxmin import ScrapMaxMin
+from src.services.scrapping.scrap_maxmin import ScrapMaxMin
 
 
 class ScrapEnum(Enum):
@@ -23,14 +23,14 @@ class MaxMinUtils:
         Returns:\n
             Optional[str]: None | lista de codigos de maxmin\n
         """
-        if scrap == ScrapEnum.WEB_SCRAP:
+        if scrap == ScrapEnum.WEB_SCRAP.value:
             lista_codigos = ScrapMaxMin(date_since).web()
-        elif scrap == ScrapEnum.LOCAL_SCRAP:
+        elif scrap == ScrapEnum.LOCAL_SCRAP.value:
             lista_codigos = ScrapMaxMin(date_since).local()
 
         lista_final: List[tuple] = [tuple(map(int, codigo.split("."))) for codigo in lista_codigos]
         
-        if with_excel == ExcelEnum.WITH_EXCEL:
+        if with_excel == ExcelEnum.WITH_EXCEL.value:
             import pandas as pd
 
             df = pd.DataFrame({
@@ -38,7 +38,7 @@ class MaxMinUtils:
                 "Articulo":[art[1] for art in lista_final]
                 })
             df.to_excel(f"codigos_maxmin.xlsx")
-        elif with_excel == ExcelEnum.WITHOUT_EXCEL:
+        elif with_excel == ExcelEnum.WITHOUT_EXCEL.value:
             return lista_final
         else:
             raise ValueError("Solo se puede con o sin excel")

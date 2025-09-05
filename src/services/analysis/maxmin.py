@@ -1,11 +1,9 @@
 import pandas as pd
 
-from datetime import date
-
-from config.constants import OUT_PATH
-from services.data_cleaning.inventory_data_cleaner import InventoryDataCleaner
-from ..utils.maxmin_utils import MaxMinUtils
-from ..utils.exception_utils import execute_safely
+from src.config.constants import OUT_PATH, TODAY_DATE_PAGE, TODAY_DATE_FILE
+from src.services.data_cleaning.inventory_data_cleaner import InventoryDataCleaner
+from src.services.utils.maxmin_utils import MaxMinUtils
+from src.services.utils.exception_utils import execute_safely
 
 """
 - Se descargan los consumos de x fecha hacia atrás de los productos que se queira evaluar el  maxmin.
@@ -14,45 +12,38 @@ from ..utils.exception_utils import execute_safely
 """
 
 class MaxMin:
-    def __init__(self, file: str, dir: str = "todo maxmin", 
-                 multiplicar_por: float = 2.5) -> None:
-        self.dir = dir
-        self.file = file      
-        self.multiplicar_por = multiplicar_por
-        self.fecha_hoy = pd.Timestamp.today().strftime("%d-%m-%Y")
-
-    
-    @execute_safely
-    def run_all(self, date_since: str = date.today().strftime("%d/%m/%Y")) -> None:
-        """
-        Genera el file completo con los maxmin.
-        """
-        InventoryDataCleaner(self.file, self.dir).run_all()
-        InventoryDataCleaner(f"{self.file}-S").filter("lista_codigos", 
-                                                      MaxMinUtils().create_code_list(date_since)) # type: ignore
-        self.calculate
+    def __init__(self, file: str, directory: str = "todo maxmin", date_since: str = TODAY_DATE_PAGE) -> None:
+        self.file = file
+        self.directory = directory
+        self.date_since = date_since
 
 
     @execute_safely
-    def calculate(self) -> None:
+    def prepare_data(self) -> pd.DataFrame:
         """
         Calcula el nuevo minimo y maximo de cada repuesto y\n
         multiplica al minimo por el valor asignado. 
         """
+        df = InventoryDataCleaner(self.file, self.directory).run_all()
+        return InventoryDataCleaner(df).filter_lista_codigos(MaxMinUtils().create_code_list(self.date_since)) # type: ignore
         
-        df: pd.DataFrame = pd.read_excel(f"{OUT_PATH}/filtrado.xlsx", engine="calamine")
+
+
+    @execute_safely
+    def calculate(self, multiplicar_por: float = 2.5):
+        df = self.prepare_data()
 
         # --- Fechas --- #
-        df["FechaCompleta"] = pd.DatetimeIndex(pd.to_datetime(df["FechaCompleta"])).strftime("%Y-%m")
-        fecha_max: pd.Timestamp = pd.to_datetime(df["FechaCompleta"].max()) + pd.Timedelta(days=30)
-        fecha_rango_unico: pd.Index[str] = pd.date_range(df["FechaCompleta"].min(), fecha_max, freq="ME").unique().strftime("%Y-%m")
-
+        fecha_max: pd.Timestamp = df["FechaCompleta"].max()
+        fecha_min: pd.Timestamp = df["FechaCompleta"].min()
+        fecha_rango_unico = pd.date_range(fecha_min, fecha_max, freq="ME").unique()
+        
         df_agrupado: pd.DataFrame = df.groupby(["Familia", "Articulo", "Repuesto"]).agg({"Cantidad":"sum"}).reset_index()
         
-        min_calc: pd.Series[float] = round(df_agrupado["Cantidad"] / len(fecha_rango_unico), 1) * self.multiplicar_por
+        min_calc: pd.Series[float] = round(df_agrupado["Cantidad"] / len(fecha_rango_unico), 1) * multiplicar_por
         df_agrupado["Minimo"] = min_calc
         df_agrupado["Maximo"] = min_calc * 2
     
         df_agrupado = df_agrupado[["Familia", "Articulo", "Repuesto", "Minimo", "Maximo"]]
 
-        df_agrupado.to_excel(f"{OUT_PATH}/maxmin {self.fecha_hoy}.xlsx")
+        df_agrupado.to_excel(f"{OUT_PATH}/maxmin {TODAY_DATE_FILE}.xlsx")

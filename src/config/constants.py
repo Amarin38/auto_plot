@@ -1,5 +1,6 @@
-from typing import Tuple
+from typing import Tuple, List
 from pathlib import Path
+import pandas as pd
 
 INTERNOS_DEVOLUCION: Tuple[str, ...] = ("C0488", "C0489", "C0500", "C0700", "C1400", 
                                         "C4500", "C4900", "C6000", "C6700", "C9500",
@@ -15,8 +16,24 @@ COLORS: Tuple[str, ...] = ("#FFC300", "#FF5733", "#C70039", "#900C3F", "#5C6D70"
                            "#4A1942", "#823329", "#3F7CAC", "#899878", "#5497A7", 
                            "#883677", "#3A7D44", "#254D32", "#F7CE5B", "#F7B05B")
 
-MAIN_PATH = Path().cwd()
+DEL_COLUMNS: List[str]= ["ficdep", "fictra", "artipo", "ficpro", 
+                         "pronom", "ficrem", "ficfac", "corte", 
+                         "signo", "transfe", "ficmov"]
 
-OUT_PATH = f"{Path.home()}\\Documents\\Programas\\auto_plot\\out"
-JSON_PATH = f"{MAIN_PATH}/data/json_data"
-EXCEL_PATH = f"{MAIN_PATH}/data/excel_data"
+# Paths
+MAIN_PATH: Path = Path().cwd()
+OUT_PATH: str = f"{Path.home()}\\Documents\\Programas\\auto_plot\\out"
+TEST_PATH: str = f"{MAIN_PATH}\\src\\views\\test"
+DB_PATH: str = f"{MAIN_PATH}\\src\\db\\indices.db"
+JSON_PATH: str = f"{MAIN_PATH}\\src\\data\\json_data"
+EXCEL_PATH: str = f"{MAIN_PATH}\\src\\data\\excel_data"
+
+# Dates
+TODAY_DATE_PAGE = pd.Timestamp.today().strftime("%d/%m/%Y")
+TODAY_DATE_FILE = pd.Timestamp.today().strftime("%d-%m-%Y")
+TODAY_FOR_DELTA = pd.Timestamp(pd.to_datetime('today').strftime("%Y-%m"))
+
+# Movs
+MOV_SALIDAS: str = "Transf al Dep |Salida"
+MOV_ENTRADAS: str = "Tranf desde |Transf Recibida|Entrada "
+MOV_DEVOLUCIONES: str = "Devolucion"

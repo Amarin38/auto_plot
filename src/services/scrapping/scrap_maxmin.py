@@ -1,4 +1,5 @@
 import re
+import pandas as pd
 
 from bs4 import BeautifulSoup
 from typing import List
@@ -6,9 +7,9 @@ from typing import List
 from selenium.webdriver.common.by import By
 from selenium.common.exceptions import NoSuchElementException
 
-from config import MAIN_PATH
-from ..utils.scrap_utils import ScrapUtils 
-from ..utils.exception_utils import execute_safely
+from src.config.constants import MAIN_PATH, OUT_PATH
+from src.services.utils.scrap_utils import ScrapUtils 
+from src.services.utils.exception_utils import execute_safely
 
 class ScrapMaxMin:
     def __init__(self, fecha_desde: str) -> None:
@@ -56,6 +57,13 @@ class ScrapMaxMin:
 
         return lista_codigos
     
+
+    @execute_safely
+    def web_to_excel(self) -> None:
+        df = pd.DataFrame(self.web(), columns=["Codigos"])
+        df.to_excel(f"{OUT_PATH}/codigos_maxmin.xlsx")
+
+
     @execute_safely
     def local(self) -> List[str]:
         lista_codigos: list[str] = []

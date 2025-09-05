@@ -4,7 +4,7 @@ from numpy.polynomial import Polynomial
 
 from typing import List, Dict, Union, Any
 
-from ...utils.forecast_utils import ForecastUtils
+from src.services.utils.forecast_utils import ForecastUtils
 
 class ForecastTrend:
     def __init__(self, meses_en_adelante: int, repuestos, con_cero: bool) -> None:
@@ -36,7 +36,7 @@ class ForecastTrend:
 
             meses_iter = iter(meses_en_adelante.tolist()) # itero sobre las fechas por cada vuelta
             for prediccion in meses_prediccion:
-                fecha_completa = next(meses_iter)
+                fecha_completa = next(meses_iter, None)
                 resultado.append({
                     "Repuesto":rep,
                     "FechaCompleta":fecha_completa,
@@ -48,7 +48,7 @@ class ForecastTrend:
         return pd.DataFrame(resultado)
 
 
-    # TODO seguir cuando haga la tendencia
+    # TODO: seguir cuando haga la tendencia
     def calcular_v2(self, df:pd.DataFrame) -> pd.DataFrame:
         utils = ForecastUtils()
         meses_en_adelante = utils._calculate_date_trend(self.meses_en_adelante)

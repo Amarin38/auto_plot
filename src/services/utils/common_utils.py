@@ -1,21 +1,21 @@
 import re
 import glob
 import os
-import sys
 
 import pandas as pd
 import pyexcel as pe
 
 from pathlib import Path
-from typing import Optional, Union
+from typing import Optional, Union, Any
 
-from config import MAIN_PATH, OUT_PATH
-from services.utils.exception_utils import execute_safely
+from src.config.constants import MAIN_PATH, OUT_PATH
+from src.services.utils.exception_utils import execute_safely
+from src.config.enums import SaveEnum
 
 class CommonUtils:
     @staticmethod
     @execute_safely
-    def _check_file_exists(file: str) -> Optional[bool]:
+    def check_file_exists(file: str) -> bool:
         """
         Checks if the entered file name already exists.
         """
@@ -24,7 +24,7 @@ class CommonUtils:
 
     @staticmethod
     @execute_safely
-    def _convert_to_df(file: Union[str, pd.DataFrame]) -> Optional[pd.DataFrame]:
+    def convert_to_df(file: Union[str, Any]) -> pd.DataFrame:
         """
         Checks whereas the file entered is a string and converts it to dataframe \n
         and returns it or is already a dataframe and returns it.
@@ -35,12 +35,12 @@ class CommonUtils:
             return pd.DataFrame(file)
 
 
-    def _convert_xls_to_xlsx(self, dir) -> None:
+    def _convert_xls_to_xlsx(self, directory) -> None:
         """
-        Converts all the .xls files in the current directory into a fully working .xlsx file\n
+        Converts all the .xls files in the current directoryectory into a fully working .xlsx file\n
         deleting all the errors within the out .xls file.
         """
-        _xls_files = glob.glob(f"{MAIN_PATH}/{dir}/**/*.xls", recursive=True)
+        _xls_files = glob.glob(f"{MAIN_PATH}/{directory}/**/*.xls", recursive=True)
         
         for file in _xls_files:
             file_mod_name = file.replace(".xls", "")
@@ -57,21 +57,19 @@ class CommonUtils:
 
 
     @execute_safely
-    def _append_df(self, file: str, dir: str, save: bool) -> Optional[pd.DataFrame]:
+    def append_df(self, file: str, directory: str, save: str) -> pd.DataFrame:
         """
         Appends all the xlsx files into one single file with 
         the name entered. 
         """
-
-        if self._check_file_exists(file):
+        if self.check_file_exists(file):
             return pd.DataFrame()
         else:
-            self._convert_xls_to_xlsx(dir)
-            _xlsx_files = glob.glob(f"{MAIN_PATH}/{dir}/**/*.xlsx", recursive=True)
-
+            self._convert_xls_to_xlsx(directory)
+            _xlsx_files = glob.glob(f"{MAIN_PATH}/{directory}/**/*.xlsx", recursive=True)
             df_list: pd.DataFrame = pd.concat([pd.read_excel(file, engine="calamine") for file in _xlsx_files])
                 
-            if save:
+            if save == SaveEnum.SAVE.value:
                 df_list.to_excel(f"{OUT_PATH}/appended_df.xlsx", index=False)
             return df_list
     

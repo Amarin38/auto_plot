@@ -29,21 +29,21 @@ class TextColors():
 
 @dataclass
 class PlotConfig:
-    figure_width: int = 208
-    figure_height: int = 70
+    FIG_WIDTH: int = 50
+    FIG_HEIGHT: int = 30
 
-    text_font_size: int = 20
-    suptitle_font_size: int = 40
-    plot_title_fontsize: int = 35
-    legend_fonsize: int = 20
-    label_fontsize: int = 30
-    x_tick_fontsize: float = 16.5
-    y_tick_fontsize: int = 15
-    bar_fontsize: int = 25
+    TEXT_SIZE: int = 25
+    SUPTITLE_SIZE: int = 30
+    PLOT_TITLE_SIZE: int = 25
+    LEGEND_SIZE: int = 20
+    LABEL_SIZE: int = 30
+    X_TICK_SIZE: float = 18
+    Y_TICK_SIZE: int = 15
+    BAR_SIZE: int = 25
 
-    title_position: float = 0.93
-    wspace: float = 0.1
-    hspace: float = 0.3
-    divisor_factor: float = 0.3
-    zorder_multiplier: int = 10
-    zorder_base: int = 100
+    TITLE_POS: float = 0.93
+    WSPACE: float = 0.1
+    HSPACE: float = 0.3
+    DIV_FACTOR: float = 0.3
+    LABEL_PAD: int = 20
+    

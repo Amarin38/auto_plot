@@ -2,7 +2,7 @@ import traceback
 import functools
 import logging
 
-from config.dataclasses import TextColors
+from src.config.dataclasses import TextColors
 
 logging.basicConfig(
      level=logging.ERROR,

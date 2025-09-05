@@ -3,22 +3,22 @@ import numpy as np
 
 from typing import List, Union
 
-from config.constants import OUT_PATH, EXCEL_PATH
-from services.utils.index_utils import IndexUtils
-from services.data_cleaning.inventory_data_cleaner import InventoryDataCleaner
+from src.config.constants import OUT_PATH, EXCEL_PATH
+from src.services.utils.index_utils import IndexUtils
+from src.services.data_cleaning.inventory_data_cleaner import InventoryDataCleaner
 
 
 class IndexByMotor:
-    def __init__(self, file: str, dir: str) -> None:
+    def __init__(self, file: str, directory: str, tipo: str) -> None:
         self.file = file
-        self.dir = dir
-
+        self.directory = directory
+        self.tipo = tipo
         self.df_motors = pd.read_excel(f"{EXCEL_PATH}/motores_por_cabecera.xlsx", engine="calamine")
         self.df_consumption = pd.read_excel(f"{OUT_PATH}/{self.file}-S.xlsx", engine="calamine")
 
 
     def calculate_index(self) -> List[Union[pd.DataFrame, str]]:
-        InventoryDataCleaner(self.file, self.dir).run_all()
+        InventoryDataCleaner(self.file, self.directory).run_all()
 
         grouped = self.df_consumption.groupby(['Cabecera', 'Repuesto']).agg({'Cantidad':'sum'}).reset_index()
 
@@ -28,8 +28,9 @@ class IndexByMotor:
         df_rate = df_with_vehicles[['Cabecera', 'Repuesto', 'IndiceConsumo']]
         df_rate["IndiceConsumo"].replace([np.inf, -np.inf], np.nan, inplace=True)
         df_rate.dropna(subset=["IndiceConsumo"], inplace=True)
+        df_rate.insert(2, 'TipoRepuesto', self.tipo)
         
         df_rate.to_excel(f"{OUT_PATH}/{self.file}_indice_por_motor.xlsx")
-        return [df_rate, IndexUtils()._create_title_date(self.df_consumption)]
+        return [df_rate, IndexUtils().create_title_date(self.df_consumption)]
 
 
