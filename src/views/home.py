@@ -38,7 +38,5 @@ def main():
         tendencia.tendencia_options()
  
 
-#TODO: agregar HTTPS para poder abrirlo en otra pc|
-
 if __name__ == "__main__":
     main()
