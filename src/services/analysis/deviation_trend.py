@@ -8,7 +8,7 @@ class DeviationTrend:
     @staticmethod
     @execute_safely
     def calcular_desviaciones_totales() -> None:
-        df = CommonUtils().append_df("todos_indices", "todos indices", save="GUARDAR")
+        df = CommonUtils().append_df("todos indices")
 
         media_cabecera = round(df.groupby(["Cabecera"]).agg({"IndiceConsumo":"mean"}), 1).rename(columns={"IndiceConsumo":"MediaCabecera"}).reset_index() # type:ignore
        

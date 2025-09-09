@@ -24,7 +24,7 @@ class MaxMin:
         Calcula el nuevo minimo y maximo de cada repuesto y\n
         multiplica al minimo por el valor asignado. 
         """
-        df = InventoryDataCleaner(self.file, self.directory).run_all()
+        df = InventoryDataCleaner().run_all(self.directory)
         return InventoryDataCleaner(df).filter_lista_codigos(MaxMinUtils().create_code_list(self.date_since)) # type: ignore
         
 
