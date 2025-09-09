@@ -1,10 +1,11 @@
 import pandas as pd
 import numpy as np
-from numpy.polynomial import Polynomial
 
+from numpy.polynomial import Polynomial
 from typing import List, Dict, Union, Any
 
-from src.services.utils.forecast_utils import ForecastUtils
+from src.config.constants import TODAY_FOR_DELTA 
+
 
 class ForecastTrend:
     def __init__(self, meses_en_adelante: int, repuestos, con_cero: bool) -> None:
@@ -14,8 +15,7 @@ class ForecastTrend:
 
 
     def calculate_trend(self, df: pd.DataFrame) -> pd.DataFrame:
-        utils = ForecastUtils()
-        meses_en_adelante = utils._calculate_date_trend(self.meses_en_adelante)
+        meses_en_adelante = self._calculate_date_trend(self.meses_en_adelante)
         resultado: List[Dict[str, Union[Any, int]]] = []
 
         for rep in self.repuestos:
@@ -40,8 +40,8 @@ class ForecastTrend:
                 resultado.append({
                     "Repuesto":rep,
                     "FechaCompleta":str(fecha_completa),
-                    "Año":utils._convert_complete_date("año", fecha_completa), # type: ignore
-                    "Mes":utils._convert_complete_date("mes", fecha_completa), # type: ignore
+                    "Año":self._convert_complete_date("año", fecha_completa), # type: ignore
+                    "Mes":self._convert_complete_date("mes", fecha_completa), # type: ignore
                     "Tendencia":prediccion
                     })
         
@@ -50,8 +50,7 @@ class ForecastTrend:
 
     # FIXME: hacer funcional como principal
     def calcular_v2(self, df:pd.DataFrame) -> pd.DataFrame:
-        utils = ForecastUtils()
-        meses_en_adelante = utils._calculate_date_trend(self.meses_en_adelante)
+        meses_en_adelante = self._calculate_date_trend(self.meses_en_adelante)
         resultado: List[Dict[str, Union[Any, int]]] = []
 
         df["Contado"] = ""
@@ -115,3 +114,24 @@ class ForecastTrend:
         df_final["Multiplicado"] = round((df_indice_agrupado *  df_tendencia_agrupada), 0)
 
         return df_final["Multiplicado"].to_list()
+    
+
+    @staticmethod
+    def _calculate_date_trend(meses_en_adelante: int) -> pd.PeriodIndex:
+        dias_en_adelante: int = 30 * (meses_en_adelante + 1)
+        fecha_inicio: pd.Timestamp = TODAY_FOR_DELTA + pd.Timedelta(days=1)
+        fecha_final: pd.Timestamp = TODAY_FOR_DELTA + pd.Timedelta(days=dias_en_adelante)
+
+        return pd.date_range(fecha_inicio, fecha_final, freq="ME").to_period("M")
+
+
+    @staticmethod
+    def _convert_complete_date(tipo: str, fecha_completa: str) -> int:
+        fecha: pd.Timestamp = pd.to_datetime(fecha_completa, format="%Y-%m")
+        
+        if tipo == "año":
+            return fecha.year
+        elif tipo == "mes":
+            return fecha.month
+        else:
+            return fecha.day

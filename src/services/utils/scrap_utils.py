@@ -1,8 +1,10 @@
 from selenium import webdriver
+
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
-from selenium.common.exceptions import WebDriverException
 from selenium.webdriver.support import expected_conditions as EC
+
+from selenium.common.exceptions import WebDriverException
 
 class ScrapUtils:
     @staticmethod
@@ -24,6 +26,7 @@ class ScrapUtils:
 
         return driver, wait
     
+
     def login_licitaciones(self) -> tuple:
         driver, wait = self.create_page_licitaciones()
         
@@ -45,6 +48,7 @@ class ScrapUtils:
 
         return driver, wait
     
+
     @staticmethod
     def wait_by_name(wait, name: str):
         return wait.until(EC.presence_of_element_located((By.NAME, name)))

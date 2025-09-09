@@ -9,7 +9,7 @@ from src.services.data_cleaning.inventory_data_cleaner import InventoryDataClean
 
 class Forecast:
     def __init__(self, file: str, directory: str, 
-                 with_zero: str = "con cero", meses_en_adelante: int = 6) -> None:
+                 with_zero: str = "ZERO", meses_en_adelante: int = 6) -> None:
         self.file = file
         self.directory = directory
         self.with_zero = with_zero
@@ -36,9 +36,9 @@ class Forecast:
         df_tendencia = pd.DataFrame(self.tendencia.calculate_trend(self.df))
         self.df["TendenciaEstacional"] = self.tendencia.calculate_seasonal_rate(self.df, df_tendencia)
 
-        if self.with_zero == WithZeroEnum.ZERO:
+        if self.with_zero == WithZeroEnum.ZERO.value:
             self.df.to_excel(f"{OUT_PATH}/tendencia_con_cero.xlsx")
-        elif self.with_zero == WithZeroEnum.NON_ZERO:
+        elif self.with_zero == WithZeroEnum.NON_ZERO.value:
             self.df.to_excel(f"{OUT_PATH}/tendencia_sin_cero.xlsx")
         else:
             raise ValueError("Introduce un valor que sea con o sin cero.")

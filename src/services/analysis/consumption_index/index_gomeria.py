@@ -5,7 +5,7 @@ import pandas as pd
 from typing import Dict
 
 from src.config.constants import EXCEL_PATH, JSON_PATH
-from src.services.utils.index_utils import IndexUtils
+from src.config.constants import TODAY_FOR_DELTA
 
 class IndexGomeria:
     def __init__(self, file: str, diff_months: int) -> None:
@@ -37,7 +37,7 @@ class IndexGomeria:
 
 
     def update_tire_values(self) -> Dict[str, float]:
-        meses: pd.Index = IndexUtils().create_months_list(self.diff_months)
+        meses: pd.Index = self._create_months_list(self.diff_months)
         indice_consumo_por_mes: Dict[str, float] = {}
 
         data_consumo = pd.read_excel(f"{EXCEL_PATH}/cubiertas_consumo_{self.file}.xlsx", engine="calamine")
@@ -49,3 +49,10 @@ class IndexGomeria:
             indice_consumo_por_mes.update({mes:total_consumo})
         
         return indice_consumo_por_mes
+
+
+    @staticmethod
+    def _create_months_list(diff_months) -> pd.Index:
+        diff = pd.date_range(TODAY_FOR_DELTA - pd.Timedelta(days=30*diff_months))
+
+        return pd.DatetimeIndex(diff.strftime("%Y-%B").unique())

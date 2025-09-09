@@ -12,7 +12,7 @@ from src.services.utils.inventory_delete import InventoryDelete
 from src.services.utils.exception_utils import execute_safely
 
 class InventoryDataCleaner:
-    def __init__(self, save: Literal["GUARDAR", "NO GUARDAR"] = "NO GUARDAR"):
+    def __init__(self, save: Literal["SAVE", "NOT SAVE"] = "NOT SAVE"):
         self.save = save
         self.utils = CommonUtils()
         self.delete = InventoryDelete()

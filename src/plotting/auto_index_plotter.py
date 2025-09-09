@@ -4,7 +4,7 @@ import pandas as pd
 import numpy as np
 import plotly.graph_objects as go
 
-from typing import Optional
+from typing import Optional, Literal
 
 from src.config.constants import COLORS
 from src.config.constants import MAIN_PATH
@@ -20,7 +20,7 @@ from src.db.crud import sql_to_df_by_type
 from src.db.indice_repuesto_model import IndiceRepuesto
 
 class AutoIndexPlotter:
-    def __init__(self, directory: str, index_type: str, tipo_rep: str, filtro: Optional[str] = None) -> None:
+    def __init__(self, directory: str, index_type: Literal["MOTOR", "VEHICLE"], tipo_rep: str, filtro: Optional[str] = None) -> None:
         self.index_type = index_type
         self.directory = directory
         self.filtro = filtro

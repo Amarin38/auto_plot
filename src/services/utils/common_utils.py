@@ -66,7 +66,7 @@ class CommonUtils:
 
 
     @execute_safely
-    def append_df(self, directory: str, save: Literal["GUARDAR", "NO GUARDAR"] = "NO GUARDAR") -> pd.DataFrame:
+    def append_df(self, directory: str, save: Literal["SAVE", "NOT SAVE"] = "NOT SAVE") -> pd.DataFrame:
         """
         Appends all the xlsx files into one single file with 
         the name entered. 

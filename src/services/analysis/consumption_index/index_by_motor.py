@@ -4,7 +4,6 @@ import numpy as np
 from typing import List, Union
 
 from src.config.constants import OUT_PATH, EXCEL_PATH
-from src.services.utils.index_utils import IndexUtils
 from src.services.data_cleaning.inventory_data_cleaner import InventoryDataCleaner
 
 
@@ -18,7 +17,7 @@ class IndexByMotor:
 
 
     def calculate_index(self) -> List[Union[pd.DataFrame, str]]:
-        InventoryDataCleaner(self.file, self.directory).run_all()
+        InventoryDataCleaner().run_all(self.directory)
 
         grouped = self.df_consumption.groupby(['Cabecera', 'Repuesto']).agg({'Cantidad':'sum'}).reset_index()
 
@@ -31,6 +30,13 @@ class IndexByMotor:
         df_rate.insert(2, 'TipoRepuesto', self.tipo)
         
         df_rate.to_excel(f"{OUT_PATH}/{self.file}_indice_por_motor.xlsx")
-        return [df_rate, IndexUtils().create_title_date(self.df_consumption)]
+        return [df_rate, self._create_title_date(self.df_consumption)]
 
 
+    @staticmethod
+    def _create_title_date(df: pd.DataFrame) -> str:
+        """
+        Devuelve la fecha del titulo basandose en el file introducido.
+        """
+        dates = df["Fecha"].unique()
+        return f"{dates.min()} a {dates.max()}"

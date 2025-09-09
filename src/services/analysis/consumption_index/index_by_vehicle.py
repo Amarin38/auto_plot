@@ -4,9 +4,11 @@ import numpy as np
 from typing import Optional
 
 from src.config.constants import EXCEL_PATH
+
 from src.services.utils.exception_utils import execute_safely
-from src.db.crud import df_to_sql
 from src.services.data_cleaning.inventory_data_cleaner import InventoryDataCleaner
+
+from src.db.crud import df_to_sql
 
 class IndexByVehicle:
     def __init__(self,  directory: str, tipo: str, filtro: Optional[str] = None) -> None:

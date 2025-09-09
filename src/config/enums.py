@@ -1,13 +1,21 @@
 from enum import Enum
 
 class WithZeroEnum(Enum):
-    ZERO = "con cero"
-    NON_ZERO = "sin cero"
+    ZERO = "ZERO"
+    NON_ZERO = "NON ZERO"
 
 class SaveEnum(Enum):
-    SAVE = "GUARDAR"
-    NOT_SAVE = "NO GUARDAR"
+    SAVE = "SAVE"
+    NOT_SAVE = "NOT SAVE"
 
 class IndexTypeEnum(Enum):
-    BY_MOTOR = "motor"
-    BY_VEHICLE = "vehicle"
+    BY_MOTOR = "MOTOR"
+    BY_VEHICLE = "VEHICLE"
+
+class ScrapEnum(Enum):
+    WEB_SCRAP = "WEB"
+    LOCAL_SCRAP = "LOCAL"
+
+class ExcelEnum(Enum):
+    WITH_EXCEL = "WITH EXCEL" 
+    WITHOUT_EXCEL = "WITHOUT EXCEL"
