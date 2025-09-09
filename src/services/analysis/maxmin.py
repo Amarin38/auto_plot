@@ -1,5 +1,6 @@
 import pandas as pd
-from pathlib import Path
+
+from datetime import datetime, timedelta
 from io import BytesIO
 
 from src.config.constants import MAIN_PATH
@@ -20,14 +21,18 @@ class MaxMin:
         self.utils = MaxMinUtils()
         self.data_cleaner = InventoryDataCleaner()
         self.common = CommonUtils()
-    
+
+
     @execute_safely
     def create_maxmin(self, directory: str = "todo maxmin") -> pd.DataFrame:
-        # if self.common.check_file_exists(MAIN_PATH, directory):
-        # self.utils.create_code_list("08/09/2025")
-        # return self.calculate()
-        # else:
-        return sql_to_df("maxmin")
+        dir_exists = self.common.check_dir_exists(MAIN_PATH, directory)
+        fecha = (datetime.today() - timedelta(days=1)).strftime("%d/%m/%Y")
+        
+        if dir_exists:
+            self.utils.create_code_list(fecha)
+            return self.calculate()
+        else:
+            return sql_to_df("maxmin")
 
 
     @execute_safely
@@ -47,7 +52,7 @@ class MaxMin:
 
 
     @execute_safely
-    def to_excel(self, df: pd.DataFrame):
+    def to_excel(self, df: pd.DataFrame) -> bytes:
         output = BytesIO()
         with pd.ExcelWriter(output, engine="openpyxl") as writer:
             df.to_excel(writer, index=False, sheet_name="Datos")

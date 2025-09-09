@@ -1,9 +1,9 @@
 import pandas as pd
 import numpy as np
 
-from typing import Optional, Union
+from typing import Optional
 
-from src.config.constants import OUT_PATH, EXCEL_PATH
+from src.config.constants import EXCEL_PATH
 from src.services.utils.exception_utils import execute_safely
 from src.db.crud import df_to_sql
 from src.services.data_cleaning.inventory_data_cleaner import InventoryDataCleaner

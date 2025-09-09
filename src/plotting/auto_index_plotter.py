@@ -2,19 +2,22 @@ import random
 
 import pandas as pd
 import numpy as np
-
-from typing import Optional
 import plotly.graph_objects as go
 
+from typing import Optional
+
 from src.config.constants import COLORS
+from src.config.constants import MAIN_PATH
 from src.config.enums import IndexTypeEnum
+
 from src.services.data_cleaning.inventory_data_cleaner import InventoryDataCleaner
 from src.services.analysis.consumption_index.index_by_motor import IndexByMotor
 from src.services.analysis.consumption_index.index_by_vehicle import IndexByVehicle 
 from src.services.utils.exception_utils import execute_safely
-from src.db.crud import sql_to_df_by_type
 from src.services.utils.common_utils import CommonUtils
-from src.config.constants import MAIN_PATH
+
+from src.db.crud import sql_to_df_by_type
+from src.db.indice_repuesto_model import IndiceRepuesto
 
 class AutoIndexPlotter:
     def __init__(self, directory: str, index_type: str, tipo_rep: str, filtro: Optional[str] = None) -> None:
@@ -28,7 +31,7 @@ class AutoIndexPlotter:
         if dir_exists:
             self.prepare_data()
 
-        self.df = sql_to_df_by_type("indice_repuesto", self.tipo_rep)
+        self.df = sql_to_df_by_type(IndiceRepuesto, self.tipo_rep)
             
 
     def create_plot(self) -> list:

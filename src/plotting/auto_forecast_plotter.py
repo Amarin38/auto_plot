@@ -4,15 +4,18 @@ import plotly.graph_objects as go
 
 from typing import Literal
 
+from src.config.constants import COLORS
+from src.config.constants import MAIN_PATH
+
 from src.services.utils.exception_utils import execute_safely
 from src.services.data_cleaning.inventory_data_cleaner import InventoryDataCleaner
-
-from src.config.constants import COLORS
 from src.services.analysis.forecast.forecast_with_zero import ForecastWithZero
+from src.services.utils.common_utils import CommonUtils
 
 from src.db.crud import sql_to_df_by_type, read_date
-from src.services.utils.common_utils import CommonUtils
-from src.config.constants import MAIN_PATH
+from src.db.forecast_trend_model import ForecastTrend
+from src.db.forecast_data_model import ForecastData
+
 
 class AutoForecastPlotter:
     def __init__(self, directory: str, tipo_rep: str, with_zero: Literal["WITH ZERO", "WITHOUT ZERO"] = "WITH ZERO", months_to_forecast: int = 12) -> None:
@@ -25,8 +28,8 @@ class AutoForecastPlotter:
         if dir_exists:
             self.prepare_data()
             
-        self.df_tendencia = sql_to_df_by_type("forecast_trend", self.tipo_rep)
-        self.df_data = sql_to_df_by_type("forecast_data", self.tipo_rep)
+        self.df_tendencia = sql_to_df_by_type(ForecastTrend, self.tipo_rep)
+        self.df_data = sql_to_df_by_type(ForecastData, self.tipo_rep)
 
 
     @execute_safely
@@ -118,6 +121,6 @@ class AutoForecastPlotter:
 
     @execute_safely
     def devolver_fecha(self) -> str:
-        df_fecha = read_date("forecast_data")
+        df_fecha = read_date(ForecastData)
         return pd.to_datetime(df_fecha["FechaCompleta"].unique()).strftime("%d-%m-%Y")[0]
     
