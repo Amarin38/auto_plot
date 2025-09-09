@@ -22,7 +22,7 @@ class Forecast:
 
 
     def calculate_forecast(self) -> None:
-        InventoryDataCleaner(self.file, self.directory).run_all()
+        InventoryDataCleaner().run_all(self.directory)
         fecha_periodo: pd.Series[pd.Period] = self.df["FechaCompleta"].dt.to_period("M")
 
         self.df["fechaMes"] = fecha_periodo.dt.month

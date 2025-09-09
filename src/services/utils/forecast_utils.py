@@ -27,25 +27,3 @@ class ForecastUtils:
             return fecha.day
 
 
-    @staticmethod
-    def prepare_data(file: str, directory: str, with_zero: str, months_to_forecast: int = 6) -> tuple[pd.DataFrame, pd.DataFrame]:
-        from src.services.analysis.forecast.forecast_without_zero import ForecastWithoutZero
-        from src.services.analysis.forecast.forecast_with_zero import ForecastWithZero
-
-        """
-        ### Prepara los datos para graficar.
-        """
-        InventoryDataCleaner(file, directory).run_all()
-
-        if with_zero == WithZeroEnum.ZERO:
-            ForecastWithZero(file, directory, months_to_forecast).calculate_forecast()
-            df_tendencia = pd.read_excel(f"{OUT_PATH}/tendencia_ConCero.xlsx")
-            df_data = pd.read_excel(f"{OUT_PATH}/data_ConCero.xlsx")
-        elif with_zero == WithZeroEnum.NON_ZERO:
-            ForecastWithoutZero(file, directory, months_to_forecast).calculate_forecast()
-            df_tendencia = pd.read_excel(f"{OUT_PATH}/tendencia_SinCero.xlsx")
-            df_data = pd.read_excel(f"{OUT_PATH}/data_SinCero.xlsx")
-        else:
-            raise ValueError(f"Por favor introduzca si es con o sin cero.")
-
-        return df_tendencia, df_data

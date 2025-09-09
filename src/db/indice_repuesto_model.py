@@ -1,4 +1,3 @@
-
 from datetime import date
 from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column

@@ -7,3 +7,7 @@ class WithZeroEnum(Enum):
 class SaveEnum(Enum):
     SAVE = "GUARDAR"
     NOT_SAVE = "NO GUARDAR"
+
+class IndexTypeEnum(Enum):
+    BY_MOTOR = "motor"
+    BY_VEHICLE = "vehicle"

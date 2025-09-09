@@ -39,7 +39,7 @@ class ForecastTrend:
                 fecha_completa = next(meses_iter, None)
                 resultado.append({
                     "Repuesto":rep,
-                    "FechaCompleta":fecha_completa,
+                    "FechaCompleta":str(fecha_completa),
                     "Año":utils._convert_complete_date("año", fecha_completa), # type: ignore
                     "Mes":utils._convert_complete_date("mes", fecha_completa), # type: ignore
                     "Tendencia":prediccion
@@ -48,7 +48,7 @@ class ForecastTrend:
         return pd.DataFrame(resultado)
 
 
-    # TODO: seguir cuando haga la tendencia
+    # FIXME: hacer funcional como principal
     def calcular_v2(self, df:pd.DataFrame) -> pd.DataFrame:
         utils = ForecastUtils()
         meses_en_adelante = utils._calculate_date_trend(self.meses_en_adelante)
@@ -89,22 +89,24 @@ class ForecastTrend:
                 mes_comparado_df: pd.Series[bool] = df_indice["Mes"] == mes
                 
                 indice_estacional_mes: int = df_indice.loc[rep_comparado_df & mes_comparado_df, 
-                                                    "IndiceEstacional"].iloc[0]
+                                                           "IndiceEstacional"].iloc[0]
                 
-                if self.con_cero:
-                    indice_estacional_mes: int = df_indice.loc[rep_comparado_df & mes_comparado_df, 
-                                                        "IndiceEstacionalConCero"].iloc[0]
-                else:
-                    indice_estacional_mes: int = df_indice.loc[rep_comparado_df & mes_comparado_df, 
-                                                        "IndiceEstacionalSinCero"].iloc[0]
+                # if self.con_cero:
+                #     indice_estacional_mes: int = df_indice.loc[rep_comparado_df & mes_comparado_df, 
+                #                                         "IndiceEstacionalConCero"].iloc[0]
+                # else:
+                #     indice_estacional_mes: int = df_indice.loc[rep_comparado_df & mes_comparado_df, 
+                #                                         "IndiceEstacionalSinCero"].iloc[0]
                     
-                tendencia_mes: pd.Series[int] = df_tendencia.loc[rep_comparado_tendencia & mes_comparado_tendencia, "Tendencia"]
+                tendencia_mes: pd.Series[int] = df_tendencia.loc[rep_comparado_tendencia & 
+                                                                 mes_comparado_tendencia, "Tendencia"]
 
                 tendencia_estacional.append(round((indice_estacional_mes * tendencia_mes).iloc[0], 0))
         
         return tendencia_estacional
     
 
+    # FIXME: hacer funcional como principal 
     def calculate_seasonal_rate_v2(self, df_indice: pd.DataFrame, df_tendencia: pd.DataFrame) -> List[float]:
         df_indice_agrupado = df_indice.groupby(["Repuesto", "Mes"]).agg({"IndiceEstacional":"sum"})
         df_tendencia_agrupada = df_tendencia.groupby(["Repuesto", "Mes"]).agg({"Tendencia":"sum"}) 

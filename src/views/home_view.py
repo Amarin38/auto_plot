@@ -3,8 +3,8 @@ import sys, os
 import streamlit as st
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
-from src.views.index import IndexPage
-from src.views.forecast import ForecastPage
+from src.views.index_view import IndexPage
+from src.views.forecast_view import ForecastPage
 
 
 def main():

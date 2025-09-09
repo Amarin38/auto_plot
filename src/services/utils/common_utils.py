@@ -6,7 +6,7 @@ import pandas as pd
 import pyexcel as pe
 
 from pathlib import Path
-from typing import Union, Any
+from typing import Union, Any, Literal
 
 from src.config.constants import MAIN_PATH, OUT_PATH
 from src.services.utils.exception_utils import execute_safely
@@ -15,11 +15,11 @@ from src.config.enums import SaveEnum
 class CommonUtils:
     @staticmethod
     @execute_safely
-    def check_file_exists(file: str) -> bool:
+    def check_file_exists(path: Path, file: str) -> bool:
         """
         Checks if the entered file name already exists.
         """
-        return Path(f"{OUT_PATH}/{file}.xlsx").exists()
+        return Path(f"{path}/{file}.xlsx").exists()
 
 
     @staticmethod
@@ -57,21 +57,21 @@ class CommonUtils:
 
 
     @execute_safely
-    def append_df(self, file: str, directory: str, save: str) -> pd.DataFrame:
+    def append_df(self, directory: str, save: Literal["GUARDAR", "NO GUARDAR"] = "NO GUARDAR") -> pd.DataFrame:
         """
         Appends all the xlsx files into one single file with 
         the name entered. 
         """
-        if self.check_file_exists(file):
-            return pd.DataFrame()
-        else:
-            self._convert_xls_to_xlsx(directory)
-            _xlsx_files = glob.glob(f"{MAIN_PATH}/{directory}/**/*.xlsx", recursive=True)
+        self._convert_xls_to_xlsx(directory)
+        _xlsx_files = glob.glob(f"{MAIN_PATH}/{directory}/**/*.xlsx", recursive=True)
+
+        if len(_xlsx_files) != 0:
             df_list: pd.DataFrame = pd.concat([pd.read_excel(file, engine="calamine") for file in _xlsx_files])
-                
+            
             if save == SaveEnum.SAVE.value:
                 df_list.to_excel(f"{OUT_PATH}/appended_df.xlsx", index=False)
             return df_list
+        return pd.DataFrame()
     
 
     @staticmethod

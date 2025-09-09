@@ -21,7 +21,7 @@ class AutoForecastPlotter:
         self._plot_utils = PlotUtils()
         self.plot_config = PlotConfig()
 
-        df_list = ForecastUtils().prepare_data(self.file, self.directory, self.with_zero, self.months_to_forecast)
+        df_list = ForecastUtils().prepare_data(self.directory, self.with_zero, self.months_to_forecast)
         self.df_tendencia = df_list[0]
         self.df_data = df_list[1]
 

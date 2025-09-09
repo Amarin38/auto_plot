@@ -8,14 +8,14 @@ class ForecastIndex:
         self.con_cero = con_cero
 
 
+    # def calculate_anual_rate(self, df: pd.DataFrame) -> pd.Series:
+    #     if self.con_cero:
+    #         return round((df["TotalMes"] / df["PromedioConCero"]).where(df["PromedioConCero"] != 0, 0), 2)
+    #     else:
+    #         return round((df["TotalMes"] / df["PromedioSinCero"]).where(df["PromedioSinCero"] != 0, 0), 2)
+
+
     def calculate_anual_rate(self, df: pd.DataFrame) -> pd.Series:
-        if self.con_cero:
-            return round((df["TotalMes"] / df["PromedioConCero"]).where(df["PromedioConCero"] != 0, 0), 2)
-        else:
-            return round((df["TotalMes"] / df["PromedioSinCero"]).where(df["PromedioSinCero"] != 0, 0), 2)
-
-
-    def calculate_anual_rate_v2(self, df: pd.DataFrame) -> pd.Series:
         return round((df["TotalMes"] / df["Promedio"]).where(df["Promedio"] != 0, 0), 2)
 
 
@@ -31,11 +31,12 @@ class ForecastIndex:
                     rep_comparado = df["Repuesto"] == rep
                     mes_comparado = df["Mes"] == mes
                     if self.con_cero:
-                        resultado.append(float(df.loc[rep_comparado & mes_comparado, 
-                                                      ["IndiceAnualConCero"]].sum().iloc[0] / len(años)))
-                    else:
-                        resultado.append(float(df.loc[rep_comparado & mes_comparado, 
-                                                      ["IndiceAnualSinCero"]].sum().iloc[0] / len(años)))
+                        resultado.append(round(float(df.loc[rep_comparado & mes_comparado, ["IndiceAnual"]].sum().iloc[0] / len(años)), 3))
+                                                    #   ["IndiceAnualConCero"]].sum().iloc[0] / len(años)))
+                                                      
+                    # else:
+                        # resultado.append(float(df.loc[rep_comparado & mes_comparado, 
+                        #                               ["IndiceAnualSinCero"]].sum().iloc[0] / len(años)))
         return resultado
 
 

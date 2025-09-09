@@ -7,29 +7,28 @@ from src.config.constants import OUT_PATH, EXCEL_PATH
 from src.services.utils.exception_utils import execute_safely
 from src.db.crud import df_to_sql
 from src.services.data_cleaning.inventory_data_cleaner import InventoryDataCleaner
-from src.services.utils.common_utils import CommonUtils
 
 class IndexByVehicle:
-    def __init__(self, file: Union[pd.DataFrame, str], directory: str, tipo: str, filtro: Optional[str] = None) -> None:
-        self.file = file
+    def __init__(self,  directory: str, tipo: str, filtro: Optional[str] = None) -> None:
         self.directory = directory
         self.tipo = tipo
         self.filtro = filtro
         self.df_vehicles = pd.read_excel(f"{EXCEL_PATH}/coches_por_cabecera.xlsx", engine="calamine")
-        # self.df_consumption = pd.read_excel(f"{OUT_PATH}/{self.file}-S.xlsx", engine="calamine")
-        self.df_consumption = CommonUtils().convert_to_df(self.file)
+
+        self.cleaner = InventoryDataCleaner()
 
     @execute_safely
-    def calculate_index(self) -> None:
-        if self.df_consumption is not None:
-            fecha_max = self.df_consumption["FechaCompleta"].max()
-            self.df_consumption["Cantidad"] = pd.to_numeric(self.df_consumption["Cantidad"], errors="coerce") 
-            self.df_consumption["Precio"] = self.df_consumption["Precio"].astype(str).str.replace(",",".")
-            self.df_consumption["Precio"] = pd.to_numeric(self.df_consumption["Precio"], errors="coerce")
+    def calculate_index(self, df: pd.DataFrame) -> None:
+        if not df.empty:
+            fecha_max = df["FechaCompleta"].max()
+
+            df["Cantidad"] = pd.to_numeric(df["Cantidad"], errors="coerce") 
+            df["Precio"] = df["Precio"].astype(str).str.replace(",",".")
+            df["Precio"] = pd.to_numeric(df["Precio"], errors="coerce")
             
-            self.df_consumption["Precio"] = self.df_consumption["Cantidad"] * self.df_consumption["Precio"] 
+            df["Precio"] = df["Cantidad"] * df["Precio"] 
             
-            grouped = self.df_consumption.groupby(['Cabecera', 'Repuesto']).agg({'Cantidad':'sum', 'Precio':'sum'}).reset_index()
+            grouped = df.groupby(['Cabecera', 'Repuesto']).agg({'Cantidad':'sum', 'Precio':'sum'}).reset_index()
 
             df_with_vehicles = grouped.merge(self.df_vehicles, on="Cabecera", how="left") # hago join con la cantidad de coches para hacer el cálculo
             df_with_vehicles['IndiceConsumo'] = (df_with_vehicles["Cantidad"]*100) / df_with_vehicles["CantidadCoches"] # hago el cálculo y se lo asigno a una nueva columna
@@ -46,7 +45,9 @@ class IndexByVehicle:
             df_rate.dropna(subset=['IndiceConsumo'], inplace=True)
             df_rate.insert(2, 'TipoRepuesto', self.tipo)
 
-        if self.filtro is not None:
-            df_rate = InventoryDataCleaner(df_rate).filter("Repuesto", self.filtro, "startswith")
+            if self.filtro is not None:
+                df_rate = self.cleaner.filter(df_rate, "Repuesto", self.filtro, "startswith")
 
-        df_to_sql("indice_repuesto", df_rate) # guardo directoryecto en la base de datos
+            df_to_sql("indice_repuesto", df_rate) # guardo el proyecto en la base de datos
+        else:
+            print("El df está vacío.")

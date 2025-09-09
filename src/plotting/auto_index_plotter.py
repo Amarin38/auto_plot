@@ -7,21 +7,27 @@ from typing import Optional
 import plotly.graph_objects as go
 
 from src.config.constants import COLORS
-from src.services.utils.index_utils import IndexUtils
+from src.config.enums import IndexTypeEnum
+from src.services.data_cleaning.inventory_data_cleaner import InventoryDataCleaner
+from src.services.analysis.consumption_index.index_by_motor import IndexByMotor
+from src.services.analysis.consumption_index.index_by_vehicle import IndexByVehicle 
 from src.services.utils.exception_utils import execute_safely
 from src.db.crud import sql_to_df_by_type
+from src.services.utils.common_utils import CommonUtils
+from src.config.constants import MAIN_PATH
 
 class AutoIndexPlotter:
-    def __init__(self, file: str, directory: str, index_type: str, tipo_rep: str, filtro: Optional[str] = None) -> None:
-        self.file = file
+    def __init__(self, directory: str, index_type: str, tipo_rep: str, filtro: Optional[str] = None) -> None:
         self.index_type = index_type
         self.directory = directory
         self.filtro = filtro
         self.colors = COLORS
         self.tipo_rep = tipo_rep
 
-        # FIXME: funciona pero se ejecuta cada vez que se inicia el programa, arreglar
-        IndexUtils().prepare_data(self.index_type, self.file, self.directory, self.tipo_rep, self.filtro) # cargo los datos
+        dir_exists = CommonUtils.check_file_exists(MAIN_PATH, directory)
+        if dir_exists:
+            self.prepare_data()
+
         self.df = sql_to_df_by_type("indice_repuesto", self.tipo_rep)
             
 
@@ -64,6 +70,23 @@ class AutoIndexPlotter:
 
             figuras.append(fig)
         return figuras
+
+
+    @execute_safely
+    def prepare_data(self) -> None:
+        df = InventoryDataCleaner().run_all(self.directory)
+
+        # if index_type == IndexTypeEnum.BY_MOTOR.value:
+            # df_updated = InventoryUpdate().rows_by_dict(df, file, "motores") #FIXME: le paso un file normal pero del otro lado es un json
+            # df_updated.to_excel(f"{OUT_PATH}/{file}-S.xlsx")
+            
+            # IndexByMotor(file, directory, tipo_repuesto).calculate_index()
+        
+        
+        if self.index_type == IndexTypeEnum.BY_VEHICLE.value:
+            IndexByVehicle(self.directory, self.tipo_rep, self.filtro).calculate_index(df)
+        else:
+            raise ValueError(f"Tipo de indice no soportado: {self.index_type}")
 
 
     @execute_safely

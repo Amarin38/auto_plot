@@ -8,9 +8,7 @@ from src.config.constants import OUT_PATH, TODAY_FOR_DELTA
 from src.services.data_cleaning.inventory_data_cleaner import InventoryDataCleaner
 from src.services.utils.inventory_update import InventoryUpdate
 
-class IndexTypeEnum(Enum):
-    BY_MOTOR = "motor"
-    BY_VEHICLE = "vehicle"
+
 
 
 class IndexUtils:
@@ -49,23 +47,5 @@ class IndexUtils:
         return pd.DatetimeIndex(diff.strftime("%Y-%B").unique())
     
 
-    @staticmethod
-    def prepare_data(index_type: str, file: str, directory: str, tipo_repuesto: str, filtro: Optional[str] = None) -> None:
-        from src.services.analysis.consumption_index.index_by_motor import IndexByMotor
-        from src.services.analysis.consumption_index.index_by_vehicle import IndexByVehicle 
-
-        df = InventoryDataCleaner(file, directory, save="NO GUARDAR").run_all()
-
-        if index_type == IndexTypeEnum.BY_MOTOR.value:
-            df_updated = InventoryUpdate().rows_by_dict(df, file, "motores") #FIXME: le paso un file normal pero del otro lado es un json
-            df_updated.to_excel(f"{OUT_PATH}/{file}-S.xlsx")
-            
-            IndexByMotor(file, directory, tipo_repuesto).calculate_index()
-        
-        
-        elif index_type == IndexTypeEnum.BY_VEHICLE.value:
-            IndexByVehicle(df, directory, tipo_repuesto, filtro).calculate_index()
-        
-        else:
-            raise ValueError(f"Tipo de indice no soportado: {index_type}")
+    
 
