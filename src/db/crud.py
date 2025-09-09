@@ -8,13 +8,12 @@ from . import engine
 
 Session = sessionmaker(bind=engine)
 
-# create
 def df_to_sql(table: str, df: pd.DataFrame):
     with engine.begin() as connection:
         df.to_sql(table, con=connection, index=False, if_exists="append")
 
 
-# delete
+# ----------------------------------------------------
 def delete_by_id(table, id: int):
     with Session() as session:
         with session.begin():
@@ -23,22 +22,26 @@ def delete_by_id(table, id: int):
                 session.delete(row)
 
 
-# read
+def delete_table(table: str):
+    with Session() as session:
+        session.delete(table)
+        session.commit()
+
+
+# ----------------------------------------------------
 def read_all(table):
     with Session() as session:
-        return session.scalars(select(table)).all() # type: ignore        
+        return session.scalars(select(table)).all()  
 
 
 def read_date(table):
-    with engine.begin() as connection:
-        query = f"SELECT FechaCompleta FROM {table}"
-        return pd.read_sql_query(query, con=connection)
+    query = select(table.FechaCompleta)
+    return pd.read_sql_query(query, con=engine)
         
 
-def sql_to_df_by_type(table: str, tipo_repuesto: str) -> pd.DataFrame:
-    with engine.begin() as connection:
-        query = f"SELECT * FROM {table} WHERE TipoRepuesto = :tipo"
-        return pd.read_sql_query(query, con=connection, params={"tipo":tipo_repuesto})
+def sql_to_df_by_type(table, tipo_repuesto: str) -> pd.DataFrame:
+    query = select(table).where(table.TipoRepuesto == tipo_repuesto)
+    return pd.read_sql_query(query, con=engine)
 
 
 def sql_to_df(table: str):

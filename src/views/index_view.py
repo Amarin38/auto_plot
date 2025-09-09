@@ -48,7 +48,6 @@ class IndexPage:
 
 
     def add_barplot(self, directory: str, type_index: str, type_repuesto: str, filtro: Optional[str] = None):
-
         autoplot = AutoIndexPlotter(directory, type_index, type_repuesto, filtro)
         StreamlitUtils().show_plot(autoplot)
         

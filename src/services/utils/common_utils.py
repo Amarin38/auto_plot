@@ -21,6 +21,15 @@ class CommonUtils:
         """
         return Path(f"{path}/{file}.xlsx").exists()
 
+    
+    @staticmethod
+    @execute_safely
+    def check_dir_exists(path: Path, dir: str) -> bool:
+        """
+        Checks if the entered directory name already exists.
+        """
+        return Path(f"{path}/{dir}").exists()
+    
 
     @staticmethod
     @execute_safely

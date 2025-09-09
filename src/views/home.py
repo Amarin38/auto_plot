@@ -3,6 +3,8 @@ import sys, os
 import streamlit as st
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
+from src.db import Base, engine
+
 from src.views.index_view import IndexPage
 from src.views.forecast_view import ForecastPage
 from src.views.maxmin_view import MaxminPage
@@ -40,14 +42,8 @@ def main():
         case "indice": indice.indice_options()
         case "tendencia": tendencia.tendencia_options()
         case "maxmin": maxmin.show_table()
-
-    # if st.session_state.active_page == "indice":
-        
-    # elif st.session_state.active_page == "tendencia":
-    #     tendencia.tendencia_options()
-    # elif st.session_state.active_page == "maxmin":
-    #     maxmin.show_table()
     
 
 if __name__ == "__main__":
+    Base.metadata.create_all(engine)
     main()
