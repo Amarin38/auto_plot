@@ -11,7 +11,7 @@ class ForecastWithoutZero:
 
     def __init__(self, file: str, directory: str, meses_en_adelante: int = 6) -> None:
         self.df = pd.read_excel(f"{OUT_PATH}/{file}.xlsx", engine="calamine")
-        
+        self.directory = directory
         self.meses_en_adelante = meses_en_adelante
         self.repuestos = self.df["Repuesto"].unique()
         self.años = self.df["FechaCompleta"].dt.year.unique() 
@@ -19,11 +19,11 @@ class ForecastWithoutZero:
 
         self.tendencia = ForecastTrend(self.meses_en_adelante, self.repuestos, con_cero=False)
         self.indice = ForecastIndex(self.repuestos, con_cero=False)
-        self.listado = InventoryDataCleaner(file, directory)
+        self.listado = InventoryDataCleaner()
 
 
     def calculate_forecast(self) -> None:
-        self.listado.run_all()
+        self.listado.run_all(self.directory)
         resultado: List[Dict[str, Union[pd.Period, int]]] = []
         fecha_periodo: pd.Series[pd.Period] = self.df["FechaCompleta"].dt.to_period("M")
 
