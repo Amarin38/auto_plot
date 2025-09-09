@@ -7,3 +7,5 @@ out/*
 
 todos */
 todas */
+*.db-shm
+*.db-wal
