@@ -17,7 +17,7 @@ def main():
         layout="wide",
         )
     
-    main, indices, prevision, maxmins = st.tabs(["Página principal", "Indices de consumo", "Prevision de consumo", "Máximos y Mínimos"])
+    main, indices, prevision, maxmins = st.tabs(["Página principal", "Índices de consumo", "Previsión de consumo", "Máximos y Mínimos"])
 
 
     with main:

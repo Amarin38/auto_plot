@@ -1,5 +1,4 @@
-
--- ALTER TABLE forecast_trend RENAME TO forecast_trend_old;
+-- ALTER TABLE indice_repuesto RENAME TO index_repuesto;
 -- ALTER TABLE forecast_data RENAME TO forecast_data_old;
 
 

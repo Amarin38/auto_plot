@@ -55,14 +55,6 @@ class MaxMin:
         return df_agrupado
 
 
-    @staticmethod
-    @execute_safely
-    def to_excel(df: pd.DataFrame) -> bytes:
-        output = BytesIO()
-        with pd.ExcelWriter(output, engine="openpyxl") as writer:
-            df.to_excel(writer, index=False, sheet_name="Datos")
-        return output.getvalue()
-    
 
     @staticmethod
     @execute_safely

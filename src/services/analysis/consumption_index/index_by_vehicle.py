@@ -50,6 +50,6 @@ class IndexByVehicle:
             if self.filtro is not None:
                 df_rate = self.cleaner.filter(df_rate, "Repuesto", self.filtro, "startswith")
 
-            df_to_sql("indice_repuesto", df_rate) # guardo el proyecto en la base de datos
+            df_to_sql("index_repuesto", df_rate) # guardo el proyecto en la base de datos
         else:
             print("El df está vacío.")

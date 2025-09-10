@@ -1,0 +1,7 @@
+[server]
+runOnSave = true
+maxUploadSize = 500
+
+[theme]
+base = "dark"
+

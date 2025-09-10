@@ -17,7 +17,7 @@ from src.services.utils.exception_utils import execute_safely
 from src.services.utils.common_utils import CommonUtils
 
 from src.db.crud import sql_to_df_by_type
-from src.db.indice_repuesto_model import IndiceRepuesto
+from src.db.index_repuesto_model import IndexRepuesto
 
 class AutoIndexPlotter:
     def __init__(self, directory: str, index_type: Literal["MOTOR", "VEHICLE"], tipo_rep: str, filtro: Optional[str] = None) -> None:
@@ -31,7 +31,7 @@ class AutoIndexPlotter:
         if dir_exists:
             self.prepare_data()
 
-        self.df = sql_to_df_by_type(IndiceRepuesto, self.tipo_rep)
+        self.df = sql_to_df_by_type(IndexRepuesto, self.tipo_rep)
             
 
     def create_plot(self) -> list:
