@@ -3,7 +3,7 @@ import sys, os
 import streamlit as st
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
-from src.plotting.auto_forecast_plotter import AutoForecastPlotter
+from src.plot.forecast_plotter import ForecastPlotter
 from src.views.streamlit_utils import StreamlitUtils
 from src.services.utils.exception_utils import execute_safely
 
@@ -37,6 +37,6 @@ class ForecastPage:
 
     @execute_safely
     def add_barplot(self, directory: str, type: str):
-        autoplot = AutoForecastPlotter(directory, type)
+        autoplot = ForecastPlotter(directory, type)
         StreamlitUtils().show_plot(autoplot, self.opcion_prevision)
         

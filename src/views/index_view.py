@@ -3,7 +3,7 @@ import streamlit as st
 from typing import Optional, Literal
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
-from src.plotting.auto_index_plotter import  AutoIndexPlotter
+from src.plot.index_plotter import  IndexPlotter
 from src.views.streamlit_utils import StreamlitUtils
 
 class IndexPage:
@@ -32,6 +32,6 @@ class IndexPage:
 
 
     def add_barplot(self, directory: str, type_index: Literal["MOTOR", "VEHICLE"], type_repuesto: str, filtro: Optional[str] = None):
-        autoplot = AutoIndexPlotter(directory, type_index, type_repuesto, filtro)
+        autoplot = IndexPlotter(directory, type_index, type_repuesto, filtro)
         StreamlitUtils().show_plot(autoplot, self.opcion_indice)
         

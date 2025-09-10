@@ -21,4 +21,5 @@
 -- FROM forecast_data_old;
 
 -- DROP TABLE indice_repuesto;
-DELETE FROM maxmin;
+-- DELETE FROM maxmin;
+

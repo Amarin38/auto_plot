@@ -21,5 +21,14 @@
             "folderPath": "auto_plot\\src\\config\\enums.py\\",
             "color": "foldercolorizer.color_66ccff"
         }
-    ]
+    ],
+    "material-icon-theme.folders.associations": {
+        "charts": "images",
+        "graphs": "icons",
+        "visualizations": "images",
+        "plot":"images",
+        "analysis": "delta",
+        "data_cleaning":"custom",
+        "scrapping":"constant"
+    }
 }

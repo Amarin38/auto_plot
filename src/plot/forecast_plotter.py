@@ -13,11 +13,11 @@ from src.services.analysis.forecast.forecast_with_zero import ForecastWithZero
 from src.services.utils.common_utils import CommonUtils
 
 from src.db.crud import sql_to_df_by_type, read_date
-from src.db.forecast_trend_model import ForecastTrend
-from src.db.forecast_data_model import ForecastData
+from src.db.models.forecast_trend_model import ForecastTrend
+from src.db.models.forecast_data_model import ForecastData
 
 
-class AutoForecastPlotter:
+class ForecastPlotter:
     def __init__(self, directory: str, tipo_rep: str, with_zero: Literal["WITH ZERO", "WITHOUT ZERO"] = "WITH ZERO", months_to_forecast: int = 12) -> None:
         self.directory = directory
         self.tipo_rep = tipo_rep
@@ -123,6 +123,7 @@ class AutoForecastPlotter:
     def devolver_fecha(self) -> str:
         df_fecha = read_date(ForecastData)
         return pd.to_datetime(df_fecha["FechaCompleta"].unique()).strftime("%d-%m-%Y")[0]
+    
     
     @execute_safely
     def devolver_titulo(self, rep) -> str:
