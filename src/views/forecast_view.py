@@ -10,12 +10,12 @@ from src.services.utils.exception_utils import execute_safely
 
 class ForecastPage:
     def tendencia_options(self):
-        opcion_tendencia = self.selectbox()
-        if opcion_tendencia != "------":
-            st.title(f"Tendencia de {opcion_tendencia} a 12 meses")
+        opcion_prevision = self.selectbox()
+        if opcion_prevision != "------":
+            st.title(f"Prevision de {opcion_prevision} a 12 meses")
 
 
-        match (opcion_tendencia):
+        match (opcion_prevision):
             case "Inyectores":
                 ...
             case "Bombas inyectoras":

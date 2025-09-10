@@ -31,8 +31,8 @@ def main():
     if col1.button("Indices"):
         st.session_state.active_page = "indice"
     
-    if col2.button("Tendencias"):
-        st.session_state.active_page = "tendencia" 
+    if col2.button("Prevision"):
+        st.session_state.active_page = "prevision" 
 
     if col3.button("Maximos y Minimos"):
         st.session_state.active_page = "maxmin"
@@ -40,7 +40,7 @@ def main():
     # dependiendo de cual se active hace una cosa u otra
     match(st.session_state.active_page):
         case "indice": indice.indice_options()
-        case "tendencia": tendencia.tendencia_options()
+        case "prevision": tendencia.tendencia_options()
         case "maxmin": maxmin.show_table()
     
 
