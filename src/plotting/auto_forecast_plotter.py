@@ -124,3 +124,6 @@ class AutoForecastPlotter:
         df_fecha = read_date(ForecastData)
         return pd.to_datetime(df_fecha["FechaCompleta"].unique()).strftime("%d-%m-%Y")[0]
     
+    @execute_safely
+    def devolver_titulo(self, rep) -> str:
+        return f"Indice {rep} ({self.devolver_fecha()})"

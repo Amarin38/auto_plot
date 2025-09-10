@@ -95,3 +95,7 @@ class AutoIndexPlotter:
     @execute_safely
     def devolver_fecha(self) -> str:
         return pd.to_datetime(self.df["UltimaFecha"].unique()).strftime("%d-%m-%Y")[0]
+    
+    @execute_safely
+    def devolver_titulo(self, rep) -> str:
+        return f"Indice {rep} ({self.devolver_fecha()})"
