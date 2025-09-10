@@ -20,4 +20,5 @@
 -- SELECT Repuesto, FechaCompleta, TipoRepuesto, Año, Mes, TotalAño, TotalMes, Promedio, IndiceAnual, IndiceEstacional
 -- FROM forecast_data_old;
 
--- DROP TABLE forecast_data_old;
+-- DROP TABLE indice_repuesto;
+DELETE FROM maxmin;

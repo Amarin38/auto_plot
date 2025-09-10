@@ -8,7 +8,9 @@ from src.services.analysis.maxmin import MaxMin
 
 if __name__ == "__main__":
     # delete = InventoryDataCleaner("inyectores-S").filter_repuesto("INYECTOR", "startswith")
+    a = InventoryDataCleaner().run_all("todo")
 
+    print(a)
     # df = pd.read_excel(f"{OUT_PATH}/inyectores_indice_por_coche.xlsx")
     # df_to_sql("indice_repuesto", df)
     

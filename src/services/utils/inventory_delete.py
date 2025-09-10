@@ -24,7 +24,8 @@ class InventoryDelete:
     @execute_safely
     def by_content(self, file: Union[str, pd.DataFrame], column: str, delete_by: Tuple[str, ...]):
         df = self.common.convert_to_df(file)
-
         delete = "|".join(delete_by)
+        df[column] = df[column].fillna("").astype(str)
+
         return df.loc[~df[column].str.contains(delete, na=False)] # guardo indices de los elementos para borrar
 

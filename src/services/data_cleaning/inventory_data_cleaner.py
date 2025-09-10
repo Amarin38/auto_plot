@@ -103,13 +103,13 @@ class InventoryDataCleaner:
     
     @execute_safely
     def filter_mov(self, df: pd.DataFrame, mov: Literal["salida", "entrada", "devolucion"]) -> pd.DataFrame:
-        df_interno = self.delete.by_content(df, "Interno", INTERNOS_DEVOLUCION)
+        df = self.delete.by_content(df, "Interno", INTERNOS_DEVOLUCION)
         
         match mov:
             case "salida":
-                df_final = df_interno.loc[df_interno["Movimiento"].str.contains(MOV_SALIDAS, regex=True, na=False)]
+                df_final = df.loc[df["Movimiento"].str.contains(MOV_SALIDAS, regex=True, na=False)]
             case "entrada":
-                df_final = df_interno.loc[df_interno["Movimiento"].str.contains(MOV_ENTRADAS, regex=True, na=False)]
+                df_final = df.loc[df["Movimiento"].str.contains(MOV_ENTRADAS, regex=True, na=False)]
             case "devolucion":
                 df_final = df.loc[df["Movimiento"].str.contains(MOV_DEVOLUCIONES, regex=True, na=False)]
 
