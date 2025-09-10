@@ -26,7 +26,6 @@ OUT_PATH: str = f"{Path.home()}/Documents/Programas/auto_plot/out"
 TEST_PATH: str = f"{MAIN_PATH}/src/views/test"
 DB_PATH: str = f"{MAIN_PATH}/src/db/indices.db"
 JSON_PATH: str = f"{MAIN_PATH}/src/data/json_data"
-EXCEL_PATH: str = f"{MAIN_PATH}/src/data/excel_data"
 
 # Dates
 TODAY_DATE_PAGE = pd.Timestamp.today().strftime("%d/%m/%Y")

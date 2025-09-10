@@ -2,7 +2,7 @@ from datetime import date
 from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column
 from sqlalchemy import Date
-from . import Base
+from .. import Base
 
 class ForecastTrend(Base):
     __tablename__ = "forecast_trend"

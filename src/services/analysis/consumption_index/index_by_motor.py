@@ -3,16 +3,16 @@ import numpy as np
 
 from typing import List, Union
 
-from src.config.constants import OUT_PATH, EXCEL_PATH
+from src.config.constants import OUT_PATH
 from src.services.data_cleaning.inventory_data_cleaner import InventoryDataCleaner
-
+from src.db.crud import sql_to_df
 
 class IndexByMotor:
     def __init__(self, file: str, directory: str, tipo: str) -> None:
         self.file = file
         self.directory = directory
         self.tipo = tipo
-        self.df_motors = pd.read_excel(f"{EXCEL_PATH}/motores_por_cabecera.xlsx", engine="calamine")
+        self.df_motors = sql_to_df("motores_cabecera")
         self.df_consumption = pd.read_excel(f"{OUT_PATH}/{self.file}-S.xlsx", engine="calamine")
 
 

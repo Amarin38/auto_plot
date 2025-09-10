@@ -1,13 +1,14 @@
 import pandas as pd
 
-from src.config.constants import EXCEL_PATH
 from src.services.utils.common_utils import CommonUtils
 from src.services.utils.exception_utils import execute_safely
+from src.db.crud import df_to_sql, sql_to_df
 
 class FleetDataCleaner:
     def __init__(self, file: str) -> None:
         self.df = CommonUtils().convert_to_df(file)
-        self.cabecera = pd.read_excel(f"{EXCEL_PATH}/internos_asignados_cabecera.xlsx")
+        self.cabecera = sql_to_df("internos_asignados")
+
 
     @execute_safely
     def count_motors_by_cabecera(self) -> None:
@@ -20,7 +21,9 @@ class FleetDataCleaner:
         df_fleet["Motores"] = df_fleet["Motor modelo"]
         df_grouped = df_fleet.groupby(["Cabecera", "Motores"]).agg({"Motor modelo":"count"}).reset_index()
         df_grouped = df_grouped.rename(columns={"Motor modelo":"Cantidad Motores"})[["Cabecera", "Motores", "Cantidad Motores"]]
-        df_grouped.to_excel(f"{EXCEL_PATH}/motores_por_cabecera.xlsx")
+
+        df_to_sql("motores_cabecera", df_grouped, "replace")
+
 
     @execute_safely
     def assign_cabecera(self) -> pd.DataFrame:

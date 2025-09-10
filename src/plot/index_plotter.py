@@ -17,9 +17,9 @@ from src.services.utils.exception_utils import execute_safely
 from src.services.utils.common_utils import CommonUtils
 
 from src.db.crud import sql_to_df_by_type
-from src.db.index_repuesto_model import IndexRepuesto
+from src.db.models.index_repuesto_model import IndexRepuesto
 
-class AutoIndexPlotter:
+class IndexPlotter:
     def __init__(self, directory: str, index_type: Literal["MOTOR", "VEHICLE"], tipo_rep: str, filtro: Optional[str] = None) -> None:
         self.index_type = index_type
         self.directory = directory

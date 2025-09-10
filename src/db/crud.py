@@ -1,4 +1,5 @@
 import pandas as pd
+from typing import Literal
 
 from sqlalchemy.orm import Session
 from sqlalchemy.orm import sessionmaker
@@ -8,9 +9,9 @@ from . import engine
 
 Session = sessionmaker(bind=engine)
 
-def df_to_sql(table: str, df: pd.DataFrame):
+def df_to_sql(table: str, df: pd.DataFrame, if_exists: Literal["fail", "replace", "append"]):
     with engine.begin() as connection:
-        df.to_sql(table, con=connection, index=False, if_exists="append")
+        df.to_sql(table, con=connection, index=False, if_exists=if_exists)
 
 
 # ----------------------------------------------------
