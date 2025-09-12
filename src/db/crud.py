@@ -1,22 +1,26 @@
+import json
 import pandas as pd
-from typing import Literal
+from typing import Literal, Union
 
+from sqlalchemy import select
 from sqlalchemy.orm import Session
 from sqlalchemy.orm import sessionmaker
-from sqlalchemy import select
 
-
+from src.db.models.json_config_model import JSONConfig
+from src.config.constants import JSON_PATH
 
 from . import engine
 
 Session = sessionmaker(bind=engine)
+
+# ----------------------------------------------------
 
 def df_to_sql(table: str, df: pd.DataFrame, if_exists: Literal["fail", "replace", "append"]):
     with engine.begin() as connection:
         df.to_sql(table, con=connection, index=False, if_exists=if_exists)
 
 
-def json_to_sql(config_name, data):
+def json_to_sql(config_name: str, data):
     from src.db.models.json_config_model import JSONConfig
 
     with Session() as session:
@@ -24,8 +28,12 @@ def json_to_sql(config_name, data):
         
         session.add(json_file)
         session.commit()
-
         
+
+def store_json_file(file_name:str, ):
+    with open(f"{JSON_PATH}/{file_name}.json", encoding="UTF-8", mode="r") as f:
+        data = json.load(f)
+        json_to_sql(file_name, data)
 
 # ----------------------------------------------------
 def delete_by_id(table, id: int):
@@ -61,4 +69,21 @@ def sql_to_df_by_type(table, tipo_repuesto: str) -> pd.DataFrame:
 def sql_to_df(table: str):
     with engine.begin() as connection:
         return pd.read_sql_table(table, connection) 
-    
+
+
+def get_pk_json_config(nombre_dato: str) -> int:
+    with Session() as session:
+        stmnt = select(JSONConfig).where(JSONConfig.nombre == nombre_dato)
+        return session.scalar(stmnt).id # type: ignore
+
+
+def read_json_config(identificador: Union[str, int]):
+    with Session() as session:
+        if isinstance(identificador, str):
+            stmnt = select(JSONConfig).where(JSONConfig.nombre == identificador)
+        elif isinstance(identificador, int):
+            stmnt = select(JSONConfig).where(JSONConfig.id == identificador)
+
+        return session.scalar(stmnt).data # type: ignore
+        
+        

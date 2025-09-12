@@ -23,3 +23,7 @@
 -- DROP TABLE indice_repuesto;
 -- DELETE FROM maxmin;
 
+-- DELETE FROM "json_config" 
+-- WHERE id == 4
+
+DROP TABLE "sqlite_stat1"

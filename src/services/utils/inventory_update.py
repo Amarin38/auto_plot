@@ -1,14 +1,12 @@
-import json
-
 import pandas as pd
 
-from typing import Dict, Union, Literal
+from typing import Union, Literal
 
 from src.services.utils.common_utils import CommonUtils
 from src.services.utils.exception_utils import execute_safely
-from src.config.constants import OUT_PATH, JSON_PATH
+from src.config.constants import OUT_PATH
 from src.config.enums import SaveEnum
-
+from src.db.crud import read_json_config
 
 class InventoryUpdate:
     def __init__(self) -> None:
@@ -27,21 +25,15 @@ class InventoryUpdate:
     
 
     @execute_safely
-    def column_by_dict(self, file: Union[str, pd.DataFrame], json_file: str) -> pd.DataFrame:
+    def column_by_dict(self, file: Union[str, pd.DataFrame], json_col: str) -> pd.DataFrame:
         """ Updates all the columns by the json file indicated. """
         df = self.common.convert_to_df(file)
-
-        with open(f"{JSON_PATH}/{json_file}.json", "r", encoding="utf-8") as f:
-            return df.rename(columns=json.load(f))
+        return df.rename(columns=read_json_config(json_col))
 
 
     @execute_safely
-    def rows_by_dict(self, file: Union[str, pd.DataFrame], json_file: str, column: str) -> pd.DataFrame:
+    def rows_by_dict(self, file: Union[str, pd.DataFrame], json_col: str, column: str) -> pd.DataFrame:
         """ Updates rows in the column specified by the json file indicated. """
         df = self.common.convert_to_df(file)
-
-        with open(f"{JSON_PATH}/{json_file}.json", "r", encoding="utf-8") as f:
-            data: Dict[str, str] = json.load(f)
-        
-            df[column] = df[column].replace(data)
+        df[column] = df[column].replace(read_json_config(json_col))
         return df
