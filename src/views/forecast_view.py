@@ -5,7 +5,7 @@ import streamlit as st
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
 from src.plot.forecast_plotter import ForecastPlotter
 from src.views.streamlit_utils import StreamlitUtils
-from src.services.utils.exception_utils import execute_safely
+from src.utils.exception_utils import execute_safely
 
 
 class ForecastPage:

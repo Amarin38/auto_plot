@@ -4,12 +4,15 @@ import pandas as pd
 
 from typing import Union, List, Tuple, Literal
 
-from src.config.constants import INTERNOS_DEVOLUCION, OUT_PATH, MOV_SALIDAS, MOV_ENTRADAS, MOV_DEVOLUCIONES, DEL_COLUMNS
 from src.config.enums import SaveEnum
-from src.services.utils.common_utils import CommonUtils
-from src.services.utils.inventory_update import InventoryUpdate 
-from src.services.utils.inventory_delete import InventoryDelete
-from src.services.utils.exception_utils import execute_safely
+from src.config.constants import INTERNOS_DEVOLUCION, OUT_PATH, MOV_SALIDAS, MOV_ENTRADAS, MOV_DEVOLUCIONES, DEL_COLUMNS
+
+from src.utils.common_utils import CommonUtils
+from src.utils.exception_utils import execute_safely
+
+from src.services.data_cleaning.inventory_update import InventoryUpdate 
+from src.services.data_cleaning.inventory_delete import InventoryDelete
+
 
 class InventoryDataCleaner:
     def __init__(self, save: Literal["SAVE", "NOT SAVE"] = "NOT SAVE"):

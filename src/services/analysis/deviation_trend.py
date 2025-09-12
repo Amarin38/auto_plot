@@ -1,8 +1,8 @@
 import numpy as np
 
 from src.config.constants import OUT_PATH
-from src.services.utils.common_utils import CommonUtils
-from src.services.utils.exception_utils import execute_safely
+from src.utils.common_utils import CommonUtils
+from src.utils.exception_utils import execute_safely
 
 class DeviationTrend:
     @staticmethod

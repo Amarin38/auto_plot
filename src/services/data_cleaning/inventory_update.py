@@ -2,8 +2,8 @@ import pandas as pd
 
 from typing import Union, Literal
 
-from src.services.utils.common_utils import CommonUtils
-from src.services.utils.exception_utils import execute_safely
+from src.utils.common_utils import CommonUtils
+from src.utils.exception_utils import execute_safely
 from src.config.constants import OUT_PATH
 from src.config.enums import SaveEnum
 from src.db.crud import read_json_config

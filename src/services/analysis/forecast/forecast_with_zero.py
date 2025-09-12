@@ -5,7 +5,7 @@ from src.services.analysis.forecast.forecast_index import ForecastIndex
 from src.services.analysis.forecast.forecast_trend import ForecastTrend
 from src.services.data_cleaning.inventory_data_cleaner import InventoryDataCleaner
 from src.db.crud import df_to_sql
-from src.services.utils.exception_utils import execute_safely
+from src.utils.exception_utils import execute_safely
 
 
 # TODO: cambiar a groupby 

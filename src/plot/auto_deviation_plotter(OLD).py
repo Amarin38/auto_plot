@@ -3,15 +3,13 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 from src.config.constants import OUT_PATH, COLORS
-from src.config.dataclasses import PlotConfig
 from src.plot.plot_utils import PlotUtils
-from src.services.utils.exception_utils import execute_safely
+from src.utils.exception_utils import execute_safely
 
 
 class DeviationPlotter:
     def __init__(self, file) -> None:
         self.data = pd.read_excel(f"{OUT_PATH}/{file}.xlsx")
-        self.plot_config = PlotConfig()
     
 
     @execute_safely

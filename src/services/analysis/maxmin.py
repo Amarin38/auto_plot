@@ -8,8 +8,8 @@ from src.config.constants import MAIN_PATH
 from src.config.enums import ScrapEnum, ExcelEnum
 
 from src.services.data_cleaning.inventory_data_cleaner import InventoryDataCleaner
-from src.services.utils.exception_utils import execute_safely
-from src.services.utils.common_utils import CommonUtils
+from src.utils.exception_utils import execute_safely
+from src.utils.common_utils import CommonUtils
 from src.services.scrapping.scrap_maxmin import ScrapMaxMin 
 
 from src.db.crud import df_to_sql, sql_to_df

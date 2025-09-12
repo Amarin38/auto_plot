@@ -9,7 +9,7 @@ from pathlib import Path
 from typing import Union, Any, Literal
 
 from src.config.constants import MAIN_PATH, OUT_PATH
-from src.services.utils.exception_utils import execute_safely
+from src.utils.exception_utils import execute_safely
 from src.config.enums import SaveEnum
 
 class CommonUtils:

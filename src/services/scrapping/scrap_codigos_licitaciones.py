@@ -6,8 +6,8 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 
 from src.config.constants import OUT_PATH
-from src.services.utils.scrap_utils import ScrapUtils
-from src.services.utils.exception_utils import execute_safely
+from src.services.scrapping.scrap_utils import ScrapUtils
+from src.utils.exception_utils import execute_safely
 
 class ScrapCodigosLicitaciones:
     def __init__(self, text: str) -> None:

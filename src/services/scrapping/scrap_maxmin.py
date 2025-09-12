@@ -8,8 +8,8 @@ from selenium.webdriver.common.by import By
 from selenium.common.exceptions import NoSuchElementException
 
 from src.config.constants import MAIN_PATH, OUT_PATH
-from src.services.utils.scrap_utils import ScrapUtils 
-from src.services.utils.exception_utils import execute_safely
+from src.services.scrapping.scrap_utils import ScrapUtils 
+from src.utils.exception_utils import execute_safely
 
 class ScrapMaxMin:
     def __init__(self, fecha_desde: str) -> None:

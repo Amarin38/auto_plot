@@ -1,7 +1,7 @@
 import pandas as pd
 
-from src.services.utils.common_utils import CommonUtils
-from src.services.utils.exception_utils import execute_safely
+from src.utils.common_utils import CommonUtils
+from src.utils.exception_utils import execute_safely
 from src.db.crud import df_to_sql, sql_to_df
 
 class FleetDataCleaner:

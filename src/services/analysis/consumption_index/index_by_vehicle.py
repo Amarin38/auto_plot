@@ -3,7 +3,7 @@ import numpy as np
 
 from typing import Optional
 
-from src.services.utils.exception_utils import execute_safely
+from src.utils.exception_utils import execute_safely
 from src.services.data_cleaning.inventory_data_cleaner import InventoryDataCleaner
 
 from src.db.crud import df_to_sql, sql_to_df

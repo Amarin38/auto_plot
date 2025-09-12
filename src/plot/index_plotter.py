@@ -13,8 +13,8 @@ from src.config.enums import IndexTypeEnum
 from src.services.data_cleaning.inventory_data_cleaner import InventoryDataCleaner
 from src.services.analysis.consumption_index.index_by_motor import IndexByMotor
 from src.services.analysis.consumption_index.index_by_vehicle import IndexByVehicle 
-from src.services.utils.exception_utils import execute_safely
-from src.services.utils.common_utils import CommonUtils
+from src.utils.exception_utils import execute_safely
+from src.utils.common_utils import CommonUtils
 
 from src.db.crud import sql_to_df_by_type
 from src.db.models.index_repuesto_model import IndexRepuesto

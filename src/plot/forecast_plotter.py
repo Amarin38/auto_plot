@@ -7,10 +7,10 @@ from typing import Literal
 from src.config.constants import COLORS
 from src.config.constants import MAIN_PATH
 
-from src.services.utils.exception_utils import execute_safely
+from src.utils.exception_utils import execute_safely
 from src.services.data_cleaning.inventory_data_cleaner import InventoryDataCleaner
 from src.services.analysis.forecast.forecast_with_zero import ForecastWithZero
-from src.services.utils.common_utils import CommonUtils
+from src.utils.common_utils import CommonUtils
 
 from src.db.crud import sql_to_df_by_type, read_date
 from src.db.models.forecast_trend_model import ForecastTrend

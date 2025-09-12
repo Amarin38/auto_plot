@@ -5,7 +5,7 @@ from datetime import datetime
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
 from src.services.analysis.maxmin import MaxMin
-from src.services.utils.exception_utils import execute_safely
+from src.utils.exception_utils import execute_safely
 from src.views.streamlit_utils import StreamlitUtils
 
 class MaxminPage:

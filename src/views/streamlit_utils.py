@@ -2,7 +2,7 @@ import pandas as pd
 import streamlit as st
 from io import BytesIO
 
-from src.services.utils.exception_utils import execute_safely
+from src.utils.exception_utils import execute_safely
 
 
 class StreamlitUtils:
