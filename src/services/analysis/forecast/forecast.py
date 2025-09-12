@@ -3,7 +3,7 @@ import pandas as pd
 from src.config.constants import OUT_PATH
 from src.config.enums import WithZeroEnum
 from src.services.analysis.forecast.forecast_index import ForecastIndex 
-from src.services.analysis.forecast.forecast_trend import ForecastTrend
+from src.services.analysis.forecast.forecast_trend import ForecastTrendModel
 from src.services.data_cleaning.inventory_data_cleaner import InventoryDataCleaner
 
 
@@ -17,7 +17,7 @@ class Forecast:
         self.df = pd.read_excel(f"{OUT_PATH}/{file}.xlsx", engine="calamine")
 
         self.repuestos = self.df["Repuesto"].unique()
-        self.tendencia = ForecastTrend(self.meses_en_adelante, self.repuestos, con_cero=True)
+        self.tendencia = ForecastTrendModel(self.meses_en_adelante, self.repuestos, con_cero=True)
         self.indice = ForecastIndex(self.repuestos, con_cero=True)
 
 

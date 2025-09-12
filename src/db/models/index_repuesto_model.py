@@ -4,7 +4,7 @@ from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column
 from .. import Base
 
-class IndexRepuesto(Base):
+class IndexRepuestoModel(Base):
     __tablename__ = "index_repuesto"
     
     id:            Mapped[int] = mapped_column(primary_key=True)

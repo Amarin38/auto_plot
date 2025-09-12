@@ -13,8 +13,8 @@ from src.services.analysis.forecast.forecast_with_zero import ForecastWithZero
 from src.utils.common_utils import CommonUtils
 
 from src.db.crud import sql_to_df_by_type, read_date
-from src.db.models.forecast_trend_model import ForecastTrend
-from src.db.models.forecast_data_model import ForecastData
+from src.db.models.forecast_trend_model import ForecastTrendModel
+from src.db.models.forecast_data_model import ForecastDataModel
 
 
 class ForecastPlotter:
@@ -24,12 +24,12 @@ class ForecastPlotter:
         self.with_zero = with_zero
         self.months_to_forecast = months_to_forecast
 
-        dir_exists = CommonUtils.check_file_exists(MAIN_PATH, directory)
+        dir_exists = CommonUtils.check_dir_exists(MAIN_PATH, directory)
         if dir_exists:
             self.prepare_data()
             
-        self.df_tendencia = sql_to_df_by_type(ForecastTrend, self.tipo_rep)
-        self.df_data = sql_to_df_by_type(ForecastData, self.tipo_rep)
+        self.df_tendencia = sql_to_df_by_type(ForecastTrendModel, self.tipo_rep)
+        self.df_data = sql_to_df_by_type(ForecastDataModel, self.tipo_rep)
 
 
     @execute_safely
@@ -121,7 +121,7 @@ class ForecastPlotter:
 
     @execute_safely
     def devolver_fecha(self) -> str:
-        df_fecha = read_date(ForecastData)
+        df_fecha = read_date(ForecastDataModel)
         return pd.to_datetime(df_fecha["FechaCompleta"].unique()).strftime("%d-%m-%Y")[0]
     
     

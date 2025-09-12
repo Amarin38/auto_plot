@@ -2,7 +2,7 @@ from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column
 from .. import Base
 
-class CochesCabecera(Base):
+class CochesCabeceraModel(Base):
     __tablename__ = "coches_cabecera"
     
     id:                 Mapped[int] = mapped_column(primary_key=True)

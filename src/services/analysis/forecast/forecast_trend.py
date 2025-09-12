@@ -7,7 +7,7 @@ from typing import List, Dict, Union, Any
 from src.config.constants import TODAY_FOR_DELTA 
 
 
-class ForecastTrend:
+class ForecastTrendModel:
     def __init__(self, meses_en_adelante: int, repuestos, con_cero: bool) -> None:
         self.meses_en_adelante = meses_en_adelante
         self.repuestos = repuestos

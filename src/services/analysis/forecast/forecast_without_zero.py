@@ -3,7 +3,7 @@ from typing import Union, Dict, List
 
 from src.config.constants import OUT_PATH
 from src.services.analysis.forecast.forecast_index import ForecastIndex
-from src.services.analysis.forecast.forecast_trend import ForecastTrend
+from src.services.analysis.forecast.forecast_trend import ForecastTrendModel
 from src.services.data_cleaning.inventory_data_cleaner import InventoryDataCleaner
 
 # TODO cambiar a groupby 
@@ -17,7 +17,7 @@ class ForecastWithoutZero:
         self.años = self.df["FechaCompleta"].dt.year.unique() 
         self.años_meses = (pd.date_range(start=f"1/1/{self.años[0]}", end=f"31/12/{self.años[-1]}", freq="ME")).to_period("M")
 
-        self.tendencia = ForecastTrend(self.meses_en_adelante, self.repuestos, con_cero=False)
+        self.tendencia = ForecastTrendModel(self.meses_en_adelante, self.repuestos, con_cero=False)
         self.indice = ForecastIndex(self.repuestos, con_cero=False)
         self.listado = InventoryDataCleaner()
 

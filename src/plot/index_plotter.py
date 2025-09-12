@@ -17,7 +17,7 @@ from src.utils.exception_utils import execute_safely
 from src.utils.common_utils import CommonUtils
 
 from src.db.crud import sql_to_df_by_type
-from src.db.models.index_repuesto_model import IndexRepuesto
+from src.db.models.index_repuesto_model import IndexRepuestoModel
 
 class IndexPlotter:
     def __init__(self, directory: str, index_type: Literal["MOTOR", "VEHICLE"], tipo_rep: str, filtro: Optional[str] = None) -> None:
@@ -27,11 +27,11 @@ class IndexPlotter:
         self.colors = COLORS
         self.tipo_rep = tipo_rep
 
-        dir_exists = CommonUtils.check_file_exists(MAIN_PATH, directory)
+        dir_exists = CommonUtils.check_dir_exists(MAIN_PATH, directory)
         if dir_exists:
             self.prepare_data()
 
-        self.df = sql_to_df_by_type(IndexRepuesto, self.tipo_rep)
+        self.df = sql_to_df_by_type(IndexRepuestoModel, self.tipo_rep)
             
 
     def create_plot(self) -> list:
@@ -51,6 +51,15 @@ class IndexPlotter:
                 x=x_data,
                 y=y_data,
                 name="Consumo",
+
+                text=y_data,
+                textposition="auto",
+                textfont=dict(
+                    size=11,
+                    color='white', 
+                    family='Arial'  
+                ),
+                
                 marker=dict(color=self.colors[random.randint(0,19)])
             ))
 
@@ -66,8 +75,17 @@ class IndexPlotter:
 
             fig.update_layout(
                 title=f"{repuesto}",
-                yaxis_title='Consumo',
-                xaxis_title='Cabecera',
+
+                xaxis=dict(
+                    title='Cabecera',
+                    showticklabels=True
+                ),
+                
+                yaxis=dict(
+                    title='Consumo',
+                    showticklabels=True
+                ),
+
                 showlegend=True
             )
 

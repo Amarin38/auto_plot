@@ -26,4 +26,11 @@
 -- DELETE FROM "json_config" 
 -- WHERE id == 4
 
-DROP TABLE "sqlite_stat1"
+-- DROP TABLE "sqlite_stat1"
+
+-- Update a datos de coches_cabecera
+UPDATE "coches_cabecera"
+SET CantidadCoches = 136
+WHERE Cabecera LIKE 'CUSA'; 
+
+DROP TABLE "deviation"

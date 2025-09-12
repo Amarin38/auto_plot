@@ -2,7 +2,7 @@ import pandas as pd
 from typing import List
 
 from src.services.analysis.forecast.forecast_index import ForecastIndex 
-from src.services.analysis.forecast.forecast_trend import ForecastTrend
+from src.services.analysis.forecast.forecast_trend import ForecastTrendModel
 from src.services.data_cleaning.inventory_data_cleaner import InventoryDataCleaner
 from src.db.crud import df_to_sql
 from src.utils.exception_utils import execute_safely
@@ -20,7 +20,7 @@ class ForecastWithZero:
         self.años = df["FechaCompleta"].dt.year.unique()
 
         self.años_meses = pd.date_range(start=f"1/1/{self.años.min()}", end=f"31/12/{self.años.max()}", freq="ME").to_period("M")
-        self.trend = ForecastTrend(self.months_to_forecast, self.repuestos, con_cero=True) # TODO: cambiar
+        self.trend = ForecastTrendModel(self.months_to_forecast, self.repuestos, con_cero=True) # TODO: cambiar
         self.index = ForecastIndex(self.repuestos, con_cero=True) # TODO: cambiar
         self.inv_cleaner = InventoryDataCleaner()
 

@@ -2,7 +2,7 @@ from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column
 from .. import Base
 
-class Maxmin(Base):
+class MaxminModel(Base):
     __tablename__ = "maxmin"
     
     id:         Mapped[int] = mapped_column(primary_key=True)
