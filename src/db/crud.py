@@ -5,6 +5,8 @@ from sqlalchemy.orm import Session
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import select
 
+
+
 from . import engine
 
 Session = sessionmaker(bind=engine)
@@ -13,6 +15,17 @@ def df_to_sql(table: str, df: pd.DataFrame, if_exists: Literal["fail", "replace"
     with engine.begin() as connection:
         df.to_sql(table, con=connection, index=False, if_exists=if_exists)
 
+
+def json_to_sql(config_name, data):
+    from src.db.models.json_config_model import JSONConfig
+
+    with Session() as session:
+        json_file = JSONConfig(nombre=config_name, data=data)
+        
+        session.add(json_file)
+        session.commit()
+
+        
 
 # ----------------------------------------------------
 def delete_by_id(table, id: int):

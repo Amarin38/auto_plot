@@ -1,7 +1,7 @@
 from datetime import date
+from sqlalchemy import Date
 from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column
-from sqlalchemy import Date
 from .. import Base
 
 class IndexRepuesto(Base):

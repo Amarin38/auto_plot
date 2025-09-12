@@ -1,13 +1,14 @@
 import os, sys
 import pandas as pd
-
+from io import StringIO
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
 from src.services.data_cleaning.inventory_data_cleaner import InventoryDataCleaner
+from src.db import Base, engine
+from src.db.models.json_config_model import JSONConfig
 
 # from src.db.crud import df_to_sql, sql_to_df
 
-# from src.db import Base, engine
 # from src.db.models.coches_cabecera_model import CochesCabecera
 # from src.db.models.internos_cabecera_model import InternosCabecera
 # from src.db.models.motores_cabecera_model import MotoresCabecera
@@ -20,28 +21,13 @@ from src.services.data_cleaning.inventory_data_cleaner import InventoryDataClean
 from src.config.constants import JSON_PATH
 
 if __name__ == "__main__":
-    # Base.metadata.create_all(engine)
-    df = pd.read_json(f"{JSON_PATH}/columns.json", lines=True) 
-    print(df)
-    # print(sql_to_df("motores_cabecera"))
-    # df = pd.read_excel(f"{EXCEL_PATH}/internos_asignados_cabecera.xlsx")
-    # df = pd.read_excel(f"{EXCEL_PATH}/internos_por_cabecera.xlsx")
-    # df = pd.read_excel(f"{EXCEL_PATH}/motores_por_cabecera.xlsx")
-
-
-    # df_to_sql("internos_asignados", df, "append")
-    # delete = InventoryDataCleaner("inyectores-S").filter_repuesto("INYECTOR", "startswith")
-    # a = InventoryDataCleaner().run_all("todo")
-
-    # print(a)
-    # df = pd.read_excel(f"{OUT_PATH}/inyectores_indice_por_coche.xlsx")
-    # df_to_sql("indice_repuesto", df)
+    Base.metadata.create_all(engine)
+    # df = pd.read_json(f"{JSON_PATH}/depositos.json", lines=True) 
     
-    # for indice in read_all("indice_repuesto"):
-    #     print(indice)
+    with open(f"{JSON_PATH}/depositos.json", "r") as f:
+        data = f.read()
 
 
-    # maxmin = MaxMin("maxmin", "todo maxmin", "02/09/2025").calculate()
     ...
 
 
