@@ -28,6 +28,7 @@ def main():
         page_title="Estadisticas",
         page_icon="📊",
         layout="wide",
+        initial_sidebar_state="collapsed"
         )
     
     main, indices, prevision, desviacion, maxmins = st.tabs(["Página principal", "Índices de consumo", "Previsión de consumo", "Desviacion de indices", "Máximos y Mínimos"])
