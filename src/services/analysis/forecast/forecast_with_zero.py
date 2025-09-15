@@ -4,7 +4,7 @@ from typing import List
 from src.services.analysis.forecast.forecast_index import ForecastIndex 
 from src.services.analysis.forecast.forecast_trend import ForecastTrendModel
 from src.services.data_cleaning.inventory_data_cleaner import InventoryDataCleaner
-from src.db.crud import df_to_sql
+from src.db.crud_services import CRUDServices
 from src.utils.exception_utils import execute_safely
 
 
@@ -15,6 +15,7 @@ class ForecastWithZero:
         self.directory = directory
         self.type = type
         self.months_to_forecast = months_to_forecast
+        self.crud = CRUDServices()
     
         self.repuestos = df["Repuesto"].unique()
         self.años = df["FechaCompleta"].dt.year.unique()
@@ -41,8 +42,8 @@ class ForecastWithZero:
         df_trend.insert(2, 'TipoRepuesto', self.type)
 
         # guardo el proyecto en la base de datos
-        df_to_sql("forecast_data", df_data) 
-        df_to_sql("forecast_trend", df_trend)
+        self.crud.df_to_db("forecast_data", df_data, "append") 
+        self.crud.df_to_db("forecast_trend", df_trend, "append")
 
 
     @execute_safely

@@ -16,25 +16,14 @@ from src.services.analysis.consumption_index.index_by_vehicle import IndexByVehi
 from src.utils.exception_utils import execute_safely
 from src.utils.common_utils import CommonUtils
 
-from src.db.crud import sql_to_df_by_type
+from src.db.crud_services import CRUDServices
 from src.db.models.index_repuesto_model import IndexRepuestoModel
 
 class IndexPlotter:
-    def __init__(self, directory: str, index_type: Literal["MOTOR", "VEHICLE"], tipo_rep: str, filtro: Optional[str] = None) -> None:
-        self.index_type = index_type
-        self.directory = directory
-        self.filtro = filtro
-        self.colors = COLORS
-        self.tipo_rep = tipo_rep
+    @execute_safely
+    def create_plot(self, directory: str, index_type: Literal["MOTOR", "VEHICLE"], tipo_rep: str, filtro: Optional[str] = None) -> list:
+        self.df: pd.DataFrame = self._prepare_data(directory, index_type, tipo_rep, filtro)
 
-        dir_exists = CommonUtils.check_dir_exists(MAIN_PATH, directory)
-        if dir_exists:
-            self.prepare_data()
-
-        self.df = sql_to_df_by_type(IndexRepuestoModel, self.tipo_rep)
-            
-
-    def create_plot(self) -> list:
         todos_repuestos = self.df["Repuesto"].unique()
         figuras = []
 
@@ -60,7 +49,7 @@ class IndexPlotter:
                     family='Arial'  
                 ),
                 
-                marker=dict(color=self.colors[random.randint(0,19)])
+                marker=dict(color=COLORS[random.randint(0,19)])
             ))
 
 
@@ -92,28 +81,31 @@ class IndexPlotter:
             figuras.append(fig)
         return figuras
 
-
+    @staticmethod
     @execute_safely
-    def prepare_data(self) -> None:
-        df = InventoryDataCleaner().run_all(self.directory)
-
-        # if index_type == IndexTypeEnum.BY_MOTOR.value:
-            # df_updated = InventoryUpdate().rows_by_dict(df, file, "motores") #FIXME: le paso un file normal pero del otro lado es un json
-            # df_updated.to_excel(f"{OUT_PATH}/{file}-S.xlsx")
+    def _prepare_data(directory: str, index_type: Literal["MOTOR", "VEHICLE"], tipo_rep: str, filtro: Optional[str] = None) -> pd.DataFrame:
+        dir_exists = CommonUtils.check_dir_exists(MAIN_PATH, directory)
+        if dir_exists:
+            df = InventoryDataCleaner().run_all(directory)
+            # if index_type == IndexTypeEnum.BY_MOTOR.value:
+                # df_updated = InventoryUpdate().rows_by_dict(df, file, "motores") #FIXME: le paso un file normal pero del otro lado es un json
+                # df_updated.to_excel(f"{OUT_PATH}/{file}-S.xlsx")
+                
+                # IndexByMotor(file, directory, tipo_repuesto).calculate_index()
             
-            # IndexByMotor(file, directory, tipo_repuesto).calculate_index()
-        
-        
-        if self.index_type == IndexTypeEnum.BY_VEHICLE.value:
-            IndexByVehicle(self.directory, self.tipo_rep, self.filtro).calculate_index(df)
-        else:
-            raise ValueError(f"Tipo de indice no soportado: {self.index_type}")
+            
+            if index_type == IndexTypeEnum.BY_VEHICLE.value:
+                IndexByVehicle(directory, tipo_rep, filtro).calculate_index(df)
+            else:
+                raise ValueError(f"Tipo de indice no soportado: {index_type}")
+        return CRUDServices().sql_to_df_by_type(IndexRepuestoModel, tipo_rep)
+
 
 
     @execute_safely
-    def devolver_fecha(self) -> str:
+    def _devolver_fecha(self) -> str:
         return pd.to_datetime(self.df["UltimaFecha"].unique()).strftime("%d-%m-%Y")[0]
     
     @execute_safely
-    def devolver_titulo(self, rep) -> str:
-        return f"Indice {rep} ({self.devolver_fecha()})"
+    def _devolver_titulo(self, rep: str) -> str:
+        return f"Indice {rep} ({self._devolver_fecha()})"

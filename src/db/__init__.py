@@ -1,15 +1,17 @@
 from sqlalchemy import create_engine
-from sqlalchemy.orm import DeclarativeBase
+from sqlalchemy.orm import declarative_base
+from sqlalchemy.orm import sessionmaker
 
-from src.config.constants import DB_PATH
+from src.config.constants import COMMON_DB_PATH, SERV_DB_PATH
 
-engine = create_engine(f"sqlite:///{DB_PATH}", echo=True)
+common_engine = create_engine(f"sqlite:///{COMMON_DB_PATH}", echo=True)
+services_engine = create_engine(f"sqlite:///{SERV_DB_PATH}", echo=True)
 
-class Base(DeclarativeBase):
-    pass
+SessionCommon = sessionmaker(bind=common_engine)
+SessionServices = sessionmaker(bind=services_engine)
 
-
-
+CommonBase = declarative_base()
+ServicesBase = declarative_base()
 
 
 

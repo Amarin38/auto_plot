@@ -3,7 +3,8 @@ import sys, os
 import streamlit as st
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
-from src.db import Base, engine
+from src.db import CommonBase, ServicesBase
+from src.db import common_engine, services_engine
 
 from src.db.models.coches_cabecera_model import CochesCabeceraModel
 from src.db.models.internos_cabecera_model import InternosCabeceraModel
@@ -42,33 +43,10 @@ def main():
         DeviationPage().show_deviation()
     with maxmins:
         MaxminPage().show_table()
-
-    # col1, col2, col3 = st.columns([1, 1.2, 10], vertical_alignment="center", gap="small")
-    
-    # inicializo el estado del boton 
-    # if "active_page" not in st.session_state:
-    #     st.session_state.active_page = None
-
-
-    # mantengo activos los botones
-    # if col1.button("Indices"):
-    #     st.session_state.active_page = "indice"
-    
-    # if col2.button("Prevision"):
-    #     st.session_state.active_page = "prevision" 
-
-    # if col3.button("Maximos y Minimos"):
-    #     st.session_state.active_page = "maxmin"
-
-    # dependiendo de cual se active hace una cosa u otra
-    
-
-    # match(st.session_state.active_page):
-    #     case "indice": indice.indice_options()
-    #     case "prevision": tendencia.tendencia_options()
-    #     case "maxmin": maxmin.show_table()
     
 
 if __name__ == "__main__":
-    Base.metadata.create_all(engine)
+    CommonBase.metadata.create_all(common_engine)
+    ServicesBase.metadata.create_all(services_engine)
+
     main()

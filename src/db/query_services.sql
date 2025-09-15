@@ -16,21 +16,25 @@
 --     IndiceEstacional REAL
 -- );
 
--- INSERT INTO forecast_data (Repuesto, FechaCompleta, TipoRepuesto, Año, Mes, TotalAño, TotalMes, Promedio, IndiceAnual, IndiceEstacional)
--- SELECT Repuesto, FechaCompleta, TipoRepuesto, Año, Mes, TotalAño, TotalMes, Promedio, IndiceAnual, IndiceEstacional
--- FROM forecast_data_old;
+ATTACH DATABASE 'C:/Users/repuestos01/Documents/Programas/auto_plot/src/db/common_data.db' as COMMONDB;
 
--- DROP TABLE indice_repuesto;
--- DELETE FROM maxmin;
+INSERT INTO COMMONDB.internos_cabecera (Linea, Interno, Cabecera)
+SELECT Linea, Interno, Cabecera
+FROM internos_cabecera;
+
+DETACH DATABASE COMMONDB;
+
+
 
 -- DELETE FROM "json_config" 
 -- WHERE id == 4
 
--- DROP TABLE "sqlite_stat1"
+DROP TABLE "internos_cabecera";
 
 -- Update a datos de coches_cabecera
-UPDATE "coches_cabecera"
-SET CantidadCoches = 136
-WHERE Cabecera LIKE 'CUSA'; 
+-- UPDATE "coches_cabecera"
+-- SET CantidadCoches = 136
+-- WHERE Cabecera LIKE 'CUSA'; 
 
-DROP TABLE "deviation"
+-- DROP TABLE "deviation"
+

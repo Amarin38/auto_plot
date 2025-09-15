@@ -11,7 +11,7 @@ from src.services.analysis.deviation_trend import DeviationTrend
 from src.utils.exception_utils import execute_safely
 from src.utils.common_utils import CommonUtils
 
-from src.db.crud import sql_to_df_by_type, sql_to_df
+from src.db.crud_services import CRUDServices
 
 
 class DeviationPlotter:
@@ -19,7 +19,7 @@ class DeviationPlotter:
         if CommonUtils().check_dir_exists(MAIN_PATH, "todos indices"):
             DeviationTrend().calcular_desviaciones_totales()
 
-        self.df = sql_to_df("deviation")
+        self.df = CRUDServices().sql_to_df("deviation")
             
     @execute_safely
     def create_plot(self) -> go.Figure:

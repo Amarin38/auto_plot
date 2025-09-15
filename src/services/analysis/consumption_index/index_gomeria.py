@@ -5,12 +5,13 @@ import pandas as pd
 from typing import Dict
 
 from src.config.constants import TODAY_FOR_DELTA
-from src.db.crud import read_json_config
+from src.db.crud_common import CRUDCommon
 
 class IndexGomeria:
     def __init__(self, file: str, diff_months: int) -> None:
         self.file = file
         self.diff_months = diff_months
+
 
 
     # def calculate_trend(self) -> None: #FIXME:
@@ -41,7 +42,7 @@ class IndexGomeria:
         indice_consumo_por_mes: Dict[str, float] = {}
 
         # data_consumo = pd.read_excel(f"{EXCEL_PATH}/cubiertas_consumo_{self.file}.xlsx", engine="calamine")
-        data_armadas = read_json_config("cubiertas_armadas")
+        data_armadas = CRUDCommon().read_json_config("cubiertas_armadas")
 
         # for mes in meses:
         #     total_consumo = round(data_consumo["plata"][0][mes]/data_armadas["cantidad"][0][mes], 2) 

@@ -2,9 +2,9 @@ from datetime import date
 from sqlalchemy import Date
 from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column
-from .. import Base
+from .. import ServicesBase
 
-class IndexRepuestoModel(Base):
+class IndexRepuestoModel(ServicesBase):
     __tablename__ = "index_repuesto"
     
     id:            Mapped[int] = mapped_column(primary_key=True)

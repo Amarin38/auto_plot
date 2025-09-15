@@ -6,15 +6,15 @@ from typing import Optional
 from src.utils.exception_utils import execute_safely
 from src.services.data_cleaning.inventory_data_cleaner import InventoryDataCleaner
 
-from src.db.crud import df_to_sql, sql_to_df
+from src.db.crud_services import CRUDServices
 
 class IndexByVehicle:
     def __init__(self,  directory: str, tipo: str, filtro: Optional[str] = None) -> None:
         self.directory = directory
         self.tipo = tipo
         self.filtro = filtro
-        # self.df_vehicles = pd.read_excel(f"{EXCEL_PATH}/coches_por_cabecera.xlsx", engine="calamine")
-        self.df_vehicles = sql_to_df("coches_cabecera")
+        self.crud = CRUDServices()
+        self.df_vehicles = self.crud.sql_to_df("coches_cabecera")
 
         self.cleaner = InventoryDataCleaner()
 
@@ -49,6 +49,6 @@ class IndexByVehicle:
             if self.filtro is not None:
                 df_rate = self.cleaner.filter(df_rate, "Repuesto", self.filtro, "startswith")
 
-            df_to_sql("index_repuesto", df_rate, "append") # guardo el proyecto en la base de datos
+            self.crud.df_to_db("index_repuesto", df_rate, "append") # guardo el proyecto en la base de datos
         else:
             print("El df está vacío.")

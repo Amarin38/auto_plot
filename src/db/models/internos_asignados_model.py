@@ -1,8 +1,8 @@
 from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column
-from .. import Base
+from .. import CommonBase
 
-class InternosAsignadosModel(Base):
+class InternosAsignadosModel(CommonBase):
     __tablename__ = "internos_asignados"
     
     id:             Mapped[int] = mapped_column(primary_key=True)

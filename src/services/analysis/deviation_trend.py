@@ -5,7 +5,7 @@ from src.config.constants import MAIN_PATH
 from src.utils.common_utils import CommonUtils
 from src.utils.exception_utils import execute_safely
 
-from src.db.crud import df_to_sql, sql_to_df
+from src.db.crud_services import CRUDServices
 
 class DeviationTrend:
     def __init__(self) -> None:
@@ -34,4 +34,4 @@ class DeviationTrend:
         media_cabecera["FechaCompleta"] = pd.Timestamp.today()
         media_cabecera["FechaCompleta"] = media_cabecera["FechaCompleta"].dt.date 
 
-        df_to_sql("deviation", media_cabecera, "append")
+        CRUDServices().df_to_db("deviation", media_cabecera, "append")

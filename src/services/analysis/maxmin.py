@@ -2,7 +2,6 @@ import pandas as pd
 
 from typing import List, Optional, Literal
 from datetime import datetime, timedelta
-from io import BytesIO
 
 from src.config.constants import MAIN_PATH
 from src.config.enums import ScrapEnum, ExcelEnum
@@ -12,7 +11,7 @@ from src.utils.exception_utils import execute_safely
 from src.utils.common_utils import CommonUtils
 from src.services.scrapping.scrap_maxmin import ScrapMaxMin 
 
-from src.db.crud import df_to_sql, sql_to_df
+from src.db.crud_services import CRUDServices
 
 """
 - Se descargan los consumos de x fecha hacia atrás de los productos que se queira evaluar el  maxmin.
@@ -25,6 +24,7 @@ class MaxMin:
     def __init__(self) -> None:
         self.data_cleaner = InventoryDataCleaner()
         self.common = CommonUtils()
+        self.crud = CRUDServices()
 
 
     @execute_safely
@@ -36,7 +36,7 @@ class MaxMin:
             self._create_code_list(fecha)
             return self.calculate()
         else:
-            return sql_to_df("maxmin")
+            return self.crud.sql_to_df("maxmin")
 
 
     @execute_safely
@@ -51,7 +51,7 @@ class MaxMin:
     
         df_agrupado = df_agrupado[["Familia", "Articulo", "Repuesto", "Minimo", "Maximo"]]
 
-        df_to_sql("maxmin", df_agrupado)
+        self.crud.df_to_db("maxmin", df_agrupado, "append")
         return df_agrupado
 
 

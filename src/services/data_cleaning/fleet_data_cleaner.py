@@ -2,12 +2,13 @@ import pandas as pd
 
 from src.utils.common_utils import CommonUtils
 from src.utils.exception_utils import execute_safely
-from src.db.crud import df_to_sql, sql_to_df
+from src.db.crud_services import CRUDServices
 
 class FleetDataCleaner:
     def __init__(self, file: str) -> None:
+        self.crud = CRUDServices()
         self.df = CommonUtils().convert_to_df(file)
-        self.cabecera = sql_to_df("internos_asignados")
+        self.cabecera = self.crud.sql_to_df("internos_asignados")
 
 
     @execute_safely
@@ -22,7 +23,7 @@ class FleetDataCleaner:
         df_grouped = df_fleet.groupby(["Cabecera", "Motores"]).agg({"Motor modelo":"count"}).reset_index()
         df_grouped = df_grouped.rename(columns={"Motor modelo":"Cantidad Motores"})[["Cabecera", "Motores", "Cantidad Motores"]]
 
-        df_to_sql("motores_cabecera", df_grouped, "replace")
+        self.crud.df_to_db("motores_cabecera", df_grouped, "replace")
 
 
     @execute_safely
