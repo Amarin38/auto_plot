@@ -8,18 +8,12 @@ from src.services.data_cleaning.inventory_data_cleaner import InventoryDataClean
 from src.db.crud_services import CRUDServices
 
 class IndexByMotor:
-    def __init__(self, file: str, directory: str, tipo: str) -> None:
-        self.file = file
-        self.directory = directory
-        self.tipo = tipo
-        self.df_motors = CRUDServices().sql_to_df("motores_cabecera")
-        self.df_consumption = pd.read_excel(f"{OUT_PATH}/{self.file}-S.xlsx", engine="calamine")
+    def __init__(self) -> None:
+        self.df_motors = CRUDServices().db_to_df("motores_cabecera")
 
 
-    def calculate_index(self) -> List[Union[pd.DataFrame, str]]:
-        InventoryDataCleaner().run_all(self.directory)
-
-        grouped = self.df_consumption.groupby(['Cabecera', 'Repuesto']).agg({'Cantidad':'sum'}).reset_index()
+    def calculate_index(self, df: pd.DataFrame, tipo: str) -> List[Union[pd.DataFrame, str]]:
+        grouped = df.groupby(['Cabecera', 'Repuesto']).agg({'Cantidad':'sum'}).reset_index()
 
         df_with_vehicles = grouped.merge(self.df_motors, on=["Cabecera", "Repuesto"], how="right") # hago join con la cantidad de coches para hacer el cálculo
         df_with_vehicles["IndiceConsumo"] = round((df_with_vehicles["Cantidad"]*100) / df_with_vehicles["CantidadMotores"], 1) # hago el cálculo y se lo asigno a una nueva columna
@@ -27,10 +21,9 @@ class IndexByMotor:
         df_rate = df_with_vehicles[['Cabecera', 'Repuesto', 'IndiceConsumo']]
         df_rate["IndiceConsumo"].replace([np.inf, -np.inf], np.nan, inplace=True)
         df_rate.dropna(subset=["IndiceConsumo"], inplace=True)
-        df_rate.insert(2, 'TipoRepuesto', self.tipo)
+        df_rate.insert(2, 'TipoRepuesto', tipo)
         
-        df_rate.to_excel(f"{OUT_PATH}/{self.file}_indice_por_motor.xlsx")
-        return [df_rate, self._create_title_date(self.df_consumption)]
+        return [df_rate, self._create_title_date(df)]
 
 
     @staticmethod

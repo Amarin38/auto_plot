@@ -20,7 +20,7 @@ from src.views.index_view import IndexPage
 from src.views.forecast_view import ForecastPage
 from src.views.deviation_view import DeviationPage
 from src.views.maxmin_view import MaxminPage
-
+from src.views.sidebar_view import LoadDataSideBar
 
 def main():
     st.title("Estadisticas repuestos")
@@ -32,6 +32,7 @@ def main():
     
     main, indices, prevision, desviacion, maxmins = st.tabs(["Página principal", "Índices de consumo", "Previsión de consumo", "Desviacion de indices", "Máximos y Mínimos"])
 
+    LoadDataSideBar().select_data()
 
     with main:
         st.text("Pagina principal")
@@ -43,7 +44,7 @@ def main():
         DeviationPage().show_deviation()
     with maxmins:
         MaxminPage().show_table()
-    
+
 
 if __name__ == "__main__":
     CommonBase.metadata.create_all(common_engine)

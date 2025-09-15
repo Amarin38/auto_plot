@@ -21,8 +21,10 @@ from src.db.models.index_repuesto_model import IndexRepuestoModel
 
 class IndexPlotter:
     @execute_safely
-    def create_plot(self, directory: str, index_type: Literal["MOTOR", "VEHICLE"], tipo_rep: str, filtro: Optional[str] = None) -> list:
-        self.df: pd.DataFrame = self._prepare_data(directory, index_type, tipo_rep, filtro)
+    def create_plot(self, index_type: Literal["MOTOR", "VEHICLE"], 
+                    tipo_rep: str, filtro: Optional[str] = None) -> list:
+        
+        self.df: pd.DataFrame = CRUDServices().sql_to_df_by_type(IndexRepuestoModel, tipo_rep)
 
         todos_repuestos = self.df["Repuesto"].unique()
         figuras = []
@@ -80,26 +82,6 @@ class IndexPlotter:
 
             figuras.append(fig)
         return figuras
-
-    @staticmethod
-    @execute_safely
-    def _prepare_data(directory: str, index_type: Literal["MOTOR", "VEHICLE"], tipo_rep: str, filtro: Optional[str] = None) -> pd.DataFrame:
-        dir_exists = CommonUtils.check_dir_exists(MAIN_PATH, directory)
-        if dir_exists:
-            df = InventoryDataCleaner().run_all(directory)
-            # if index_type == IndexTypeEnum.BY_MOTOR.value:
-                # df_updated = InventoryUpdate().rows_by_dict(df, file, "motores") #FIXME: le paso un file normal pero del otro lado es un json
-                # df_updated.to_excel(f"{OUT_PATH}/{file}-S.xlsx")
-                
-                # IndexByMotor(file, directory, tipo_repuesto).calculate_index()
-            
-            
-            if index_type == IndexTypeEnum.BY_VEHICLE.value:
-                IndexByVehicle(directory, tipo_rep, filtro).calculate_index(df)
-            else:
-                raise ValueError(f"Tipo de indice no soportado: {index_type}")
-        return CRUDServices().sql_to_df_by_type(IndexRepuestoModel, tipo_rep)
-
 
 
     @execute_safely

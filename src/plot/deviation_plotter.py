@@ -1,25 +1,23 @@
-import random
-
 import pandas as pd
-import numpy as np
+
+from typing import Optional
+
 import plotly.graph_objects as go
 
 from src.config.constants import COLORS
-from src.config.constants import MAIN_PATH
 
 from src.services.analysis.deviation_trend import DeviationTrend
 from src.utils.exception_utils import execute_safely
-from src.utils.common_utils import CommonUtils
 
 from src.db.crud_services import CRUDServices
 
 
 class DeviationPlotter:
-    def __init__(self) -> None:
-        if CommonUtils().check_dir_exists(MAIN_PATH, "todos indices"):
-            DeviationTrend().calcular_desviaciones_totales()
+    def __init__(self, df: Optional[pd.DataFrame] = None) -> None:
+        if df is not None:
+            DeviationTrend().calcular_desviaciones_totales(df)
 
-        self.df = CRUDServices().sql_to_df("deviation")
+        self.df = CRUDServices().db_to_df("deviation")
             
     @execute_safely
     def create_plot(self) -> go.Figure:

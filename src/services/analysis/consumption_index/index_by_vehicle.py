@@ -6,20 +6,17 @@ from typing import Optional
 from src.utils.exception_utils import execute_safely
 from src.services.data_cleaning.inventory_data_cleaner import InventoryDataCleaner
 
-from src.db.crud_services import CRUDServices
+from src.db.crud_common import CRUDCommon
 
 class IndexByVehicle:
-    def __init__(self,  directory: str, tipo: str, filtro: Optional[str] = None) -> None:
-        self.directory = directory
-        self.tipo = tipo
-        self.filtro = filtro
-        self.crud = CRUDServices()
-        self.df_vehicles = self.crud.sql_to_df("coches_cabecera")
-
+    def __init__(self, ) -> None:
+        self.crud = CRUDCommon()
         self.cleaner = InventoryDataCleaner()
+        self.df_vehicles = self.crud.db_to_df("coches_cabecera")
+
 
     @execute_safely
-    def calculate_index(self, df: pd.DataFrame) -> None:
+    def calculate_index(self, df: pd.DataFrame, tipo: str, filtro: Optional[str] = None) -> None:
         if not df.empty:
             fecha_max = df["FechaCompleta"].max()
 
@@ -44,10 +41,10 @@ class IndexByVehicle:
             df_rate['UltimaFecha'] = df_rate['UltimaFecha'].dt.date
 
             df_rate.dropna(subset=['IndiceConsumo'], inplace=True)
-            df_rate.insert(2, 'TipoRepuesto', self.tipo)
+            df_rate.insert(2, 'TipoRepuesto', tipo)
 
-            if self.filtro is not None:
-                df_rate = self.cleaner.filter(df_rate, "Repuesto", self.filtro, "startswith")
+            if filtro is not None:
+                df_rate = self.cleaner.filter(df_rate, "Repuesto", filtro, "startswith")
 
             self.crud.df_to_db("index_repuesto", df_rate, "append") # guardo el proyecto en la base de datos
         else:

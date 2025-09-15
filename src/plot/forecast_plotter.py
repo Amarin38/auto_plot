@@ -2,15 +2,9 @@ import pandas as pd
 
 import plotly.graph_objects as go
 
-from typing import Literal, Tuple
-
 from src.config.constants import COLORS
-from src.config.constants import MAIN_PATH
 
 from src.utils.exception_utils import execute_safely
-from src.services.data_cleaning.inventory_data_cleaner import InventoryDataCleaner
-from src.services.analysis.forecast.forecast_with_zero import ForecastWithZero
-from src.utils.common_utils import CommonUtils
 
 from src.db.crud_services import CRUDServices
 from src.db.models.forecast_trend_model import ForecastTrendModel
@@ -22,11 +16,9 @@ class ForecastPlotter:
         self.crud = CRUDServices()
 
     @execute_safely
-    def create_plot(self, directory: str, tipo_rep: str):
-        data = self._prepare_data(directory, tipo_rep)
-
-        df_data = data[0]
-        df_trend = data[1]
+    def create_plot(self, tipo_rep: str):
+        df_data = self.crud.sql_to_df_by_type(ForecastDataModel, tipo_rep)
+        df_trend = self.crud.sql_to_df_by_type(ForecastTrendModel, tipo_rep)
 
         todos_repuestos = df_data["Repuesto"].unique()
         figuras = []
@@ -102,21 +94,6 @@ class ForecastPlotter:
             figuras.append(fig)
         return figuras
     
-
-    @execute_safely
-    def _prepare_data(self, directory: str, tipo_rep: str, months_to_forecast: int = 12) -> Tuple[pd.DataFrame, pd.DataFrame]:
-        """
-        ### Prepara los datos para graficar.
-        """
-        dir_exists = CommonUtils.check_dir_exists(MAIN_PATH, directory)
-
-        if dir_exists:
-            df = InventoryDataCleaner().run_all(directory)
-            ForecastWithZero(df, directory, tipo_rep, months_to_forecast).create_forecast()
-        
-        return (self.crud.sql_to_df_by_type(ForecastDataModel, tipo_rep), 
-                self.crud.sql_to_df_by_type(ForecastTrendModel, tipo_rep))
-
 
     @execute_safely
     def devolver_fecha(self) -> str:

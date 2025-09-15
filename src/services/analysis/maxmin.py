@@ -36,7 +36,7 @@ class MaxMin:
             self._create_code_list(fecha)
             return self.calculate()
         else:
-            return self.crud.sql_to_df("maxmin")
+            return self.crud.db_to_df("maxmin")
 
 
     @execute_safely

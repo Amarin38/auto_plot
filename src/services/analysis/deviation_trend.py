@@ -13,9 +13,7 @@ class DeviationTrend:
         
 
     @execute_safely
-    def calcular_desviaciones_totales(self) -> None:
-        df = self.common.append_df("todos indices")
-
+    def calcular_desviaciones_totales(self, df) -> None:
         media_cabecera = round(df.groupby(["Cabecera"]).agg({"IndiceConsumo":"mean"}), 1).rename(columns={"IndiceConsumo":"MediaCabecera"}).reset_index() # type:ignore
     
         media_cabecera["MediaDeMedias"] = round(media_cabecera["MediaCabecera"].mean(), 2)
@@ -34,4 +32,4 @@ class DeviationTrend:
         media_cabecera["FechaCompleta"] = pd.Timestamp.today()
         media_cabecera["FechaCompleta"] = media_cabecera["FechaCompleta"].dt.date 
 
-        CRUDServices().df_to_db("deviation", media_cabecera, "append")
+        CRUDServices().df_to_db("deviation", media_cabecera, "replace")

@@ -10,10 +10,9 @@ from src.utils.exception_utils import execute_safely
 
 # TODO: cambiar a groupby 
 class ForecastWithZero:
-    def __init__(self, df: pd.DataFrame, directory: str, type: str, months_to_forecast: int = 12) -> None:
+    def __init__(self, df: pd.DataFrame, type_rep: str, months_to_forecast: int = 12) -> None:
         self.df = df
-        self.directory = directory
-        self.type = type
+        self.type_rep = type_rep
         self.months_to_forecast = months_to_forecast
         self.crud = CRUDServices()
     
@@ -28,22 +27,21 @@ class ForecastWithZero:
 
     @execute_safely
     def create_forecast(self) -> None:
-        self.inv_cleaner.run_all(self.directory)
         data = self._calculate_forecast()
 
         df_data = pd.DataFrame(data[0])
         df_data["Promedio"] = data[1]
         df_data["IndiceAnual"] = self.index.calculate_anual_rate(df_data)
         df_data["IndiceEstacional"] = self.index.calculate_seasonal_rate(df_data)
-        df_data.insert(2, 'TipoRepuesto', self.type)
+        df_data.insert(2, 'TipoRepuesto', self.type_rep)
 
         df_trend = pd.DataFrame(self.trend.calculate_trend(df_data))
         df_trend["TendenciaEstacional"] = self.trend.calculate_seasonal_rate(df_data, df_trend)
-        df_trend.insert(2, 'TipoRepuesto', self.type)
+        df_trend.insert(2, 'TipoRepuesto', self.type_rep)
 
         # guardo el proyecto en la base de datos
-        self.crud.df_to_db("forecast_data", df_data, "append") 
-        self.crud.df_to_db("forecast_trend", df_trend, "append")
+        self.crud.df_to_db("forecast_data", df_data, "replace") 
+        self.crud.df_to_db("forecast_trend", df_trend, "replace")
 
 
     @execute_safely

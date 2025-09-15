@@ -29,7 +29,7 @@ DETACH DATABASE COMMONDB;
 -- DELETE FROM "json_config" 
 -- WHERE id == 4
 
-DROP TABLE "internos_cabecera";
+DROP TABLE "deviation";
 
 -- Update a datos de coches_cabecera
 -- UPDATE "coches_cabecera"

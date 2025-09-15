@@ -17,6 +17,21 @@ DEL_COLUMNS: Tuple[str, ...] = ("ficdep", "fictra", "artipo", "ficpro",
                                 "signo", "transfe", "ficmov")
 
 
+OPCIONES_REP = ("------", "Inyectores", "Bombas inyectoras", 
+                    "Bombas urea", "Calipers", "Camaras", "DVRs", 
+                    "Electroválvulas 5 vias", "Flotantes de gasoil", 
+                    "Herramientas", "Retenes", "Sensores", "Taladros")
+
+OPCIONES_TIPOS_INDICES = ("VEHICLE", "MOTOR")
+
+OPCIONES_CARGAR_DATOS = ("------", "Indices de consumo", "Prevision de connsumo", 
+                         "Desviacion de indices", "Maximos y minimos")
+
+OPCIONES_REP_DB = ("------", "INYECTOR", "BOMBA UREA", "CALIPER", 
+                   "ELECTROVALVULA", "FLOTANTE GASOIL", "RETEN", 
+                   "SENSOR", "TALADRO", "BOMBA INYECTORA", "CAMARA", 
+                   "DVR", "HERRAMIENTA")
+
 # Paths
 MAIN_PATH: Path = Path().cwd()
 OUT_PATH: str = f"{Path.home()}/Documents/Programas/auto_plot/out"
@@ -71,3 +86,8 @@ UNDERLINE = '\033[4m'
 ITALIC = '\033[3m'
 DIMM = '\033[22m'
 RESET = '\033[0m'
+
+
+# Container heights
+SELECT_BOX_HEIGHT = 100
+FILE_UPLOADER_HEIGHT = 368 

@@ -78,7 +78,7 @@ class CRUDServices:
 
 
     @staticmethod
-    def sql_to_df(table: str):
+    def db_to_df(table: str):
         """
         Hace una consulta a la base de datos de services_data.db y lo devuelve en forma de dataframe.    
         """

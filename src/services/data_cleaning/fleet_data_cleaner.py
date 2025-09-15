@@ -8,7 +8,7 @@ class FleetDataCleaner:
     def __init__(self, file: str) -> None:
         self.crud = CRUDServices()
         self.df = CommonUtils().convert_to_df(file)
-        self.cabecera = self.crud.sql_to_df("internos_asignados")
+        self.cabecera = self.crud.db_to_df("internos_asignados")
 
 
     @execute_safely

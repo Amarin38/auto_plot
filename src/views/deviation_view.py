@@ -17,5 +17,5 @@ class DeviationPage:
             with st.container(height=640):
                 st.plotly_chart(DeviationPlotter().create_plot())
         with data:
-            st.dataframe(CRUDServices().sql_to_df("deviation"))
+            st.dataframe(CRUDServices().db_to_df("deviation"))
         
