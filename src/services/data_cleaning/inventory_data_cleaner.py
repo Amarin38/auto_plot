@@ -6,18 +6,13 @@ from typing import Union, List, Tuple, Literal
 
 from src.config.constants import INTERNOS_DEVOLUCION, MOV_SALIDAS, MOV_ENTRADAS, MOV_DEVOLUCIONES, DEL_COLUMNS
 
-from src.utils.common_utils import CommonUtils
 from src.utils.exception_utils import execute_safely
-
-from src.services.data_cleaning.inventory_update import InventoryUpdate 
-from src.services.data_cleaning.inventory_delete import InventoryDelete
+from src.utils.common_utils import CommonUtils
 
 
 class InventoryDataCleaner:
     def __init__(self):
-        self.utils = CommonUtils()
-        self.delete = InventoryDelete()
-        self.update = InventoryUpdate()
+        self.common = CommonUtils()
 
 
     def run_all(self, df_directory: list)-> pd.DataFrame:
@@ -28,11 +23,11 @@ class InventoryDataCleaner:
         - Elimina las columns innecesarias.
         - Filtra por salida.
         """
-        df: pd.DataFrame = self.utils.concat_dataframes(df_directory)
+        df: pd.DataFrame = self.common.concat_dataframes(df_directory)
 
         if not df.empty:
             df = self._transform(df)
-            df = self.delete.unnamed_cols(df)
+            df = self.common.del_unnamed_cols(df)
 
             return self.filter_mov(df, "salida")
         return pd.DataFrame()
@@ -46,12 +41,12 @@ class InventoryDataCleaner:
             print("No se pueden eliminar las columnas, no existen.")
             pass
 
-        df_updated = self.update.column_by_dict(df, "columns")
+        df_updated = self.common.upd_column_by_dict(df, "columns")
 
         df_updated["FechaCompleta"] = pd.to_datetime(df_updated["FechaCompleta"], format="%d/%m/%Y", errors="coerce", dayfirst=True)
         df_updated["Fecha"] = df_updated["FechaCompleta"].dt.strftime("%Y-%m")
 
-        df_updated = self.update.rows_by_dict(df_updated, "depositos", "Cabecera")
+        df_updated = self.common.upd_rows_by_dict(df_updated, "depositos", "Cabecera")
         
         return df_updated
 
@@ -62,7 +57,7 @@ class InventoryDataCleaner:
             case "contains": filtered_df = df.loc[df[column].str.contains(filter_args, na=False)] 
             case "startswith": filtered_df = df.loc[df[column].str.startswith(filter_args, na=False)]
 
-        filtered_df = self.delete.unnamed_cols(filtered_df)
+        filtered_df = self.common.del_unnamed_cols(filtered_df)
 
         return filtered_df
     
@@ -70,7 +65,7 @@ class InventoryDataCleaner:
     @execute_safely
     def filter_codigo(self, df: pd.DataFrame, filter_args: float) -> pd.DataFrame:
         filtered_df = df.loc[df["Codigo"] == filter_args]
-        filtered_df = self.delete.unnamed_cols(filtered_df)
+        filtered_df = self.common.del_unnamed_cols(filtered_df)
 
         return filtered_df
         
@@ -84,21 +79,21 @@ class InventoryDataCleaner:
         filtered_df = pd.concat([df.loc[(df["Familia"] == fam) & 
                                         (df["Articulo"] == art)] for fam, art in filter_args])
             
-        filtered_df = self.delete.unnamed_cols(filtered_df)
+        filtered_df = self.common.del_unnamed_cols(filtered_df)
     
         return filtered_df
 
     
     @execute_safely
     def filter_mov(self, df: pd.DataFrame, mov: Literal["salida", "entrada", "devolucion"]) -> pd.DataFrame:
-        df = self.delete.by_content(df, "Interno", INTERNOS_DEVOLUCION)
+        df = self.common.del_by_content(df, "Interno", INTERNOS_DEVOLUCION)
         
         match mov:
             case "salida": df_final = df.loc[df["Movimiento"].str.contains(MOV_SALIDAS, regex=True, na=False)]
             case "entrada": df_final = df.loc[df["Movimiento"].str.contains(MOV_ENTRADAS, regex=True, na=False)]
             case "devolucion": df_final = df.loc[df["Movimiento"].str.contains(MOV_DEVOLUCIONES, regex=True, na=False)]
 
-        df_final = self.delete.unnamed_cols(df_final)
+        df_final = self.common.del_unnamed_cols(df_final)
 
         return df_final
 

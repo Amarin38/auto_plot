@@ -9,6 +9,10 @@ cells:
     metadata: {}
   - kind: 2
     languageId: sql
+    value: DROP TABLE "maxmin"
+    metadata: {}
+  - kind: 2
+    languageId: sql
     value: "-- ALTER TABLE indice_repuesto RENAME TO index_repuesto;\r
 
       -- ALTER TABLE forecast_data RENAME TO forecast_data_old;\r

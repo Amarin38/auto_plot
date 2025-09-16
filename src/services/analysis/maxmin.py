@@ -1,15 +1,15 @@
 import pandas as pd
 
-from typing import List, Optional, Literal
+from typing import List, Optional
 
 from src.config.enums import ScrapEnum
 
 from src.services.data_cleaning.inventory_data_cleaner import InventoryDataCleaner
-from src.utils.exception_utils import execute_safely
-from src.utils.common_utils import CommonUtils
 from src.services.scrapping.scrap_maxmin import ScrapMaxMin 
 
-from src.db.crud_services import df_to_db, db_to_df
+from src.utils.exception_utils import execute_safely
+
+from src.db.crud_services import df_to_db
 
 """
 - Se descargan los consumos de x fecha hacia atrás de los productos que se queira evaluar el  maxmin.
@@ -19,25 +19,21 @@ from src.db.crud_services import df_to_db, db_to_df
 
 
 class MaxMin:
-    def __init__(self) -> None:
-        self.data_cleaner = InventoryDataCleaner()
-        self.common = CommonUtils()
-
     @execute_safely
-    def calculate(self, df: Optional[pd.DataFrame] = None, multiplicar_por: float = 2.5) -> pd.DataFrame:
+    def calculate(self, df: Optional[pd.DataFrame] = None, multiplicar_por: float = 2.5) -> None:
         if df is not None:
             df_final = df.groupby(["Familia", "Articulo", "Repuesto"]).agg({"Cantidad":"sum"}).reset_index()
             
-            minimo = round((df_final["Cantidad"] / 6) * multiplicar_por, 1)
-            maximo = minimo * 2
+            minimo: pd.Series[float] = round((df_final["Cantidad"] / 6) * multiplicar_por, 1)
+            maximo: pd.Series[float] = minimo * 2
 
             df_final["Minimo"] = minimo
             df_final["Maximo"] = maximo
         
             df_final = df_final[["Familia", "Articulo", "Repuesto", "Minimo", "Maximo"]]
+            
+            df_to_db("maxmin", df_final) # FIXME: se carga 2 veces
 
-            df_to_db("maxmin", df_final, "replace")
-        return db_to_df("maxmin")
 
     @staticmethod
     @execute_safely

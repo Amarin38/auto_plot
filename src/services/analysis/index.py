@@ -39,6 +39,7 @@ class Index:
                     df_motors = db_to_df('motores_cabecera')
                     df_mod = grouped.merge(df_motors, on=['Cabecera', 'Repuesto'], how='right')
 
+            print(df_mod)
             df_mod['IndiceConsumo'] = (df_mod['Cantidad'] * 100) / df_mod['CantidadCoches']
 
             df_rate = df_mod.rename(columns={'Cantidad':'TotalConsumo',

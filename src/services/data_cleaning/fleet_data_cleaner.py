@@ -1,12 +1,11 @@
 import pandas as pd
 
-from src.utils.common_utils import CommonUtils
 from src.utils.exception_utils import execute_safely
 from src.db.crud_services import df_to_db, db_to_df
 
 class FleetDataCleaner:
-    def __init__(self, file: str) -> None:
-        self.df = CommonUtils().convert_to_df(file)
+    def __init__(self, df: pd.DataFrame) -> None:
+        self.df = df
         self.cabecera = db_to_df("internos_asignados")
 
 

@@ -9,7 +9,7 @@ from . import SessionServices
 from src.config.enums import IndexTypeEnum
 
 # ---------------------------------   CREATE   --------------------------------- #
-def df_to_db(table: str, df: pd.DataFrame, if_exists: Literal["fail", "replace", "append"]):
+def df_to_db(table: str, df: pd.DataFrame):
     """
     Guarda un dataframe pasado por parámetro a services_data.db
     - table -> Nombre de la tabla a guardar.
@@ -17,7 +17,7 @@ def df_to_db(table: str, df: pd.DataFrame, if_exists: Literal["fail", "replace",
     - if_exists -> funcion que se va a realizar cuando se introduzca un dato repetido (dejar en append).
     """
     with services_engine.begin() as connection:
-        df.to_sql(table, con=connection, index=False, if_exists=if_exists)
+        df.to_sql(table, con=connection, index=False, if_exists="append")
 
 
 # ---------------------------------   DELETE   --------------------------------- #

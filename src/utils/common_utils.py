@@ -3,42 +3,90 @@ import io
 
 import pandas as pd
 
-from pathlib import Path
-from typing import Union, Any, List
+from typing import List, Tuple, Literal
 
-from src.config.constants import OUT_PATH
 from src.utils.exception_utils import execute_safely
+from src.db.crud_common import read_json_config
+
 
 class CommonUtils:
-    @staticmethod
     @execute_safely
-    def check_file_exists(path: Path, file: str) -> bool:
+    def concat_dataframes(self, df_directory: List) -> pd.DataFrame:
         """
-        Checks if the entered file name already exists.
+        Converts all the .xls files to .xlsx files and returns the concat of all of them\n
         """
-        return Path(f"{path}/{file}.xlsx").exists()
+        _xlsx_files = []
+        if len(df_directory) != 0:
+            for file in df_directory:
+                try:
+                    df = pd.read_excel(file, engine="xlrd") # leo el xls
+                except Exception:
+                    df = pd.read_excel(file, engine="openpyxl") # leo el xls
+                df = self.del_unnamed_cols(df)
 
+                buffer = io.BytesIO()
+                df.to_excel(buffer, index=False, engine="openpyxl")
+                buffer.seek(0) # muevo el puntero a la primera posicion otra vez
+
+                _xlsx_files.append(df)
+            
+            df = pd.concat(_xlsx_files)
+
+            if "pronom" in df.columns:
+                df["pronom"] = [self.del_error_bytes(str(string), "\x00") if pd.notnull(string) else string for string in df["pronom"]]
+
+            return df
+        return pd.DataFrame()
     
+
+    # ------------------------------------------------------ DELETE ------------------------------------------------------
     @staticmethod
     @execute_safely
-    def check_dir_exists(path: Path, dir: str) -> bool:
-        """
-        Checks if the entered directory name already exists.
-        """
-        return Path(f"{path}/{dir}").exists()
-    
+    def del_unnamed_cols(df: pd.DataFrame) -> pd.DataFrame:
+        """ Deletes all the 'Unnamed' columns. """
+        if df.columns.str.contains("Unnamed").any():
+            df = df.loc[:, ~df.columns.str.contains("Unnamed")] 
+            df = df.loc[:, ~df.columns.str.contains("Columna")]
+
+        return df
+
 
     @staticmethod
     @execute_safely
-    def convert_to_df(file: Union[str, Any]) -> pd.DataFrame:
-        """
-        Checks whereas the file entered is a string and converts it to dataframe \n
-        and returns it or is already a dataframe and returns it.
-        """
-        if isinstance(file, str):
-            return pd.read_excel(f"{OUT_PATH}/{file}.xlsx", engine="calamine")
-        else:
-            return pd.DataFrame(file)
+    def del_by_content(df: pd.DataFrame, column: str, delete_by: Tuple[str, ...]):
+        delete = "|".join(delete_by)
+        df[column] = df[column].fillna("").astype(str)
+
+        return df.loc[~df[column].str.contains(delete, na=False)] # guardo indices de los elementos para borrar    
+
+
+    @staticmethod
+    def del_error_bytes(string: str, eliminar: str) -> str:
+        return re.sub(fr"{eliminar}", "", string)
+
+
+    # ------------------------------------------------------ UPDATE ------------------------------------------------------
+    @staticmethod
+    @execute_safely
+    def upd_single_row_name(df: pd.DataFrame, column: str, old_name: str, new_name: str, save: Literal["SAVE", "NOT SAVE"] = "NOT SAVE") -> pd.DataFrame:
+        """ Updates a single row by an 'old_name' var to a 'new_name' in the column specified """
+        df[column] = df[column].replace(old_name, new_name)
+        return df
+        
+
+    @staticmethod
+    @execute_safely
+    def upd_column_by_dict(df: pd.DataFrame, json_col: str) -> pd.DataFrame:
+        """ Updates all the columns by the json file indicated. """
+        return df.rename(columns=read_json_config(json_col))
+
+
+    @staticmethod
+    @execute_safely
+    def upd_rows_by_dict(df: pd.DataFrame, json_col: str, column: str) -> pd.DataFrame:
+        """ Updates rows in the column specified by the json file indicated. """
+        df[column] = df[column].replace(read_json_config(json_col))
+        return df
 
 
     # def _convert_xls_to_xlsx(self, directory) -> None:
@@ -78,36 +126,3 @@ class CommonUtils:
     #     return pd.DataFrame()
     
 
-    def concat_dataframes(self, df_directory: List) -> pd.DataFrame:
-        """
-        Converts all the .xls files to .xlsx files and returns the concat of all of them\n
-        """
-        from src.services.data_cleaning.inventory_delete import InventoryDelete
-        
-        _xlsx_files = []
-        if len(df_directory) != 0:
-            for file in df_directory:
-                try:
-                    df = pd.read_excel(file, engine="xlrd") # leo el xls
-                except Exception:
-                    df = pd.read_excel(file, engine="openpyxl") # leo el xls
-                df = InventoryDelete().unnamed_cols(df)
-
-                buffer = io.BytesIO()
-                df.to_excel(buffer, index=False, engine="openpyxl")
-                buffer.seek(0) # muevo el puntero a la primera posicion otra vez
-
-                _xlsx_files.append(df)
-            
-            df = pd.concat(_xlsx_files)
-
-            if "pronom" in df.columns:
-                df["pronom"] = [self._delete_error_bytes(str(string), "\x00") if pd.notnull(string) else string for string in df["pronom"]]
-
-            return df
-        return pd.DataFrame()
-
-
-    @staticmethod
-    def _delete_error_bytes(string: str, eliminar: str) -> str:
-        return re.sub(fr"{eliminar}", "", string)
