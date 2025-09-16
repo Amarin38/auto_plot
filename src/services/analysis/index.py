@@ -35,12 +35,13 @@ class Index:
                 case IndexTypeEnum.VEHICLE: 
                     df_vehicles = db_to_df('coches_cabecera')
                     df_mod = grouped.merge(df_vehicles, on='Cabecera', how='left')
+                    df_mod['IndiceConsumo'] = (df_mod['Cantidad'] * 100) / df_mod['CantidadCoches']
                 case IndexTypeEnum.MOTOR: 
                     df_motors = db_to_df('motores_cabecera')
                     df_mod = grouped.merge(df_motors, on=['Cabecera', 'Repuesto'], how='right')
-
+                    df_mod['IndiceConsumo'] = (df_mod['Cantidad']*100) / df_mod['CantidadMotores']
+                    # FIXME: arreglar para que funcione con motores
             print(df_mod)
-            df_mod['IndiceConsumo'] = (df_mod['Cantidad'] * 100) / df_mod['CantidadCoches']
 
             df_rate = df_mod.rename(columns={'Cantidad':'TotalConsumo',
                                              'Precio':'TotalCoste'})[['Cabecera', 'Repuesto', 'TotalConsumo', 'TotalCoste', 'IndiceConsumo']]

@@ -17,25 +17,25 @@ DEL_COLUMNS: Tuple[str, ...] = ("ficdep", "fictra", "artipo", "ficpro",
                                 "signo", "transfe", "ficmov")
 
 
-OPCIONES_REP = ("------", "Inyectores", "Bombas inyectoras", 
-                    "Bombas urea", "Calipers", "Camaras", "DVRs", 
-                    "Electroválvulas 5 vias", "Flotantes de gasoil", 
-                    "Herramientas", "Retenes", "Sensores", "Taladros")
+OPCIONES_REP: Tuple[str, ...] = ("------", "Inyectores", "Bombas inyectoras", 
+                                 "Bombas urea", "Calipers", "Camaras", "DVRs", 
+                                 "Electroválvulas 5 vias", "Flotantes de gasoil", 
+                                 "Herramientas", "Retenes", "Sensores", "Taladros")
 
-OPCIONES_CARGAR_DATOS = ("------", "Indices de consumo", "Prevision de connsumo", 
-                         "Desviacion de indices", "Maximos y minimos")
+OPCIONES_CARGAR_DATOS: Tuple[str, ...] = ("------", "Indices de consumo", "Prevision de connsumo", 
+                                          "Desviacion de indices", "Maximos y minimos")
 
-OPCIONES_REP_DB = ("------", "INYECTOR", "BOMBA UREA", "CALIPER", 
-                   "ELECTROVALVULA", "FLOTANTE GASOIL", "RETEN", 
-                   "SENSOR", "TALADRO", "BOMBA INYECTORA", "CAMARA", 
-                   "DVR", "HERRAMIENTA")
+OPCIONES_REP_DB: Tuple[str, ...] = ("------", "INYECTOR", "BOMBA UREA", "CALIPER", 
+                                    "ELECTROVALVULA", "FLOTANTE GASOIL", "RETEN", 
+                                    "SENSOR", "TALADRO", "BOMBA INYECTORA", "CAMARA", 
+                                    "DVR", "HERRAMIENTA")
 
 # Paths
 MAIN_PATH: Path = Path().cwd()
-OUT_PATH: str = f"{Path.home()}/Documents/Programas/auto_plot/out"
+JSON_PATH: str = f"{MAIN_PATH}/src/data/json_data"
+
 COMMON_DB_PATH: str = f"{MAIN_PATH}/src/db_data/db/common_data.db"
 SERV_DB_PATH: str = f"{MAIN_PATH}/src/db_data/db/services_data.db"
-JSON_PATH: str = f"{MAIN_PATH}/src/data/json_data"
 
 
 # Dates

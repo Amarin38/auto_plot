@@ -1,28 +1,22 @@
 import pandas as pd
 
-from src.config.constants import OUT_PATH
 from src.config.enums import WithZeroEnum
 from src.services.analysis.forecast.forecast_index import ForecastIndex 
 from src.services.analysis.forecast.forecast_trend import ForecastTrendModel
-from src.services.data_cleaning.inventory_data_cleaner import InventoryDataCleaner
 
 
 class Forecast:
-    def __init__(self, file: str, directory: str, 
-                 with_zero: str = "ZERO", meses_en_adelante: int = 6) -> None:
-        self.file = file
-        self.directory = directory
+    def __init__(self, df: pd.DataFrame, with_zero: WithZeroEnum = WithZeroEnum.ZERO, meses_en_adelante: int = 6) -> None:
+        self.df = df
         self.with_zero = with_zero
         self.meses_en_adelante = meses_en_adelante
-        self.df = pd.read_excel(f"{OUT_PATH}/{file}.xlsx", engine="calamine")
 
         self.repuestos = self.df["Repuesto"].unique()
         self.tendencia = ForecastTrendModel(self.meses_en_adelante, self.repuestos, con_cero=True)
         self.indice = ForecastIndex(self.repuestos, con_cero=True)
 
 
-    def calculate_forecast(self) -> None:
-        InventoryDataCleaner().run_all(self.directory)
+    def calculate_forecast(self) -> pd.DataFrame:
         fecha_periodo: pd.Series[pd.Period] = self.df["FechaCompleta"].dt.to_period("M")
 
         self.df["fechaMes"] = fecha_periodo.dt.month
@@ -36,9 +30,4 @@ class Forecast:
         df_tendencia = pd.DataFrame(self.tendencia.calculate_trend(self.df))
         self.df["TendenciaEstacional"] = self.tendencia.calculate_seasonal_rate(self.df, df_tendencia)
 
-        if self.with_zero == WithZeroEnum.ZERO.value:
-            self.df.to_excel(f"{OUT_PATH}/tendencia_con_cero.xlsx")
-        elif self.with_zero == WithZeroEnum.NON_ZERO.value:
-            self.df.to_excel(f"{OUT_PATH}/tendencia_sin_cero.xlsx")
-        else:
-            raise ValueError("Introduce un valor que sea con o sin cero.")
+        return self.df

@@ -1,7 +1,6 @@
 import pandas as pd
 from typing import Union, Dict, List
 
-from src.config.constants import OUT_PATH
 from src.services.analysis.forecast.forecast_index import ForecastIndex
 from src.services.analysis.forecast.forecast_trend import ForecastTrendModel
 from src.services.data_cleaning.inventory_data_cleaner import InventoryDataCleaner
@@ -9,9 +8,8 @@ from src.services.data_cleaning.inventory_data_cleaner import InventoryDataClean
 # TODO cambiar a groupby 
 class ForecastWithoutZero:
 
-    def __init__(self, file: str, directory: str, meses_en_adelante: int = 6) -> None:
-        self.df = pd.read_excel(f"{OUT_PATH}/{file}.xlsx", engine="calamine")
-        self.directory = directory
+    def __init__(self, df: pd.DataFrame, meses_en_adelante: int = 6) -> None:
+        self.df = df
         self.meses_en_adelante = meses_en_adelante
         self.repuestos = self.df["Repuesto"].unique()
         self.años = self.df["FechaCompleta"].dt.year.unique() 
@@ -22,8 +20,7 @@ class ForecastWithoutZero:
         self.listado = InventoryDataCleaner()
 
 
-    def calculate_forecast(self) -> None:
-        self.listado.run_all(self.directory)
+    def calculate_forecast(self) -> pd.DataFrame:
         resultado: List[Dict[str, Union[pd.Period, int]]] = []
         fecha_periodo: pd.Series[pd.Period] = self.df["FechaCompleta"].dt.to_period("M")
 
@@ -51,12 +48,11 @@ class ForecastWithoutZero:
         df_final["PromedioSinCero"] = self.compute_non_zero(df_final)
         df_final["IndiceAnualSinCero"] = self.indice.calculate_anual_rate(df_final)
         df_final["IndiceEstacionalSinCero"] = self.indice.calculate_seasonal_rate(df_final)
-        df_final.to_excel(f"{OUT_PATH}/data_sin_cero.xlsx")
         
         df_tendencia: pd.DataFrame = pd.DataFrame(self.tendencia.calculate_trend(df_final))
         df_tendencia["TendenciaEstacionalSinCero"] = self.tendencia.calculate_seasonal_rate(df_final, df_tendencia)
-        df_tendencia.to_excel(f"{OUT_PATH}/tendencia_sin_cero.xlsx")
 
+        return df_tendencia
     def compute_non_zero(self, df: pd.DataFrame) -> List[float]:
         resultado: List[float] = []
 

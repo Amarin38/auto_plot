@@ -39,16 +39,15 @@ class LoadDataSideBar:
                         
                     case "Prevision de connsumo":
                         select_prevision = st.selectbox("Prevision", OPCIONES_REP_DB)
-                        self.load_data_bttn(lambda: ForecastWithZero(df, select_prevision).create_forecast())
+                        self.load_data_bttn(lambda: ForecastWithZero(df, select_prevision).calculate())
 
                     case "Desviacion de indices": 
-                        self.load_data_bttn(lambda: DeviationTrend().calcular_desviaciones_totales(df))
+                        self.load_data_bttn(lambda: DeviationTrend().calculate(df))
 
                     case "Maximos y minimos":
                         mult_por = float(st.text_input("Multiplicar por: "))
                         self.load_data_bttn(lambda: MaxMin().calculate(df, mult_por))
                         
-
 
     @execute_safely
     def load_data(self, select_load, uploaded_files):

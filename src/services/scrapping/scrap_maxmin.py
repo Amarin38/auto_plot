@@ -7,7 +7,7 @@ from typing import List
 from selenium.webdriver.common.by import By
 from selenium.common.exceptions import NoSuchElementException
 
-from src.config.constants import MAIN_PATH, OUT_PATH
+from src.config.constants import MAIN_PATH
 from src.services.scrapping.scrap_utils import ScrapUtils 
 from src.utils.exception_utils import execute_safely
 
@@ -61,7 +61,7 @@ class ScrapMaxMin:
     @execute_safely
     def web_to_excel(self) -> None:
         df = pd.DataFrame(self.web(), columns=["Codigos"])
-        df.to_excel(f"{OUT_PATH}/codigos_maxmin.xlsx")
+        df.to_excel(f"{MAIN_PATH}/codigos_maxmin.xlsx")
 
 
     @execute_safely

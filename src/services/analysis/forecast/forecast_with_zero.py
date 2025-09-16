@@ -26,7 +26,7 @@ class ForecastWithZero:
 
 
     @execute_safely
-    def create_forecast(self) -> None:
+    def calculate(self) -> None:
         data = self._calculate_forecast()
 
         df_data = pd.DataFrame(data[0])

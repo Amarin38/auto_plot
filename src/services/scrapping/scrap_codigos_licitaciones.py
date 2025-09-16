@@ -5,9 +5,9 @@ from typing import List
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 
-from src.config.constants import OUT_PATH
-from src.services.scrapping.scrap_utils import ScrapUtils
+from src.config.constants import MAIN_PATH
 from src.utils.exception_utils import execute_safely
+from src.services.scrapping.scrap_utils import ScrapUtils
 
 class ScrapCodigosLicitaciones:
     def __init__(self, text: str) -> None:
@@ -39,5 +39,5 @@ class ScrapCodigosLicitaciones:
 
 
     def scrap_to_df(self) -> None:
-        pd.DataFrame(self.scrap(), columns=["Codigo", "Nombre"]).to_excel(f"{OUT_PATH}/codigos_licitaciones.xlsx")
+        pd.DataFrame(self.scrap(), columns=["Codigo", "Nombre"]).to_excel(f"{MAIN_PATH}/codigos_licitaciones.xlsx")
         
