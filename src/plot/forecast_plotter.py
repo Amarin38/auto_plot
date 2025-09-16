@@ -6,19 +6,16 @@ from src.config.constants import COLORS
 
 from src.utils.exception_utils import execute_safely
 
-from src.db.crud_services import CRUDServices
+from src.db.crud_services import sql_to_df_by_type, read_date
 from src.db.models.forecast_trend_model import ForecastTrendModel
 from src.db.models.forecast_data_model import ForecastDataModel
 
 
 class ForecastPlotter:
-    def __init__(self) -> None:
-        self.crud = CRUDServices()
-
     @execute_safely
     def create_plot(self, tipo_rep: str):
-        df_data = self.crud.sql_to_df_by_type(ForecastDataModel, tipo_rep)
-        df_trend = self.crud.sql_to_df_by_type(ForecastTrendModel, tipo_rep)
+        df_data = sql_to_df_by_type(ForecastDataModel, tipo_rep)
+        df_trend = sql_to_df_by_type(ForecastTrendModel, tipo_rep)
 
         todos_repuestos = df_data["Repuesto"].unique()
         figuras = []
@@ -97,7 +94,7 @@ class ForecastPlotter:
 
     @execute_safely
     def devolver_fecha(self) -> str:
-        df_fecha = self.crud.read_date(ForecastDataModel)
+        df_fecha = read_date(ForecastDataModel)
         return pd.to_datetime(df_fecha["FechaCompleta"].unique()).strftime("%d-%m-%Y")[0]
     
     

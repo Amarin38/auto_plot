@@ -2,7 +2,8 @@ import sys, os
 import streamlit as st
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
-from src.config.constants import OPCIONES_REP_DB, OPCIONES_CARGAR_DATOS, OPCIONES_TIPOS_INDICES
+from src.config.constants import OPCIONES_REP_DB, OPCIONES_CARGAR_DATOS
+from src.config.enums import IndexTypeEnum
 
 from src.utils.exception_utils import execute_safely
 from src.utils.common_utils import CommonUtils
@@ -10,8 +11,7 @@ from src.utils.common_utils import CommonUtils
 from src.services.data_cleaning.inventory_data_cleaner import InventoryDataCleaner
 
 from src.services.analysis.deviation_trend import DeviationTrend
-from src.services.analysis.consumption_index.index_by_vehicle import IndexByVehicle 
-from src.services.analysis.consumption_index.index_by_motor import IndexByMotor
+from src.services.analysis.consumption_index.index import Index 
 from src.services.analysis.forecast.forecast_with_zero import ForecastWithZero
 
 
@@ -31,15 +31,15 @@ class LoadDataSideBar:
             match self.select_load:
                 case "Indices de consumo":
                     select_indice = st.selectbox("Indice", OPCIONES_REP_DB)
-                    select_tipo = st.selectbox("Tipo", OPCIONES_TIPOS_INDICES)
+                    select_tipo = st.selectbox("Tipo", IndexTypeEnum)
 
                     match select_tipo:
-                        case "VEHICLE":
+                        case IndexTypeEnum.VEHICLE:
                             load_button = st.button("Cargar datos", type="primary", use_container_width=True, 
-                                                    on_click=IndexByVehicle().calculate_index(df, select_indice)) # type: ignore
-                        case "MOTOR":
+                                                    on_click=Index().calculate_by_vehicle(df, select_indice)) # type: ignore
+                        case IndexTypeEnum.MOTOR:
                             load_button = st.button("Cargar datos", type="primary", use_container_width=True, 
-                                                    on_click=IndexByMotor().calculate_index(df, select_indice)) # type: ignore
+                                                    on_click=Index().calculate_by_motor(df, select_indice)) # type: ignore
                             
                 case "Prevision de connsumo":
                     select_prevision = st.selectbox("Prevision", OPCIONES_REP_DB)

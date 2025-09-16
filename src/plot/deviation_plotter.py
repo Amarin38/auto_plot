@@ -9,7 +9,7 @@ from src.config.constants import COLORS
 from src.services.analysis.deviation_trend import DeviationTrend
 from src.utils.exception_utils import execute_safely
 
-from src.db.crud_services import CRUDServices
+from src.db.crud_services import db_to_df
 
 
 class DeviationPlotter:
@@ -17,7 +17,7 @@ class DeviationPlotter:
         if df is not None:
             DeviationTrend().calcular_desviaciones_totales(df)
 
-        self.df = CRUDServices().db_to_df("deviation")
+        self.df = db_to_df("deviation")
             
     @execute_safely
     def create_plot(self) -> go.Figure:

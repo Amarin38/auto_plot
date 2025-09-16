@@ -1,5 +1,5 @@
 from datetime import date
-from sqlalchemy import Date
+from sqlalchemy import Date, String
 from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column
 from .. import ServicesBase
@@ -15,6 +15,7 @@ class IndexRepuestoModel(ServicesBase):
     TotalCoste:    Mapped[float]
     IndiceConsumo: Mapped[float]
     UltimaFecha:   Mapped[date] = mapped_column(Date)
+    TipoOperacion: Mapped[str] = mapped_column(String(7))
     
 
 

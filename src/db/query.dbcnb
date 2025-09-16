@@ -1,0 +1,101 @@
+cells:
+  - kind: 2
+    languageId: sql
+    value: "ALTER TABLE \"index_repuesto\" ADD COLUMN TipoOperacion VARCHAR(7);\r\n"
+    metadata: {}
+  - kind: 2
+    languageId: sql
+    value: UPDATE index_repuesto SET TipoOperacion = 'VEHICLE'
+    metadata: {}
+  - kind: 2
+    languageId: sql
+    value: "-- ALTER TABLE indice_repuesto RENAME TO index_repuesto;\r
+
+      -- ALTER TABLE forecast_data RENAME TO forecast_data_old;\r
+
+      \r
+
+      \r
+
+      -- CREATE TABLE forecast_data (\r
+
+      --     id INTEGER PRIMARY KEY AUTOINCREMENT,\r
+
+      --     Repuesto TEXT,\r
+
+      --     FechaCompleta TEXT,\r
+
+      --     TipoRepuesto TEXT,\r
+
+      --     Año INTEGER,\r
+
+      --     Mes INTEGER,\r
+
+      --     TotalAño INTEGER,\r
+
+      --     TotalMes INTEGER,\r
+
+      --     Promedio REAL,\r
+
+      --     IndiceAnual REAL,\r
+
+      --     IndiceEstacional REAL\r
+
+      -- );\r
+
+      \r
+
+      ATTACH DATABASE
+      'C:/Users/repuestos01/Documents/Programas/auto_plot/src/db/common_data.db'
+      as COMMONDB;\r
+
+      DROP TABLE COMMONDB.index_repuesto;\r
+
+      \r
+
+      INSERT INTO COMMONDB.internos_cabecera (Linea, Interno, Cabecera)\r
+
+      SELECT Linea, Interno, Cabecera\r
+
+      FROM internos_cabecera;\r
+
+      \r
+
+      DETACH DATABASE COMMONDB;\r
+
+      \r
+
+      \r
+
+      \r
+
+      UPDATE index_repuesto SET TipoOperacion = 'VEHICLE'\r
+
+      -- DELETE FROM \"json_config\" \r
+
+      -- WHERE id == 4\r
+
+      \r
+
+      DROP TABLE \"index_repuesto\";\r
+
+      -- Update a datos de coches_cabecera\r
+
+      -- UPDATE \"coches_cabecera\"\r
+
+      -- SET CantidadCoches = 136\r
+
+      -- WHERE Cabecera LIKE 'CUSA'; \r
+
+      \r
+
+      -- DROP TABLE \"deviation\"\r
+
+      \r\n"
+    metadata: {}
+metadata:
+  conn:
+    id: fa069feb3c880269
+    name: services_data.db
+  database: main
+  schema: ""

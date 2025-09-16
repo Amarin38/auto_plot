@@ -4,7 +4,8 @@ from typing import List
 from src.services.analysis.forecast.forecast_index import ForecastIndex 
 from src.services.analysis.forecast.forecast_trend import ForecastTrendModel
 from src.services.data_cleaning.inventory_data_cleaner import InventoryDataCleaner
-from src.db.crud_services import CRUDServices
+
+from src.db.crud_services import df_to_db
 from src.utils.exception_utils import execute_safely
 
 
@@ -14,7 +15,6 @@ class ForecastWithZero:
         self.df = df
         self.type_rep = type_rep
         self.months_to_forecast = months_to_forecast
-        self.crud = CRUDServices()
     
         self.repuestos = df["Repuesto"].unique()
         self.años = df["FechaCompleta"].dt.year.unique()
@@ -40,8 +40,8 @@ class ForecastWithZero:
         df_trend.insert(2, 'TipoRepuesto', self.type_rep)
 
         # guardo el proyecto en la base de datos
-        self.crud.df_to_db("forecast_data", df_data, "replace") 
-        self.crud.df_to_db("forecast_trend", df_trend, "replace")
+        df_to_db("forecast_data", df_data, "replace") 
+        df_to_db("forecast_trend", df_trend, "replace")
 
 
     @execute_safely

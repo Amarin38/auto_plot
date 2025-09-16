@@ -1,21 +1,28 @@
-from enum import Enum
+from enum import auto
+from strenum import UppercaseStrEnum, PascalSnakeCaseStrEnum 
 
-class WithZeroEnum(Enum):
-    ZERO = "ZERO"
-    NON_ZERO = "NON ZERO"
+class WithZeroEnum(UppercaseStrEnum):
+    ZERO = auto()
+    NON_ZERO = auto()
 
-class SaveEnum(Enum):
-    SAVE = "SAVE"
-    NOT_SAVE = "NOT SAVE"
+class IndexTypeEnum(UppercaseStrEnum):
+    VEHICLE = auto()
+    MOTOR = auto()
 
-class IndexTypeEnum(Enum):
-    BY_MOTOR = "MOTOR"
-    BY_VEHICLE = "VEHICLE"
+class ScrapEnum(UppercaseStrEnum):
+    WEB = auto()
+    LOCAL = auto()
 
-class ScrapEnum(Enum):
-    WEB_SCRAP = "WEB"
-    LOCAL_SCRAP = "LOCAL"
-
-class ExcelEnum(Enum):
-    WITH_EXCEL = "WITH EXCEL" 
-    WITHOUT_EXCEL = "WITHOUT EXCEL"
+class RepuestoEnum(PascalSnakeCaseStrEnum):
+    INYECTOR = auto()
+    BOMBA_UREA = auto()
+    CALIPER = auto()
+    ELECTROVALVULA = auto()
+    FLOTANTE_GASOIL = auto()
+    RETEN = auto()
+    SENSOR = auto()
+    TALADRO = auto()
+    BOMBA_INYECTORA = auto()
+    CAMARA = auto()
+    DVR = auto()
+    HERRAMIENTA = auto()

@@ -4,9 +4,8 @@ import streamlit as st
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
 from src.plot.deviation_plotter import DeviationPlotter
-from src.views.streamlit_utils import StreamlitUtils
 from src.utils.exception_utils import execute_safely
-from src.db.crud_services import CRUDServices
+from src.db.crud_services import db_to_df
 
 class DeviationPage:
     @execute_safely
@@ -17,5 +16,5 @@ class DeviationPage:
             with st.container(height=640):
                 st.plotly_chart(DeviationPlotter().create_plot())
         with data:
-            st.dataframe(CRUDServices().db_to_df("deviation"))
+            st.dataframe(db_to_df("deviation"))
         

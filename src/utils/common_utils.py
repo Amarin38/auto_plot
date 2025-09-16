@@ -74,8 +74,6 @@ class CommonUtils:
     #     if len(_xlsx_files) != 0:
     #         df_list: pd.DataFrame = pd.concat([pd.read_excel(file, engine="calamine") for file in _xlsx_files])
             
-    #         if save == SaveEnum.SAVE.value:
-    #             df_list.to_excel(f"{OUT_PATH}/appended_df.xlsx", index=False)
     #         return df_list
     #     return pd.DataFrame()
     

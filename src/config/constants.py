@@ -22,8 +22,6 @@ OPCIONES_REP = ("------", "Inyectores", "Bombas inyectoras",
                     "Electroválvulas 5 vias", "Flotantes de gasoil", 
                     "Herramientas", "Retenes", "Sensores", "Taladros")
 
-OPCIONES_TIPOS_INDICES = ("VEHICLE", "MOTOR")
-
 OPCIONES_CARGAR_DATOS = ("------", "Indices de consumo", "Prevision de connsumo", 
                          "Desviacion de indices", "Maximos y minimos")
 

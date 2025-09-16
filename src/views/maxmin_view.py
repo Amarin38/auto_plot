@@ -14,7 +14,7 @@ class MaxminPage:
         utils = StreamlitUtils()
         today_date = datetime.today().strftime("%d-%m-%Y")
         
-        df = MaxMin().create_maxmin()
+        df = MaxMin().calculate()
         utils.download_df(utils.to_excel(df), f"maxmin {today_date}.xlsx")
         
         st.dataframe(df, height=600)
