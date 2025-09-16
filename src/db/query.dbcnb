@@ -13,6 +13,42 @@ cells:
     metadata: {}
   - kind: 2
     languageId: sql
+    value: "CREATE TABLE deviation (\r
+
+      \    id INTEGER PRIMARY KEY AUTOINCREMENT,\r
+
+      \    Cabecera TEXT,\r
+
+      \    MediaCabecera REAL,\r
+
+      \    MediaDeMedias REAL,\r
+
+      \    Diferencia REAL,\r
+
+      \    Desviacion REAL,\r
+
+      \    DesviacionPor TEXT,\r
+
+      \    FechaCompleta DATE\r
+
+      );"
+    metadata: {}
+  - kind: 2
+    languageId: sql
+    value: ALTER TABLE deviation RENAME TO deviation_old;
+    metadata: {}
+  - kind: 2
+    languageId: sql
+    value: "INSERT INTO deviation (Cabecera, MediaCabecera, MediaDeMedias,
+      Diferencia, Desviacion, DesviacionPor, FechaCompleta)\r
+
+      SELECT Cabecera, MediaCabecera, MediaDeMedias, Diferencia, Desviacion,
+      DesviacionPor, FechaCompleta\r
+
+      FROM deviation_old;"
+    metadata: {}
+  - kind: 2
+    languageId: sql
     value: "-- ALTER TABLE indice_repuesto RENAME TO index_repuesto;\r
 
       -- ALTER TABLE forecast_data RENAME TO forecast_data_old;\r
