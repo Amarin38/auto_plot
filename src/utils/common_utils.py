@@ -6,7 +6,7 @@ import pandas as pd
 from typing import List, Tuple, Literal
 
 from src.utils.exception_utils import execute_safely
-from src.db.crud_common import read_json_config
+from src.db_data.crud_common import read_json_config
 
 
 class CommonUtils:

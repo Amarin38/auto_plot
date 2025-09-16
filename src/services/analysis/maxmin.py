@@ -9,7 +9,7 @@ from src.services.scrapping.scrap_maxmin import ScrapMaxMin
 
 from src.utils.exception_utils import execute_safely
 
-from src.db.crud_services import df_to_db
+from src.db_data.crud_services import df_to_db
 
 """
 - Se descargan los consumos de x fecha hacia atrás de los productos que se queira evaluar el  maxmin.

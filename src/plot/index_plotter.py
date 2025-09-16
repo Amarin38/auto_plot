@@ -11,8 +11,8 @@ from src.config.enums import IndexTypeEnum
 
 from src.utils.exception_utils import execute_safely
 
-from src.db.crud_services import sql_to_df_by_type_and_index_type
-from src.db.models.index_repuesto_model import IndexRepuestoModel
+from src.db_data.crud_services import sql_to_df_by_type_and_index_type
+from src.db_data.models.index_repuesto_model import IndexRepuestoModel
 
 class IndexPlotter:
     @execute_safely

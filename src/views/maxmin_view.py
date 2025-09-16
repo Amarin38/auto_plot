@@ -7,7 +7,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".
 from src.services.analysis.maxmin import MaxMin
 from src.utils.exception_utils import execute_safely
 from src.views.streamlit_utils import StreamlitUtils
-from src.db.crud_services import db_to_df
+from src.db_data.crud_services import db_to_df
 
 class MaxminPage:
     @execute_safely

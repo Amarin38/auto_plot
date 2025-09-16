@@ -6,7 +6,7 @@ from sqlalchemy import select
 
 from src.config.constants import JSON_PATH
 
-from src.db.models.json_config_model import JSONConfigModel
+from src.db_data.models.json_config_model import JSONConfigModel
 
 from . import common_engine
 from . import SessionCommon

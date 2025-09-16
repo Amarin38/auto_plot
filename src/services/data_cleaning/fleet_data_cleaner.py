@@ -1,7 +1,7 @@
 import pandas as pd
 
 from src.utils.exception_utils import execute_safely
-from src.db.crud_services import df_to_db, db_to_df
+from src.db_data.crud_services import df_to_db, db_to_df
 
 class FleetDataCleaner:
     def __init__(self, df: pd.DataFrame) -> None:
@@ -21,7 +21,7 @@ class FleetDataCleaner:
         df_grouped = df_fleet.groupby(["Cabecera", "Motores"]).agg({"Motor modelo":"count"}).reset_index()
         df_grouped = df_grouped.rename(columns={"Motor modelo":"Cantidad Motores"})[["Cabecera", "Motores", "Cantidad Motores"]]
 
-        df_to_db("motores_cabecera", df_grouped, "replace")
+        df_to_db("motores_cabecera", df_grouped)
 
 
     @execute_safely

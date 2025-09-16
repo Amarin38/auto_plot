@@ -9,7 +9,7 @@ from src.config.constants import COLORS
 from src.services.analysis.deviation_trend import DeviationTrend
 from src.utils.exception_utils import execute_safely
 
-from src.db.crud_services import db_to_df
+from src.db_data.crud_services import db_to_df
 
 
 class DeviationPlotter:

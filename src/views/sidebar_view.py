@@ -55,7 +55,6 @@ class LoadDataSideBar:
         match select_load:
             case "Desviacion de indices":
                 df = self.common.concat_dataframes(uploaded_files)
-                print(df)
                 return df
             case _:
                 if uploaded_files is not None:

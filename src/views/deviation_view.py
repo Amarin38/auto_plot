@@ -5,7 +5,7 @@ import streamlit as st
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
 from src.plot.deviation_plotter import DeviationPlotter
 from src.utils.exception_utils import execute_safely
-from src.db.crud_services import db_to_df
+from src.db_data.crud_services import db_to_df
 
 class DeviationPage:
     @execute_safely

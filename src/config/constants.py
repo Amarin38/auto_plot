@@ -33,8 +33,8 @@ OPCIONES_REP_DB = ("------", "INYECTOR", "BOMBA UREA", "CALIPER",
 # Paths
 MAIN_PATH: Path = Path().cwd()
 OUT_PATH: str = f"{Path.home()}/Documents/Programas/auto_plot/out"
-COMMON_DB_PATH: str = f"{MAIN_PATH}/src/db/common_data.db"
-SERV_DB_PATH: str = f"{MAIN_PATH}/src/db/services_data.db"
+COMMON_DB_PATH: str = f"{MAIN_PATH}/src/db_data/db/common_data.db"
+SERV_DB_PATH: str = f"{MAIN_PATH}/src/db_data/db/services_data.db"
 JSON_PATH: str = f"{MAIN_PATH}/src/data/json_data"
 
 

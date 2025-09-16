@@ -5,7 +5,7 @@ import pandas as pd
 from typing import Dict
 
 from src.config.constants import TODAY_FOR_DELTA
-from src.db.crud_common import read_json_config
+from src.db_data.crud_common import read_json_config
 
 class IndexGomeria:
     def __init__(self, file: str, diff_months: int) -> None:
