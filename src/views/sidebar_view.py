@@ -35,24 +35,19 @@ class LoadDataSideBar:
                     case "Indices de consumo":
                         select_indice = st.selectbox("Indice", OPCIONES_REP_DB)
                         select_tipo = st.selectbox("Tipo", IndexTypeEnum)
-
-                        load_button = st.button("Cargar datos", type="primary", use_container_width=True, 
-                                                on_click=Index().calculate(df, select_indice, select_tipo))
-                                
+                        self.load_data_bttn(lambda: Index().calculate(df, select_indice, select_tipo))
+                        
                     case "Prevision de connsumo":
                         select_prevision = st.selectbox("Prevision", OPCIONES_REP_DB)
+                        self.load_data_bttn(lambda: ForecastWithZero(df, select_prevision).create_forecast())
 
-                        load_button = st.button("Cargar datos", type="primary", use_container_width=True, 
-                                                on_click=ForecastWithZero(df, select_prevision).create_forecast())
-                        
-                    case "Desviacion de indices":
-                        load_button = st.button("Cargar datos", type="primary", use_container_width=True, 
-                                                on_click=DeviationTrend().calcular_desviaciones_totales(df))
-                        
+                    case "Desviacion de indices": 
+                        self.load_data_bttn(lambda: DeviationTrend().calcular_desviaciones_totales(df))
+
                     case "Maximos y minimos":
                         mult_por = float(st.text_input("Multiplicar por: "))
-                        load_button = st.button("Cargar datos", type="primary", use_container_width=True,
-                                                on_click=MaxMin().calculate(df, mult_por))
+                        self.load_data_bttn(lambda: MaxMin().calculate(df, mult_por))
+                        
 
 
     @execute_safely
@@ -67,4 +62,11 @@ class LoadDataSideBar:
                     return self.inventory.run_all(uploaded_files) # junto todos los archivos
             
     
+    def load_data_bttn(self, func):
+        st.button(
+            label="Cargar datos", 
+            type="primary", 
+            use_container_width=True,
+            on_click=func
+            )
     

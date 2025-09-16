@@ -32,7 +32,7 @@ class MaxMin:
         
             df_final = df_final[["Familia", "Articulo", "Repuesto", "Minimo", "Maximo"]]
             
-            df_to_db("maxmin", df_final) # FIXME: se carga 2 veces
+            df_to_db("maxmin", df_final)
 
 
     @staticmethod
