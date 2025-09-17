@@ -8,6 +8,8 @@
         "analysis": "delta",
         "data_cleaning":"custom",
         "scrapping":"constant",
-        "db_data":"contract"
+        "db_data":"contract",
+        "config_model":"config",
+        "services_model":"controller"
     }
 }

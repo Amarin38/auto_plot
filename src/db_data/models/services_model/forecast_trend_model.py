@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column
-from .. import ServicesBase
+from ... import ServicesBase
 
 class ForecastTrendModel(ServicesBase):
     __tablename__ = "forecast_trend"

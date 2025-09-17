@@ -6,7 +6,7 @@ class WithZeroEnum(UppercaseStrEnum):
     NON_ZERO = auto()
 
 class IndexTypeEnum(UppercaseStrEnum):
-    VEHICLE = auto()
+    VEHICULO = auto()
     MOTOR = auto()
 
 class ScrapEnum(UppercaseStrEnum):

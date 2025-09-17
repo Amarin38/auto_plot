@@ -12,7 +12,7 @@ class FleetDataCleaner:
     @execute_safely
     def count_motors_by_cabecera(self) -> None:
         """
-        ### Cuenta la cantidad de motores por cabecera y las asigna\n
+        ### Cuenta la cantidad de motor por cabecera y las asigna\n
         ### en un nuevo file separado por motor.
         """
         df_fleet: pd.DataFrame =  self.assign_cabecera() # type: ignore

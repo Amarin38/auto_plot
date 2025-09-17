@@ -2,7 +2,7 @@ from datetime import date
 from sqlalchemy import Date
 from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column
-from .. import ServicesBase
+from ... import ServicesBase
 
 class DeviationModel(ServicesBase):
     __tablename__ = "deviation"

@@ -7,8 +7,8 @@ from src.config.constants import COLORS
 from src.utils.exception_utils import execute_safely
 
 from src.db_data.crud_services import sql_to_df_by_type, read_date
-from src.db_data.models.forecast_trend_model import ForecastTrendModel
-from src.db_data.models.forecast_data_model import ForecastDataModel
+from src.db_data.models.services_model.forecast_trend_model import ForecastTrendModel
+from src.db_data.models.services_model.forecast_data_model import ForecastDataModel
 
 
 class ForecastPlotter:

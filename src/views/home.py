@@ -6,15 +6,20 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".
 from src.db_data import CommonBase, ServicesBase
 from src.db_data import common_engine, services_engine
 
-from src.db_data.models.coches_cabecera_model import CochesCabeceraModel
-from src.db_data.models.internos_cabecera_model import InternosCabeceraModel
-from src.db_data.models.motores_cabecera_model import MotoresCabeceraModel
-from src.db_data.models.forecast_data_model import ForecastDataModel
-from src.db_data.models.forecast_trend_model import ForecastTrendModel
-from src.db_data.models.index_repuesto_model import IndexRepuestoModel
-from src.db_data.models.internos_asignados_model import InternosAsignadosModel
-from src.db_data.models.deviation_model import DeviationModel
-from src.db_data.models.maxmin_model import MaxminModel
+from src.db_data.models.services_model.forecast_data_model import ForecastDataModel
+from src.db_data.models.services_model.forecast_trend_model import ForecastTrendModel
+from src.db_data.models.services_model.index_repuesto_model import IndexRepuestoModel
+from src.db_data.models.services_model.deviation_model import DeviationModel
+from src.db_data.models.services_model.maxmin_model import MaxminModel
+
+from src.db_data.models.config_model.coches_cabecera_model import CochesCabeceraModel
+from src.db_data.models.config_model.internos_cabecera_model import InternosCabeceraModel
+from src.db_data.models.config_model.motores_cabecera_model import MotoresCabeceraModel
+from src.db_data.models.config_model.internos_asignados_model import InternosAsignadosModel
+from src.db_data.models.config_model.cilindros_model import CilindrosModel
+from src.db_data.models.config_model.normativa_model import NormativaModel
+from src.db_data.models.config_model.motores_model import MotoresModel
+from src.db_data.models.config_model.chasis_model import ChasisModel
 
 from src.views.index_view import IndexPage
 from src.views.forecast_view import ForecastPage

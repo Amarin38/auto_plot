@@ -2,7 +2,7 @@ from datetime import date
 from sqlalchemy import Date, String
 from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column
-from .. import ServicesBase
+from ... import ServicesBase
 
 class IndexRepuestoModel(ServicesBase):
     __tablename__ = "index_repuesto"

@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column
-from .. import CommonBase
+from ... import CommonBase
 
 class CochesCabeceraModel(CommonBase):
     __tablename__ = "coches_cabecera"

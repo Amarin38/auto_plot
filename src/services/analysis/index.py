@@ -32,7 +32,7 @@ class Index:
             grouped = df.groupby(['Cabecera', 'Repuesto']).agg({'Cantidad':'sum', 'Precio':'sum'}).reset_index()
 
             match tipo_op:
-                case IndexTypeEnum.VEHICLE: 
+                case IndexTypeEnum.VEHICULO: 
                     df_vehicles = db_to_df('coches_cabecera')
                     df_mod = grouped.merge(df_vehicles, on='Cabecera', how='left')
                     df_mod['IndiceConsumo'] = (df_mod['Cantidad'] * 100) / df_mod['CantidadCoches']
@@ -40,7 +40,8 @@ class Index:
                     df_motors = db_to_df('motores_cabecera')
                     df_mod = grouped.merge(df_motors, on=['Cabecera', 'Repuesto'], how='right')
                     df_mod['IndiceConsumo'] = (df_mod['Cantidad']*100) / df_mod['CantidadMotores']
-                    # FIXME: arreglar para que funcione con motores
+                    # FIXME: arreglar para que funcione con motor
+                    
             print(df_mod)
 
             df_rate = df_mod.rename(columns={'Cantidad':'TotalConsumo',
@@ -59,7 +60,7 @@ class Index:
             if filtro is not None:
                 df_rate = self.cleaner.filter(df_rate, 'Repuesto', filtro, 'startswith')
 
-            df_to_db('index_repuesto', df_rate, 'append') # guardo el proyecto en la base de datos
+            df_to_db('prueba_index', df_rate) # guardo el proyecto en la base de datos
         else:
             print('El df está vacío.')
 

@@ -6,7 +6,7 @@ from sqlalchemy import select
 
 from src.config.constants import JSON_PATH
 
-from src.db_data.models.json_config_model import JSONConfigModel
+from src.db_data.models.config_model.json_config_model import JSONConfigModel
 
 from . import common_engine
 from . import SessionCommon
@@ -14,7 +14,7 @@ from . import SessionCommon
 
 
 # ---------------------------------   CREATE   --------------------------------- #
-def df_to_db(table: str, df: pd.DataFrame, if_exists: Literal["fail", "replace", "append"]):
+def df_to_db(table: str, df: pd.DataFrame):
     """
     Guarda un dataframe pasado por parámetro a common_data.db
     - table -> Nombre de la tabla a guardar.
@@ -22,7 +22,7 @@ def df_to_db(table: str, df: pd.DataFrame, if_exists: Literal["fail", "replace",
     - if_exists -> funcion que se va a realizar cuando se introduzca un dato repetido (dejar en append).
     """
     with common_engine.begin() as connection:
-        df.to_sql(table, con=connection, index=False, if_exists=if_exists)
+        df.to_sql(table, con=connection, index=False, if_exists="append")
 
 
 def json_to_sql(config_name: str, data):

@@ -2,7 +2,7 @@ from typing import Dict, Any
 from sqlalchemy import JSON
 from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column
-from .. import CommonBase
+from ... import CommonBase
 
 class JSONConfigModel(CommonBase):
     __tablename__ = "json_config"
