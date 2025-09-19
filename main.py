@@ -10,7 +10,7 @@ from src.db_data.crud_services import json_to_sql, store_json_file, read_json_co
 # from src.db.models.coches_cabecera_model import CochesCabeceraModel
 # from src.db.models.internos_cabecera_model import InternosCabeceraModel
 # from src.db.models.motores_cabecera_model import MotoresCabeceraModel
-# from src.db.models.forecast_data_model import ForecastDataModel
+# from src.db.models.forecast_data_model import ForecastIndexModel
 # from src.db.models.forecast_trend_model import ForecastTrendModel
 # from src.db.models.index_repuesto_model import IndexRepuestoModel
 # from src.db.models.internos_asignados_model import InternosAsignadosModel

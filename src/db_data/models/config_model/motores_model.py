@@ -13,16 +13,16 @@ class MotoresModel(CommonBase):
     
     # Motor (M) --> (1) Normativa
     NormativaId:  Mapped[int] = mapped_column(ForeignKey("normativa.id"))
-    Normativa:    Mapped["NormativaModel"] = relationship(back_populates="motor") # type: ignore
+    Normativa:    Mapped["NormativaModel"] = relationship(back_populates="Motores") # type: ignore
 
 
     # Motor (M) --> (1) MT
     ChasisId:     Mapped[int] = mapped_column(ForeignKey("chasis.id"))         
-    Chasis:       Mapped["ChasisModel"] = relationship(back_populates="motor") # type: ignore
+    Chasis:       Mapped["ChasisModel"] = relationship(back_populates="Motores") # type: ignore
     
 
     # Motor (M) --> (1) Normativa
     CilindrosId:  Mapped[int] = mapped_column(ForeignKey("cilindrada.id"))
-    Cilindro:     Mapped["CilindrosModel"] = relationship(back_populates="motor") # type: ignore
+    Cilindrada:   Mapped["CilindrosModel"] = relationship(back_populates="Motores") # type: ignore
 
 

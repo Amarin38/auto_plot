@@ -1,7 +1,8 @@
-from typing import Tuple
+from typing import Tuple, Literal
 from pathlib import Path
-import pandas as pd
+from pandas import Timestamp, to_datetime
 
+# Inventory cleaner
 INTERNOS_DEVOLUCION: Tuple[str, ...] = ("C0488", "C0489", "C0500", "C0700", "C1400", 
                                         "C4500", "C4900", "C6000", "C6700", "C9500",
                                         "C9100", "C7000", "C5000", "C9000", "C3000",
@@ -16,22 +17,44 @@ DEL_COLUMNS: Tuple[str, ...] = ("ficdep", "fictra", "artipo", "ficpro",
                                 "pronom", "ficrem", "ficfac", "corte", 
                                 "signo", "transfe", "ficmov")
 
+FORECAST_TREND_COLUMNS: Tuple[str, ...] = ("Repuesto", "TipoRepuesto", "FechaCompleta",
+                                           "Año", "Mes", "Tendencia", "TendenciaEstacional") 
 
-OPCIONES_REP: Tuple[str, ...] = ("------", "Inyectores", "Bombas inyectoras", 
-                                 "Bombas urea", "Calipers", "Camaras", "DVRs", 
-                                 "Electroválvulas 5 vias", "Flotantes de gasoil", 
-                                 "Herramientas", "Retenes", "Sensores", "Taladros")
+FORECAST_INDEX_COLUMNS: Tuple[str, ...] = ("Repuesto", "TipoRepuesto", "FechaCompleta", "Año", "Mes", 
+                                           "TotalAño", "TotalMes", "Promedio", "IndiceAnual", "IndiceEstacional")
 
-OPCIONES_CARGAR_DATOS: Tuple[str, ...] = ("------", "Indices de consumo", "Prevision de connsumo", 
-                                          "Desviacion de indices", "Maximos y minimos")
 
-OPCIONES_REP_DB: Tuple[str, ...] = ("------", "INYECTOR", "BOMBA UREA", "CALIPER", 
-                                    "ELECTROVALVULA", "FLOTANTE GASOIL", "RETEN", 
-                                    "SENSOR", "TALADRO", "BOMBA INYECTORA", "CAMARA", 
-                                    "DVR", "HERRAMIENTA")
+# View Config.
+MAIN_TABS: Tuple[str, ...] = ("Página principal", "Índices de consumo", 
+                              "Previsión de consumo", "Desviacion de indices", 
+                              "Máximos y Mínimos")
+
+
+REPUESTOS_OPT: Tuple[str, ...] = ("------", "Inyectores", "Bombas inyectoras", 
+                                  "Bombas urea", "Calipers", "Camaras", "DVRs", 
+                                  "Electroválvulas 5 vias", "Flotantes de gasoil", 
+                                  "Herramientas", "Retenes", "Sensores", "Taladros")
+
+
+REPUESTOS_DB_OPT: Tuple[str, ...] = ("------", "INYECTOR", "BOMBA UREA", "CALIPER", 
+                                     "ELECTROVALVULA", "FLOTANTE GASOIL", "RETEN", 
+                                     "SENSOR", "TALADRO", "BOMBA INYECTORA", "CAMARA", 
+                                     "DVR", "HERRAMIENTA")
+
+
+LOAD_DATA_OPT: Tuple[str, ...] = ("------", "Indices de consumo", "Prevision de connsumo", 
+                                  "Desviacion de indices", "Maximos y minimos")
+
+
+SELECT_BOX_HEIGHT: int = 100
+PLOT_BOX_HEIGHT: int = 600
+FILE_UPLOADER_HEIGHT: int = 368 
+DISTANCE_COLS: Tuple[int, int] = (1, 5)
+
+
 
 # Paths
-MAIN_PATH: Path = Path().cwd()
+MAIN_PATH = Path().cwd()
 JSON_PATH: str = f"{MAIN_PATH}/src/data/json_data"
 
 COMMON_DB_PATH: str = f"{MAIN_PATH}/src/db_data/db/common_data.db"
@@ -39,9 +62,9 @@ SERV_DB_PATH: str = f"{MAIN_PATH}/src/db_data/db/services_data.db"
 
 
 # Dates
-TODAY_DATE_PAGE = pd.Timestamp.today().strftime("%d/%m/%Y")
-TODAY_DATE_FILE = pd.Timestamp.today().strftime("%d-%m-%Y")
-TODAY_FOR_DELTA = pd.Timestamp(pd.to_datetime('today').strftime("%Y-%m"))
+TODAY_DATE_PAGE = Timestamp.today().strftime("%d/%m/%Y")
+TODAY_DATE_FILE = Timestamp.today().strftime("%d-%m-%Y")
+TODAY_FOR_DELTA = Timestamp(to_datetime('today').strftime("%Y-%m"))
 
 
 # Movs
@@ -85,7 +108,3 @@ ITALIC = '\033[3m'
 DIMM = '\033[22m'
 RESET = '\033[0m'
 
-
-# Container heights
-SELECT_BOX_HEIGHT = 100
-FILE_UPLOADER_HEIGHT = 368 

@@ -11,5 +11,5 @@ class NormativaModel(CommonBase):
     id:      Mapped[int] = mapped_column(primary_key=True)
     Euro:    Mapped[str] = mapped_column(String(2))
     
-    Motor:   Mapped[List["MotoresModel"]] = relationship(back_populates="normativa") # type: ignore
+    Motores: Mapped[List["MotoresModel"]] = relationship(back_populates="Normativa") # type: ignore
 

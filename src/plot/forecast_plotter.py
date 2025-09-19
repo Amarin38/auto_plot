@@ -7,15 +7,16 @@ from src.config.constants import COLORS
 from src.utils.exception_utils import execute_safely
 
 from src.db_data.crud_services import sql_to_df_by_type, read_date
-from src.db_data.models.services_model.forecast_trend_model import ForecastTrendModel
+from src.db_data.models.services_model.forecast_model import ForecastModel
 from src.db_data.models.services_model.forecast_data_model import ForecastDataModel
+
 
 
 class ForecastPlotter:
     @execute_safely
     def create_plot(self, tipo_rep: str):
         df_data = sql_to_df_by_type(ForecastDataModel, tipo_rep)
-        df_trend = sql_to_df_by_type(ForecastTrendModel, tipo_rep)
+        df_forecast = sql_to_df_by_type(ForecastModel, tipo_rep)
 
         todos_repuestos = df_data["Repuesto"].unique()
         figuras = []
@@ -24,8 +25,8 @@ class ForecastPlotter:
             x_data = df_data.loc[df_data["Repuesto"] == repuesto, "FechaCompleta"]
             y_data = df_data.loc[df_data["Repuesto"] == repuesto, "TotalMes"]
         
-            x_tendencia = df_trend.loc[df_trend["Repuesto"] == repuesto, "FechaCompleta"]
-            y_tendencia = df_trend.loc[df_trend["Repuesto"] == repuesto, "TendenciaEstacional"]
+            x_forecast = df_forecast.loc[df_forecast["Repuesto"] == repuesto, "FechaCompleta"]
+            y_forecast = df_forecast.loc[df_forecast["Repuesto"] == repuesto, "TendenciaEstacional"]
 
             fig = go.Figure()
 
@@ -52,12 +53,12 @@ class ForecastPlotter:
 
 
             fig.add_trace(go.Scatter(
-                x=x_tendencia,
-                y=y_tendencia,
+                x=x_forecast,
+                y=y_forecast,
                 name="Tendencia",
                 mode='lines+markers+text',
 
-                text=y_tendencia,
+                text=y_forecast,
                 textposition="top center",
                 textfont=dict(
                     size=19,
@@ -89,7 +90,7 @@ class ForecastPlotter:
             )
 
             figuras.append(fig)
-        return figuras
+        return figuras, df_data, df_forecast
     
 
     @execute_safely

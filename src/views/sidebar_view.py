@@ -2,7 +2,7 @@ import sys, os
 import streamlit as st
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
-from src.config.constants import OPCIONES_REP_DB, OPCIONES_CARGAR_DATOS
+from src.config.constants import REPUESTOS_DB_OPT, LOAD_DATA_OPT
 from src.config.enums import IndexTypeEnum
 
 from src.utils.exception_utils import execute_safely
@@ -13,7 +13,8 @@ from src.services.data_cleaning.inventory_data_cleaner import InventoryDataClean
 from src.services.analysis.index import Index 
 from src.services.analysis.maxmin import MaxMin
 from src.services.analysis.deviation_trend import DeviationTrend
-from src.services.analysis.forecast.forecast_with_zero import ForecastWithZero
+
+from src.services.analysis.forecast import create_all
 
 
 class LoadDataSideBar:
@@ -27,19 +28,22 @@ class LoadDataSideBar:
     def select_data(self):
         with self.expander_load:
             uploaded_files = st.file_uploader("Ingresa datos para actualizar", accept_multiple_files="directory")
-            select_load = st.selectbox("Tabla", OPCIONES_CARGAR_DATOS)
+            select_load = st.selectbox("Tabla", LOAD_DATA_OPT)
             df = self.load_data(select_load, uploaded_files)
-
+            
             if df is not None:
                 match select_load:
                     case "Indices de consumo":
-                        select_indice = st.selectbox("Indice", OPCIONES_REP_DB)
+                        select_indice = st.selectbox("Indice", REPUESTOS_DB_OPT)
                         select_tipo = st.selectbox("Tipo", IndexTypeEnum)
                         self.load_data_bttn(lambda: Index().calculate(df, select_indice, select_tipo))
                         
                     case "Prevision de connsumo":
-                        select_prevision = st.selectbox("Prevision", OPCIONES_REP_DB)
-                        self.load_data_bttn(lambda: ForecastWithZero(df, select_prevision).calculate())
+                        select_prevision = st.selectbox("Prevision", REPUESTOS_DB_OPT)
+
+                        self.load_data_bttn(lambda: create_all(df, select_prevision, 12, 2))
+                        
+
 
                     case "Desviacion de indices": 
                         self.load_data_bttn(lambda: DeviationTrend().calculate(df))

@@ -1,0 +1,71 @@
+import pandas as pd
+import numpy as np
+
+from typing import List
+
+from src.db_data.crud_services import df_to_db
+
+# FIXME: arreglar el forecast para que funcione bien (fijarse en lo que dijo la ultima vez chatgpt)
+
+
+def create_all(df: pd.DataFrame, tipo_repuesto: str, meses: int, grado: int):
+    df["Mes"] = df["FechaCompleta"].dt.month
+    df = df.groupby(["Repuesto", "Mes"]).agg(Cantidad=("Cantidad", "sum"),).reset_index() # agrupo por mes y repuesto
+    df.insert(2, "TipoRepuesto", tipo_repuesto)
+    
+    df_forecast = create_forecast(df, meses, tipo_repuesto, grado)
+    
+    df_to_db("forecast_data", df)
+    df_to_db("forecast", df_forecast)
+
+
+def create_forecast(df: pd.DataFrame, meses: int, tipo_repuesto: str, grado: int) -> pd.DataFrame:
+    df_list: List[pd.DataFrame] = []
+    repuestos = df["Repuesto"].unique()
+
+    for rep in repuestos:
+        df_rep = df[df["Repuesto"] == rep] # separo por repuesto
+        cantidad_meses = len(df_rep)
+
+        # Ventas históricas y meses
+        ventas = df_rep["Cantidad"].to_numpy()
+        ventas = np.nan_to_num(ventas)
+        meses_actuales = df_rep["Mes"].to_numpy()
+        meses_futuros = np.arange(cantidad_meses, cantidad_meses + meses) # hago un rango para que me tome los meses futuros
+
+
+        # Tendencia polinómica
+        if len(ventas) == 1:
+            tendencia_futura = np.full(meses, ventas[0])
+            estacionalidad_futura = np.ones(meses)
+        else:
+            if len(ventas) > grado:
+                coeficientes = np.polyfit(meses_actuales, ventas, grado)
+                tendencia_futura = np.polyval(coeficientes, meses_futuros)
+            else:
+                # No se puede ajustar polinomio, usar promedio simple
+                tendencia_futura = np.full(meses, ventas.mean())
+
+
+        # Estacionalidad
+        estacionalidad_mensual = df_rep.groupby("Mes")["Cantidad"].mean().reindex(np.arange(1,13), fill_value=ventas.mean()).to_numpy()
+        estacionalidad_futura = estacionalidad_mensual[:meses]
+
+
+        # Calculo la prevision
+        prevision = tendencia_futura + estacionalidad_futura
+        prevision = np.maximum(prevision, 0)
+
+        total_prevision = prevision.sum()
+
+        df_forecast = pd.DataFrame({
+                                    "Repuesto": rep,
+                                    "TipoRepuesto": tipo_repuesto,
+                                    "Mes": meses_futuros, # Meses futuros
+                                    "Prevision": np.round(prevision, 0),
+                                    "TotalPrevision": np.round(total_prevision, 0)
+                                    })
+        
+        df_list.append(df_forecast)
+    df_final = pd.concat(df_list, ignore_index=True)
+    return df_final

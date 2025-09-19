@@ -24,7 +24,7 @@ class InventoryDataCleaner:
         - Filtra por salida.
         """
         df: pd.DataFrame = self.common.concat_dataframes(df_directory)
-
+        
         if not df.empty:
             df = self._transform(df)
             df = self.common.del_unnamed_cols(df)

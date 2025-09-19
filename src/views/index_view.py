@@ -6,7 +6,7 @@ from src.plot.index_plotter import  IndexPlotter
 
 from src.utils.exception_utils import execute_safely
 
-from src.config.constants import OPCIONES_REP, SELECT_BOX_HEIGHT
+from src.config.constants import REPUESTOS_OPT, SELECT_BOX_HEIGHT, PLOT_BOX_HEIGHT, DISTANCE_COLS
 from src.config.enums import IndexTypeEnum
 
 
@@ -18,12 +18,12 @@ class IndexPage:
     @execute_safely
     def indice_options(self) -> None:
         figs = None
-        col1, col2 = st.columns([1, 5], vertical_alignment="top", gap="small")
+        col1, col2 = st.columns(DISTANCE_COLS)
         
         with col1.container(height=SELECT_BOX_HEIGHT):
-            opcion_indice = st.selectbox("Selecciona un índice:", OPCIONES_REP)
+            opcion_indice = st.selectbox("Selecciona un índice:", REPUESTOS_OPT)
 
-            if opcion_indice != OPCIONES_REP[0]:
+            if opcion_indice != REPUESTOS_OPT[0]:
                 with col1.container(height=SELECT_BOX_HEIGHT):
                     opcion_tipo_indice = st.selectbox("Selecciona un tipo de indice:", IndexTypeEnum) # TODO: implementar el tipo de indice para el cálculo
                     
@@ -42,8 +42,8 @@ class IndexPage:
                         case "Taladros": figs = self.plot.create_plot(opcion_tipo_indice, "TALADRO")
         
 
-        with col2.container(height=600):
-            if opcion_indice != OPCIONES_REP[0]:
+        with col2.container(height=PLOT_BOX_HEIGHT):
+            if opcion_indice != REPUESTOS_OPT[0]:
                 st.subheader(self.plot._devolver_titulo(opcion_indice))
 
             if figs is not None:

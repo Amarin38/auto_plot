@@ -6,8 +6,8 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".
 from src.db_data import CommonBase, ServicesBase
 from src.db_data import common_engine, services_engine
 
+from src.db_data.models.services_model.forecast_model import ForecastModel
 from src.db_data.models.services_model.forecast_data_model import ForecastDataModel
-from src.db_data.models.services_model.forecast_trend_model import ForecastTrendModel
 from src.db_data.models.services_model.index_repuesto_model import IndexRepuestoModel
 from src.db_data.models.services_model.deviation_model import DeviationModel
 from src.db_data.models.services_model.maxmin_model import MaxminModel
@@ -27,6 +27,9 @@ from src.views.deviation_view import DeviationPage
 from src.views.maxmin_view import MaxminPage
 from src.views.sidebar_view import LoadDataSideBar
 
+from src.config.constants import MAIN_TABS
+
+
 def main():
     st.title("Estadisticas repuestos")
     st.set_page_config(
@@ -36,7 +39,7 @@ def main():
         initial_sidebar_state="collapsed"
         )
     
-    main, indices, prevision, desviacion, maxmins = st.tabs(["Página principal", "Índices de consumo", "Previsión de consumo", "Desviacion de indices", "Máximos y Mínimos"])
+    main, indices, prevision, desviacion, maxmins = st.tabs(MAIN_TABS)
 
     LoadDataSideBar().select_data()
 

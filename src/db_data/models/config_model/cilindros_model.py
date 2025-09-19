@@ -11,4 +11,4 @@ class CilindrosModel(CommonBase):
     id:           Mapped[int] = mapped_column(primary_key=True)
     Cilindros:    Mapped[str] = mapped_column(String(2))
     
-    Motor:        Mapped[List["MotoresModel"]] = relationship(back_populates="cilindrada") # type: ignore
+    Motores:      Mapped[List["MotoresModel"]] = relationship(back_populates="Cilindrada") # type: ignore
