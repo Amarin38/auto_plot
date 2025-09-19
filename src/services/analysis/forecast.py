@@ -4,35 +4,49 @@ import numpy as np
 from typing import List
 
 from src.db_data.crud_services import df_to_db
+from src.utils.exception_utils import execute_safely
 
-# FIXME: arreglar el forecast para que funcione bien (fijarse en lo que dijo la ultima vez chatgpt)
 
-
+# FIXME: funciona, pero cambiarle la forma de calcular el tiempo
+@execute_safely
 def create_all(df: pd.DataFrame, tipo_repuesto: str, meses: int, grado: int):
-    df["Mes"] = df["FechaCompleta"].dt.month
-    df = df.groupby(["Repuesto", "Mes"]).agg(Cantidad=("Cantidad", "sum"),).reset_index() # agrupo por mes y repuesto
+    df["FechaCompleta"] = df["FechaCompleta"].dt.to_period("M")
+
+
+    df = df.groupby(["Repuesto", "FechaCompleta"]).agg(Cantidad=("Cantidad", "sum")).reset_index() # agrupo por mes y repuesto
     df.insert(2, "TipoRepuesto", tipo_repuesto)
     
     df_forecast = create_forecast(df, meses, tipo_repuesto, grado)
     
+
+    df["FechaCompleta"] = df["FechaCompleta"].astype(str)
     df_to_db("forecast_data", df)
     df_to_db("forecast", df_forecast)
 
 
+@execute_safely
 def create_forecast(df: pd.DataFrame, meses: int, tipo_repuesto: str, grado: int) -> pd.DataFrame:
     df_list: List[pd.DataFrame] = []
     repuestos = df["Repuesto"].unique()
 
     for rep in repuestos:
-        df_rep = df[df["Repuesto"] == rep] # separo por repuesto
-        cantidad_meses = len(df_rep)
+        df_rep: pd.DataFrame = df[df["Repuesto"] == rep] # separo por repuesto
 
         # Ventas históricas y meses
         ventas = df_rep["Cantidad"].to_numpy()
         ventas = np.nan_to_num(ventas)
-        meses_actuales = df_rep["Mes"].to_numpy()
-        meses_futuros = np.arange(cantidad_meses, cantidad_meses + meses) # hago un rango para que me tome los meses futuros
 
+
+        ultimo_mes = df_rep["FechaCompleta"].max().to_timestamp()
+        meses_actuales = df_rep["FechaCompleta"].dt.month.to_numpy()
+
+        meses_futuros = pd.date_range(
+            start=ultimo_mes + pd.DateOffset(months=1),  # arranca el mes siguiente
+            periods=meses,
+            freq="MS"  # "MS" = Month Start
+        )
+
+        meses_futuros_numpy = meses_futuros.month.to_numpy()
 
         # Tendencia polinómica
         if len(ventas) == 1:
@@ -41,14 +55,14 @@ def create_forecast(df: pd.DataFrame, meses: int, tipo_repuesto: str, grado: int
         else:
             if len(ventas) > grado:
                 coeficientes = np.polyfit(meses_actuales, ventas, grado)
-                tendencia_futura = np.polyval(coeficientes, meses_futuros)
+                tendencia_futura = np.polyval(coeficientes, meses_futuros_numpy)
             else:
                 # No se puede ajustar polinomio, usar promedio simple
                 tendencia_futura = np.full(meses, ventas.mean())
 
 
         # Estacionalidad
-        estacionalidad_mensual = df_rep.groupby("Mes")["Cantidad"].mean().reindex(np.arange(1,13), fill_value=ventas.mean()).to_numpy()
+        estacionalidad_mensual = df_rep.groupby("FechaCompleta")["Cantidad"].mean().reindex(np.arange(1,13), fill_value=ventas.mean()).to_numpy()
         estacionalidad_futura = estacionalidad_mensual[:meses]
 
 
@@ -61,11 +75,12 @@ def create_forecast(df: pd.DataFrame, meses: int, tipo_repuesto: str, grado: int
         df_forecast = pd.DataFrame({
                                     "Repuesto": rep,
                                     "TipoRepuesto": tipo_repuesto,
-                                    "Mes": meses_futuros, # Meses futuros
                                     "Prevision": np.round(prevision, 0),
                                     "TotalPrevision": np.round(total_prevision, 0)
                                     })
-        
+        df_forecast["FechaCompleta"] = meses_futuros
+
+        print(df_forecast)
         df_list.append(df_forecast)
     df_final = pd.concat(df_list, ignore_index=True)
     return df_final

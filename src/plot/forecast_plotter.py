@@ -18,26 +18,26 @@ class ForecastPlotter:
         df_data = sql_to_df_by_type(ForecastDataModel, tipo_rep)
         df_forecast = sql_to_df_by_type(ForecastModel, tipo_rep)
 
-        todos_repuestos = df_data["Repuesto"].unique()
+        todos_repuestos = df_data['Repuesto'].unique()
         figuras = []
         
         for repuesto in todos_repuestos:
-            x_data = df_data.loc[df_data["Repuesto"] == repuesto, "FechaCompleta"]
-            y_data = df_data.loc[df_data["Repuesto"] == repuesto, "TotalMes"]
+            x_data = df_data.loc[df_data['Repuesto'] == repuesto, 'FechaCompleta']
+            y_data = df_data.loc[df_data['Repuesto'] == repuesto, 'Cantidad']
         
-            x_forecast = df_forecast.loc[df_forecast["Repuesto"] == repuesto, "FechaCompleta"]
-            y_forecast = df_forecast.loc[df_forecast["Repuesto"] == repuesto, "TendenciaEstacional"]
+            x_forecast = df_forecast.loc[df_forecast['Repuesto'] == repuesto, 'FechaCompleta']
+            y_forecast = df_forecast.loc[df_forecast['Repuesto'] == repuesto, 'Prevision']
 
             fig = go.Figure()
 
             fig.add_trace(go.Scatter(
                 x=x_data,
                 y=y_data,
-                name="Consumo",
+                name='Consumo',
                 mode='lines+markers+text',
 
                 text=y_data,
-                textposition="top center",
+                textposition='top center',
                 textfont=dict(
                     size=19,
                     color=COLORS[15]
@@ -55,11 +55,11 @@ class ForecastPlotter:
             fig.add_trace(go.Scatter(
                 x=x_forecast,
                 y=y_forecast,
-                name="Tendencia",
+                name='Prevision',
                 mode='lines+markers+text',
 
                 text=y_forecast,
-                textposition="top center",
+                textposition='top center',
                 textfont=dict(
                     size=19,
                     color=COLORS[1]
@@ -75,7 +75,7 @@ class ForecastPlotter:
 
 
             fig.update_layout(
-                title=f"{repuesto}",
+                title=f'{repuesto}',
                 showlegend=True,
 
                 xaxis=dict(
@@ -96,9 +96,9 @@ class ForecastPlotter:
     @execute_safely
     def devolver_fecha(self) -> str:
         df_fecha = read_date(ForecastDataModel)
-        return pd.to_datetime(df_fecha["FechaCompleta"].unique()).strftime("%d-%m-%Y")[0]
+        return pd.to_datetime(df_fecha['FechaCompleta'].unique()).strftime('%d-%m-%Y')[0]
     
     
     @execute_safely
     def _devolver_titulo(self, rep: str) -> str:
-        return f"Prevision de {rep} ({self.devolver_fecha()})"
+        return f'Prevision de {rep} ({self.devolver_fecha()})'

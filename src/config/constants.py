@@ -20,7 +20,7 @@ DEL_COLUMNS: Tuple[str, ...] = ("ficdep", "fictra", "artipo", "ficpro",
 FORECAST_TREND_COLUMNS: Tuple[str, ...] = ("Repuesto", "TipoRepuesto", "FechaCompleta",
                                            "Año", "Mes", "Tendencia", "TendenciaEstacional") 
 
-FORECAST_INDEX_COLUMNS: Tuple[str, ...] = ("Repuesto", "TipoRepuesto", "FechaCompleta", "Año", "Mes", 
+FORECAST_DATA_COLUMNS: Tuple[str, ...] = ("Repuesto", "TipoRepuesto", "FechaCompleta", "Año", "Mes", 
                                            "TotalAño", "TotalMes", "Promedio", "IndiceAnual", "IndiceEstacional")
 
 
