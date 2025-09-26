@@ -48,6 +48,7 @@ def create_forecast(df: pd.DataFrame, meses: int, tipo_repuesto: str, grado: int
 
         meses_futuros_numpy = meses_futuros.month.to_numpy()
 
+
         # Tendencia polinómica
         if len(ventas) == 1:
             tendencia_futura = np.full(meses, ventas[0])
