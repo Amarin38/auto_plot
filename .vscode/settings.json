@@ -11,5 +11,6 @@
         "db_data":"contract",
         "config_model":"config",
         "services_model":"controller"
-    }
+    },
+    "python.analysis.autoImportCompletions": true
 }

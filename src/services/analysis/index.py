@@ -4,12 +4,15 @@ import numpy as np
 from typing import Optional
 
 from src.config.enums import IndexTypeEnum
+from src.db_data.models.config_model.coches_cabecera_model import CochesCabeceraModel
+from src.db_data.models.config_model.motores_cabecera_model import MotoresCabeceraModel
 
 from src.utils.exception_utils import execute_safely
 
 from src.services.data_cleaning.inventory_data_cleaner import InventoryDataCleaner
 
 from src.db_data.crud_common import db_to_df, df_to_db
+
 
 class Index:
     def __init__(self, ) -> None:
@@ -19,6 +22,7 @@ class Index:
     @execute_safely
     def calculate(self, df: pd.DataFrame, tipo_rep: str, tipo_op: IndexTypeEnum, filtro: Optional[str] = None) -> None:
         if not df.empty:
+            df_mod = pd.DataFrame()
             fecha_max = df['FechaCompleta'].max()
 
             # Cambio de tipos de datos para evitar errores
@@ -33,16 +37,15 @@ class Index:
 
             match tipo_op:
                 case IndexTypeEnum.VEHICULO: 
-                    df_vehicles = db_to_df('coches_cabecera')
+                    df_vehicles = db_to_df(CochesCabeceraModel)
                     df_mod = grouped.merge(df_vehicles, on='Cabecera', how='left')
                     df_mod['IndiceConsumo'] = (df_mod['Cantidad'] * 100) / df_mod['CantidadCoches']
                 case IndexTypeEnum.MOTOR: 
-                    df_motors = db_to_df('motores_cabecera')
+                    df_motors = db_to_df(MotoresCabeceraModel)
                     df_mod = grouped.merge(df_motors, on=['Cabecera', 'Repuesto'], how='right')
-                    df_mod['IndiceConsumo'] = (df_mod['Cantidad']*100) / df_mod['CantidadMotores']
+                    df_mod['IndiceConsumo'] = (df_mod['Cantidad'] * 100) / df_mod['CantidadMotores']
                     # FIXME: arreglar para que funcione con motor
                     
-            print(df_mod)
 
             df_rate = df_mod.rename(columns={'Cantidad':'TotalConsumo',
                                              'Precio':'TotalCoste'})[['Cabecera', 'Repuesto', 'TotalConsumo', 'TotalCoste', 'IndiceConsumo']]
@@ -66,7 +69,7 @@ class Index:
 
 
     # def calculate_by_motor(self, df: pd.DataFrame, tipo: str) -> None:
-    #     df_motors = self.services.db_to_df('motores_cabecera')
+    #     df_motors = self.services.db_to_df(MotoresCabeceraModel)
         
     #     if not df.empty:
     #         grouped = df.groupby(['Cabecera', 'Repuesto']).agg({'Cantidad':'sum'}).reset_index()

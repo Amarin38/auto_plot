@@ -1,5 +1,6 @@
 import re
 import io
+from zipfile import BadZipFile
 
 import pandas as pd
 
@@ -19,9 +20,9 @@ class CommonUtils:
         if len(df_directory) != 0:
             for file in df_directory:
                 try:
+                    df = pd.read_excel(file, engine="openpyxl") # leo el xlsx
+                except BadZipFile:
                     df = pd.read_excel(file, engine="xlrd") # leo el xls
-                except Exception:
-                    df = pd.read_excel(file, engine="openpyxl") # leo el xls
                 df = self.del_unnamed_cols(df)
 
                 buffer = io.BytesIO()

@@ -6,18 +6,18 @@ import plotly.graph_objects as go
 
 from typing import Optional, Literal
 
-from src.config.constants import COLORS
+from src.config.constants import COLORS, FILE_STRFTIME
 from src.config.enums import IndexTypeEnum
 
 from src.utils.exception_utils import execute_safely
 
-from src.db_data.crud_services import sql_to_df_by_type_and_index_type
+from src.db_data.crud_services import db_to_df_by_repuesto_and_index_type
 from src.db_data.models.services_model.index_repuesto_model import IndexRepuestoModel
 
 class IndexPlotter:
     @execute_safely
     def create_plot(self, index_type: IndexTypeEnum, tipo_rep: str, filtro: Optional[str] = None) -> list:
-        self.df = sql_to_df_by_type_and_index_type(IndexRepuestoModel, tipo_rep, index_type)
+        self.df = db_to_df_by_repuesto_and_index_type(IndexRepuestoModel, tipo_rep, index_type)
 
         todos_repuestos = self.df["Repuesto"].unique()
         figuras = []
@@ -79,8 +79,8 @@ class IndexPlotter:
 
     @execute_safely
     def _devolver_fecha(self) -> str:
-        return pd.to_datetime(self.df["UltimaFecha"].unique()).strftime("%d-%m-%Y")[0]
+        return pd.to_datetime(self.df["UltimaFecha"].unique()).strftime(FILE_STRFTIME)[0]
     
     @execute_safely
-    def _devolver_titulo(self, rep: str) -> str:
+    def devolver_titulo(self, rep: str) -> str:
         return f"Indice {rep} ({self._devolver_fecha()})"

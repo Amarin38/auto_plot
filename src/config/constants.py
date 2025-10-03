@@ -1,6 +1,6 @@
-from typing import Tuple, Literal
+from typing import Tuple
 from pathlib import Path
-from pandas import Timestamp, to_datetime
+from pandas import Timestamp
 
 # Inventory cleaner
 INTERNOS_DEVOLUCION: Tuple[str, ...] = ("C0488", "C0489", "C0500", "C0700", "C1400", 
@@ -17,55 +17,45 @@ DEL_COLUMNS: Tuple[str, ...] = ("ficdep", "fictra", "artipo", "ficpro",
                                 "pronom", "ficrem", "ficfac", "corte", 
                                 "signo", "transfe", "ficmov")
 
+
 FORECAST_TREND_COLUMNS: Tuple[str, ...] = ("Repuesto", "TipoRepuesto", "FechaCompleta",
                                            "Año", "Mes", "Tendencia", "TendenciaEstacional") 
+
 
 FORECAST_DATA_COLUMNS: Tuple[str, ...] = ("Repuesto", "TipoRepuesto", "FechaCompleta", "Año", "Mes", 
                                            "TotalAño", "TotalMes", "Promedio", "IndiceAnual", "IndiceEstacional")
 
 
 # View Config.
-MAIN_TABS: Tuple[str, ...] = ("Página principal", "Índices de consumo", 
-                              "Previsión de consumo", "Desviacion de indices", 
-                              "Máximos y Mínimos")
-
-
-REPUESTOS_OPT: Tuple[str, ...] = ("------", "Inyectores", "Bombas inyectoras", 
-                                  "Bombas urea", "Calipers", "Camaras", "DVRs", 
-                                  "Electroválvulas 5 vias", "Flotantes de gasoil", 
-                                  "Herramientas", "Retenes", "Sensores", "Taladros")
-
-
-REPUESTOS_DB_OPT: Tuple[str, ...] = ("------", "INYECTOR", "BOMBA UREA", "CALIPER", 
-                                     "ELECTROVALVULA", "FLOTANTE GASOIL", "RETEN", 
-                                     "SENSOR", "TALADRO", "BOMBA INYECTORA", "CAMARA", 
-                                     "DVR", "HERRAMIENTA")
-
-
-LOAD_DATA_OPT: Tuple[str, ...] = ("------", "Indices de consumo", "Prevision de connsumo", 
-                                  "Desviacion de indices", "Maximos y minimos")
+MAIN_TABS: Tuple[str, ...] = ("Página principal", "Índices de consumo",
+                              "Previsión de consumo", "Desviacion de indices",
+                              "Falla Garantias", "Máximos y Mínimos")
 
 
 SELECT_BOX_HEIGHT: int = 100
+DATAFRAME_HEIGHT: int = 600
 PLOT_BOX_HEIGHT: int = 600
-FILE_UPLOADER_HEIGHT: int = 368 
+FULL_PLOT_BOX_HEIGHT: int = 650
+FILE_UPLOADER_HEIGHT: int = 368
+TEXT_BOX_HEIGHT: int = 450
 DISTANCE_COLS: Tuple[int, int] = (1, 5)
-
 
 
 # Paths
 MAIN_PATH = Path().cwd()
 JSON_PATH: str = f"{MAIN_PATH}/src/data/json_data"
-
 COMMON_DB_PATH: str = f"{MAIN_PATH}/src/db_data/db/common_data.db"
 SERV_DB_PATH: str = f"{MAIN_PATH}/src/db_data/db/services_data.db"
 
 
 # Dates
-TODAY_DATE_PAGE = Timestamp.today().strftime("%d/%m/%Y")
-TODAY_DATE_FILE = Timestamp.today().strftime("%d-%m-%Y")
-TODAY_FOR_DELTA = Timestamp(to_datetime('today').strftime("%Y-%m"))
-
+PAGE_STRFTIME = "%d/%m/%Y"
+FILE_STRFTIME = "%d-%m-%Y"
+DELTA_STRFTIME = "%Y-%m"
+TODAY_DATE_PAGE = Timestamp.today().strftime(PAGE_STRFTIME)
+TODAY_DATE_FILE = Timestamp.today().strftime(FILE_STRFTIME)
+TODAY_FOR_DELTA = Timestamp.today().strftime(DELTA_STRFTIME)
+# TODAY_FOR_DELTA = Timestamp(to_datetime('today').strftime(DELTA_STRFTIME))
 
 # Movs
 MOV_SALIDAS: str = "Transf al Dep |Salida"

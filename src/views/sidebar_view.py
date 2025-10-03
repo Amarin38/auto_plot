@@ -1,9 +1,11 @@
 import sys, os
 import streamlit as st
 
+from src.services.analysis.garantias import calcular_falla_garantias, calcular_consumo_garantias, \
+    guardar_datos_garantias
+
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
-from src.config.constants import REPUESTOS_DB_OPT, LOAD_DATA_OPT
-from src.config.enums import IndexTypeEnum
+from src.config.enums import IndexTypeEnum, RepuestoEnum, LoadDataEnum
 
 from src.utils.exception_utils import execute_safely
 from src.utils.common_utils import CommonUtils
@@ -14,7 +16,7 @@ from src.services.analysis.index import Index
 from src.services.analysis.maxmin import MaxMin
 from src.services.analysis.deviation_trend import DeviationTrend
 
-from src.services.analysis.forecast import create_all
+from src.services.analysis.forecast import create_forecast
 
 
 class LoadDataSideBar:
@@ -28,27 +30,35 @@ class LoadDataSideBar:
     def select_data(self):
         with self.expander_load:
             uploaded_files = st.file_uploader("Ingresa datos para actualizar", accept_multiple_files="directory")
-            select_load = st.selectbox("Tabla", LOAD_DATA_OPT)
+            select_load = st.selectbox("Tabla", LoadDataEnum, index=None, placeholder="------")
+
             df = self.load_data(select_load, uploaded_files)
             
             if df is not None:
                 match select_load:
-                    case "Indices de consumo":
-                        select_indice = st.selectbox("Indice", REPUESTOS_DB_OPT)
-                        select_tipo = st.selectbox("Tipo", IndexTypeEnum)
+                    case LoadDataEnum.INDICES_DE_CONSUMO:
+                        select_indice = st.selectbox("Indice", RepuestoEnum, index=None, placeholder="------")
+                        select_tipo = st.selectbox("Tipo", IndexTypeEnum, index=None, placeholder="------")
+
                         self.load_data_bttn(lambda: Index().calculate(df, select_indice, select_tipo))
-                        
-                    case "Prevision de connsumo":
-                        select_prevision = st.selectbox("Prevision", REPUESTOS_DB_OPT)
 
-                        self.load_data_bttn(lambda: create_all(df, select_prevision, 12, 2))
-                        
+                    case LoadDataEnum.PREVISION_DE_CONSUMO:
+                        select_prevision = st.selectbox("Prevision", RepuestoEnum, index=None, placeholder="------")
+                        self.load_data_bttn(lambda: create_forecast(df, select_prevision))
 
-
-                    case "Desviacion de indices": 
+                    case LoadDataEnum.DESVIACION_DE_INDICES:
                         self.load_data_bttn(lambda: DeviationTrend().calculate(df))
 
-                    case "Maximos y minimos":
+                    case LoadDataEnum.FALLA_GARANTIAS:
+                        self.load_data_bttn(lambda: calcular_falla_garantias(df))
+
+                    case LoadDataEnum.DATOS_GARANTIAS:
+                        self.load_data_bttn(lambda: guardar_datos_garantias(df))
+
+                    case LoadDataEnum.CONSUMO_GARANTIAS:
+                        self.load_data_bttn(lambda: calcular_consumo_garantias(df))
+
+                    case LoadDataEnum.MAXMIMOS_Y_MINIMOS:
                         mult_por = float(st.text_input("Multiplicar por: "))
                         self.load_data_bttn(lambda: MaxMin().calculate(df, mult_por))
                         
@@ -62,13 +72,14 @@ class LoadDataSideBar:
             case _:
                 if uploaded_files is not None:
                     return self.inventory.run_all(uploaded_files) # junto todos los archivos
-            
-    
-    def load_data_bttn(self, func):
+                return None
+
+    @staticmethod
+    def load_data_bttn(func):
         st.button(
-            label="Cargar datos", 
-            type="primary", 
+            label="Cargar datos",
+            type="primary",
             use_container_width=True,
             on_click=func
-            )
+        )
     

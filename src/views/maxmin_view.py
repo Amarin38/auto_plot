@@ -1,20 +1,21 @@
 import sys, os
 
 import streamlit as st
-from datetime import datetime
+
+from src.config.constants import TODAY_DATE_FILE, DATAFRAME_HEIGHT
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
 from src.utils.exception_utils import execute_safely
-from src.views.streamlit_utils import StreamlitUtils
+from src.utils.streamlit_utils import StreamlitUtils
 from src.db_data.crud_services import db_to_df
+from src.db_data.models.services_model.maxmin_model import MaxminModel
 
 class MaxminPage:
     @execute_safely
     def show_table(self):
         utils = StreamlitUtils()
-        today_date = datetime.today().strftime("%d-%m-%Y")
+
+        df = db_to_df(MaxminModel)
+        utils.download_df(utils.to_excel(df), f"maxmin {TODAY_DATE_FILE}.xlsx")
         
-        df = db_to_df("maxmin")
-        utils.download_df(utils.to_excel(df), f"maxmin {today_date}.xlsx")
-        
-        st.dataframe(df, height=600)
+        st.dataframe(df, height=DATAFRAME_HEIGHT)

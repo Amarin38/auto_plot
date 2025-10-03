@@ -60,27 +60,40 @@ def read_date(table):
     """
     query = select(table.FechaCompleta)
     return pd.read_sql_query(query, con=services_engine)
-        
 
-def sql_to_df_by_type(table, tipo_repuesto: str) -> pd.DataFrame:
+
+def db_to_df(table) -> pd.DataFrame:
     """
-    Hace un query a la base de datos de services_data.db\n 
+    Hace una consulta a la base de datos de services_data.db,
+    y lo devuelve en forma de dataframe.
+    """
+    query = select(table)
+    return pd.read_sql_query(query, con=services_engine)
+
+
+def db_to_df_by_cabecera(table, cabecera: str) -> pd.DataFrame:
+    """
+    Hace un query a la base de datos de services_data.db,
+    mediante la condicion de cabecera y lo devuelve en forma de dataframe.
+    """
+    query = select(table).where(table.Cabecera == cabecera) # type: ignore
+    return pd.read_sql_query(query, con=services_engine)
+
+
+def db_to_df_by_repuesto(table, tipo_repuesto: str) -> pd.DataFrame:
+    """
+    Hace un query a la base de datos de services_data.db,
     mediante la condicion de tipo_repuesto y lo devuelve en forma de dataframe.
     """
-    query = select(table).where(table.TipoRepuesto == tipo_repuesto)
+    query = select(table).where(table.TipoRepuesto == tipo_repuesto) # type: ignore
     return pd.read_sql_query(query, con=services_engine)
 
-def sql_to_df_by_type_and_index_type(table, tipo_repuesto: str, tipo_indice: IndexTypeEnum):
-    query = select(table).where(table.TipoRepuesto == tipo_repuesto, table.TipoOperacion == tipo_indice)
-    return pd.read_sql_query(query, con=services_engine)
-    
 
-def db_to_df(table: str):
-    """
-    Hace una consulta a la base de datos de services_data.db y lo devuelve en forma de dataframe.    
-    """
-    with services_engine.begin() as connection:
-        return pd.read_sql_table(table, connection) 
+def db_to_df_by_repuesto_and_index_type(table, tipo_repuesto: str, tipo_indice: IndexTypeEnum):
+    query = select(table).where(table.TipoRepuesto == tipo_repuesto, table.TipoOperacion == tipo_indice) # type: ignore
+    return pd.read_sql_query(query, con=services_engine)
+
+
 
 
 

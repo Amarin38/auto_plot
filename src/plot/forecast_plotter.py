@@ -6,17 +6,16 @@ from src.config.constants import COLORS
 
 from src.utils.exception_utils import execute_safely
 
-from src.db_data.crud_services import sql_to_df_by_type, read_date
+from src.db_data.crud_services import db_to_df_by_repuesto, read_date
 from src.db_data.models.services_model.forecast_model import ForecastModel
 from src.db_data.models.services_model.forecast_data_model import ForecastDataModel
-
 
 
 class ForecastPlotter:
     @execute_safely
     def create_plot(self, tipo_rep: str):
-        df_data = sql_to_df_by_type(ForecastDataModel, tipo_rep)
-        df_forecast = sql_to_df_by_type(ForecastModel, tipo_rep)
+        df_data = db_to_df_by_repuesto(ForecastDataModel, tipo_rep)
+        df_forecast = db_to_df_by_repuesto(ForecastModel, tipo_rep)
 
         todos_repuestos = df_data['Repuesto'].unique()
         figuras = []
@@ -100,5 +99,5 @@ class ForecastPlotter:
     
     
     @execute_safely
-    def _devolver_titulo(self, rep: str) -> str:
+    def devolver_titulo(self, rep: str) -> str:
         return f'Prevision de {rep} ({self.devolver_fecha()})'

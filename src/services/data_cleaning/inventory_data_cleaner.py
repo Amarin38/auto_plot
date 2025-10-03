@@ -4,7 +4,8 @@ import pandas as pd
 
 from typing import Union, List, Tuple, Literal
 
-from src.config.constants import INTERNOS_DEVOLUCION, MOV_SALIDAS, MOV_ENTRADAS, MOV_DEVOLUCIONES, DEL_COLUMNS
+from src.config.constants import INTERNOS_DEVOLUCION, MOV_SALIDAS, MOV_ENTRADAS, MOV_DEVOLUCIONES, DEL_COLUMNS, \
+    PAGE_STRFTIME, DELTA_STRFTIME
 
 from src.utils.exception_utils import execute_safely
 from src.utils.common_utils import CommonUtils
@@ -43,8 +44,8 @@ class InventoryDataCleaner:
 
         df_updated = self.common.upd_column_by_dict(df, "columns")
 
-        df_updated["FechaCompleta"] = pd.to_datetime(df_updated["FechaCompleta"], format="%d/%m/%Y", errors="coerce", dayfirst=True)
-        df_updated["Fecha"] = df_updated["FechaCompleta"].dt.strftime("%Y-%m")
+        df_updated["FechaCompleta"] = pd.to_datetime(df_updated["FechaCompleta"], format=PAGE_STRFTIME, errors="coerce", dayfirst=True)
+        df_updated["Fecha"] = df_updated["FechaCompleta"].dt.strftime(DELTA_STRFTIME)
 
         df_updated = self.common.upd_rows_by_dict(df_updated, "depositos", "Cabecera")
         
@@ -53,6 +54,8 @@ class InventoryDataCleaner:
 
     @execute_safely
     def filter(self, df: pd.DataFrame, column: str, filter_args: str, filter_type: str):
+        filtered_df = pd.DataFrame()
+
         match filter_type:
             case "contains": filtered_df = df.loc[df[column].str.contains(filter_args, na=False)] 
             case "startswith": filtered_df = df.loc[df[column].str.startswith(filter_args, na=False)]
@@ -87,7 +90,8 @@ class InventoryDataCleaner:
     @execute_safely
     def filter_mov(self, df: pd.DataFrame, mov: Literal["salida", "entrada", "devolucion"]) -> pd.DataFrame:
         df = self.common.del_by_content(df, "Interno", INTERNOS_DEVOLUCION)
-        
+        df_final = pd.DataFrame()
+
         match mov:
             case "salida": df_final = df.loc[df["Movimiento"].str.contains(MOV_SALIDAS, regex=True, na=False)]
             case "entrada": df_final = df.loc[df["Movimiento"].str.contains(MOV_ENTRADAS, regex=True, na=False)]

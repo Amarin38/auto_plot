@@ -13,7 +13,10 @@ class DeviationTrend:
 
     @execute_safely
     def calculate(self, df) -> None:
-        media_cabecera = round(df.groupby(["Cabecera"]).agg({"IndiceConsumo":"mean"}), 1).rename(columns={"IndiceConsumo":"MediaCabecera"}).reset_index() # type:ignore
+        media_cabecera = (round(df.groupby(["Cabecera"])
+                            .agg({"IndiceConsumo":"mean"}), 1)
+                            .rename(columns={"IndiceConsumo":"MediaCabecera"})
+                            .reset_index())
     
         media_cabecera["MediaDeMedias"] = round(media_cabecera["MediaCabecera"].mean(), 2)
         media_cabecera["Diferencia"] = round(media_cabecera["MediaCabecera"] - media_cabecera["MediaDeMedias"], 2)

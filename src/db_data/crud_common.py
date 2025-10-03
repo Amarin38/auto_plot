@@ -78,24 +78,24 @@ def read_all(table):
     - table -> ModelClass()
     """
     with SessionCommon() as session:
-        return session.scalars(select(table)).all()  
+        return session.scalars(select(table)).all()
 
 
-def sql_to_df_by_type(table, tipo_repuesto: str) -> pd.DataFrame:
+def db_to_df(table):
     """
-    Hace un query a la base de datos de common_data.db\n 
-    mediante la condicion de tipo_repuesto y lo devuelve en forma de dataframe.
+    Hace una consulta a la base de datos de common_data.db y lo devuelve en forma de dataframe.
     """
-    query = select(table).where(table.TipoRepuesto == tipo_repuesto)
+    query = select(table)
     return pd.read_sql_query(query, con=common_engine)
 
 
-def db_to_df(table: str):
+def db_to_df_by_repuesto(table, tipo_repuesto: str) -> pd.DataFrame:
     """
-    Hace una consulta a la base de datos de common_data.db y lo devuelve en forma de dataframe.    
+    Hace un query a la base de datos de common_data.db
+    mediante la condicion de tipo_repuesto y lo devuelve en forma de dataframe.
     """
-    with common_engine.begin() as connection:
-        return pd.read_sql_table(table, connection) 
+    query = select(table).where(table.TipoRepuesto == tipo_repuesto) # type: ignore
+    return pd.read_sql_query(query, con=common_engine)
     
 
 # ---------------------------------   READ JSON   --------------------------------- #
