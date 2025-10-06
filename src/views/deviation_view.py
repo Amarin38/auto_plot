@@ -12,7 +12,7 @@ from src.db_data.crud_services import db_to_df
 
 class DeviationPage:
     @execute_safely
-    def show_deviation(self):
+    def show(self):
         plot, data = st.tabs(["Gráfico", "Datos"])
         
         with plot:

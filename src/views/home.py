@@ -62,11 +62,11 @@ def main():
     with prevision:
         ForecastPage().prevision_options()
     with desviacion:
-        DeviationPage().show_deviation()
+        DeviationPage().show()
     with falla_garantias:
         FallaEquiposGarantiaPage().show()
     with maxmins:
-        MaxminPage().show_table()
+        MaxminPage().show()
 
 
 if __name__ == "__main__":

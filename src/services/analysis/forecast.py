@@ -1,3 +1,4 @@
+import numpy as np
 import pandas as pd
 from statsmodels.tsa.holtwinters import ExponentialSmoothing
 
@@ -7,32 +8,35 @@ from src.utils.exception_utils import execute_safely
 @execute_safely
 def create_forecast(df: pd.DataFrame, tipo_repuesto: str):
     df["FechaCompleta"] = pd.to_datetime(df["FechaCompleta"])
-    df["FechaCompleta"] = df["FechaCompleta"].dt.to_period("M")
-    df["FechaCompleta"] = df["FechaCompleta"].dt.to_timestamp()
+    df = df.groupby(df["FechaCompleta"].dt.to_period("M")).agg({"Cantidad":"sum"})
+    df.index = pd.PeriodIndex(df.index, freq='M').to_timestamp()
+    df = df.asfreq("MS")
+    df = df.replace(np.nan, 0)
 
-    df.set_index("FechaCompleta").asfreq("MS")
-    
-    data = df.groupby("FechaCompleta").agg({"Cantidad":"sum"}).reset_index()
-    print(data)
-    
-    series = pd.Series(data["Cantidad"].values, index=data["FechaCompleta"])
+    series = pd.Series(df["Cantidad"].values, index=df.index)
     print(series)
-
     # Modelo HoltWinters para calcular el suavizado exponencial triple
-    model = ExponentialSmoothing(series, trend="add", seasonal="multiplicative", seasonal_periods=12)
+    fit = ExponentialSmoothing(
+        series,
+        trend="add",
+        seasonal="add",
+        seasonal_periods=12
+    ).fit()
 
-    fit = model.fit()
     forecast = fit.forecast(12)
+    params = fit.model.params
 
     print("Parámetros encontrados:")
-    print(f"alpha={fit.model.params['smoothing_level']:.3f}, "
-          f"beta={fit.model.params['smoothing_slope']:.3f}, "
-          f"gamma={fit.model.params['smoothing_seasonal']:.3f}")
-    
+    for key, value in params.items():
+        if isinstance(value, float):
+            print(f"{key}: {value:.3f}")
+        else:
+            print(f"{key}: {value}")
+
     print("\nPronósticos:")
     print(forecast)
     
-
+    # TODO funciona bien la tendencia, falta guardarla en la base de datos
     # df_forecast.insert(2, "TipoRepuesto", tipo_repuesto)
     # df_to_db("forecast", df_forecast)
 

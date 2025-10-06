@@ -12,7 +12,7 @@ from src.db_data.models.services_model.maxmin_model import MaxminModel
 
 class MaxminPage:
     @execute_safely
-    def show_table(self):
+    def show(self):
         utils = StreamlitUtils()
 
         df = db_to_df(MaxminModel)

@@ -33,7 +33,7 @@ class LoadDataSideBar:
             select_load = st.selectbox("Tabla", LoadDataEnum, index=None, placeholder="------")
 
             df = self.load_data(select_load, uploaded_files)
-            
+            print(df)
             if df is not None:
                 match select_load:
                     case LoadDataEnum.INDICES_DE_CONSUMO:
@@ -70,6 +70,7 @@ class LoadDataSideBar:
                 return self.common.concat_dataframes(uploaded_files)
             case _:
                 if uploaded_files is not None:
+                    # FIXME se ejecuta varias veces, no solo una
                     return self.inventory.run_all(uploaded_files)
                 return None
 
