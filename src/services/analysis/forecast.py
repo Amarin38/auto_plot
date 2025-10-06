@@ -7,13 +7,15 @@ from src.utils.exception_utils import execute_safely
 
 @execute_safely
 def create_forecast(df: pd.DataFrame, tipo_repuesto: str):
+    repuesto = df["Repuesto"].unique()[0]
+
     df["FechaCompleta"] = pd.to_datetime(df["FechaCompleta"])
     df = df.groupby(df["FechaCompleta"].dt.to_period("M")).agg({"Cantidad":"sum"})
     df.index = pd.PeriodIndex(df.index, freq='M').to_timestamp()
     df = df.asfreq("MS")
     df = df.replace(np.nan, 0)
 
-    series = pd.Series(df["Cantidad"].values, index=df.index)
+    series: pd.Series = pd.Series(df["Cantidad"].values, index=df.index)
     print(series)
     # Modelo HoltWinters para calcular el suavizado exponencial triple
     fit = ExponentialSmoothing(
@@ -23,7 +25,7 @@ def create_forecast(df: pd.DataFrame, tipo_repuesto: str):
         seasonal_periods=12
     ).fit()
 
-    forecast = fit.forecast(12)
+    forecast: pd.Series = fit.forecast(12)
     params = fit.model.params
 
     print("Parámetros encontrados:")
@@ -35,16 +37,20 @@ def create_forecast(df: pd.DataFrame, tipo_repuesto: str):
 
     print("\nPronósticos:")
     print(forecast)
-    
-    # TODO funciona bien la tendencia, falta guardarla en la base de datos
-    # df_forecast.insert(2, "TipoRepuesto", tipo_repuesto)
-    # df_to_db("forecast", df_forecast)
 
+    data: pd.DataFrame = series.to_frame("Consumo").reset_index() # type: ignore
+    data.columns = ["FechaCompleta", "Consumo"]
+    data["Consumo"] = data["Consumo"].round(0)
+    data["Repuesto"] = repuesto
+    data["TipoRepuesto"] = tipo_repuesto
+    df_to_db("forecast_data", data)
 
-
-
-
-
+    forecast: pd.DataFrame = forecast.to_frame("Prevision").reset_index()# type: ignore
+    forecast.columns = ["FechaCompleta", "Prevision"]
+    forecast["Prevision"] = forecast["Prevision"].round(0)
+    forecast["Repuesto"] = repuesto
+    forecast["TipoRepuesto"] = tipo_repuesto
+    df_to_db("forecast", forecast)
 
 
 # @execute_safely

@@ -65,6 +65,7 @@ class RepuestoEnum(StrEnum):
     CAMARA = auto()
     DVR = auto()
     HERRAMIENTA = auto()
+    UREA = auto()
 
 
 class LoadDataEnum(StrEnum):
