@@ -35,6 +35,7 @@ MAIN_TABS: Tuple[str, ...] = ("Página principal", "Índices de consumo",
 SELECT_BOX_HEIGHT: int = 100
 DATAFRAME_HEIGHT: int = 600
 PLOT_BOX_HEIGHT: int = 600
+PIE_PLOT_BOX_HEIGHT: int = 800
 FULL_PLOT_BOX_HEIGHT: int = 650
 FILE_UPLOADER_HEIGHT: int = 368
 TEXT_BOX_HEIGHT: int = 450

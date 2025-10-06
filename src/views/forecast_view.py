@@ -20,12 +20,16 @@ class ForecastPage:
     @execute_safely
     def prevision_options(self):
         figs = None
+        repuesto_upper = None
+
         col1, col2 = st.columns(DISTANCE_COLS)
 
 
         with col1.container(height=SELECT_BOX_HEIGHT):
             opcion_prevision = st.selectbox("Selecciona una previsión:", RepuestoEnum, index=None, placeholder="------")
-            repuesto_upper = opcion_prevision.upper()
+
+            if opcion_prevision is not None:
+                repuesto_upper = opcion_prevision.upper()
 
             figs = self.plot.create_plot(repuesto_upper)
 

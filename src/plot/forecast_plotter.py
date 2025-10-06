@@ -2,7 +2,7 @@ import pandas as pd
 
 import plotly.graph_objects as go
 
-from src.config.constants import COLORS
+from src.config.constants import COLORS, FILE_STRFTIME
 
 from src.utils.exception_utils import execute_safely
 
@@ -14,18 +14,18 @@ from src.db_data.models.services_model.forecast_data_model import ForecastDataMo
 class ForecastPlotter:
     @execute_safely
     def create_plot(self, tipo_rep: str):
-        df_data = db_to_df_by_repuesto(ForecastDataModel, tipo_rep)
-        df_forecast = db_to_df_by_repuesto(ForecastModel, tipo_rep)
+        self.df_data = db_to_df_by_repuesto(ForecastDataModel, tipo_rep)
+        self.df_forecast = db_to_df_by_repuesto(ForecastModel, tipo_rep)
 
-        todos_repuestos = df_data['Repuesto'].unique()
+        todos_repuestos = self.df_data['Repuesto'].unique()
         figuras = []
         
         for repuesto in todos_repuestos:
-            x_data = df_data.loc[df_data['Repuesto'] == repuesto, 'FechaCompleta']
-            y_data = df_data.loc[df_data['Repuesto'] == repuesto, 'Cantidad']
+            x_data = self.df_data.loc[self.df_data['Repuesto'] == repuesto, 'FechaCompleta']
+            y_data = self.df_data.loc[self.df_data['Repuesto'] == repuesto, 'Cantidad']
         
-            x_forecast = df_forecast.loc[df_forecast['Repuesto'] == repuesto, 'FechaCompleta']
-            y_forecast = df_forecast.loc[df_forecast['Repuesto'] == repuesto, 'Prevision']
+            x_forecast = self.df_forecast.loc[self.df_forecast['Repuesto'] == repuesto, 'FechaCompleta']
+            y_forecast = self.df_forecast.loc[self.df_forecast['Repuesto'] == repuesto, 'Prevision']
 
             fig = go.Figure()
 
@@ -89,15 +89,18 @@ class ForecastPlotter:
             )
 
             figuras.append(fig)
-        return figuras, df_data, df_forecast
-    
+        return figuras, self.df_data, self.df_forecast
+
 
     @execute_safely
     def devolver_fecha(self) -> str:
-        df_fecha = read_date(ForecastDataModel)
-        return pd.to_datetime(df_fecha['FechaCompleta'].unique()).strftime('%d-%m-%Y')[0]
-    
-    
+        if self.df_data.size == 0:
+            return ""
+        return pd.to_datetime(self.df_data['FechaCompleta'].unique()).strftime(FILE_STRFTIME)[0]
+
+
     @execute_safely
     def devolver_titulo(self, rep: str) -> str:
+        if self.df_data.size == 0:
+            return ""
         return f'Prevision de {rep} ({self.devolver_fecha()})'

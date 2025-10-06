@@ -66,12 +66,11 @@ class LoadDataSideBar:
     @execute_safely
     def load_data(self, select_load, uploaded_files):
         match select_load:
-            case "Desviacion de indices":
-                df = self.common.concat_dataframes(uploaded_files)
-                return df
+            case LoadDataEnum.DESVIACION_DE_INDICES | LoadDataEnum.FALLA_GARANTIAS | LoadDataEnum.CONSUMO_GARANTIAS | LoadDataEnum.DATOS_GARANTIAS:
+                return self.common.concat_dataframes(uploaded_files)
             case _:
                 if uploaded_files is not None:
-                    return self.inventory.run_all(uploaded_files) # junto todos los archivos
+                    return self.inventory.run_all(uploaded_files)
                 return None
 
     @staticmethod

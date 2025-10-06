@@ -4,7 +4,7 @@ import pandas as pd
 import numpy as np
 import plotly.graph_objects as go
 
-from typing import Optional, Literal
+from typing import Optional
 
 from src.config.constants import COLORS, FILE_STRFTIME
 from src.config.enums import IndexTypeEnum
@@ -13,6 +13,7 @@ from src.utils.exception_utils import execute_safely
 
 from src.db_data.crud_services import db_to_df_by_repuesto_and_index_type
 from src.db_data.models.services_model.index_repuesto_model import IndexRepuestoModel
+
 
 class IndexPlotter:
     @execute_safely
@@ -25,8 +26,8 @@ class IndexPlotter:
         for repuesto in todos_repuestos:
             df_repuesto = self.df.loc[self.df["Repuesto"] == repuesto]
 
-            x_data = df_repuesto["Cabecera"] 
-            y_data = df_repuesto["IndiceConsumo"] 
+            x_data = df_repuesto["Cabecera"]
+            y_data = df_repuesto["IndiceConsumo"]
             median = [round(y_data.replace(0, np.nan).mean(), 1)] * len(x_data)
 
             fig = go.Figure()
@@ -40,10 +41,10 @@ class IndexPlotter:
                 textposition="auto",
                 textfont=dict(
                     size=11,
-                    color='white', 
-                    family='Arial'  
+                    color='white',
+                    family='Arial'
                 ),
-                
+
                 marker=dict(color=COLORS[random.randint(0,19)])
             ))
 
@@ -64,7 +65,7 @@ class IndexPlotter:
                     title='Cabecera',
                     showticklabels=True
                 ),
-                
+
                 yaxis=dict(
                     title='Consumo',
                     showticklabels=True
@@ -76,11 +77,14 @@ class IndexPlotter:
             figuras.append(fig)
         return figuras
 
+    @execute_safely
+    def devolver_fecha(self) -> str:
+        if self.df.size == 0:
+            return ""
+        return pd.to_datetime(self.df["UltimaFecha"].unique()).strftime(FILE_STRFTIME)[0]
 
     @execute_safely
-    def _devolver_fecha(self) -> str:
-        return pd.to_datetime(self.df["UltimaFecha"].unique()).strftime(FILE_STRFTIME)[0]
-    
-    @execute_safely
     def devolver_titulo(self, rep: str) -> str:
-        return f"Indice {rep} ({self._devolver_fecha()})"
+        if self.df.size == 0:
+            return ""
+        return f"Indice {rep} ({self.devolver_fecha()})"

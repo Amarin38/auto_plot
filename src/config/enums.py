@@ -56,7 +56,7 @@ class RepuestoEnum(StrEnum):
     INYECTOR = auto()
     BOMBA_UREA = auto()
     CALIPER = auto()
-    ELECTROVALVULA_5_VIAS = auto()
+    ELECTROVALVULA = auto()
     FLOTANTE_GASOIL = auto()
     RETEN = auto()
     SENSOR = auto()

@@ -10,7 +10,6 @@ from src.config.constants import SELECT_BOX_HEIGHT, PLOT_BOX_HEIGHT, DISTANCE_CO
 from src.config.enums import IndexTypeEnum, RepuestoEnum
 
 
-
 class IndexPage:
     def __init__(self) -> None:
         self.plot = IndexPlotter()
@@ -19,14 +18,18 @@ class IndexPage:
     @execute_safely
     def indice_options(self) -> None:
         figs = None
+        repuesto_upper = None
+
         col1, col2 = st.columns(DISTANCE_COLS)
         
         with col1.container(height=SELECT_BOX_HEIGHT):
             opcion_repuesto_indice = st.selectbox("Selecciona un índice:", RepuestoEnum, index=None, placeholder="------")
-            repuesto_upper = opcion_repuesto_indice.upper()
+
+            if opcion_repuesto_indice is not None:
+                repuesto_upper = opcion_repuesto_indice.upper()
 
             with col1.container(height=SELECT_BOX_HEIGHT):
-                opcion_tipo_indice = st.selectbox("Selecciona un tipo de indice:", IndexTypeEnum, index=None, placeholder="------")
+                opcion_tipo_indice = st.selectbox("Selecciona un tipo de indice:", IndexTypeEnum)
                     
                 match opcion_repuesto_indice:
                     case RepuestoEnum.INYECTOR:
@@ -36,7 +39,7 @@ class IndexPage:
 
 
         with col2.container(height=PLOT_BOX_HEIGHT):
-            st.subheader(self.plot.devolver_titulo(opcion_repuesto_indice))
+            st.subheader(self.plot.devolver_titulo(opcion_repuesto_indice)) # type: ignore
 
             if figs is not None:
                 for fig in figs:

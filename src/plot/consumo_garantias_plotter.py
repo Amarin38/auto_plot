@@ -35,7 +35,7 @@ class ConsumoGarantiasPlotter:
                 family='Arial'
             ),
 
-            marker=dict(color=COLORS[random.randint(0, 19)])
+            marker=dict(color=COLORS[1])
         ))
 
         fig.add_trace(go.Bar(
@@ -51,7 +51,7 @@ class ConsumoGarantiasPlotter:
                 family='Arial'
             ),
 
-            marker=dict(color=COLORS[random.randint(0, 19)])
+            marker=dict(color=COLORS[12])
         ))
 
         fig.update_layout(
