@@ -63,7 +63,7 @@ class Index:
             if filtro is not None:
                 df_rate = self.cleaner.filter(df_rate, 'Repuesto', filtro, 'startswith')
 
-            df_to_db('prueba_index', df_rate) # guardo el proyecto en la base de datos
+            df_to_db('index_repuesto', df_rate) # guardo el proyecto en la base de datos
         else:
             print('El df está vacío.')
 

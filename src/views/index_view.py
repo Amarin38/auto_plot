@@ -1,47 +1,38 @@
 import sys, os
 import streamlit as st
 
+from src.interfaces_abstract_classes.abs_column_view import ColumnView
+
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
 from src.plot.index_plotter import  IndexPlotter
 
 from src.utils.exception_utils import execute_safely
 
-from src.config.constants import SELECT_BOX_HEIGHT, PLOT_BOX_HEIGHT, DISTANCE_COLS
+from src.config.constants import PLACEHOLDER
 from src.config.enums import IndexTypeEnum, RepuestoEnum
 
 
-class IndexPage:
+class IndexPage(ColumnView):
     def __init__(self) -> None:
-        self.plot = IndexPlotter()
+        super().__init__()
 
 
     @execute_safely
-    def indice_options(self) -> None:
-        figs = None
-        repuesto_upper = None
+    def show(self) -> None:
+        with super().container_select():
+            repuesto = st.selectbox("Selecciona una Repuesto:", RepuestoEnum, index=None, placeholder=PLACEHOLDER)
 
-        col1, col2 = st.columns(DISTANCE_COLS)
-        
-        with col1.container(height=SELECT_BOX_HEIGHT):
-            opcion_repuesto_indice = st.selectbox("Selecciona un índice:", RepuestoEnum, index=None, placeholder="------")
+            with super().container_select():
+                tipo_indice = st.selectbox("Selecciona un Tipo de indice:", IndexTypeEnum)
 
-            if opcion_repuesto_indice is not None:
-                repuesto_upper = opcion_repuesto_indice.upper()
-
-            with col1.container(height=SELECT_BOX_HEIGHT):
-                opcion_tipo_indice = st.selectbox("Selecciona un tipo de indice:", IndexTypeEnum)
-                    
-                match opcion_repuesto_indice:
-                    case RepuestoEnum.INYECTOR:
-                        figs = self.plot.create_plot(opcion_tipo_indice, repuesto_upper, repuesto_upper)
-                    case _:
-                        figs = self.plot.create_plot(opcion_tipo_indice, repuesto_upper)
+                plot = IndexPlotter(tipo_indice, repuesto)
+                self.figs, titulo = plot.create_plot()
 
 
-        with col2.container(height=PLOT_BOX_HEIGHT):
-            st.subheader(self.plot.devolver_titulo(opcion_repuesto_indice)) # type: ignore
+        with super().container_plot():
+            st.subheader(titulo)
 
-            if figs is not None:
-                for fig in figs:
-                    st.plotly_chart(fig) 
-            
+            if self.figs is not None:
+                for fig in self.figs:
+                    st.plotly_chart(fig)
+

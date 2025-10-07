@@ -3,40 +3,32 @@ import sys, os
 import streamlit as st
 
 from src.config.enums import RepuestoEnum
+from src.interfaces_abstract_classes.abs_column_view import ColumnView
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
 from src.plot.forecast_plotter import ForecastPlotter
 
-# from src.views.streamlit_utils import StreamlitUtils 
 from src.utils.exception_utils import execute_safely
 
-from src.config.constants import SELECT_BOX_HEIGHT, PLOT_BOX_HEIGHT, DISTANCE_COLS
+from src.config.constants import PLACEHOLDER
 
-class ForecastPage:
+
+class ForecastPage(ColumnView):
     def __init__(self) -> None:
-        self.plot = ForecastPlotter()
-        # self.utils = StreamlitUtils()
+        super().__init__()
 
     @execute_safely
-    def prevision_options(self):
-        figs = None
-        repuesto_upper = None
+    def show(self):
+        with super().container_select():
+            repuesto = st.selectbox("Selecciona una repuesto:", RepuestoEnum, index=None, placeholder=PLACEHOLDER)
 
-        col1, col2 = st.columns(DISTANCE_COLS)
-
-
-        with col1.container(height=SELECT_BOX_HEIGHT):
-            opcion_prevision = st.selectbox("Selecciona una previsión:", RepuestoEnum, index=None, placeholder="------")
-
-            if opcion_prevision is not None:
-                repuesto_upper = opcion_prevision.upper()
-
-            figs = self.plot.create_plot(repuesto_upper)
+            plot = ForecastPlotter(repuesto)
+            self.figs, titulo = plot.create_plot()
 
 
-        with col2.container(height=PLOT_BOX_HEIGHT):
-            st.subheader(self.plot.devolver_titulo(opcion_prevision))
-            
-            if figs is not None:
-                for fig in figs[0]:
+        with super().container_plot():
+            st.subheader(titulo)
+
+            if self.figs is not None:
+                for fig in self.figs:
                     st.plotly_chart(fig)

@@ -58,9 +58,9 @@ def main():
     with main_page:
         st.text("Pagina principal")
     with indices:
-        IndexPage().indice_options()
+        IndexPage().show()
     with prevision:
-        ForecastPage().prevision_options()
+        ForecastPage().show()
     with desviacion:
         DeviationPage().show()
     with falla_garantias:

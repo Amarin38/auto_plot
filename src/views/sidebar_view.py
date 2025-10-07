@@ -1,6 +1,7 @@
 import sys, os
 import streamlit as st
 
+from src.config.constants import PLACEHOLDER
 from src.services.analysis.garantias import calcular_falla_garantias, calcular_consumo_garantias, \
     guardar_datos_garantias
 
@@ -30,37 +31,47 @@ class LoadDataSideBar:
     def select_data(self):
         with self.expander_load:
             uploaded_files = st.file_uploader("Ingresa datos para actualizar", accept_multiple_files="directory")
-            select_load = st.selectbox("Tabla", LoadDataEnum, index=None, placeholder="------")
+            select_load = st.selectbox("Tabla", LoadDataEnum, index=None, placeholder=PLACEHOLDER)
 
-            df = self.load_data(select_load, uploaded_files)
-            print(df)
-            if df is not None:
+            if select_load and len(uploaded_files) > 0:
                 match select_load:
                     case LoadDataEnum.INDICES_DE_CONSUMO:
-                        select_indice = st.selectbox("Indice", RepuestoEnum, index=None, placeholder="------")
-                        select_tipo = st.selectbox("Tipo", IndexTypeEnum, index=None, placeholder="------")
+                        select_indice = st.selectbox("Indice", RepuestoEnum, index=None, placeholder=PLACEHOLDER)
+                        select_tipo = st.selectbox("Tipo", IndexTypeEnum, index=None, placeholder=PLACEHOLDER)
 
-                        self.load_data_bttn(lambda: Index().calculate(df, select_indice, select_tipo))
+                        if select_indice and select_tipo:
+                            df = self.load_data(select_load, uploaded_files)
+                            self.load_data_bttn(lambda: Index().calculate(df, select_indice.upper(), select_tipo.upper()))
 
                     case LoadDataEnum.PREVISION_DE_CONSUMO:
-                        select_prevision = st.selectbox("Prevision", RepuestoEnum, index=None, placeholder="------")
-                        self.load_data_bttn(lambda: create_forecast(df, select_prevision))
+                        select_prevision = st.selectbox("Prevision", RepuestoEnum, index=None, placeholder=PLACEHOLDER)
+
+                        if select_prevision:
+                            df = self.load_data(select_load, uploaded_files)
+                            self.load_data_bttn(lambda: create_forecast(df, select_prevision.upper()))
 
                     case LoadDataEnum.DESVIACION_DE_INDICES:
+                        df = self.load_data(select_load, uploaded_files)
                         self.load_data_bttn(lambda: DeviationTrend().calculate(df))
 
                     case LoadDataEnum.FALLA_GARANTIAS:
+                        df = self.load_data(select_load, uploaded_files)
                         self.load_data_bttn(lambda: calcular_falla_garantias(df))
 
                     case LoadDataEnum.DATOS_GARANTIAS:
+                        df = self.load_data(select_load, uploaded_files)
                         self.load_data_bttn(lambda: guardar_datos_garantias(df))
 
                     case LoadDataEnum.CONSUMO_GARANTIAS:
+                        df = self.load_data(select_load, uploaded_files)
                         self.load_data_bttn(lambda: calcular_consumo_garantias(df))
 
                     case LoadDataEnum.MAXMIMOS_Y_MINIMOS:
                         mult_por = float(st.text_input("Multiplicar por: "))
-                        self.load_data_bttn(lambda: MaxMin().calculate(df, mult_por))
+
+                        if mult_por:
+                            df = self.load_data(select_load, uploaded_files)
+                            self.load_data_bttn(lambda: MaxMin().calculate(df, mult_por))
                         
 
     @execute_safely
@@ -69,10 +80,10 @@ class LoadDataSideBar:
             case LoadDataEnum.DESVIACION_DE_INDICES | LoadDataEnum.FALLA_GARANTIAS | LoadDataEnum.CONSUMO_GARANTIAS | LoadDataEnum.DATOS_GARANTIAS:
                 return self.common.concat_dataframes(uploaded_files)
             case _:
-                if uploaded_files is not None:
-                    # FIXME se ejecuta varias veces, no solo una
+                if uploaded_files and select_load:
                     return self.inventory.run_all(uploaded_files)
                 return None
+
 
     @staticmethod
     def load_data_bttn(func):

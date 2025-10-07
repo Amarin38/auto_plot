@@ -1,5 +1,5 @@
 from datetime import date
-from sqlalchemy import Date, DateTime
+from sqlalchemy import Date
 from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column
 from ... import ServicesBase

@@ -51,7 +51,7 @@ class CabecerasEnum(PascalCaseStrEnum):
 class RepuestoEnum(StrEnum):
     @staticmethod
     def _generate_next_value_(name, start, count, last_values):
-        return name.replace("_", " ").capitalize()
+        return name.replace("_", " ").upper()
 
     INYECTOR = auto()
     BOMBA_UREA = auto()
@@ -66,6 +66,8 @@ class RepuestoEnum(StrEnum):
     DVR = auto()
     HERRAMIENTA = auto()
     UREA = auto()
+    CINTAS_FRENO = auto()
+    PASTILLAS_FRENO = auto()
 
 
 class LoadDataEnum(StrEnum):

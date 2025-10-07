@@ -31,6 +31,7 @@ MAIN_TABS: Tuple[str, ...] = ("Página principal", "Índices de consumo",
                               "Previsión de consumo", "Desviacion de indices",
                               "Falla Garantias", "Máximos y Mínimos")
 
+PLACEHOLDER = "------"
 
 SELECT_BOX_HEIGHT: int = 100
 DATAFRAME_HEIGHT: int = 600
@@ -50,11 +51,13 @@ SERV_DB_PATH: str = f"{MAIN_PATH}/src/db_data/db/services_data.db"
 
 
 # Dates
-PAGE_STRFTIME = "%d/%m/%Y"
-FILE_STRFTIME = "%d-%m-%Y"
+PAGE_STRFTIME_DMY = "%d/%m/%Y"
+PAGE_STRFTIME_YMD = "%Y/%m/%d"
+FILE_STRFTIME_DMY = "%d-%m-%Y"
+FILE_STRFTIME_YMD = "%Y-%m-%d"
 DELTA_STRFTIME = "%Y-%m"
-TODAY_DATE_PAGE = Timestamp.today().strftime(PAGE_STRFTIME)
-TODAY_DATE_FILE = Timestamp.today().strftime(FILE_STRFTIME)
+TODAY_DATE_PAGE = Timestamp.today().strftime(PAGE_STRFTIME_DMY)
+TODAY_DATE_FILE = Timestamp.today().strftime(FILE_STRFTIME_DMY)
 TODAY_FOR_DELTA = Timestamp.today().strftime(DELTA_STRFTIME)
 # TODAY_FOR_DELTA = Timestamp(to_datetime('today').strftime(DELTA_STRFTIME))
 
