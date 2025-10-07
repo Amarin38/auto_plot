@@ -84,7 +84,42 @@ class ForecastPlotter:
                 ),
             ))
 
+
             update_layout(fig, repuesto, "Fecha", "Consumo")
+
+            fig.update_layout(
+                xaxis=dict(
+                    rangeselector=dict(
+                        buttons=list([
+                            dict(count=1,
+                                 label="1 Mes",
+                                 step="month",
+                                 stepmode="backward"),
+                            dict(count=6,
+                                 label="6 Meses",
+                                 step="month",
+                                 stepmode="backward"),
+                            dict(count=1,
+                                 label="1 Año",
+                                 step="year",
+                                 stepmode="backward"),
+                            dict(count=2,
+                                 label="2 Años",
+                                 step="year",
+                                 stepmode="backward"),
+                            dict(step="all")
+                        ]),
+                    ),
+                    rangeslider = dict(
+                        visible=True,
+                        bgcolor="white",
+                        bordercolor="#0e1117",
+                        thickness=0.02,
+                        borderwidth=2,
+                    ),
+                    type = "date"
+                )
+            )
             figuras.append(fig)
         return figuras, titulo
 
