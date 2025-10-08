@@ -10,25 +10,27 @@ from src.plot.forecast_plotter import ForecastPlotter
 
 from src.utils.exception_utils import execute_safely
 
-from src.config.constants import PLACEHOLDER
+from src.config.constants import (PLACEHOLDER, SELECT_BOX_HEIGHT, DISTANCE_COLS_SELECT_PLOT,
+                                  MULTIPLE_PLOT_BOX_HEIGHT, PLOT_BOX_HEIGHT)
 
 
-class ForecastPage(ColumnView):
-    def __init__(self) -> None:
-        super().__init__()
-
+class ForecastPage:
     @execute_safely
     def show(self):
-        with super().container_select():
-            repuesto = st.selectbox("Selecciona una repuesto:", RepuestoEnum, index=None, placeholder=PLACEHOLDER)
+        figs = None
+        col1, col2 = st.columns(DISTANCE_COLS_SELECT_PLOT)
+
+        with col1.container(height=SELECT_BOX_HEIGHT):
+            repuesto = st.selectbox("Selecciona el repuesto para prevision: ", RepuestoEnum, index=None, placeholder=PLACEHOLDER)
 
             plot = ForecastPlotter(repuesto)
-            self.figs, titulo = plot.create_plot()
+            figs, titulo = plot.create_plot()
 
 
-        with super().container_plot():
+        with col2.container(height=MULTIPLE_PLOT_BOX_HEIGHT):
             st.subheader(titulo)
 
-            if self.figs is not None:
-                for fig in self.figs:
-                    st.plotly_chart(fig)
+            if figs is not None:
+                for fig in figs:
+                    with st.container(height=PLOT_BOX_HEIGHT):
+                        st.plotly_chart(fig)

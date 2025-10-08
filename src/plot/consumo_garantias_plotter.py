@@ -47,7 +47,7 @@ class ConsumoGarantiasPlotter:
             name="Transferencia",
 
             text=y_transfer,
-            textposition="auto",
+            textposition="outside",
             textfont=dict(
                 size=11,
                 color='white',

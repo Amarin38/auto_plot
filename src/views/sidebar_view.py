@@ -31,20 +31,20 @@ class LoadDataSideBar:
     def select_data(self):
         with self.expander_load:
             uploaded_files = st.file_uploader("Ingresa datos para actualizar", accept_multiple_files="directory")
-            select_load = st.selectbox("Tabla", LoadDataEnum, index=None, placeholder=PLACEHOLDER)
+            select_load = st.selectbox("Selecciona la tabla a ingresar: ", LoadDataEnum, index=None, placeholder=PLACEHOLDER)
 
             if select_load and len(uploaded_files) > 0:
                 match select_load:
                     case LoadDataEnum.INDICES_DE_CONSUMO:
-                        select_indice = st.selectbox("Indice", RepuestoEnum, index=None, placeholder=PLACEHOLDER)
-                        select_tipo = st.selectbox("Tipo", IndexTypeEnum, index=None, placeholder=PLACEHOLDER)
+                        select_repuesto = st.selectbox("Selecciona un repuesto: ", RepuestoEnum, index=None, placeholder=PLACEHOLDER)
+                        select_tipo = st.selectbox("Selecciona un tipo de indice: ", IndexTypeEnum, index=None, placeholder=PLACEHOLDER)
 
-                        if select_indice and select_tipo:
+                        if select_repuesto and select_tipo:
                             df = self.load_data(select_load, uploaded_files)
-                            self.load_data_bttn(lambda: Index().calculate(df, select_indice.upper(), select_tipo.upper()))
+                            self.load_data_bttn(lambda: Index().calculate(df, select_repuesto.upper(), select_tipo.upper()))
 
                     case LoadDataEnum.PREVISION_DE_CONSUMO:
-                        select_prevision = st.selectbox("Prevision", RepuestoEnum, index=None, placeholder=PLACEHOLDER)
+                        select_prevision = st.selectbox("Selecciona el tipo de prevision: ", RepuestoEnum, index=None, placeholder=PLACEHOLDER)
 
                         if select_prevision:
                             df = self.load_data(select_load, uploaded_files)

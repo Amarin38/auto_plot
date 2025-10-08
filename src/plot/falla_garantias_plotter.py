@@ -1,6 +1,7 @@
 from typing import Optional
 import plotly.graph_objects as go
 
+from src.config.constants import PIE_PLOT_HEIGHT, PIE_PLOT_WIDTH
 from src.utils.exception_utils import execute_safely
 
 from src.db_data.crud_services import db_to_df_by_cabecera
@@ -16,11 +17,6 @@ class FallasGarantiasPlotter:
 
     @execute_safely
     def create_plot(self):
-        if self.cabecera:
-            titulo = f"Fallos garantias {self.cabecera}"
-        else:
-            titulo = ""
-
         labels = self.df_data["Repuesto"]
         values = self.df_data["PromedioTiempoFalla"]
         text = self.df_data["PromedioTiempoFalla"].astype(str)
@@ -44,5 +40,9 @@ class FallasGarantiasPlotter:
 
         # TODO separar por repuesto el grafico de torta
 
-        update_layout(fig, '', '', '', 700, 700)
-        return fig, titulo
+        if self.cabecera:
+            update_layout(fig, f"Fallos garantias {self.cabecera}", '', '', PIE_PLOT_HEIGHT, PIE_PLOT_WIDTH)
+        else:
+            update_layout(fig, '', '', '', PIE_PLOT_HEIGHT, PIE_PLOT_WIDTH)
+
+        return fig

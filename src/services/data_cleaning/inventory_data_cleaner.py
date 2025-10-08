@@ -5,7 +5,7 @@ import pandas as pd
 from typing import Union, List, Tuple, Literal
 
 from src.config.constants import INTERNOS_DEVOLUCION, MOV_SALIDAS, MOV_ENTRADAS, MOV_DEVOLUCIONES, DEL_COLUMNS, \
-    PAGE_STRFTIME_DMY, DELTA_STRFTIME
+    PAGE_STRFTIME_DMY, DELTA_STRFTIME_YM
 
 from src.utils.exception_utils import execute_safely
 from src.utils.common_utils import CommonUtils
@@ -45,7 +45,7 @@ class InventoryDataCleaner:
         df_updated = self.common.upd_column_by_dict(df, "columns")
 
         df_updated["FechaCompleta"] = pd.to_datetime(df_updated["FechaCompleta"], format=PAGE_STRFTIME_DMY, errors="coerce", dayfirst=True)
-        df_updated["Fecha"] = df_updated["FechaCompleta"].dt.strftime(DELTA_STRFTIME)
+        df_updated["Fecha"] = df_updated["FechaCompleta"].dt.strftime(DELTA_STRFTIME_YM)
 
         df_updated = self.common.upd_rows_by_dict(df_updated, "depositos", "Cabecera")
         

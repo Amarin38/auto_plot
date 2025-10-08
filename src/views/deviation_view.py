@@ -2,7 +2,7 @@ import sys, os
 
 import streamlit as st
 
-from src.config.constants import FULL_PLOT_BOX_HEIGHT
+from src.config.constants import FULL_PLOT_BOX_HEIGHT, DISTANCE_COLS_DUAL_PLOT, TAB_BOX_HEIGHT
 from src.db_data.models.services_model.deviation_model import DeviationModel
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
@@ -13,11 +13,11 @@ from src.db_data.crud_services import db_to_df
 class DeviationPage:
     @execute_safely
     def show(self):
-        plot, data = st.tabs(["Gráfico", "Datos"])
-        
-        with plot:
-            with st.container(height=FULL_PLOT_BOX_HEIGHT):
-                st.plotly_chart(DeviationPlotter().create_plot())
-        with data:
-            st.dataframe(db_to_df(DeviationModel))
-        
+        with st.container(height=TAB_BOX_HEIGHT):
+            plot, data = st.tabs(["📊 Gráfico", "ℹ️ Datos"])
+
+            with plot:
+                with st.container(height=FULL_PLOT_BOX_HEIGHT):
+                    st.plotly_chart(DeviationPlotter().create_plot())
+            with data:
+                st.dataframe(db_to_df(DeviationModel), height=FULL_PLOT_BOX_HEIGHT)

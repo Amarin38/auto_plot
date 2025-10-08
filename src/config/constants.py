@@ -28,19 +28,31 @@ FORECAST_DATA_COLUMNS: Tuple[str, ...] = ("Repuesto", "TipoRepuesto", "FechaComp
 
 # View Config.
 MAIN_TABS: Tuple[str, ...] = ("Página principal", "Índices de consumo",
-                              "Previsión de consumo", "Desviacion de indices",
-                              "Falla Garantias", "Máximos y Mínimos")
+                              "Previsión de consumo", "Desviación de índices",
+                              "Falla Garantías", "Máximos y Mínimos")
 
+# Selectboxes
 PLACEHOLDER = "------"
+
+
+PIE_PLOT_HEIGHT = 650
+PIE_PLOT_WIDTH = 650
 
 SELECT_BOX_HEIGHT: int = 100
 DATAFRAME_HEIGHT: int = 600
-PLOT_BOX_HEIGHT: int = 600
-PIE_PLOT_BOX_HEIGHT: int = 800
+
+PLOT_BOX_HEIGHT: int = 535
+PIE_PLOT_BOX_HEIGHT: int = PIE_PLOT_HEIGHT + 40
+MULTIPLE_PLOT_BOX_HEIGHT: int = PLOT_BOX_HEIGHT + 100
+
 FULL_PLOT_BOX_HEIGHT: int = 650
-FILE_UPLOADER_HEIGHT: int = 368
 TEXT_BOX_HEIGHT: int = 450
-DISTANCE_COLS: Tuple[int, int] = (1, 5)
+TAB_BOX_HEIGHT: int = PLOT_BOX_HEIGHT + 150
+FILE_UPLOADER_HEIGHT: int = 368
+
+
+DISTANCE_COLS_SELECT_PLOT: Tuple[int, int] = (1, 5)
+DISTANCE_COLS_DUAL_PLOT: Tuple[int, float] = (1, 1.30)
 
 
 # Paths
@@ -55,11 +67,12 @@ PAGE_STRFTIME_DMY = "%d/%m/%Y"
 PAGE_STRFTIME_YMD = "%Y/%m/%d"
 FILE_STRFTIME_DMY = "%d-%m-%Y"
 FILE_STRFTIME_YMD = "%Y-%m-%d"
-DELTA_STRFTIME = "%Y-%m"
+DELTA_STRFTIME_YM = "%Y-%m"
+DELTA_STRFTIME_MY = "%m-%Y"
 TODAY_DATE_PAGE = Timestamp.today().strftime(PAGE_STRFTIME_DMY)
 TODAY_DATE_FILE = Timestamp.today().strftime(FILE_STRFTIME_DMY)
-TODAY_FOR_DELTA = Timestamp.today().strftime(DELTA_STRFTIME)
-# TODAY_FOR_DELTA = Timestamp(to_datetime('today').strftime(DELTA_STRFTIME))
+TODAY_FOR_DELTA = Timestamp.today().strftime(DELTA_STRFTIME_YM)
+
 
 # Movs
 MOV_SALIDAS: str = "Transf al Dep |Salida"
@@ -90,11 +103,9 @@ T_GRAY = '\033[90m'
 T_ORANGE = '\033[38;5;208m'
 T_FUCHSIA = '\033[38;5;170m'
 
-
 # Background colors
 B_RED = '\033[41m'
 B_ORANGE = '\033[48;5;208m'
-
 
 # Text mods.
 UNDERLINE = '\033[4m'

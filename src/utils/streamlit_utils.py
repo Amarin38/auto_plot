@@ -31,9 +31,7 @@ def update_layout(fig, title: str, x_title: str, y_title: str, height: Optional[
         title=title,
         legend=dict(
             orientation='v',
-            yanchor='top',
             y=1.02,
-            xanchor='right',
             x=1,
             font=dict(size=13)
         ),
@@ -51,6 +49,47 @@ def update_layout(fig, title: str, x_title: str, y_title: str, height: Optional[
 
         height=height,
         width=width,
+    )
+
+@execute_safely
+def range_slider(fig):
+    fig.update_layout(
+        xaxis=dict(
+            rangeselector=dict(
+                buttons=list([
+                    dict(count=1,
+                         label="1 Mes",
+                         step="month",
+                         stepmode="backward"),
+                    dict(count=6,
+                         label="6 Meses",
+                         step="month",
+                         stepmode="backward"),
+                    dict(count=1,
+                         label="1 Año",
+                         step="year",
+                         stepmode="backward"),
+                    dict(count=2,
+                         label="2 Años",
+                         step="year",
+                         stepmode="backward"),
+                    dict(count=3,
+                         label="3 Años",
+                         step="year",
+                         stepmode="backward"),
+                    dict(label="Todo",
+                         step="all")
+                ]),
+            ),
+            rangeslider=dict(
+                visible=True,
+                bgcolor="white",
+                bordercolor="#0e1117",
+                thickness=0.02,
+                borderwidth=2,
+            ),
+            type="date"
+        )
     )
 
 

@@ -2,14 +2,14 @@ import pandas as pd
 
 import plotly.graph_objects as go
 
-from src.config.constants import COLORS, FILE_STRFTIME_DMY, FILE_STRFTIME_YMD
+from src.config.constants import COLORS, FILE_STRFTIME_YMD
 
 from src.utils.exception_utils import execute_safely
 
-from src.db_data.crud_services import db_to_df_by_repuesto, read_date
+from src.db_data.crud_services import db_to_df_by_repuesto
 from src.db_data.models.services_model.forecast_model import ForecastModel
 from src.db_data.models.services_model.forecast_data_model import ForecastDataModel
-from src.utils.streamlit_utils import update_layout, devolver_fecha
+from src.utils.streamlit_utils import update_layout, devolver_fecha, range_slider
 
 
 class ForecastPlotter:
@@ -84,42 +84,8 @@ class ForecastPlotter:
                 ),
             ))
 
-
             update_layout(fig, repuesto, "Fecha", "Consumo")
-
-            fig.update_layout(
-                xaxis=dict(
-                    rangeselector=dict(
-                        buttons=list([
-                            dict(count=1,
-                                 label="1 Mes",
-                                 step="month",
-                                 stepmode="backward"),
-                            dict(count=6,
-                                 label="6 Meses",
-                                 step="month",
-                                 stepmode="backward"),
-                            dict(count=1,
-                                 label="1 Año",
-                                 step="year",
-                                 stepmode="backward"),
-                            dict(count=2,
-                                 label="2 Años",
-                                 step="year",
-                                 stepmode="backward"),
-                            dict(step="all")
-                        ]),
-                    ),
-                    rangeslider = dict(
-                        visible=True,
-                        bgcolor="white",
-                        bordercolor="#0e1117",
-                        thickness=0.02,
-                        borderwidth=2,
-                    ),
-                    type = "date"
-                )
-            )
+            range_slider(fig)
             figuras.append(fig)
         return figuras, titulo
 
