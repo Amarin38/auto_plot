@@ -8,7 +8,7 @@ from src.plot.index_plotter import  IndexPlotter
 
 from src.utils.exception_utils import execute_safely
 
-from src.config.constants import PLACEHOLDER, SELECT_BOX_HEIGHT, DISTANCE_COLS_SELECT_PLOT, BAR_PLOT_BOX_HEIGHT, \
+from src.config.constants import PLACEHOLDER, SELECT_BOX_HEIGHT, DISTANCE_COLS_SELECT_PLOT, , \
     MULTIPLE_BAR_PLOT_BOX_HEIGHT, PLOT_BOX_HEIGHT, MULTIPLE_PLOT_BOX_HEIGHT
 from src.config.enums import IndexTypeEnum, RepuestoEnum
 

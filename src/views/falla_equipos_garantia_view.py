@@ -7,7 +7,7 @@ from src.utils.exception_utils import execute_safely
 
 from src.plot.falla_garantias_plotter import FallasGarantiasPlotter
 
-from src.config.constants import BAR_PLOT_BOX_HEIGHT, PLACEHOLDER, DISTANCE_COLS_DUAL_PLOT, SELECT_BOX_HEIGHT, \
+from src.config.constants import , PLACEHOLDER, DISTANCE_COLS_DUAL_PLOT, SELECT_BOX_HEIGHT, \
     PIE_PLOT_BOX_HEIGHT
 from src.config.enums import CabecerasEnum
 
@@ -28,6 +28,6 @@ class FallaEquiposGarantiaPage:
 
             st.plotly_chart(pie_plot)
 
-        with col2.container(height=BAR_PLOT_BOX_HEIGHT):
+        with col2.container(height=):
             consumo_plot = ConsumoGarantiasPlotter().create_plot()
             st.plotly_chart(consumo_plot)
