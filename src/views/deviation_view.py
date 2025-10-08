@@ -2,7 +2,7 @@ import sys, os
 
 import streamlit as st
 
-from src.config.constants import FULL_PLOT_BOX_HEIGHT, DISTANCE_COLS_DUAL_PLOT, TAB_BOX_HEIGHT
+from src.config.constants import FULL_PLOT_BOX_HEIGHT, TAB_BOX_HEIGHT
 from src.db_data.models.services_model.deviation_model import DeviationModel
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))

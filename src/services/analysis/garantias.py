@@ -24,6 +24,7 @@ def calcular_consumo_garantias(df: pd.DataFrame) -> None:
 
     df_to_db('consumo_garantias', df_final)
 
+
 @execute_safely
 def calcular_falla_garantias(df: pd.DataFrame) -> None:
     df = df.loc[df["Tipo"] == "GARANTIA"]
@@ -35,6 +36,7 @@ def calcular_falla_garantias(df: pd.DataFrame) -> None:
     df["PromedioTiempoFalla"] = df["PromedioTiempoFalla"].round(0)
 
     df_to_db('falla_garantias', df)
+
 
 @execute_safely
 def guardar_datos_garantias(df: pd.DataFrame) -> None:
