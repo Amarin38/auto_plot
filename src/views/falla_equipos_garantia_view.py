@@ -24,17 +24,18 @@ class FallaEquiposGarantiaPage:
         with st.container(height=FALLA_TAB_BOX_HEIGHT):
             pie, bar = st.tabs([" 🚫 Falla Equipos Garantías", " 📊 Consumos Garantias y Transferencias"])
 
-            with pie.container(height=PIE_PLOT_BOX_HEIGHT, width=PIE_PLOT_BOX_WIDTH):
-                with st.container(height=SELECT_BOX_HEIGHT, width=SELECT_BOX_WIDTH):
+            with pie:
+            # with pie.container(height=PIE_PLOT_BOX_HEIGHT, width=PIE_PLOT_BOX_WIDTH):
+                with pie.container(height=SELECT_BOX_HEIGHT, width=SELECT_BOX_WIDTH):
                     col_cabecera, col_repuesto = st.columns(2)
 
-                    with col_cabecera:
-                        cabecera = st.selectbox("Selecciona una cabecera: ", CabecerasEnum, index=None,
-                                                placeholder=PLACEHOLDER)
+                with col_cabecera:
+                    cabecera = st.selectbox("Selecciona una cabecera: ", CabecerasEnum, index=None,
+                                            placeholder=PLACEHOLDER)
 
-                    with col_repuesto:
-                        tipo_repuesto = st.selectbox("Selecciona un tipo de repuesto: ", RepuestoEnum, index=None,
-                                                     placeholder=PLACEHOLDER)
+                with col_repuesto:
+                    tipo_repuesto = st.selectbox("Selecciona un tipo de repuesto: ", RepuestoEnum, index=None,
+                                                 placeholder=PLACEHOLDER)
 
                 fallas = FallasGarantiasPlotter(cabecera, tipo_repuesto)
                 pie_plot = fallas.create_plot()
