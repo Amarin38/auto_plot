@@ -27,32 +27,44 @@ FORECAST_DATA_COLUMNS: Tuple[str, ...] = ("Repuesto", "TipoRepuesto", "FechaComp
 
 
 # View Config.
-MAIN_TABS: Tuple[str, ...] = ("Página principal", "Índices de consumo",
-                              "Previsión de consumo", "Desviación de índices",
-                              "Falla Garantías", "Máximos y Mínimos")
+MAIN_TABS: Tuple[str, ...] = (" 🏠 Página principal", " 📊 Índices de consumo",
+                              " 📈 Previsión de consumo", " 📊 Desviación de índices",
+                              " 🚫 Falla Garantías", " ↕️ Máximos y Mínimos")
 
 # Selectboxes
 PLACEHOLDER = "------"
 
-
 PIE_PLOT_HEIGHT = 650
 PIE_PLOT_WIDTH = 650
 
-SELECT_BOX_HEIGHT: int = 100
+BARPLOT_WIDTH: int = 1100
+
 DATAFRAME_HEIGHT: int = 600
 
-PLOT_BOX_HEIGHT: int = 535
-PIE_PLOT_BOX_HEIGHT: int = PIE_PLOT_HEIGHT + 40
-MULTIPLE_PLOT_BOX_HEIGHT: int = PLOT_BOX_HEIGHT + 100
+LINK_BOX_HEIGHT: int = 72
+SELECT_BOX_HEIGHT: int = 100
+SELECT_BOX_WIDTH: int = 650
 
+BARPLOT_BOX_HEIGHT: int = 700
+BARPLOT_BOX_WIDTH: int = 1600
+
+PLOT_BOX_HEIGHT: int = 600
+
+PIE_PLOT_BOX_HEIGHT: int = PLOT_BOX_HEIGHT + 100
+PIE_PLOT_BOX_WIDTH: int = PIE_PLOT_WIDTH + 900
+
+MULTIPLE_PLOT_BOX_HEIGHT: int = PLOT_BOX_HEIGHT + 100
 FULL_PLOT_BOX_HEIGHT: int = 650
+
 TEXT_BOX_HEIGHT: int = 450
 TAB_BOX_HEIGHT: int = FULL_PLOT_BOX_HEIGHT + 100
+FALLA_TAB_BOX_HEIGHT: int = TAB_BOX_HEIGHT + 40
 FILE_UPLOADER_HEIGHT: int = 368
 
-
 DISTANCE_COLS_SELECT_PLOT: Tuple[int, int] = (1, 5)
-DISTANCE_COLS_DUAL_PLOT: Tuple[int, float] = (1, 1.30)
+DISTANCE_COLS_SELECTBIGGER_PLOT: Tuple[int, float] = (1, 4.5)
+DISTANCE_COLS_DUAL_PLOT: Tuple[int, float] = (1, 1.8)
+DISTANTE_COLS_DUAL_SELECT: Tuple[int, float] = (1, 0.5)
 
 
 # Paths

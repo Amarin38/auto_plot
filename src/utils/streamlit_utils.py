@@ -20,7 +20,7 @@ def download_df(df, file_name: str):
 @execute_safely
 def to_excel(df: pd.DataFrame) -> bytes:
     output = BytesIO()
-    with pd.ExcelWriter(output, engine="openpyxl") as writer:
+    with pd.ExcelWriter(output, engine="openpyxl") as writer: # type: ignore
         df.to_excel(writer, index=False, sheet_name="Datos")
     return output.getvalue()
 

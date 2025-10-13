@@ -1,15 +1,11 @@
-import pandas as pd
-
 from typing import List, Optional
 
+import pandas as pd
+
 from src.config.enums import ScrapEnum
-
-from src.services.data_cleaning.inventory_data_cleaner import InventoryDataCleaner
-from src.services.scrapping.scrap_maxmin import ScrapMaxMin 
-
-from src.utils.exception_utils import execute_safely
-
 from src.db_data.crud_services import df_to_db
+from src.services.scrapping.scrap_maxmin import ScrapMaxMin
+from src.utils.exception_utils import execute_safely
 
 """
 - Se descargan los consumos de x fecha hacia atrás de los productos que se queira evaluar el  maxmin.
@@ -47,6 +43,7 @@ class MaxMin:
         Returns:\n
             Optional[str]: None | lista de codigos de maxmin\n
         """
+        lista_codigos: List[str] = []
         match scrap:
             case ScrapEnum.WEB: lista_codigos = ScrapMaxMin(date_since).web()
             case ScrapEnum.LOCAL: lista_codigos = ScrapMaxMin(date_since).local()

@@ -1,0 +1,24 @@
+[
+  {
+    "id": "TASK_1",
+    "priority": "HIGH",
+    "tags": [],
+    "title": "Agregar 0s a BURROS y ALTERNADORES",
+    "description": "Agregarlos antes y despues de las fechas para completar a la fecha actual 01/10/2025 y hacer la prevision nuevamente.",
+    "status": "TODO",
+    "date": {
+      "date": {
+        "year": 2025,
+        "month": 10,
+        "day": 8
+      },
+      "time": {
+        "hour": 11,
+        "minute": 55,
+        "second": 13,
+        "nano": 367924400
+      }
+    },
+    "isImported": false
+  }
+]

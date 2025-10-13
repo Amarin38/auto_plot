@@ -2,7 +2,7 @@ from selenium import webdriver
 
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support import expected_conditions as exp_cond
 
 from selenium.common.exceptions import WebDriverException
 
@@ -51,20 +51,20 @@ class ScrapUtils:
 
     @staticmethod
     def wait_by_name(wait, name: str):
-        return wait.until(EC.presence_of_element_located((By.NAME, name)))
+        return wait.until(exp_cond.presence_of_element_located((By.NAME, name)))
     
     @staticmethod
     def wait_by_xpath(wait, name: str):
-        return wait.until(EC.presence_of_element_located((By.XPATH, name)))
+        return wait.until(exp_cond.presence_of_element_located((By.XPATH, name)))
 
     @staticmethod
     def wait_by_id(wait, name: str):
-        return wait.until(EC.presence_of_element_located((By.ID, name)))
+        return wait.until(exp_cond.presence_of_element_located((By.ID, name)))
     
     @staticmethod
     def wait_by_class(wait, name: str):
-        return wait.until(EC.presence_of_element_located((By.CLASS_NAME, name)))
+        return wait.until(exp_cond.presence_of_element_located((By.CLASS_NAME, name)))
 
     @staticmethod
     def wait_by_css(wait, name: str):
-        return wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, name)))
+        return wait.until(exp_cond.presence_of_element_located((By.CSS_SELECTOR, name)))

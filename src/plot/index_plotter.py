@@ -1,16 +1,13 @@
 import random
 
-import pandas as pd
 import numpy as np
 import plotly.graph_objects as go
 
-from src.config.constants import COLORS, FILE_STRFTIME_DMY
+from src.config.constants import COLORS
 from src.config.enums import IndexTypeEnum
-
-from src.utils.exception_utils import execute_safely
-
 from src.db_data.crud_services import db_to_df_by_repuesto_and_index_type
 from src.db_data.models.services_model.index_repuesto_model import IndexRepuestoModel
+from src.utils.exception_utils import execute_safely
 from src.utils.streamlit_utils import update_layout, devolver_fecha
 
 

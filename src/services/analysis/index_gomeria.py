@@ -1,11 +1,10 @@
-import json
+from typing import Dict
 
 import pandas as pd
 
-from typing import Dict
-
 from src.config.constants import TODAY_FOR_DELTA
 from src.db_data.crud_common import read_json_config
+
 
 class IndexGomeria:
     def __init__(self, file: str, diff_months: int) -> None:
@@ -53,6 +52,7 @@ class IndexGomeria:
 
     @staticmethod
     def _create_months_list(diff_months) -> pd.Index:
-        diff = pd.date_range(TODAY_FOR_DELTA - pd.Timedelta(days=30*diff_months))
+        diff = TODAY_FOR_DELTA - pd.Timedelta(days=30*diff_months)
+        diff = pd.date_range(diff, TODAY_FOR_DELTA)
 
         return pd.DatetimeIndex(diff.strftime("%Y-%B").unique())

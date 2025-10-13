@@ -1,16 +1,13 @@
 import json
-import pandas as pd
-from typing import Literal, Union, Dict, Any
+from typing import Union, Dict, Any
 
+import pandas as pd
 from sqlalchemy import select
 
 from src.config.constants import JSON_PATH
-
 from src.db_data.models.config_model.json_config_model import JSONConfigModel
-
-from . import common_engine
 from . import SessionCommon
-
+from . import common_engine
 
 
 # ---------------------------------   CREATE   --------------------------------- #
@@ -49,7 +46,7 @@ def store_json_file(self, file_name: str):
 
 
 # ---------------------------------   DELETE   --------------------------------- #
-def delete_by_id(table, id: int):
+def delete_by_id(table, _id: int):
     """
     Elimina datos de una tabla de common_data.db a partir del id.
     - table -> ModelClass()

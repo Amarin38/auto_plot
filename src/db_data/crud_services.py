@@ -1,12 +1,10 @@
 import pandas as pd
-from typing import Literal
-
 from sqlalchemy import select
 
-from . import services_engine
-from . import SessionServices
-
 from src.config.enums import IndexTypeEnum
+from . import SessionServices
+from . import services_engine
+
 
 # ---------------------------------   CREATE   --------------------------------- #
 def df_to_db(table: str, df: pd.DataFrame):
@@ -21,7 +19,7 @@ def df_to_db(table: str, df: pd.DataFrame):
 
 
 # ---------------------------------   DELETE   --------------------------------- #
-def delete_by_id(table, id: int):
+def delete_by_id(table, _id: int):
     """
     Elimina datos de una tabla de services_data.db a partir del id.
     - table -> ModelClass()
@@ -77,6 +75,11 @@ def db_to_df_by_cabecera(table, cabecera: str) -> pd.DataFrame:
     mediante la condicion de cabecera y lo devuelve en forma de dataframe.
     """
     query = select(table).where(table.Cabecera == cabecera) # type: ignore
+    return pd.read_sql_query(query, con=services_engine)
+
+
+def db_to_df_by_cabecera_and_repuesto(table, cabecera: str, tipo_repuesto: str) -> pd.DataFrame:
+    query = select(table).where(table.Cabecera == cabecera, table.TipoRepuesto == tipo_repuesto) # type: ignore
     return pd.read_sql_query(query, con=services_engine)
 
 

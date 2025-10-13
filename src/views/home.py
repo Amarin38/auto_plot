@@ -13,7 +13,7 @@ from src.views.maxmin_view import MaxminPage
 from src.views.sidebar_view import LoadDataSideBar
 from src.views.falla_equipos_garantia_view import FallaEquiposGarantiaPage
 
-from src.config.constants import MAIN_TABS
+from src.config.constants import MAIN_TABS, SELECT_BOX_HEIGHT, LINK_BOX_HEIGHT
 
 # Services DB -----------------------------------------------------------------------------------
 from src.db_data.models.services_model.forecast_model import ForecastModel
@@ -55,8 +55,14 @@ def main():
 
     LoadDataSideBar().select_data()
 
-    with main_page:
-        st.text("Pagina principal")
+    with (main_page):
+        st.text("Páginas de la empresa:")
+
+        with st.container(height=LINK_BOX_HEIGHT):
+            col1, col2 = st.columns((1,11))
+            col1.link_button("SISSA FLOTA", "https://sistemasanantonio.com.ar/flota/login.aspx")
+            col2.link_button("Dota Licitaciones", "https://dota.sistemasanantonio.com.ar/licitaciones/index.aspx")
+
     with indices:
         IndexPage().show()
     with prevision:

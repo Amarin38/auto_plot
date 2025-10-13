@@ -54,6 +54,8 @@ class RepuestoEnum(StrEnum):
         return name.replace("_", " ").upper()
 
     INYECTOR = auto()
+    BURRO = auto()
+    ALTERNADOR = auto()
     BOMBA_UREA = auto()
     CALIPER = auto()
     ELECTROVALVULA = auto()

@@ -69,7 +69,7 @@ class CommonUtils:
     # ------------------------------------------------------ UPDATE ------------------------------------------------------
     @staticmethod
     @execute_safely
-    def upd_single_row_name(df: pd.DataFrame, column: str, old_name: str, new_name: str, save: Literal["SAVE", "NOT SAVE"] = "NOT SAVE") -> pd.DataFrame:
+    def upd_single_row_name(df: pd.DataFrame, column: str, old_name: str, new_name: str) -> pd.DataFrame:
         """ Updates a single row by an 'old_name' var to a 'new_name' in the column specified """
         df[column] = df[column].replace(old_name, new_name)
         return df

@@ -14,7 +14,7 @@ class DeviationPage:
     @execute_safely
     def show(self):
         with st.container(height=TAB_BOX_HEIGHT):
-            plot, data = st.tabs(["📊 Gráfico", "ℹ️ Datos"])
+            plot, data = st.tabs([" 📊 Gráfico", " ℹ️ Datos"])
 
             with plot:
                 with st.container(height=FULL_PLOT_BOX_HEIGHT):

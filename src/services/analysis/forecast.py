@@ -2,9 +2,10 @@ import numpy as np
 import pandas as pd
 from statsmodels.tsa.holtwinters import ExponentialSmoothing
 
-from src.config.constants import COLORS, T_RED, RESET, T_YELLOW, T_ORANGE, T_BLUE
+from src.config.constants import T_RED, RESET, T_YELLOW, T_ORANGE, T_BLUE
 from src.db_data.crud_services import df_to_db
 from src.utils.exception_utils import execute_safely
+
 
 @execute_safely
 def create_forecast(df: pd.DataFrame, tipo_repuesto: str):
