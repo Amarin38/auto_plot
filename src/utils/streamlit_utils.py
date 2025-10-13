@@ -4,7 +4,7 @@ import pandas as pd
 import streamlit as st
 from io import BytesIO
 
-from src.config.constants import FILE_STRFTIME_DMY
+from src.config.constants import FILE_STRFTIME_DMY, COLORS
 from src.utils.exception_utils import execute_safely
 
 
@@ -50,6 +50,23 @@ def update_layout(fig, title: str, x_title: str, y_title: str, height: Optional[
         height=height,
         width=width,
     )
+
+
+@execute_safely
+def top_right_legend(fig):
+    fig.update_layout(
+        legend=dict(
+            orientation='v',
+            yanchor='top',
+            y=1.15,
+            xanchor='right',
+            x=1,
+            font=dict(size=13),
+            bgcolor=COLORS[-1],
+            bordercolor=COLORS[5],
+        ),
+    )
+
 
 @execute_safely
 def range_slider(fig):

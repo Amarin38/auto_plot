@@ -58,11 +58,13 @@ class ConsumoGarantiasPlotter:
         fig.update_layout(
             legend=dict(
                 orientation='h',
-                yanchor='bottom',
-                y=-0.35,
+                yanchor='top',
+                y=1.15,
                 xanchor='left',
-                x=0.43,
-                font=dict(size=13)
+                x=-0.01,
+                font=dict(size=13),
+                bgcolor=COLORS[4],
+                bordercolor=COLORS[5],
             ),
         )
 

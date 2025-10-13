@@ -1,10 +1,10 @@
 import plotly.graph_objects as go
 
 from src.config.constants import PIE_PLOT_HEIGHT, PIE_PLOT_WIDTH
-from src.db_data.crud_services import db_to_df_by_cabecera, db_to_df_by_cabecera_and_repuesto
+from src.db_data.crud_services import db_to_df_by_cabecera_and_repuesto
 from src.db_data.models.services_model.falla_garantias_model import FallaGarantiasModel
 from src.utils.exception_utils import execute_safely
-from src.utils.streamlit_utils import update_layout
+from src.utils.streamlit_utils import update_layout, top_right_legend
 
 
 class FallasGarantiasPlotter:
@@ -38,15 +38,5 @@ class FallasGarantiasPlotter:
         )
 
         update_layout(fig, '', '', '', PIE_PLOT_HEIGHT-100, PIE_PLOT_WIDTH-100)
-
-        fig.update_layout(
-            legend=dict(
-                orientation='v',
-                yanchor='top',
-                y=10,
-                xanchor='right',
-                x=1,
-                font=dict(size=13)
-            ),
-        )
+        top_right_legend(fig)
         return fig

@@ -9,7 +9,7 @@ from src.utils.exception_utils import execute_safely
 from src.db_data.crud_services import db_to_df_by_repuesto
 from src.db_data.models.services_model.forecast_model import ForecastModel
 from src.db_data.models.services_model.forecast_data_model import ForecastDataModel
-from src.utils.streamlit_utils import update_layout, devolver_fecha, range_slider
+from src.utils.streamlit_utils import update_layout, devolver_fecha, range_slider, top_right_legend
 
 
 class ForecastPlotter:
@@ -86,6 +86,8 @@ class ForecastPlotter:
 
             update_layout(fig, repuesto, "Fecha", "Consumo")
             range_slider(fig)
+            top_right_legend(fig)
+
             figuras.append(fig)
         return figuras, titulo
 

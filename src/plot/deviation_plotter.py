@@ -5,7 +5,7 @@ from src.config.constants import COLORS, FILE_STRFTIME_DMY
 from src.db_data.crud_services import db_to_df
 from src.db_data.models.services_model.deviation_model import DeviationModel
 from src.utils.exception_utils import execute_safely
-from src.utils.streamlit_utils import update_layout
+from src.utils.streamlit_utils import update_layout, top_right_legend
 
 
 class DeviationPlotter:
@@ -55,16 +55,6 @@ class DeviationPlotter:
                 line=dict(color=color, width=1))
             
         update_layout(fig, f"Desviacion {fecha[0]}", 'Cabecera', 'Desviacion en %', 600, 200)
-
-        fig.update_layout(
-            legend=dict(
-                orientation='v',
-                yanchor='top',
-                y=1.15,
-                xanchor='right',
-                x=1,
-                font=dict(size=13)
-            ),
-        )
+        top_right_legend(fig)
 
         return fig

@@ -43,6 +43,6 @@ class FallaEquiposGarantiaPage:
                 st.plotly_chart(pie_plot)
 
 
-            with bar.container(height=BARPLOT_BOX_HEIGHT, width=BARPLOT_BOX_WIDTH):
+            with bar:
                 consumo_plot = ConsumoGarantiasPlotter().create_plot()
                 st.plotly_chart(consumo_plot)

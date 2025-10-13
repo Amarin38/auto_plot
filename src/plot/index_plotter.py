@@ -8,7 +8,7 @@ from src.config.enums import IndexTypeEnum
 from src.db_data.crud_services import db_to_df_by_repuesto_and_index_type
 from src.db_data.models.services_model.index_repuesto_model import IndexRepuestoModel
 from src.utils.exception_utils import execute_safely
-from src.utils.streamlit_utils import update_layout, devolver_fecha
+from src.utils.streamlit_utils import update_layout, devolver_fecha, top_right_legend
 
 
 class IndexPlotter:
@@ -62,5 +62,7 @@ class IndexPlotter:
             ))
 
             update_layout(fig, repuesto, "Cabecera", "Consumo")
+            top_right_legend(fig)
+
             figuras.append(fig)
         return figuras, titulo
