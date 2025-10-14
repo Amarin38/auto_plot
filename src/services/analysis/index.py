@@ -11,8 +11,8 @@ from src.utils.exception_utils import execute_safely
 
 from src.services.data_cleaning.inventory_data_cleaner import InventoryDataCleaner
 
-from src.db_data.crud_common import db_to_df, df_to_db
-
+from src.db_data.crud_services import df_to_db
+from src.db_data.crud_common import db_to_df
 
 class Index:
     def __init__(self, ) -> None:

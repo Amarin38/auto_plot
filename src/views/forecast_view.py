@@ -9,8 +9,8 @@ from src.plot.forecast_plotter import ForecastPlotter
 
 from src.utils.exception_utils import execute_safely
 
-from src.config.constants import (PLACEHOLDER, SELECT_BOX_HEIGHT,MULTIPLE_PLOT_BOX_HEIGHT,
-                                  PLOT_BOX_HEIGHT, DISTANCE_COLS_SELECTBIGGER_PLOT)
+from src.config.constants import (PLACEHOLDER, SELECT_BOX_HEIGHT, MULTIPLE_PLOT_BOX_HEIGHT,
+                                  DISTANCE_COLS_SELECTBIGGER_PLOT, PLOT_BOX_HEIGHT)
 
 
 class ForecastPage:

@@ -34,8 +34,8 @@ MAIN_TABS: Tuple[str, ...] = (" 🏠 Página principal", " 📊 Índices de cons
 # Selectboxes
 PLACEHOLDER = "------"
 
-PIE_PLOT_HEIGHT: int = 650
-PIE_PLOT_WIDTH: int = 650
+PIE_PLOT_HEIGHT: int = 585
+PIE_PLOT_WIDTH: int = 585
 
 BARPLOT_WIDTH: int = 1100
 
@@ -48,7 +48,7 @@ SELECT_BOX_WIDTH: int = 650
 BARPLOT_BOX_HEIGHT: int = 700
 BARPLOT_BOX_WIDTH: int = 1600
 
-PLOT_BOX_HEIGHT: int = 600
+PLOT_BOX_HEIGHT: int = 535
 
 PIE_PLOT_BOX_HEIGHT: int = 700
 PIE_PLOT_BOX_WIDTH: int = 1550
@@ -60,6 +60,8 @@ TEXT_BOX_HEIGHT: int = 450
 TAB_BOX_HEIGHT: int = 750
 FALLA_TAB_BOX_HEIGHT: int = 790
 FILE_UPLOADER_HEIGHT: int = 368
+
+PIE_FONT_SIZE: int = 24
 
 DISTANCE_COLS_SELECT_PLOT: Tuple[int, int] = (1, 5)
 DISTANCE_COLS_SELECTBIGGER_PLOT: Tuple[int, float] = (1, 4.5)

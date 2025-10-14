@@ -1,6 +1,6 @@
 import plotly.graph_objects as go
 
-from src.config.constants import PIE_PLOT_HEIGHT, PIE_PLOT_WIDTH
+from src.config.constants import PIE_PLOT_HEIGHT, PIE_PLOT_WIDTH, PIE_FONT_SIZE
 from src.db_data.crud_services import db_to_df_by_cabecera_and_repuesto
 from src.db_data.models.services_model.falla_garantias_model import FallaGarantiasModel
 from src.utils.exception_utils import execute_safely
@@ -26,7 +26,7 @@ class FallasGarantiasPlotter:
                 labels=labels,
                 values=values,
                 text=text,
-                textfont=dict(size=max(120, 120) * 0.2),
+                textfont=dict(size=PIE_FONT_SIZE),
                 name='Fallos',
                 insidetextorientation='horizontal',
                 textposition='auto'
@@ -37,6 +37,6 @@ class FallasGarantiasPlotter:
             textinfo='value+percent',
         )
 
-        update_layout(fig, '', '', '', PIE_PLOT_HEIGHT-100, PIE_PLOT_WIDTH-100)
+        update_layout(fig, '', '', '', PIE_PLOT_HEIGHT, PIE_PLOT_WIDTH)
         top_right_legend(fig)
         return fig

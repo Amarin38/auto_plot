@@ -7,10 +7,7 @@ from src.utils.exception_utils import execute_safely
 
 from src.plot.falla_garantias_plotter import FallasGarantiasPlotter
 
-from src.config.constants import (PLACEHOLDER, DISTANCE_COLS_DUAL_PLOT, SELECT_BOX_HEIGHT,
-                                  PIE_PLOT_BOX_HEIGHT, PLOT_BOX_HEIGHT, PIE_PLOT_WIDTH, BARPLOT_WIDTH, TAB_BOX_HEIGHT,
-                                  PIE_PLOT_BOX_WIDTH, SELECT_BOX_WIDTH, BARPLOT_BOX_HEIGHT, BARPLOT_BOX_WIDTH,
-                                  FALLA_TAB_BOX_HEIGHT)
+from src.config.constants import PLACEHOLDER, SELECT_BOX_HEIGHT,  SELECT_BOX_WIDTH, FALLA_TAB_BOX_HEIGHT
 from src.config.enums import CabecerasEnum, RepuestoEnum
 
 from src.plot.consumo_garantias_plotter import ConsumoGarantiasPlotter

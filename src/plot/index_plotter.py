@@ -39,7 +39,7 @@ class IndexPlotter:
             fig.add_trace(go.Bar(
                 x=x_data,
                 y=y_data,
-                name="Consumo",
+                name="Indice de consumo",
 
                 text=y_data,
                 textposition="auto",
@@ -61,7 +61,7 @@ class IndexPlotter:
                 line=dict(color='red', dash='dash')
             ))
 
-            update_layout(fig, repuesto, "Cabecera", "Consumo")
+            update_layout(fig, repuesto, "Cabecera", "Indice de consumo")
             top_right_legend(fig)
 
             figuras.append(fig)
