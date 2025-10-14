@@ -8,12 +8,13 @@ from src.db_data import common_engine, services_engine
 
 from src.views.index_view import index_page
 from src.views.forecast_view import forecast_page
-from src.views.deviation_view import DeviationPage
-from src.views.maxmin_view import MaxminPage
-from src.views.sidebar_view import LoadDataSideBar
-from src.views.falla_equipos_garantia_view import FallaEquiposGarantiaPage
+from src.views.deviation_view import deviation_page
+from src.views.maxmin_view import maxmin_page
 
-from src.config.constants import MAIN_TABS, SELECT_BOX_HEIGHT, LINK_BOX_HEIGHT, LINK_BOX_WIDTH
+from src.views.sidebar_view import LoadDataSideBar
+from src.views.falla_equipos_garantia_view import falla_equipos_garantias_page
+
+from src.config.constants import MAIN_TABS, LINK_BOX_HEIGHT, LINK_BOX_WIDTH
 
 # Services DB -----------------------------------------------------------------------------------
 from src.db_data.models.services_model.forecast_model import ForecastModel
@@ -59,20 +60,21 @@ def main():
         st.text("Páginas de la empresa:")
 
         with st.container(height=LINK_BOX_HEIGHT, width=LINK_BOX_WIDTH):
-            col1, col2 = st.columns(2)
-            col1.link_button("SISSSA FLOTA", "https://sistemasanantonio.com.ar/flota/login.aspx")
-            col2.link_button("Dota Licitaciones", "https://dota.sistemasanantonio.com.ar/licitaciones/index.aspx")
+            flota, licitaciones = st.columns(2)
+
+            flota.link_button("SISSSA FLOTA", "https://sistemasanantonio.com.ar/flota/login.aspx")
+            licitaciones.link_button("Dota Licitaciones", "https://dota.sistemasanantonio.com.ar/licitaciones/index.aspx")
 
     with indices:
         index_page()
     with prevision:
         forecast_page()
     with desviacion:
-        DeviationPage().show()
+        deviation_page()
     with falla_garantias:
-        FallaEquiposGarantiaPage().show()
+        falla_equipos_garantias_page()
     with maxmins:
-        MaxminPage().show()
+        maxmin_page()
 
 
 if __name__ == "__main__":
