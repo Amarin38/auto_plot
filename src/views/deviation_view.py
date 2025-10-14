@@ -11,6 +11,7 @@ from src.utils.exception_utils import execute_safely
 from src.db_data.crud_services import db_to_df
 
 class DeviationPage:
+    @st.fragment
     @execute_safely
     def show(self):
         with st.container(height=TAB_BOX_HEIGHT):

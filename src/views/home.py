@@ -6,14 +6,14 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".
 from src.db_data import CommonBase, ServicesBase
 from src.db_data import common_engine, services_engine
 
-from src.views.index_view import IndexPage
-from src.views.forecast_view import ForecastPage
+from src.views.index_view import index_page
+from src.views.forecast_view import forecast_page
 from src.views.deviation_view import DeviationPage
 from src.views.maxmin_view import MaxminPage
 from src.views.sidebar_view import LoadDataSideBar
 from src.views.falla_equipos_garantia_view import FallaEquiposGarantiaPage
 
-from src.config.constants import MAIN_TABS, SELECT_BOX_HEIGHT, LINK_BOX_HEIGHT
+from src.config.constants import MAIN_TABS, SELECT_BOX_HEIGHT, LINK_BOX_HEIGHT, LINK_BOX_WIDTH
 
 # Services DB -----------------------------------------------------------------------------------
 from src.db_data.models.services_model.forecast_model import ForecastModel
@@ -58,15 +58,15 @@ def main():
     with (main_page):
         st.text("Páginas de la empresa:")
 
-        with st.container(height=LINK_BOX_HEIGHT):
-            col1, col2 = st.columns((1,11))
-            col1.link_button("SISSA FLOTA", "https://sistemasanantonio.com.ar/flota/login.aspx")
+        with st.container(height=LINK_BOX_HEIGHT, width=LINK_BOX_WIDTH):
+            col1, col2 = st.columns(2)
+            col1.link_button("SISSSA FLOTA", "https://sistemasanantonio.com.ar/flota/login.aspx")
             col2.link_button("Dota Licitaciones", "https://dota.sistemasanantonio.com.ar/licitaciones/index.aspx")
 
     with indices:
-        IndexPage().show()
+        index_page()
     with prevision:
-        ForecastPage().show()
+        forecast_page()
     with desviacion:
         DeviationPage().show()
     with falla_garantias:

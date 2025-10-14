@@ -23,9 +23,7 @@ def create_forecast(df: pd.DataFrame, tipo_repuesto: str):
 
         series: pd.Series = pd.Series(df_rep["Cantidad"].values, index=df_rep.index)
 
-        # TODO: queda que haga el forecast por cada repuesto
         # Modelo HoltWinters para calcular el suavizado exponencial triple
-
         try:
             fit = ExponentialSmoothing(
                 series,

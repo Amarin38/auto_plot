@@ -4,10 +4,21 @@ import pandas as pd
 import streamlit as st
 from io import BytesIO
 
-from src.config.constants import FILE_STRFTIME_DMY, COLORS
+from src.config.constants import FILE_STRFTIME_DMY, COLORS, CENTERED_TITLE_HEIGHT, CENTERED_TITLE_WIDTH, PLACEHOLDER, \
+    SELECT_BOX_HEIGHT
 from src.utils.exception_utils import execute_safely
 
 
+@execute_safely
+def load_data_bttn(func):
+    st.button(
+        label="Cargar datos",
+        type="primary",
+        use_container_width=True,
+        on_click=func
+    )
+
+@execute_safely
 def download_df(df, file_name: str):
     st.download_button(
         label="Descargar 💾",
@@ -115,3 +126,21 @@ def devolver_fecha(df: pd.DataFrame, columna: str) -> str:
     if df.size == 0:
         return ""
     return pd.to_datetime(df[columna].unique()).strftime(FILE_STRFTIME_DMY)[0]
+
+
+@st.dialog("Error")
+@execute_safely
+def error_dialog(message: str):
+    st.write(message)
+
+
+@execute_safely
+def centered_title(col, title: str):
+    with col.container(height=CENTERED_TITLE_HEIGHT, width=CENTERED_TITLE_WIDTH):
+        st.markdown(f"<p style='text-align: center; font-size: 28px;'>{title}</p>", unsafe_allow_html=True)
+
+
+@execute_safely
+def select_box(col, title: str, opt):
+    with col.container(height=SELECT_BOX_HEIGHT, vertical_alignment='center'):
+        return st.selectbox(title, opt, index=None, placeholder=PLACEHOLDER)

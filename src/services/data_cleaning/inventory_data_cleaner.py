@@ -6,6 +6,7 @@ from src.config.constants import INTERNOS_DEVOLUCION, MOV_SALIDAS, MOV_ENTRADAS,
     PAGE_STRFTIME_DMY, DELTA_STRFTIME_YM
 from src.utils.common_utils import CommonUtils
 from src.utils.exception_utils import execute_safely
+from src.utils.streamlit_utils import error_dialog
 
 
 class InventoryDataCleaner:
@@ -36,7 +37,7 @@ class InventoryDataCleaner:
         try:
             df = df.drop(columns=DEL_COLUMNS, axis=0)
         except KeyError:
-            print("No se pueden eliminar las columnas, no existen.")
+            error_dialog("No se pueden eliminar las columnas, no existen.")
             pass
 
         df_updated = self.common.upd_column_by_dict(df, "columns")

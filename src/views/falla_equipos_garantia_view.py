@@ -2,12 +2,14 @@ import sys, os
 
 import streamlit as st
 
+from src.utils.streamlit_utils import select_box
+
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
 from src.utils.exception_utils import execute_safely
 
 from src.plot.falla_garantias_plotter import FallasGarantiasPlotter
 
-from src.config.constants import PLACEHOLDER, SELECT_BOX_HEIGHT,  SELECT_BOX_WIDTH, FALLA_TAB_BOX_HEIGHT
+from src.config.constants import FALLA_TAB_BOX_HEIGHT
 from src.config.enums import CabecerasEnum, RepuestoEnum
 
 from src.plot.consumo_garantias_plotter import ConsumoGarantiasPlotter
@@ -16,29 +18,17 @@ from src.plot.consumo_garantias_plotter import ConsumoGarantiasPlotter
 class FallaEquiposGarantiaPage:
     @execute_safely
     def show(self):
-
-        # pie, bar = st.columns(DISTANCE_COLS_DUAL_PLOT)
-        with st.container(height=FALLA_TAB_BOX_HEIGHT):
+        with (st.container(height=FALLA_TAB_BOX_HEIGHT+30)):
             pie, bar = st.tabs([" 🚫 Falla Equipos Garantías", " 📊 Consumos Garantias y Transferencias"])
 
             with pie:
-            # with pie.container(height=PIE_PLOT_BOX_HEIGHT, width=PIE_PLOT_BOX_WIDTH):
-                with pie.container(height=SELECT_BOX_HEIGHT, width=SELECT_BOX_WIDTH):
-                    col_cabecera, col_repuesto = st.columns(2)
+                aux1, col_cabecera, col_repuesto, aux2 = st.columns((1, 1, 1, 1))
 
-                with col_cabecera:
-                    cabecera = st.selectbox("Selecciona una cabecera: ", CabecerasEnum, index=None,
-                                            placeholder=PLACEHOLDER)
+                cabecera = select_box(col_cabecera, "Selecciona una cabecera para ver su falla: ", CabecerasEnum)
+                tipo_repuesto = select_box(col_repuesto, "Selecciona un tipo de repuesto para ver su falla: ", RepuestoEnum)
 
-                with col_repuesto:
-                    tipo_repuesto = st.selectbox("Selecciona un tipo de repuesto: ", RepuestoEnum, index=None,
-                                                 placeholder=PLACEHOLDER)
-
-                fallas = FallasGarantiasPlotter(cabecera, tipo_repuesto)
-                pie_plot = fallas.create_plot()
-
+                pie_plot = FallasGarantiasPlotter(cabecera, tipo_repuesto).create_plot()
                 st.plotly_chart(pie_plot)
-
 
             with bar:
                 consumo_plot = ConsumoGarantiasPlotter().create_plot()
