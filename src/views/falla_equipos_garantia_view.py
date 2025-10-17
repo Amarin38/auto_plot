@@ -17,7 +17,7 @@ from src.plot.consumo_garantias_plotter import ConsumoGarantiasPlotter
 
 @execute_safely
 def falla_equipos_garantias_page():
-    with (st.container(height=FALLA_TAB_BOX_HEIGHT)):
+    with st.container(height=FALLA_TAB_BOX_HEIGHT):
         pie, bar = st.tabs([" 🚫 Falla Equipos Garantías", " 📊 Consumos Garantias y Transferencias"])
 
         with pie:
@@ -29,7 +29,6 @@ def falla_equipos_garantias_page():
             pie_plot = FallasGarantiasPlotter(cabecera, tipo_repuesto).create_plot()
             st.plotly_chart(pie_plot)
 
-        # TODO: falta separar por repuesto
         with bar:
             aux1, cabecera_col, repuesto_col, aux2 = st.columns((1, 1, 1, 1))
 

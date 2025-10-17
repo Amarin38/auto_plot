@@ -78,7 +78,7 @@ class LoadDataSideBar:
     @execute_safely
     def load_data(select_load, uploaded_files):
         match select_load:
-            case LoadDataEnum.DESVIACION_DE_INDICES | LoadDataEnum.FALLA_GARANTIAS | LoadDataEnum.CONSUMO_GARANTIAS | LoadDataEnum.DATOS_GARANTIAS:
+            case LoadDataEnum.DESVIACION_DE_INDICES | LoadDataEnum.FALLA_GARANTIAS | LoadDataEnum.CONSUMO_GARANTIAS:
                 return CommonUtils().concat_dataframes(uploaded_files)
             case _:
                 if uploaded_files and select_load:
