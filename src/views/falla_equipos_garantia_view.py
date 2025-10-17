@@ -29,6 +29,12 @@ def falla_equipos_garantias_page():
             pie_plot = FallasGarantiasPlotter(cabecera, tipo_repuesto).create_plot()
             st.plotly_chart(pie_plot)
 
+        # TODO: falta separar por repuesto
         with bar:
-            consumo_plot = ConsumoGarantiasPlotter().create_plot()
+            aux1, cabecera_col, repuesto_col, aux2 = st.columns((1, 1, 1, 1))
+
+            cabecera = select_box(cabecera_col, "Selecciona una cabecera para ver su consumo: ", CabecerasEnum)
+            tipo_repuesto = select_box(repuesto_col, "Selecciona un tipo de repuesto para ver su consumo: ", RepuestoEnum)
+
+            consumo_plot = ConsumoGarantiasPlotter(cabecera, tipo_repuesto).create_plot()
             st.plotly_chart(consumo_plot)

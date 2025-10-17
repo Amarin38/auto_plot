@@ -80,7 +80,6 @@ class LoadDataEnum(StrEnum):
     INDICES_DE_CONSUMO = auto()
     PREVISION_DE_CONSUMO = auto()
     DESVIACION_DE_INDICES = auto()
-    DATOS_GARANTIAS = auto()
     FALLA_GARANTIAS = auto()
     CONSUMO_GARANTIAS = auto()
     MAXMIMOS_Y_MINIMOS = auto()

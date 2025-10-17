@@ -2,8 +2,7 @@ import sys, os
 import streamlit as st
 
 from src.config.constants import PLACEHOLDER
-from src.services.analysis.garantias import calcular_falla_garantias, calcular_consumo_garantias, \
-    guardar_datos_garantias
+from src.services.analysis.garantias import calcular_falla_garantias, calcular_consumo_garantias
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
 from src.config.enums import IndexTypeEnum, RepuestoEnum, LoadDataEnum
@@ -61,9 +60,6 @@ class LoadDataSideBar:
 
                     case LoadDataEnum.FALLA_GARANTIAS:
                         load_data_bttn(lambda: calcular_falla_garantias(self.load_data(select_load, uploaded_files)))
-
-                    case LoadDataEnum.DATOS_GARANTIAS:
-                        load_data_bttn(lambda: guardar_datos_garantias(self.load_data(select_load, uploaded_files)))
 
                     case LoadDataEnum.CONSUMO_GARANTIAS:
                         load_data_bttn(lambda: calcular_consumo_garantias(self.load_data(select_load, uploaded_files)))

@@ -6,7 +6,7 @@ from sqlalchemy import DateTime
 from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column
 
-from ... import ServicesBase
+from src.db_data import ServicesBase
 
 class DatosGarantiasModel(ServicesBase):
     __tablename__ = "datos_garantias"
