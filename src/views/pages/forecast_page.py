@@ -10,12 +10,13 @@ from src.plot.forecast_plotter import ForecastPlotter
 
 from src.utils.exception_utils import execute_safely
 
-from src.config.constants import (MULTIPLE_PLOT_BOX_HEIGHT,PLOT_BOX_HEIGHT,
-                                  DISTANCE_COLS_CENTER_TITLE, DISTANCE_COLS_SELECTBIGGER_PLOT)
+from src.config.constants import (MULTIPLE_PLOT_BOX_HEIGHT, PLOT_BOX_HEIGHT,
+                                  DISTANCE_COLS_CENTER_TITLE, DISTANCE_COLS_SELECTBIGGER_PLOT, PAG_PREVISION)
 
 
 @execute_safely
 def forecast_page():
+    st.title(PAG_PREVISION)
     aux1, titulo_col, aux2 = st.columns(DISTANCE_COLS_CENTER_TITLE)
     config_col, graficos_col = st.columns(DISTANCE_COLS_SELECTBIGGER_PLOT)
 

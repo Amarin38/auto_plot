@@ -31,6 +31,15 @@ MAIN_TABS: Tuple[str, ...] = (" 🏠 Página principal", " 📊 Índices de cons
                               " 📈 Previsión de consumo", " 📊 Desviación de índices",
                               " 🚫 Falla Garantías", " ↕️ Máximos y Mínimos")
 
+PAG_PRINCIPAL = "Página principal 🏠"
+PAG_CARGAR_DATOS = "Cargar datos 🔄️"
+PAG_INDICES = "Índices de consumo 📊"
+PAG_PREVISION = "Previsión de consumo 📈"
+PAG_DESVIACIONES = "Desviaciones de índices 📊"
+PAG_FALLA_GARANTIAS = "Falla equipos garantías ⛔"
+PAG_MAXMIN = "Máximos y Mínimos ⬆️⬇️"
+
+
 # Selectboxes
 PLACEHOLDER = "------"
 

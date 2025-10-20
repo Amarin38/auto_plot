@@ -2,7 +2,7 @@ import sys, os
 
 import streamlit as st
 
-from src.config.constants import FULL_PLOT_BOX_HEIGHT, TAB_BOX_HEIGHT
+from src.config.constants import FULL_PLOT_BOX_HEIGHT, TAB_BOX_HEIGHT, PAG_DESVIACIONES
 from src.db_data.models.services_model.deviation_model import DeviationModel
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
@@ -13,6 +13,7 @@ from src.db_data.crud_services import db_to_df
 @st.fragment
 @execute_safely
 def deviation_page():
+    st.title(PAG_DESVIACIONES)
     with st.container(height=TAB_BOX_HEIGHT):
         plot, data = st.tabs([" 📊 Gráfico", " ℹ️ Datos"])
 

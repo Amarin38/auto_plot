@@ -2,7 +2,7 @@ import json
 from typing import Union, Dict, Any
 
 import pandas as pd
-from sqlalchemy import select
+from sqlalchemy import select, func
 
 from src.config.constants import JSON_PATH
 from src.db_data.models.config_model.json_config_model import JSONConfigModel
@@ -94,6 +94,16 @@ def db_to_df_by_repuesto(table, tipo_repuesto: str) -> pd.DataFrame:
     query = select(table).where(table.TipoRepuesto == tipo_repuesto) # type: ignore
     return pd.read_sql_query(query, con=common_engine)
     
+
+# ---------------------------------   DATE  --------------------------------- #
+def get_min_date(table) -> str:
+    with SessionCommon() as session:
+        return session.query(func.min(table.FechaIngreso)).scalar()
+
+
+def get_max_date(table) -> str:
+    with SessionCommon() as session:
+        return session.query(func.max(table.FechaIngreso)).scalar()
 
 # ---------------------------------   READ JSON   --------------------------------- #
 def get_pk_json_config(nombre_dato: str) -> int:

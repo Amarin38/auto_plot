@@ -2,7 +2,7 @@ import sys, os
 
 import streamlit as st
 
-from src.config.constants import TODAY_DATE_FILE, DATAFRAME_HEIGHT
+from src.config.constants import TODAY_DATE_FILE, DATAFRAME_HEIGHT, PAG_MAXMIN
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
 from src.utils.exception_utils import execute_safely
@@ -12,6 +12,7 @@ from src.db_data.models.services_model.maxmin_model import MaxminModel
 
 @execute_safely
 def maxmin_page():
+    st.title(PAG_MAXMIN)
     df = db_to_df(MaxminModel)
     download_df(to_excel(df), f"maxmin {TODAY_DATE_FILE}.xlsx")
 

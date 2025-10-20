@@ -9,12 +9,13 @@ from src.plot.index_plotter import  IndexPlotter
 from src.utils.exception_utils import execute_safely
 
 from src.config.constants import (MULTIPLE_PLOT_BOX_HEIGHT, PLOT_BOX_HEIGHT, DISTANCE_COLS_CENTER_TITLE,
-                                  DISTANCE_COLS_SELECTBIGGER_PLOT)
+                                  DISTANCE_COLS_SELECTBIGGER_PLOT, PAG_INDICES)
 from src.config.enums import IndexTypeEnum, RepuestoEnum
 
 
 @execute_safely
 def index_page() -> None:
+    st.title(PAG_INDICES)
     aux1, titulo_col, aux2 = st.columns(DISTANCE_COLS_CENTER_TITLE)
     config_col, graficos_col = st.columns(DISTANCE_COLS_SELECTBIGGER_PLOT)
 

@@ -4,7 +4,7 @@ from zipfile import BadZipFile
 
 import pandas as pd
 
-from typing import List, Tuple, Literal
+from typing import List, Tuple
 
 from src.utils.exception_utils import execute_safely
 from src.db_data.crud_common import read_json_config

@@ -9,7 +9,7 @@ from src.utils.exception_utils import execute_safely
 
 from src.plot.falla_garantias_plotter import FallasGarantiasPlotter
 
-from src.config.constants import FALLA_TAB_BOX_HEIGHT
+from src.config.constants import FALLA_TAB_BOX_HEIGHT, PAG_FALLA_GARANTIAS
 from src.config.enums import CabecerasEnum, RepuestoEnum
 
 from src.plot.consumo_garantias_plotter import ConsumoGarantiasPlotter
@@ -17,6 +17,7 @@ from src.plot.consumo_garantias_plotter import ConsumoGarantiasPlotter
 
 @execute_safely
 def falla_equipos_garantias_page():
+    st.title(PAG_FALLA_GARANTIAS)
     with st.container(height=FALLA_TAB_BOX_HEIGHT):
         pie, bar = st.tabs([" 🚫 Falla Equipos Garantías", " 📊 Consumos Garantias y Transferencias"])
 
