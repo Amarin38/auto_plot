@@ -36,6 +36,7 @@ PAG_CARGAR_DATOS = "Cargar datos 🔄️"
 PAG_INDICES = "Índices de consumo 📊"
 PAG_PREVISION = "Previsión de consumo 📈"
 PAG_DESVIACIONES = "Desviaciones de índices 📊"
+PAG_DURACION = "Duracion de repuestos 🛠️"
 PAG_FALLA_GARANTIAS = "Falla equipos garantías ⛔"
 PAG_MAXMIN = "Máximos y Mínimos ⬆️⬇️"
 

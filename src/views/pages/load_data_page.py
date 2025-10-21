@@ -2,10 +2,12 @@ import os
 import sys
 import streamlit as st
 
+from src.services.analysis.duracion_repuestos import calcular_duracion
+
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
 
 from src.config.constants import PLACEHOLDER, PAG_CARGAR_DATOS
-from src.config.enums import LoadDataEnum, RepuestoEnum, IndexTypeEnum
+from src.config.enums import LoadDataEnum, RepuestoEnum, IndexTypeEnum, TipoDuracionEnum, RepuestoReparadoEnum
 from src.services.analysis.deviation_trend import DeviationTrend
 from src.services.analysis.forecast import create_forecast
 from src.services.analysis.garantias import calcular_consumo_garantias, calcular_falla_garantias
@@ -68,11 +70,22 @@ def load_data_page():
                     else:
                         error_dialog("No se puede multiplicar por 0, por 1 o por None")
 
+                case LoadDataEnum.DURACION_REPUESTOS:
+                    select_repuesto = st.selectbox("Selecciona un repuesto reparado: ",
+                                                   RepuestoReparadoEnum, index=None, placeholder=PLACEHOLDER)
+                    select_tipo = st.selectbox("Selecciona un tipo de duracion: ",
+                                               TipoDuracionEnum, index=None, placeholder=PLACEHOLDER)
+
+                    load_data_bttn(lambda: calcular_duracion(load_data(select_load, uploaded_files),
+                                                             select_repuesto,
+                                                             select_tipo
+                                                             ))
+
 
 @execute_safely
 def load_data(select_load, uploaded_files):
     match select_load:
-        case LoadDataEnum.DESVIACION_DE_INDICES | LoadDataEnum.FALLA_GARANTIAS | LoadDataEnum.CONSUMO_GARANTIAS:
+        case LoadDataEnum.DESVIACION_DE_INDICES | LoadDataEnum.FALLA_GARANTIAS | LoadDataEnum.CONSUMO_GARANTIAS | LoadDataEnum.DURACION_REPUESTOS:
             return CommonUtils().concat_dataframes(uploaded_files)
         case _:
             if uploaded_files and select_load:

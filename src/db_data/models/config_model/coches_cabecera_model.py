@@ -7,4 +7,5 @@ class CochesCabeceraModel(CommonBase):
     
     id:                 Mapped[int] = mapped_column(primary_key=True)
     Cabecera:           Mapped[str]
-    CantidadCoches:     Mapped[int]
+    CantidadCoches:     Mapped[int] = mapped_column(nullable=True)
+    CantidadCochesNew:  Mapped[int] = mapped_column(nullable=True)

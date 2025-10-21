@@ -72,6 +72,22 @@ class RepuestoEnum(StrEnum):
     PASTILLAS_FRENO = auto()
 
 
+class RepuestoReparadoEnum(StrEnum):
+    @staticmethod
+    def _generate_next_value_(name, start, count, last_values):
+        return name.replace("_", " ").upper()
+
+    CAJA_AUTOMATICA_REPARADA_T270 = auto()
+
+
+class TipoDuracionEnum(StrEnum):
+    @staticmethod
+    def _generate_next_value_(name, start, count, last_values):
+        return name.replace("_", " ").upper()
+
+    CAJAS_REPARADAS = auto()
+
+
 class LoadDataEnum(StrEnum):
     @staticmethod
     def _generate_next_value_(name, start, count, last_values):
@@ -83,6 +99,7 @@ class LoadDataEnum(StrEnum):
     FALLA_GARANTIAS = auto()
     CONSUMO_GARANTIAS = auto()
     MAXMIMOS_Y_MINIMOS = auto()
+    DURACION_REPUESTOS = auto()
 
 
 class CabecerasCompletasEnum(Enum):

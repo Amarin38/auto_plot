@@ -5,7 +5,6 @@ from typing import Optional
 
 from src.config.enums import IndexTypeEnum
 from src.db_data.models.config_model.coches_cabecera_model import CochesCabeceraModel
-from src.db_data.models.config_model.motores_cabecera_model import MotoresCabeceraModel
 
 from src.utils.exception_utils import execute_safely
 

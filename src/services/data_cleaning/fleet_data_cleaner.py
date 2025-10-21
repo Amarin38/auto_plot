@@ -1,6 +1,6 @@
 import pandas as pd
 
-from src.db_data.models.config_model.internos_asignados_model import InternosAsignadosModel
+from src.db_data.models.config_model.internos_cabecera_model import InternosAsignadosModel
 from src.utils.exception_utils import execute_safely
 from src.db_data.crud_services import df_to_db, db_to_df
 
