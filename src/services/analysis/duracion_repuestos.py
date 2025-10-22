@@ -13,6 +13,7 @@ def calcular_duracion(df: pd.DataFrame, repuesto_rep: str, tipo_duracion: str):
         # le aplico el rango del tamaño de ese sub-dataframe
         df.loc[df_separado, "Cambio"] = range(len(df.loc[df_separado]))
         # TODO: queda calcular la duracion por dias
+
         df.loc[df_separado, "DuracionEnDias"] = df["FechaCambio"] - df["FechaCambio"].shift(1)
 
     df["Cambio"] = df["Cambio"].astype(int)
