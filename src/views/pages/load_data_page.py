@@ -2,7 +2,6 @@ import os
 import sys
 import streamlit as st
 
-from src.services.analysis.duracion_repuestos import calcular_duracion
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
 
@@ -17,6 +16,7 @@ from src.services.data_cleaning.inventory_data_cleaner import InventoryDataClean
 from src.utils.common_utils import CommonUtils
 from src.utils.exception_utils import execute_safely
 from src.utils.streamlit_utils import load_data_bttn, error_dialog
+from src.services.analysis.duracion_repuestos import DuracionRepuestos
 
 
 def load_data_page():
@@ -76,10 +76,11 @@ def load_data_page():
                     select_tipo = st.selectbox("Selecciona un tipo de duracion: ",
                                                TipoDuracionEnum, index=None, placeholder=PLACEHOLDER)
 
-                    load_data_bttn(lambda: calcular_duracion(load_data(select_load, uploaded_files),
+                    load_data_bttn(lambda: DuracionRepuestos(load_data(select_load, uploaded_files),
                                                              select_repuesto,
                                                              select_tipo
-                                                             ))
+                                                             ).calcular_duracion()
+                                   )
 
 
 @execute_safely

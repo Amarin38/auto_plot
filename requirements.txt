@@ -8,3 +8,4 @@ statsmodels==0.14.5
 streamlit==1.50.0
 StrEnum==0.4.15
 openpyxl==3.1.5
+scipy-stubs==1.16.2.4
