@@ -64,6 +64,7 @@ class DuracionRepuestos:
             df_aux["AñoPromedio"] = mu
             df_aux["DesviacionEstandar"] = sigma
             df_aux["DistribucionNormal"] = norm.pdf(x, mu, sigma).round(2)
+            df_aux["DistribucionNormal"] = df_aux["DistribucionNormal"] * 100
 
             df_list.append(df_aux)
 

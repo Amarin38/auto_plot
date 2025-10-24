@@ -78,11 +78,6 @@ def db_to_df_by_cabecera(table, cabecera: str) -> pd.DataFrame:
     return pd.read_sql_query(query, con=services_engine)
 
 
-def db_to_df_by_cabecera_and_repuesto(table, cabecera: str, tipo_repuesto: str) -> pd.DataFrame:
-    query = select(table).where(table.Cabecera == cabecera, table.TipoRepuesto == tipo_repuesto) # type: ignore
-    return pd.read_sql_query(query, con=services_engine)
-
-
 def db_to_df_by_repuesto(table, tipo_repuesto: str) -> pd.DataFrame:
     """
     Hace un query a la base de datos de services_data.db,
@@ -92,8 +87,26 @@ def db_to_df_by_repuesto(table, tipo_repuesto: str) -> pd.DataFrame:
     return pd.read_sql_query(query, con=services_engine)
 
 
-def db_to_df_by_repuesto_and_index_type(table, tipo_repuesto: str, tipo_indice: IndexTypeEnum):
-    query = select(table).where(table.TipoRepuesto == tipo_repuesto, table.TipoOperacion == tipo_indice) # type: ignore
+# ---------------------------------   Consultas multiples   --------------------------------- #
+
+def db_to_df_by_repuesto_and_index_type(table, tipo_repuesto: str, tipo_indice: IndexTypeEnum) -> pd.DataFrame:
+    query = select(table).where(
+        table.TipoRepuesto == tipo_repuesto, table.TipoOperacion == tipo_indice # type: ignore
+    )
+    return pd.read_sql_query(query, con=services_engine)
+
+
+def db_to_df_by_cabecera_and_repuesto(table, cabecera: str, tipo_repuesto: str) -> pd.DataFrame:
+    query = select(table).where(
+        table.Cabecera == cabecera, table.TipoRepuesto == tipo_repuesto # type: ignore
+    )
+    return pd.read_sql_query(query, con=services_engine)
+
+
+def db_to_df_by_repuesto_and_tipo_repuesto(table, repuesto: str, tipo_rep: str) -> pd.DataFrame:
+    query = select(table).where(
+        table.Repuesto == repuesto, table.TipoRepuesto == tipo_rep # type: ignore
+    )
     return pd.read_sql_query(query, con=services_engine)
 
 

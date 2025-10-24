@@ -37,7 +37,7 @@ def to_excel(df: pd.DataFrame) -> bytes:
 
 
 @execute_safely
-def update_layout(fig, title: str, x_title: str, y_title: str, height: Optional[int] = 500, width: Optional[int] = 500):
+def update_layout(fig, title: str, x_title: str = None, y_title: str = None, height: Optional[int] = 500, width: Optional[int] = 500):
     fig.update_layout(
         title=title,
         legend=dict(
