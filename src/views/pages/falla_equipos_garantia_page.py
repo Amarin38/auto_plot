@@ -2,16 +2,14 @@ import sys, os
 
 import streamlit as st
 
-from src.utils.streamlit_utils import select_box, select_box_tipo_repuesto, select_box_cabecera
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
 from src.utils.exception_utils import execute_safely
-
-from src.plot.falla_garantias_plotter import FallasGarantiasPlotter
+from src.utils.streamlit_utils import select_box_tipo_repuesto, select_box_cabecera
 
 from src.config.constants import FALLA_TAB_BOX_HEIGHT, PAG_FALLA_GARANTIAS, TABS_FALLAS
-from src.config.enums import CabecerasEnum, RepuestoEnum
 
+from src.plot.falla_garantias_plotter import FallasGarantiasPlotter
 from src.plot.consumo_garantias_plotter import ConsumoGarantiasPlotter
 
 

@@ -1,17 +1,15 @@
 import sys, os
 import streamlit as st
 
-from src.utils.streamlit_utils import centered_title, select_box, select_box_tipo_repuesto, select_box_tipo_indice
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
-from src.plot.index_plotter import  IndexPlotter
-
+from src.utils.streamlit_utils import centered_title, select_box_tipo_repuesto, select_box_tipo_indice
 from src.utils.exception_utils import execute_safely
+
+from src.plot.index_plotter import  IndexPlotter
 
 from src.config.constants import (MULTIPLE_PLOT_BOX_HEIGHT, PLOT_BOX_HEIGHT, DISTANCE_COLS_CENTER_TITLE,
                                   DISTANCE_COLS_SELECTBIGGER_PLOT, PAG_INDICES)
-from src.config.enums import IndexTypeEnum, RepuestoEnum
-
 
 @execute_safely
 def index_page() -> None:

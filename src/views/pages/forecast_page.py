@@ -2,17 +2,15 @@ import sys, os
 
 import streamlit as st
 
-from src.config.enums import RepuestoEnum
-from src.utils.streamlit_utils import centered_title, select_box, select_box_tipo_repuesto
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
-from src.plot.forecast_plotter import ForecastPlotter
-
+from src.utils.streamlit_utils import centered_title, select_box_tipo_repuesto
 from src.utils.exception_utils import execute_safely
 
-from src.config.constants import (MULTIPLE_PLOT_BOX_HEIGHT, PLOT_BOX_HEIGHT,
-                                  DISTANCE_COLS_CENTER_TITLE, DISTANCE_COLS_SELECTBIGGER_PLOT, PAG_PREVISION)
+from src.plot.forecast_plotter import ForecastPlotter
 
+from src.config.constants import (MULTIPLE_PLOT_BOX_HEIGHT, PLOT_BOX_HEIGHT, DISTANCE_COLS_CENTER_TITLE,
+                                  DISTANCE_COLS_SELECTBIGGER_PLOT, PAG_PREVISION)
 
 @execute_safely
 def forecast_page():
