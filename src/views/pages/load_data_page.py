@@ -5,8 +5,8 @@ import streamlit as st
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
 
-from src.config.constants import PLACEHOLDER, PAG_CARGAR_DATOS
-from src.config.enums import LoadDataEnum, RepuestoEnum, IndexTypeEnum, TipoDuracionEnum, RepuestoReparadoEnum
+from src.config.constants import PAG_CARGAR_DATOS
+from src.config.enums import LoadDataEnum
 from src.services.analysis.deviation_trend import DeviationTrend
 from src.services.analysis.forecast import create_forecast
 from src.services.analysis.garantias import calcular_consumo_garantias, calcular_falla_garantias

@@ -143,11 +143,6 @@ def centered_title(col, title: str):
         st.markdown(f"<p style='text-align: center; font-size: 28px;'>{title}</p>", unsafe_allow_html=True)
 
 # -------------------------------------------------- SELECT BOXES -------------------------------------------------- #
-@execute_safely
-def select_box(col, title: str, opt):
-    with col.container(height=SELECT_BOX_HEIGHT, vertical_alignment='center'):
-        return st.selectbox(title, opt, index=None, placeholder=PLACEHOLDER, key=random.randint(1, 200))
-
 
 @execute_safely
 def select_box_repuesto(col, key: Union[int, str]):
