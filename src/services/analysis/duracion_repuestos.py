@@ -23,6 +23,7 @@ class DuracionRepuestos:
             self.df.loc[df_separado, "Cambio"] = range(
                 len(self.df.loc[df_separado])
             )
+            self.df["Cabecera"] = "" #TODO Agregarle la cabecera
             self.df["Repuesto"] = self.repuesto
             self.df["TipoRepuesto"] = self.tipo_rep
 
@@ -59,6 +60,7 @@ class DuracionRepuestos:
 
             df_aux["Años"] = x
             df_aux["Cambio"] = c
+            df_aux["Cabecera"] = "" #TODO Agregarle la cabecera
             df_aux["Repuesto"] = self.repuesto
             df_aux["TipoRepuesto"] = self.tipo_rep
             df_aux["AñoPromedio"] = mu

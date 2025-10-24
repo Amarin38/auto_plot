@@ -12,6 +12,7 @@ class DuracionRepuestosModel(ServicesBase):
     FechaCambio:        Mapped[date] = mapped_column(Date)
     Observaciones:      Mapped[str] = mapped_column(nullable=True)
     Cambio:             Mapped[int]
+    Cabecera:           Mapped[str]
     Repuesto:           Mapped[str]
     TipoRepuesto:       Mapped[str]
     DuracionEnDias:     Mapped[int] = mapped_column(nullable=True)

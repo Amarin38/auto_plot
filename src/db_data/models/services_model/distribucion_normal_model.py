@@ -8,6 +8,7 @@ class DistribucionNormalModel(ServicesBase):
     id:                 Mapped[int] = mapped_column(primary_key=True)
     Años:               Mapped[int]
     Cambio:             Mapped[int]
+    Cabecera:           Mapped[str]
     Repuesto:           Mapped[str]
     TipoRepuesto:       Mapped[str]
     AñoPromedio:        Mapped[float]

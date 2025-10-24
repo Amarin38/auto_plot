@@ -16,15 +16,13 @@ from src.utils.exception_utils import execute_safely
 
 class MaxMin:
     @execute_safely
-    def calculate(self, df: Optional[pd.DataFrame] = None, multiplicar_por: float = 2.5) -> None:
+    def calculate(self, df: Optional[pd.DataFrame] = None, mult_por_min: float = 2.5, mult_por_max: float = 4) -> None:
         if df is not None:
             df_final = df.groupby(["Familia", "Articulo", "Repuesto"]).agg({"Cantidad":"sum"}).reset_index()
-            
-            minimo: pd.Series[float] = round((df_final["Cantidad"] / 6) * multiplicar_por, 1)
-            maximo: pd.Series[float] = minimo * 2
+            div_seis_meses = round(df_final["Cantidad"] / 6, 1)
 
-            df_final["Minimo"] = minimo
-            df_final["Maximo"] = maximo
+            df_final["Minimo"] = div_seis_meses * mult_por_min
+            df_final["Maximo"] = div_seis_meses * mult_por_max
         
             df_final = df_final[["Familia", "Articulo", "Repuesto", "Minimo", "Maximo"]]
             

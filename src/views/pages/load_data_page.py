@@ -58,11 +58,13 @@ def load_data_page():
                     load_data_bttn(lambda: calcular_consumo_garantias(load_data(select_load, uploaded_files)))
 
                 case LoadDataEnum.MAXIMOS_Y_MINIMOS:
-                    mult_por = st.text_input("Multiplicar por: ", "1")
+                    mult_por_min = st.text_input("Multiplicar por: ", 2.5)
+                    mult_por_max = st.text_input("Multiplicar por: ", 4)
 
-                    if mult_por not in ("0", '', ' '):
+                    if mult_por_min not in ("0", '', ' ') and mult_por_max not in ("0", '', ' '):
                         load_data_bttn(lambda: MaxMin().calculate(load_data(select_load, uploaded_files),
-                                                                  float(mult_por)
+                                                                  float(mult_por_min),
+                                                                  float(mult_por_max)
                                                                   ))
                     else:
                         error_dialog("No se puede multiplicar por 0, por 1 o por None")
