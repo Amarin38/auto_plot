@@ -1,4 +1,5 @@
-from typing import Optional
+import random
+from typing import Optional, Union
 
 import pandas as pd
 import streamlit as st
@@ -6,6 +7,8 @@ from io import BytesIO
 
 from src.config.constants import FILE_STRFTIME_DMY, COLORS, CENTERED_TITLE_HEIGHT, CENTERED_TITLE_WIDTH, PLACEHOLDER, \
     SELECT_BOX_HEIGHT
+from src.config.enums import RepuestoEnum, RepuestoReparadoEnum, CabecerasEnum, TipoDuracionEnum, IndexTypeEnum, \
+    LoadDataEnum
 from src.utils.exception_utils import execute_safely
 
 
@@ -139,8 +142,50 @@ def centered_title(col, title: str):
     with col.container(height=CENTERED_TITLE_HEIGHT, width=CENTERED_TITLE_WIDTH):
         st.markdown(f"<p style='text-align: center; font-size: 28px;'>{title}</p>", unsafe_allow_html=True)
 
-
+# -------------------------------------------------- SELECT BOXES -------------------------------------------------- #
 @execute_safely
 def select_box(col, title: str, opt):
     with col.container(height=SELECT_BOX_HEIGHT, vertical_alignment='center'):
-        return st.selectbox(title, opt, index=None, placeholder=PLACEHOLDER)
+        return st.selectbox(title, opt, index=None, placeholder=PLACEHOLDER, key=random.randint(1, 200))
+
+
+@execute_safely
+def select_box_repuesto(col, key: Union[int, str]):
+    with col.container(height=SELECT_BOX_HEIGHT, vertical_alignment='center'):
+        return st.selectbox("Selecciona el repuesto reparado:", RepuestoReparadoEnum, index=None,
+                            placeholder=PLACEHOLDER, key=key)
+
+
+@execute_safely
+def select_box_tipo_repuesto(col, key: Union[int, str]):
+    with col.container(height=SELECT_BOX_HEIGHT, vertical_alignment='center'):
+        return st.selectbox("Selecciona el tipo de repuesto:", RepuestoEnum, index=None,
+                            placeholder=PLACEHOLDER, key=key)
+
+
+@execute_safely
+def select_box_cabecera(col, key: Union[int, str]):
+    with col.container(height=SELECT_BOX_HEIGHT, vertical_alignment='center'):
+        return st.selectbox("Selecciona la cabecera:", CabecerasEnum, index=None,
+                            placeholder=PLACEHOLDER, key=key)
+
+
+@execute_safely
+def select_box_tipo_duracion(col, key: Union[int, str]):
+    with col.container(height=SELECT_BOX_HEIGHT, vertical_alignment='center'):
+        return st.selectbox("Selecciona el tipo de duración:", TipoDuracionEnum, index=None,
+                            placeholder=PLACEHOLDER, key=key)
+
+
+@execute_safely
+def select_box_tipo_indice(col, key: Union[int, str]):
+    with col.container(height=SELECT_BOX_HEIGHT, vertical_alignment='center'):
+        return st.selectbox("Selecciona el tipo de índice:", IndexTypeEnum, index=None,
+                            placeholder=PLACEHOLDER, key=key)
+
+
+@execute_safely
+def select_box_load_data(col, key: Union[int, str]):
+    with col.container(height=SELECT_BOX_HEIGHT, vertical_alignment='center'):
+        return st.selectbox("Selecciona la estadística a cargar:", LoadDataEnum, index=None,
+                            placeholder=PLACEHOLDER, key=key)

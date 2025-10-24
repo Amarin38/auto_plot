@@ -1,7 +1,7 @@
 import sys, os
 import streamlit as st
 
-from src.utils.streamlit_utils import centered_title, select_box
+from src.utils.streamlit_utils import centered_title, select_box, select_box_tipo_repuesto, select_box_tipo_indice
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
 from src.plot.index_plotter import  IndexPlotter
@@ -19,8 +19,8 @@ def index_page() -> None:
     aux1, titulo_col, aux2 = st.columns(DISTANCE_COLS_CENTER_TITLE)
     config_col, graficos_col = st.columns(DISTANCE_COLS_SELECTBIGGER_PLOT)
 
-    repuesto = select_box(config_col, "Selecciona el repuesto: ", RepuestoEnum)
-    tipo_indice = select_box(config_col, "Selecciona el tipo de indice: ", IndexTypeEnum)
+    repuesto = select_box_tipo_repuesto(config_col, "INDEX_REPUESTO")
+    tipo_indice = select_box_tipo_indice(config_col, "INDEX_TIPO_INDICE")
 
     figs, titulo = IndexPlotter(tipo_indice, repuesto).create_plot()
 

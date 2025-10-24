@@ -1,26 +1,33 @@
 import streamlit as st
 
-from src.config.constants import PAG_DURACION, FALLA_TAB_BOX_HEIGHT
-from src.config.enums import TipoDuracionEnum, RepuestoReparadoEnum
+from src.config.constants import PAG_DURACION, TABS_DURACION, DURACION_TAB_BOX_HEIGHT
 from src.plot.duracion_repuestos_plotter import DuracionRepuestosPlotter
 from src.utils.exception_utils import execute_safely
-from src.utils.streamlit_utils import select_box
+from src.utils.streamlit_utils import select_box_cabecera, select_box_repuesto, select_box_tipo_duracion
 
 
 @execute_safely
 def duracion_repuestos_page():
     st.title(PAG_DURACION)
+        
+    with st.container(height=DURACION_TAB_BOX_HEIGHT):
+        general, por_cabecera = st.tabs(TABS_DURACION)
 
-    with st.container(height=FALLA_TAB_BOX_HEIGHT):
-        aux1, rep_col, tipo_rep_col, aux2 = st.columns((1, 1, 1, 1))
+        with general:
+            aux1, rep_col, tipo_rep_col, aux2 = st.columns((1, 1, 1, 1))
 
-        with rep_col:
-            select_rep = select_box(rep_col, "Selecciona el repuesto para ver su duracion:", RepuestoReparadoEnum)
+            select_rep = select_box_repuesto(rep_col, "DURACION_REPUESTO_GENERAL")
+            select_tipo = select_box_tipo_duracion(tipo_rep_col, "DURACION_TIPO_DURACION_GENERAL")
 
-        with tipo_rep_col:
-            select_tipo = select_box(tipo_rep_col, "Selecciona el tipo de duracion:", TipoDuracionEnum)
+            if select_tipo and select_rep:
+                st.plotly_chart(DuracionRepuestosPlotter(select_rep, select_tipo).create_plot())
 
+        with por_cabecera:
+            aux1, cabecera_col, rep_col, tipo_rep_col, aux2 = st.columns((1, 1, 1, 1, 1))
 
-        if select_tipo is not None and select_rep is not None:
-            st.plotly_chart(DuracionRepuestosPlotter(select_rep, select_tipo).create_plot())
+            select_cabecera = select_box_cabecera(cabecera_col, "DURACION_CABECERA_TIPO")
+            select_rep = select_box_repuesto(rep_col, "DURACION_REPUESTO_TIPO")
+            select_tipo = select_box_tipo_duracion(tipo_rep_col, "DURACION_TIPO_DURACION_TIPO")
 
+            if select_cabecera and select_rep and select_tipo:
+                st.plotly_chart(DuracionRepuestosPlotter(select_rep, select_tipo).create_plot())

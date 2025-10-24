@@ -98,7 +98,7 @@ class LoadDataEnum(StrEnum):
     DESVIACION_DE_INDICES = auto()
     FALLA_GARANTIAS = auto()
     CONSUMO_GARANTIAS = auto()
-    MAXMIMOS_Y_MINIMOS = auto()
+    MAXIMOS_Y_MINIMOS = auto()
     DURACION_REPUESTOS = auto()
 
 

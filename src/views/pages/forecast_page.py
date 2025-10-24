@@ -3,7 +3,7 @@ import sys, os
 import streamlit as st
 
 from src.config.enums import RepuestoEnum
-from src.utils.streamlit_utils import centered_title, select_box
+from src.utils.streamlit_utils import centered_title, select_box, select_box_tipo_repuesto
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
 from src.plot.forecast_plotter import ForecastPlotter
@@ -20,7 +20,7 @@ def forecast_page():
     aux1, titulo_col, aux2 = st.columns(DISTANCE_COLS_CENTER_TITLE)
     config_col, graficos_col = st.columns(DISTANCE_COLS_SELECTBIGGER_PLOT)
 
-    repuesto = select_box(config_col, "Selecciona el repuesto para prevision: ", RepuestoEnum)
+    repuesto = select_box_tipo_repuesto(config_col, "FORECAST_REPUESTO")
     figs, titulo = ForecastPlotter(repuesto).create_plot()
 
     if repuesto:

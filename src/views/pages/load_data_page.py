@@ -15,7 +15,8 @@ from src.services.analysis.maxmin import MaxMin
 from src.services.data_cleaning.inventory_data_cleaner import InventoryDataCleaner
 from src.utils.common_utils import CommonUtils
 from src.utils.exception_utils import execute_safely
-from src.utils.streamlit_utils import load_data_bttn, error_dialog
+from src.utils.streamlit_utils import load_data_bttn, error_dialog, select_box_load_data, select_box_tipo_repuesto, \
+    select_box_tipo_indice, select_box_repuesto, select_box_tipo_duracion
 from src.services.analysis.duracion_repuestos import DuracionRepuestos
 
 
@@ -25,26 +26,22 @@ def load_data_page():
 
     with centro:
         uploaded_files = st.file_uploader("Ingresa datos para actualizar", accept_multiple_files="directory")
-        select_load = st.selectbox("Selecciona la tabla a ingresar: ",
-                                   LoadDataEnum, index=None, placeholder=PLACEHOLDER)
+        select_load = select_box_load_data(st, "LOAD_DATA_LOAD_CENTRO")
 
         if select_load and len(uploaded_files) > 0:
             match select_load:
                 case LoadDataEnum.INDICES_DE_CONSUMO:
-                    select_repuesto = st.selectbox("Selecciona un repuesto: ",
-                                                   RepuestoEnum, index=None, placeholder=PLACEHOLDER)
-                    select_tipo = st.selectbox("Selecciona un tipo de indice: ",
-                                               IndexTypeEnum, index=None, placeholder=PLACEHOLDER)
+                    select_repuesto = select_box_tipo_repuesto(st, "LOAD_DATA_REPUESTO_INDICE")
+                    select_tipo_indice = select_box_tipo_indice(st, "LOAD_DATA_TIPO_INDICE_INDICE")
 
-                    if select_repuesto and select_tipo:
+                    if select_repuesto and select_tipo_indice:
                         load_data_bttn(lambda: Index().calculate(load_data(select_load, uploaded_files),
                                                                  select_repuesto.upper(),
-                                                                 select_tipo.upper()
+                                                                 select_tipo_indice.upper()
                                                                  ))
 
                 case LoadDataEnum.PREVISION_DE_CONSUMO:
-                    select_prevision = st.selectbox("Selecciona el tipo de prevision: ",
-                                                    RepuestoEnum, index=None, placeholder=PLACEHOLDER)
+                    select_prevision = select_box_tipo_repuesto(st, "LOAD_DATA_TIPO_PREVISION_CONSUMO")
 
                     if select_prevision:
                         load_data_bttn(lambda: create_forecast(load_data(select_load, uploaded_files),
@@ -60,7 +57,7 @@ def load_data_page():
                 case LoadDataEnum.CONSUMO_GARANTIAS:
                     load_data_bttn(lambda: calcular_consumo_garantias(load_data(select_load, uploaded_files)))
 
-                case LoadDataEnum.MAXMIMOS_Y_MINIMOS:
+                case LoadDataEnum.MAXIMOS_Y_MINIMOS:
                     mult_por = st.text_input("Multiplicar por: ", "1")
 
                     if mult_por not in ("0", '', ' '):
@@ -71,10 +68,8 @@ def load_data_page():
                         error_dialog("No se puede multiplicar por 0, por 1 o por None")
 
                 case LoadDataEnum.DURACION_REPUESTOS:
-                    select_repuesto = st.selectbox("Selecciona un repuesto reparado: ",
-                                                   RepuestoReparadoEnum, index=None, placeholder=PLACEHOLDER)
-                    select_tipo = st.selectbox("Selecciona un tipo de duracion: ",
-                                               TipoDuracionEnum, index=None, placeholder=PLACEHOLDER)
+                    select_repuesto = select_box_repuesto(st, "LOAD_DATA_REPUESTO_DURACION")
+                    select_tipo = select_box_tipo_duracion(st, "LOAD_DATA_TIPO_DURACION")
 
                     load_data_bttn(lambda: DuracionRepuestos(load_data(select_load, uploaded_files),
                                                              select_repuesto,
