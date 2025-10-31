@@ -3,7 +3,10 @@ import sys
 import streamlit as st
 
 
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
+if os.name == "nt":
+    sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
+elif os.name == "posix":
+    sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../../..")))
 
 from src.config.constants import PAG_CARGAR_DATOS
 from src.config.enums import LoadDataEnum

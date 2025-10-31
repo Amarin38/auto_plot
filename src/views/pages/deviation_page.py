@@ -2,8 +2,11 @@ import sys, os
 
 import streamlit as st
 
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../../..")))
-# sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
+if os.name == "nt":
+    sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
+elif os.name == "posix":
+    sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../../..")))
+
 from src.db_data.crud_services import ServiceRead
 from src.db_data.models.services_model.deviation_model import DeviationModel
 

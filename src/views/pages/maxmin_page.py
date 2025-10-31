@@ -2,9 +2,13 @@ import sys, os
 
 import streamlit as st
 
-from src.config.constants import TODAY_DATE_FILE, DATAFRAME_HEIGHT, PAG_MAXMIN
 
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
+if os.name == "nt":
+    sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
+elif os.name == "posix":
+    sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../../..")))
+
+from src.config.constants import TODAY_DATE_FILE, DATAFRAME_HEIGHT, PAG_MAXMIN
 from src.utils.exception_utils import execute_safely
 from src.utils.streamlit_utils import download_df, to_excel
 from src.db_data.crud_services import ServiceRead

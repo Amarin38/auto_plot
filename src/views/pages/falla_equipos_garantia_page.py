@@ -2,8 +2,11 @@ import sys, os
 
 import streamlit as st
 
+if os.name == "nt":
+    sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
+elif os.name == "posix":
+    sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../../..")))
 
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
 from src.utils.exception_utils import execute_safely
 from src.utils.streamlit_utils import select_box_tipo_repuesto, select_box_cabecera
 

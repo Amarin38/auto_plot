@@ -2,7 +2,10 @@ import sys, os
 import streamlit as st
 
 
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
+if os.name == "nt":
+    sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
+elif os.name == "posix":
+    sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../../..")))
 from src.db_data import CommonBase, ServicesBase
 from src.db_data import common_engine, services_engine
 
