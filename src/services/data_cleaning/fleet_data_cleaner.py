@@ -1,13 +1,12 @@
 import pandas as pd
 
-from src.db_data.models.config_model.internos_cabecera_model import InternosAsignadosModel
 from src.utils.exception_utils import execute_safely
-from src.db_data.crud_services import df_to_db, db_to_df
+from src.db_data.crud_services import df_to_db, ServiceRead
+
 
 class FleetDataCleaner:
     def __init__(self, df: pd.DataFrame) -> None:
         self.df = df
-        self.cabecera = db_to_df(InternosAsignadosModel)
 
 
     @execute_safely

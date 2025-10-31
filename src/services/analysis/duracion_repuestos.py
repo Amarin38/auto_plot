@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 from scipy.stats import norm
 
+from src.config.constants import FILTRO_OBS
 from src.db_data.crud_services import df_to_db
 from src.utils.exception_utils import execute_safely
 
@@ -12,74 +13,135 @@ class DuracionRepuestos:
         self.repuesto = repuesto_rep
         self.tipo_rep = tipo_duracion
 
+        self.patentes = self.df["Patente"].unique()
+        self.cabeceras = self.df["Cabecera"].unique()
+
+
     @execute_safely
     def calcular_duracion(self):
-        patentes = self.df["Patente"].unique()
+        df = self.df.loc[self.df["Observaciones"].str.contains(FILTRO_OBS, na=False)].copy()
 
-        for patente in patentes:
-            df_separado = self.df["Patente"] == patente
-            # separo por cada patende y traigo la columna Cambio, y a esa columna en ese espacio
-            # le aplico el rango del tamaño de ese sub-dataframe
-            self.df.loc[df_separado, "Cambio"] = range(
-                len(self.df.loc[df_separado])
+        for patente in self.patentes:
+            df_separado_pat = df["Patente"] == patente
+
+            # Separo por cada patende y traigo la columna Cambio, y a esa columna en ese espacio
+            # Le aplico el rango del tamaño de ese sub-dataframe
+            df.loc[df_separado_pat, "Cambio"] = range( # type: ignore
+                len(df.loc[df_separado_pat])
             )
-            self.df["Cabecera"] = "" #TODO Agregarle la cabecera
-            self.df["Repuesto"] = self.repuesto
-            self.df["TipoRepuesto"] = self.tipo_rep
+            df["Repuesto"] = self.repuesto
+            df["TipoRepuesto"] = self.tipo_rep
 
-            # resto las fechas para saber cuanto duraron
-            self.df.loc[df_separado, "DuracionEnDias"] = self.df["FechaCambio"] - self.df["FechaCambio"].shift(1)
+            # Resto las fechas para saber cuanto duraron
+            df.loc[df_separado_pat, "DuracionEnDias"] = df["FechaCambio"] - df["FechaCambio"].shift(1)
 
-        self.df["Cambio"] = self.df["Cambio"].astype(int)
+        df["Cambio"] = df["Cambio"].astype(int)
 
-        self.df["DuracionEnDias"] = self.df["DuracionEnDias"].dt.days.fillna(0).astype(int) # limpio de valores nulos
-        self.df.loc[self.df["DuracionEnDias"] < 0, "DuracionEnDias"] = 0 # limpio de valores negativos
+        df["DuracionEnDias"] = df["DuracionEnDias"].dt.days.fillna(0).astype(int) # limpio de valores nulos
+        df.loc[df["DuracionEnDias"] < 0, "DuracionEnDias"] = 0 # limpio de valores negativos
 
-        self.df["DuracionEnMeses"] = round(self.df["DuracionEnDias"] / 30, 1)
-        self.df["DuracionEnAños"] = round(self.df["DuracionEnDias"] / 365, 1)
-        self.df["FechaCambio"] = self.df["FechaCambio"].dt.date
+        df["DuracionEnMeses"] = round(df["DuracionEnDias"] / 30, 1)
+        df["DuracionEnAños"] = round(df["DuracionEnDias"] / 365, 1)
+        df["FechaCambio"] = df["FechaCambio"].dt.date
 
-        self.calcular_media_y_std()
+        cambios = df["Cambio"].unique()[1:]
 
-        df_to_db("duracion_repuestos", self.df)
-        df_to_db("distribucion_normal", self.calcular_distribucion_normal())
+        df_duracion = self.calcular_media_y_std(df, cambios)
+
+        if df_duracion["Cabecera"].isna().any():
+            df_distribucion_normal = self.calcular_distribucion_normal(df_duracion, cambios)
+        else:
+            df_distribucion_normal = self.calcular_distribucion_normal_cabecera(df_duracion, cambios)
+
+        df_to_db("duracion_repuestos", df_duracion)
+        df_to_db("distribucion_normal", df_distribucion_normal)
 
 
     @execute_safely
-    def calcular_distribucion_normal(self) -> pd.DataFrame:
+    def calcular_distribucion_normal(self, df: pd.DataFrame, cambios) -> pd.DataFrame:
         df_list = []
 
-        for c in self.df["Cambio"].unique()[1:]:
+        for cambio in cambios:
             df_aux = pd.DataFrame()
+            df_cambio = df["Cambio"] == cambio
 
-            df_cambio = self.df["Cambio"] == c
+            # Gauss
+            mu = df.loc[df_cambio, "AñoPromedio"].values[0]
+            sigma = df.loc[df_cambio, "DesviacionEstandar"].values[0]
+            x = np.arange(1, 16)
 
-            mu = self.df.loc[df_cambio, "AñoPromedio"].values[0]
-            sigma = self.df.loc[df_cambio, "DesviacionEstandar"].values[0]
-            x = np.arange(1, 13)
 
+            # Creo el DataFrame
             df_aux["Años"] = x
-            df_aux["Cambio"] = c
-            df_aux["Cabecera"] = "" #TODO Agregarle la cabecera
+            df_aux["Cambio"] = cambio
             df_aux["Repuesto"] = self.repuesto
             df_aux["TipoRepuesto"] = self.tipo_rep
             df_aux["AñoPromedio"] = mu
             df_aux["DesviacionEstandar"] = sigma
-            df_aux["DistribucionNormal"] = norm.pdf(x, mu, sigma).round(2)
-            df_aux["DistribucionNormal"] = df_aux["DistribucionNormal"] * 100
+            df_aux["DistribucionNormal"] = (norm.pdf(x, mu, sigma).round(2)) * 100
+            df_aux["DistribucionNormal"] = df_aux["DistribucionNormal"].fillna(0)
 
             df_list.append(df_aux)
-
         return pd.concat(df_list)
 
 
     @execute_safely
-    def calcular_media_y_std(self) -> None:
-        for c in self.df["Cambio"].unique()[1:]:
-            df_cambio = self.df["Cambio"] == c
+    def calcular_distribucion_normal_cabecera(self, df: pd.DataFrame, cambios) -> pd.DataFrame:
+        df_list = []
 
-            self.df.loc[df_cambio, "AñoPromedio"] = self.df.loc[df_cambio, "DuracionEnAños"].mean().round(1)
-            self.df.loc[df_cambio, "DesviacionEstandar"] = self.df.loc[df_cambio, "DuracionEnAños"].std(ddof=1).round(1) #std de muestreo
+        for cambio in cambios:
+            df_cambio: pd.Series[bool] = df["Cambio"] == cambio
+            for cab in self.cabeceras:
+                df_aux = pd.DataFrame()
+                df_cabeceras: pd.Series[bool] = df["Cabecera"] == cab
 
-        self.df["AñoPromedio"] = self.df["AñoPromedio"].fillna(0)
-        self.df["DesviacionEstandar"] = self.df["DesviacionEstandar"].fillna(0)
+                # Gauss
+                try:
+                    mu = df.loc[df_cambio & df_cabeceras, "AñoPromedio"].values[0]
+                    sigma = df.loc[df_cambio & df_cabeceras, "DesviacionEstandar"].values[0]
+                except IndexError:
+                    mu = 0
+                    sigma = 0
+
+                x = np.arange(1, 16)
+
+                if mu != 0 and sigma != 0:
+                    distribucion_normal = (norm.pdf(x, mu, sigma).round(2)) * 100
+                else:
+                    distribucion_normal = 0
+
+                print(f"Cabecera -> {cab}")
+                print(f"mu -> {df.loc[df_cambio & df_cabeceras, "AñoPromedio"].values}")
+                print(f"sigma -> {df.loc[df_cambio & df_cabeceras, "DesviacionEstandar"].values}")
+                print(f"Distribucion normal -> {distribucion_normal}")
+
+                # Creo el DataFrame
+                df_aux["Años"] = x
+                df_aux["Cambio"] = cambio
+                df_aux["Cabecera"] = cab
+                df_aux["Repuesto"] = self.repuesto
+                df_aux["TipoRepuesto"] = self.tipo_rep
+                df_aux["AñoPromedio"] = mu
+                df_aux["DesviacionEstandar"] = sigma
+                df_aux["DistribucionNormal"] = distribucion_normal
+                df_aux["DistribucionNormal"] = df_aux["DistribucionNormal"].fillna(0)
+
+                df_list.append(df_aux)
+        return pd.concat(df_list)
+
+
+    @execute_safely
+    def calcular_media_y_std(self, df: pd.DataFrame, cambios) -> pd.DataFrame:
+        for cambio in cambios:
+            df_cambio = df["Cambio"] == cambio
+
+            for cab in self.cabeceras:
+                df_cabeceras = df["Cabecera"] == cab
+
+                df.loc[df_cambio & df_cabeceras, "AñoPromedio"] = df.loc[df_cambio & df_cabeceras, "DuracionEnAños"].mean()
+                df.loc[df_cambio & df_cabeceras, "DesviacionEstandar"] = df.loc[df_cambio & df_cabeceras, "DuracionEnAños"].std(ddof=1) #std de muestreo
+
+        df["AñoPromedio"] = df["AñoPromedio"].fillna(0).round(1)
+        df["DesviacionEstandar"] = df["DesviacionEstandar"].fillna(0).round(1)
+
+        return df

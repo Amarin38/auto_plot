@@ -1,18 +1,23 @@
-import numpy as np
-import plotly.graph_objects as go
-import plotly.figure_factory as ff
-from plotly.subplots import make_subplots
+from typing import Optional, Any
 
-from src.db_data.crud_services import db_to_df_by_repuesto_and_tipo_repuesto
+import pandas as pd
+import plotly.graph_objects as go
+from plotly.subplots import make_subplots
+from selenium.webdriver.common.devtools.v140.media import Timestamp
+
+from src.db_data.crud_services import ServiceRead
 from src.db_data.models.services_model.distribucion_normal_model import DistribucionNormalModel
 from src.db_data.models.services_model.duracion_repuestos_model import DuracionRepuestosModel
+from src.utils.exception_utils import execute_safely
 from src.utils.streamlit_utils import update_layout
 
 
 class DuracionRepuestosPlotter:
-    def __init__(self, repuesto: str, tipo_rep: str):
-        self.df_duracion = db_to_df_by_repuesto_and_tipo_repuesto(DuracionRepuestosModel, repuesto, tipo_rep)
-        self.df_distribucion = db_to_df_by_repuesto_and_tipo_repuesto(DistribucionNormalModel, repuesto, tipo_rep)
+    def __init__(self, repuesto: str, tipo_rep: str, cabecera: Optional[str] = None):
+        db = ServiceRead()
+        self.df_duracion = db.by_rep_and_tipo_rep_and_cabecera(DuracionRepuestosModel, repuesto, tipo_rep, cabecera)
+        self.df_distribucion = db.by_rep_and_tipo_rep_and_cabecera(DistribucionNormalModel, repuesto, tipo_rep, cabecera)
+
 
     def create_plot(self):
         fecha_min = self.df_duracion["FechaCambio"].min()
@@ -36,11 +41,10 @@ class DuracionRepuestosPlotter:
         cambios_iter = iter(cambios)
         cambio = next(cambios_iter, None)
 
-        for c in range(1, cols + 1):
-            for r in range(1, rows + 1):
+        for r in range(1, rows + 1):
+            for c in range(1, cols + 1):
                 df_distri_cambio = self.df_distribucion.loc[self.df_distribucion["Cambio"] == cambio]
                 df_duracion_cambio = self.df_duracion.loc[self.df_duracion["Cambio"] == cambio]
-
 
                 # Campana de gauss
                 x = df_distri_cambio["Años"]
@@ -80,29 +84,22 @@ class DuracionRepuestosPlotter:
         )
         return fig
 
-    def create_plot2(self):
-        fecha_min = self.df_duracion["FechaCambio"].min()
-        fecha_max = self.df_duracion["FechaCambio"].max()
-        cambios = self.df_distribucion["Cambio"].unique()
-        rows: int = 3
-        cols: int = 2
-        lista_distri = []
 
-        fig = make_subplots(rows=rows, cols=cols, subplot_titles=("Cambio 1", "Cambio 2",
-                                                                  "Cambio 3", "Cambio 4",
-                                                                  "Cambio 5", "Cambio 6"))
+    @execute_safely
+    def calcular_sin_cambios(self, year: str) -> Any:
+        self.df_duracion["FechaCambio"] = pd.to_datetime(self.df_duracion["FechaCambio"], errors="coerce")
+        year = pd.to_datetime(year, errors="coerce")
 
-        print(cambios)
-        for ca in cambios:
-            df_distri_cambio = self.df_distribucion.loc[self.df_distribucion["Cambio"] == ca]
-            print(df_distri_cambio)
-            df_distri_cambio["DistribucionNormal"] = float(df_distri_cambio["DistribucionNormal"])
+        df_year = self.df_duracion.loc[
+                (self.df_duracion["FechaCambio"].dt.year == year.year) &
+                (self.df_duracion["Cambio"] == 0)
+        ]
 
-            ff.create_distplot([df_distri_cambio["DistribucionNormal"]], ["Distribucion"])
+        df_sin_cambios = self.df_duracion.loc[
+            (self.df_duracion["Patente"].isin(df_year["Patente"])) &
+            (self.df_duracion["Cambio"] == 1) &
+            (self.df_duracion["FechaCambio"] == pd.to_datetime("2025-10-28")),
+            ["Patente", "FechaCambio", "Cambio"]
+        ]
 
-
-        update_layout(fig, f"Duracion repuestos ({fecha_min} | {fecha_max})", "",
-                      "Duracion en años", 700, 600)
-
-        return fig
-
+        return df_sin_cambios.count().iat[0]

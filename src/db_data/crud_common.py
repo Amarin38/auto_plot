@@ -5,7 +5,7 @@ import pandas as pd
 from sqlalchemy import select, func
 
 from src.config.constants import JSON_PATH
-from src.db_data.models.config_model.json_config_model import JSONConfigModel
+from src.db_data.models.common_model.json_config_model import JSONConfigModel
 from . import SessionCommon
 from . import common_engine
 
@@ -45,87 +45,98 @@ def store_json_file(self, file_name: str):
         self.json_to_sql(file_name, data)
 
 
-# ---------------------------------   DELETE   --------------------------------- #
-def delete_by_id(table, _id: int):
-    """
-    Elimina datos de una tabla de common_data.db a partir del id.
-    - table -> ModelClass()
-    - id -> PK
-    """
-    with SessionCommon() as session:
-        with session.begin():
-            row = session.get(table, id)
-            if row:
-                session.delete(row)
+class CommonDelete:
+    @staticmethod
+    def by_id(table, _id: int):
+        """
+        Elimina datos de una tabla de common_data.db a partir del id.
+        - table -> ModelClass()
+        - id -> PK
+        """
+        with SessionCommon() as session:
+            with session.begin():
+                row = session.get(table, id)
+                if row:
+                    session.delete(row)
 
 
-def delete_table(table: str):
-    """
-    Elimina una tabla dado el nombre de la misma en common_data.db
-    """
-    with SessionCommon() as session:
-        session.delete(table)
-        session.commit()
+    @staticmethod
+    def table(table: str):
+        """
+        Elimina una tabla dado el nombre de la misma en common_data.db
+        """
+        with SessionCommon() as session:
+            session.delete(table)
+            session.commit()
 
 
-# ---------------------------------   READ   --------------------------------- #
-def read_all(table):
-    """
-    Lee todos los datos de una tabla de common_data.db
-    - table -> ModelClass()
-    """
-    with SessionCommon() as session:
-        return session.scalars(select(table)).all()
+class CommonRead:
+    @staticmethod
+    def all_scalar(table):
+        """
+        Lee todos los datos de una tabla de common_data.db
+        - table -> ModelClass()
+        """
+        with SessionCommon() as session:
+            return session.scalars(select(table)).all()
 
 
-def db_to_df(table):
-    """
-    Hace una consulta a la base de datos de common_data.db y lo devuelve en forma de dataframe.
-    """
-    query = select(table)
-    return pd.read_sql_query(query, con=common_engine)
+    @staticmethod
+    def all_df(table):
+        """
+        Hace una consulta a la base de datos de common_data.db y lo devuelve en forma de dataframe.
+        """
+        query = select(table)
+        return pd.read_sql_query(query, con=common_engine)
 
 
-def db_to_df_by_repuesto(table, tipo_repuesto: str) -> pd.DataFrame:
-    """
-    Hace un query a la base de datos de common_data.db
-    mediante la condicion de tipo_repuesto y lo devuelve en forma de dataframe.
-    """
-    query = select(table).where(table.TipoRepuesto == tipo_repuesto) # type: ignore
-    return pd.read_sql_query(query, con=common_engine)
-    
-
-# ---------------------------------   DATE  --------------------------------- #
-def get_min_date(table) -> str:
-    with SessionCommon() as session:
-        return session.query(func.min(table.FechaIngreso)).scalar()
+    @staticmethod
+    def by_repuesto(table, tipo_repuesto: str) -> pd.DataFrame:
+        """
+        Hace un query a la base de datos de common_data.db
+        mediante la condicion de tipo_repuesto y lo devuelve en forma de dataframe.
+        """
+        query = select(table).where(table.TipoRepuesto == tipo_repuesto)  # type: ignore
+        return pd.read_sql_query(query, con=common_engine)
 
 
-def get_max_date(table) -> str:
-    with SessionCommon() as session:
-        return session.query(func.max(table.FechaIngreso)).scalar()
-
-# ---------------------------------   READ JSON   --------------------------------- #
-def get_pk_json_config(nombre_dato: str) -> int:
-    """
-    Devuelve la PK de la tabla JSONConfig a partir del nombre.
-    """
-    with SessionCommon() as session:
-        stmnt = select(JSONConfigModel).where(JSONConfigModel.nombre == nombre_dato)
-        return session.scalar(stmnt).id # type: ignore
+    # ---------------------------------   DATE  --------------------------------- #
+    @staticmethod
+    def min_date(table) -> str:
+        with SessionCommon() as session:
+            return session.query(func.min(table.FechaIngreso)).scalar()
 
 
-def read_json_config(identificador: Union[str, int]) -> Dict[str, Any]:
-    """
-    Lee los datos de la tabla JSONConfig a partir de un identificador.
-    - INT -> PK
-    - STR -> Nombre de la config. de JSON
-    """
-    with SessionCommon() as session:
-        if isinstance(identificador, str):
-            stmnt = select(JSONConfigModel).where(JSONConfigModel.nombre == identificador)
-        elif isinstance(identificador, int):
-            stmnt = select(JSONConfigModel).where(JSONConfigModel.id == identificador)
+    @staticmethod
+    def max_date(table) -> str:
+        with SessionCommon() as session:
+            return session.query(func.max(table.FechaIngreso)).scalar()
 
-        return session.scalar(stmnt).data # type: ignore
+
+    # ---------------------------------   READ JSON   --------------------------------- #
+    @staticmethod
+    def pk_json_config(nombre_dato: str) -> int:
+        """
+        Devuelve la PK de la tabla JSONConfig a partir del nombre.
+        """
+        with SessionCommon() as session:
+            stmnt = select(JSONConfigModel).where(JSONConfigModel.nombre == nombre_dato)
+            return session.scalar(stmnt).id  # type: ignore
+
+
+    @staticmethod
+    def json_config(identificador: Union[str, int]) -> Dict[str, Any]:
+        """
+        Lee los datos de la tabla JSONConfig a partir de un identificador.
+        - INT -> PK
+        - STR -> Nombre de la config. de JSON
+        """
+        with SessionCommon() as session:
+            if isinstance(identificador, str):
+                stmnt = select(JSONConfigModel).where(JSONConfigModel.nombre == identificador)
+            elif isinstance(identificador, int):
+                stmnt = select(JSONConfigModel).where(JSONConfigModel.id == identificador)
+
+            return session.scalar(stmnt).data  # type: ignore
+
     

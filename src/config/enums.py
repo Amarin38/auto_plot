@@ -78,6 +78,9 @@ class RepuestoReparadoEnum(StrEnum):
         return name.replace("_", " ").upper()
 
     CAJA_AUTOMATICA_REPARADA_T270 = auto()
+    RETEN_RUEDA_EJE_CENTRAL_MT27_EXTERIOR = auto()
+    RETEN_RUEDA_EJE_CENTRAL_MT27_INTERIOR = auto()
+    RULEMAN_RUEDA_EJE_CENTRAL_MT27 = auto()
 
 
 class TipoDuracionEnum(StrEnum):
@@ -86,6 +89,8 @@ class TipoDuracionEnum(StrEnum):
         return name.replace("_", " ").upper()
 
     CAJAS_REPARADAS = auto()
+    RETEN = auto()
+    RULEMAN = auto()
 
 
 class LoadDataEnum(StrEnum):

@@ -31,7 +31,7 @@ class DeviationTrend:
         ]
         choices = ("Encima", "Muy por encima", "Igual", "Debajo", "Muy por debajo")
         media_cabecera["DesviacionPor"] = np.select(conditions, choices, default="Debajo")
-        media_cabecera["FechaCompleta"] = pd.Timestamp.today()
-        media_cabecera["FechaCompleta"] = media_cabecera["FechaCompleta"].dt.date 
+        media_cabecera["FechaCompleta"] = pd.Timestamp.today().dt.date # type: ignore
+        # media_cabecera["FechaCompleta"] = media_cabecera["FechaCompleta"].dt.date
 
         df_to_db("deviation", media_cabecera)

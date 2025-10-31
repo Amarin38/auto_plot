@@ -10,9 +10,9 @@ class DuracionRepuestosModel(ServicesBase):
     id:                 Mapped[int] = mapped_column(primary_key=True)
     Patente:            Mapped[str] = mapped_column(String(8))
     FechaCambio:        Mapped[date] = mapped_column(Date)
-    Observaciones:      Mapped[str] = mapped_column(nullable=True)
     Cambio:             Mapped[int]
-    Cabecera:           Mapped[str]
+    Cabecera:           Mapped[str] = mapped_column(nullable=True)
+    Observaciones:      Mapped[str] = mapped_column(nullable=True)
     Repuesto:           Mapped[str]
     TipoRepuesto:       Mapped[str]
     DuracionEnDias:     Mapped[int] = mapped_column(nullable=True)

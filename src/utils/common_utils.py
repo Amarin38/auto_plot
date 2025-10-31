@@ -7,7 +7,7 @@ import pandas as pd
 from typing import List, Tuple
 
 from src.utils.exception_utils import execute_safely
-from src.db_data.crud_common import read_json_config
+from src.db_data.crud_common import CommonRead
 
 
 class CommonUtils:
@@ -17,7 +17,7 @@ class CommonUtils:
         Converts all the .xls files to .xlsx files and returns the concat of all of them\n
         """
         _xlsx_files = []
-        if len(df_directory) != 0:
+        if df_directory is not None:
             for file in df_directory:
                 try:
                     df = pd.read_excel(file, engine="openpyxl") # leo el xlsx
@@ -79,14 +79,14 @@ class CommonUtils:
     @execute_safely
     def upd_column_by_dict(df: pd.DataFrame, json_col: str) -> pd.DataFrame:
         """ Updates all the columns by the json file indicated. """
-        return df.rename(columns=read_json_config(json_col))
+        return df.rename(columns=CommonRead().json_config(json_col))
 
 
     @staticmethod
     @execute_safely
     def upd_rows_by_dict(df: pd.DataFrame, json_col: str, column: str) -> pd.DataFrame:
         """ Updates rows in the column specified by the json file indicated. """
-        df[column] = df[column].replace(read_json_config(json_col))
+        df[column] = df[column].replace(CommonRead().json_config(json_col))
         return df
 
 

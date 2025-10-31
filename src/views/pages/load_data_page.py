@@ -25,10 +25,21 @@ def load_data_page():
     centro.title(PAG_CARGAR_DATOS)
 
     with centro:
-        uploaded_files = st.file_uploader("Ingresa datos para actualizar", accept_multiple_files="directory")
+        tipo_cargar = st.radio("Selecciona el tipo de ingreso", ["Unico", "Multiple"],
+                               captions=["Seleccion de archivos simple", "Seleccion de archivos por carpeta"])
+
+        match tipo_cargar:
+            case "Unico":
+                uploaded_files = st.file_uploader("Ingresa datos para actualizar")
+            case "Multiple":
+                uploaded_files = st.file_uploader("Ingresa datos para actualizar", accept_multiple_files="directory")
+            case _:
+                uploaded_files = None
+
+
         select_load = select_box_load_data(st, "LOAD_DATA_LOAD_CENTRO")
 
-        if select_load and len(uploaded_files) > 0:
+        if select_load and uploaded_files is not None:
             match select_load:
                 case LoadDataEnum.INDICES_DE_CONSUMO:
                     select_repuesto = select_box_tipo_repuesto(st, "LOAD_DATA_REPUESTO_INDICE")
@@ -58,8 +69,8 @@ def load_data_page():
                     load_data_bttn(lambda: calcular_consumo_garantias(load_data(select_load, uploaded_files)))
 
                 case LoadDataEnum.MAXIMOS_Y_MINIMOS:
-                    mult_por_min = st.text_input("Multiplicar por: ", 2.5)
-                    mult_por_max = st.text_input("Multiplicar por: ", 4)
+                    mult_por_min = st.text_input("Multiplicar al mínimo por: ", 2.5)
+                    mult_por_max = st.text_input("Multiplicar al máximo por: ", 4)
 
                     if mult_por_min not in ("0", '', ' ') and mult_por_max not in ("0", '', ' '):
                         load_data_bttn(lambda: MaxMin().calculate(load_data(select_load, uploaded_files),
@@ -75,7 +86,7 @@ def load_data_page():
 
                     load_data_bttn(lambda: DuracionRepuestos(load_data(select_load, uploaded_files),
                                                              select_repuesto,
-                                                             select_tipo
+                                                             select_tipo,
                                                              ).calcular_duracion()
                                    )
 

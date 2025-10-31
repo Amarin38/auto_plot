@@ -19,6 +19,8 @@ def falla_equipos_garantias_page():
     with st.container(height=FALLA_TAB_BOX_HEIGHT):
         pie, bar = st.tabs(TABS_FALLAS)
 
+        # TODO: cambiar para que tome de los mismos 2 select_boxes para hacer ambos gráficos a la vez y
+        #   cambiarlo con tabs
         with pie:
             aux1, cabecera_col, repuesto_col, aux2 = st.columns((1, 1, 1, 1))
 

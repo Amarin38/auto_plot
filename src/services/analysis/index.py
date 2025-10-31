@@ -4,19 +4,20 @@ import numpy as np
 from typing import Optional
 
 from src.config.enums import IndexTypeEnum
-from src.db_data.models.config_model.coches_cabecera_model import CochesCabeceraModel
+from src.db_data.models.common_model.coches_cabecera_model import CochesCabeceraModel
 
 from src.utils.exception_utils import execute_safely
 
 from src.services.data_cleaning.inventory_data_cleaner import InventoryDataCleaner
 
 from src.db_data.crud_services import df_to_db
-from src.db_data.crud_common import db_to_df
+from src.db_data.crud_common import CommonRead
+
 
 class Index:
     def __init__(self, ) -> None:
         self.cleaner = InventoryDataCleaner()
-
+        self.read = CommonRead()
 
     @execute_safely
     def calculate(self, df: pd.DataFrame, tipo_rep: str, tipo_op: IndexTypeEnum, filtro: Optional[str] = None) -> None:
@@ -36,11 +37,11 @@ class Index:
 
             match tipo_op:
                 case IndexTypeEnum.VEHICULO: 
-                    df_vehicles = db_to_df(CochesCabeceraModel)
+                    df_vehicles = self.read.all_df(CochesCabeceraModel)
                     df_mod = grouped.merge(df_vehicles, on='Cabecera', how='left')
                     df_mod['IndiceConsumo'] = (df_mod['Cantidad'] * 100) / df_mod['CantidadCoches']
                 # case IndexTypeEnum.MOTOR:
-                #     df_motors = db_to_df(MotoresCabeceraModel)
+                #     df_motors = self.read.all_df(MotoresCabeceraModel)
                 #     df_mod = grouped.merge(df_motors, on=['Cabecera', 'Repuesto'], how='right')
                 #     df_mod['IndiceConsumo'] = (df_mod['Cantidad'] * 100) / df_mod['CantidadMotores']
                 #     # TODO: arreglar para que funcione con motor

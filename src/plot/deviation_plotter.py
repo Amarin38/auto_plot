@@ -2,7 +2,7 @@ import pandas as pd
 import plotly.graph_objects as go
 
 from src.config.constants import COLORS, FILE_STRFTIME_DMY
-from src.db_data.crud_services import db_to_df
+from src.db_data.crud_services import ServiceRead
 from src.db_data.models.services_model.deviation_model import DeviationModel
 from src.utils.exception_utils import execute_safely
 from src.utils.streamlit_utils import update_layout, top_right_legend
@@ -10,13 +10,14 @@ from src.utils.streamlit_utils import update_layout, top_right_legend
 
 class DeviationPlotter:
     def __init__(self) -> None:
-        self.df = db_to_df(DeviationModel)
+        self.df = ServiceRead().all_df(DeviationModel)
 
     @execute_safely
     def create_plot(self) -> go.Figure:
         x_data = self.df["Cabecera"] 
-        y_data = self.df["Desviacion"] 
-        median = self.df["MediaDeMedias"]
+        y_data = self.df["Desviacion"]
+
+        y_porcentual = self.df["Desviacion"].astype(str) + "%"
 
         fecha = pd.to_datetime(self.df["FechaCompleta"].unique()).strftime(FILE_STRFTIME_DMY)
         color = COLORS[9]
@@ -28,8 +29,8 @@ class DeviationPlotter:
             y=y_data,
             name="Desviaciones",
             
-            text=y_data,
-            textposition="auto",
+            text=y_porcentual,
+            textposition="outside",
             textfont=dict(
                 size=11,
                 color='white', 
@@ -42,19 +43,23 @@ class DeviationPlotter:
 
         fig.add_trace(go.Scatter(
             x=x_data,
-            y=median,
+            y=[0] * len(x_data),
             mode='lines',
 
-            name=f"Media desviaciones({median[0]})",
+            name="Centro de desviaciones (Media)",
             line=dict(color='red', dash='dash')
         ))
+
 
         for cab in x_data:
             fig.add_shape(type="line",
                 x0=cab, y0=-105, x1=cab, y1=105,
                 line=dict(color=color, width=1))
             
-        update_layout(fig, f"Desviacion {fecha[0]}", 'Cabecera', 'Desviacion en %', 600, 200)
+        update_layout(fig, f"Desviacion {fecha[0]}", 'Cabecera', 'Desviacion de la media en %', 600, 200)
         top_right_legend(fig)
 
+        fig.update_layout(
+
+        )
         return fig

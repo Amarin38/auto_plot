@@ -5,7 +5,7 @@ import plotly.graph_objects as go
 
 from src.config.constants import COLORS
 from src.config.enums import IndexTypeEnum
-from src.db_data.crud_services import db_to_df_by_repuesto_and_index_type
+from src.db_data.crud_services import ServiceRead
 from src.db_data.models.services_model.index_repuesto_model import IndexRepuestoModel
 from src.utils.exception_utils import execute_safely
 from src.utils.streamlit_utils import update_layout, devolver_fecha, top_right_legend
@@ -14,7 +14,7 @@ from src.utils.streamlit_utils import update_layout, devolver_fecha, top_right_l
 class IndexPlotter:
     def __init__(self, index_type: IndexTypeEnum, tipo_rep: str) -> None:
         self.tipo_rep = tipo_rep
-        self.df = db_to_df_by_repuesto_and_index_type(IndexRepuestoModel, self.tipo_rep, index_type)
+        self.df = ServiceRead().by_rep_and_index(IndexRepuestoModel, self.tipo_rep, index_type)
 
 
     @execute_safely

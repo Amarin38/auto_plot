@@ -25,6 +25,9 @@ FORECAST_TREND_COLUMNS: Tuple[str, ...] = ("Repuesto", "TipoRepuesto", "FechaCom
 FORECAST_DATA_COLUMNS: Tuple[str, ...] = ("Repuesto", "TipoRepuesto", "FechaCompleta", "Año", "Mes", 
                                            "TotalAño", "TotalMes", "Promedio", "IndiceAnual", "IndiceEstacional")
 
+# Filtro
+FILTRO_OBS = "0KM|TRANSMISIÓN"
+
 
 # View Config.
 MAIN_TABS: Tuple[str, ...] = (" 🏠 Página principal", " 📊 Índices de consumo",
@@ -120,8 +123,19 @@ COLORS: Tuple[str, ...] = ("#FFC300", "#FF5733", "#C70039", "#900C3F", "#5C6D70"
                            "#2C2C54", "#5FAD56", "#F2C14E", "#F78154", "#4D9078",
                            "#4A1942", "#823329", "#3F7CAC", "#899878", "#5497A7", 
                            "#883677", "#3A7D44", "#254D32", "#F7CE5B", "#F7B05B",
-                           "#414770", "#5E6973")
+                           "#414770", "#5E6973", "#0E1117", "#3D4044")
 
+
+# html
+HTML_SIN_CAMBIOS = """<p style='
+                    color: #5497A7; 
+                    font: bold light 18px sans-serif;
+                    background: #0E1117; 
+                    border-radius: 5px;
+                    border-width: 2px;
+                    border-style: solid; 
+                    border-color: #3D4044;
+                    text-align: center'>"""
 
 # Text colors
 T_RED = '\033[91m'

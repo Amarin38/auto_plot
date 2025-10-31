@@ -30,9 +30,9 @@ from src.db_data.models.services_model.duracion_repuestos_model import DuracionR
 from src.db_data.models.services_model.distribucion_normal_model import DistribucionNormalModel
 
 # Common DB -----------------------------------------------------------------------------------
-from src.db_data.models.config_model.coches_cabecera_model import CochesCabeceraModel
-from src.db_data.models.config_model.datos_garantias_model import DatosGarantiasModel
-from src.db_data.models.config_model.json_config_model import JSONConfigModel
+from src.db_data.models.common_model.coches_cabecera_model import CochesCabeceraModel
+from src.db_data.models.common_model.datos_garantias_model import DatosGarantiasModel
+from src.db_data.models.common_model.json_config_model import JSONConfigModel
 
 # -----------------------------------------------------------------------------------------------
 
