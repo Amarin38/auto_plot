@@ -2,11 +2,11 @@ import sys, os
 
 import streamlit as st
 
-from src.config.constants import FULL_PLOT_BOX_HEIGHT, TAB_BOX_HEIGHT, PAG_DESVIACIONES, COLORS, T_ORANGE
-from src.db_data.crud_services import ServiceRead
-from src.db_data.models.services_model.deviation_model import DeviationModel
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
+from src.config.constants import FULL_PLOT_BOX_HEIGHT, TAB_BOX_HEIGHT, PAG_DESVIACIONES, COLORS
+from src.db_data.crud_services import ServiceRead
+from src.db_data.models.services_model.deviation_model import DeviationModel
 from src.plot.deviation_plotter import DeviationPlotter
 from src.utils.exception_utils import execute_safely
 
