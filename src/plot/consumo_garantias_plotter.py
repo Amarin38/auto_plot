@@ -9,7 +9,7 @@ from src.utils.streamlit_utils import update_layout
 
 class ConsumoGarantiasPlotter:
     def __init__(self, cabecera, tipo_repuesto):
-        self.df_data = ServiceRead().by_cabecera_and_rep(ConsumoGarantiasModel, cabecera, tipo_repuesto)
+        self.df_data = ServiceRead().by_rep_and_cabecera(ConsumoGarantiasModel, cabecera, tipo_repuesto)
 
 
     @execute_safely

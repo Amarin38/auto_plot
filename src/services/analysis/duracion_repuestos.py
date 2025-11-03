@@ -70,7 +70,6 @@ class DuracionRepuestos:
             sigma = df.loc[df_cambio, "DesviacionEstandar"].values[0]
             x = np.arange(1, 16)
 
-
             # Creo el DataFrame
             df_aux["Años"] = x
             df_aux["Cambio"] = cambio
@@ -83,6 +82,20 @@ class DuracionRepuestos:
 
             df_list.append(df_aux)
         return pd.concat(df_list)
+
+
+    @execute_safely
+    def calcular_media_y_std(self, df: pd.DataFrame, cambios) -> pd.DataFrame:
+        for cambio in cambios:
+            df_cambio = df["Cambio"] == cambio
+
+            df.loc[df_cambio, "AñoPromedio"] = df.loc[df_cambio, "DuracionEnAños"].mean()
+            df.loc[df_cambio, "DesviacionEstandar"] = df.loc[df_cambio, "DuracionEnAños"].std(ddof=1) #std de muestreo
+
+        df["AñoPromedio"] = df["AñoPromedio"].fillna(0).round(1)
+        df["DesviacionEstandar"] = df["DesviacionEstandar"].fillna(0).round(1)
+
+        return df
 
 
     @execute_safely
@@ -110,10 +123,10 @@ class DuracionRepuestos:
                 else:
                     distribucion_normal = 0
 
-                print(f"Cabecera -> {cab}")
-                print(f"mu -> {df.loc[df_cambio & df_cabeceras, "AñoPromedio"].values}")
-                print(f"sigma -> {df.loc[df_cambio & df_cabeceras, "DesviacionEstandar"].values}")
-                print(f"Distribucion normal -> {distribucion_normal}")
+                # print(f"Cabecera -> {cab}")
+                # print(f"mu -> {df.loc[df_cambio & df_cabeceras, "AñoPromedio"].values}")
+                # print(f"sigma -> {df.loc[df_cambio & df_cabeceras, "DesviacionEstandar"].values}")
+                # print(f"Distribucion normal -> {distribucion_normal}")
 
                 # Creo el DataFrame
                 df_aux["Años"] = x
@@ -131,7 +144,7 @@ class DuracionRepuestos:
 
 
     @execute_safely
-    def calcular_media_y_std(self, df: pd.DataFrame, cambios) -> pd.DataFrame:
+    def calcular_media_y_std_cabecera(self, df: pd.DataFrame, cambios) -> pd.DataFrame:
         for cambio in cambios:
             df_cambio = df["Cambio"] == cambio
 

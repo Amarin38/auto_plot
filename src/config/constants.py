@@ -26,7 +26,7 @@ FORECAST_DATA_COLUMNS: Tuple[str, ...] = ("Repuesto", "TipoRepuesto", "FechaComp
                                            "TotalAño", "TotalMes", "Promedio", "IndiceAnual", "IndiceEstacional")
 
 # Filtro
-FILTRO_OBS = "0KM|TRANSMISIÓN"
+FILTRO_OBS = "0KM|TRANSMISIÓN|CAMBIO"
 
 
 # View Config.

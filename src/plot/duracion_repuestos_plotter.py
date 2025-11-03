@@ -13,11 +13,11 @@ from src.utils.streamlit_utils import update_layout
 
 
 class DuracionRepuestosPlotter:
-    def __init__(self, repuesto: str, tipo_rep: str, cabecera: Optional[str] = None):
+    def __init__(self, repuesto: str, cabecera: Optional[str] = None):
         db = ServiceRead()
-        self.df_duracion = db.by_rep_and_tipo_rep_and_cabecera(DuracionRepuestosModel, repuesto, tipo_rep, cabecera)
-        self.df_distribucion = db.by_rep_and_tipo_rep_and_cabecera(DistribucionNormalModel, repuesto, tipo_rep, cabecera)
 
+        self.df_duracion = db.by_repuesto(DuracionRepuestosModel, repuesto)
+        self.df_distribucion = db.by_repuesto(DistribucionNormalModel, repuesto)
 
     def create_plot(self):
         fecha_min = self.df_duracion["FechaCambio"].min()

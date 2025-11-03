@@ -16,8 +16,8 @@ class ForecastPlotter:
     def __init__(self, tipo_rep: str):
         db = ServiceRead()
         self.tipo_rep = tipo_rep
-        self.df_data = db.by_repuesto(ForecastDataModel, self.tipo_rep)
-        self.df_forecast = db.by_repuesto(ForecastModel, self.tipo_rep)
+        self.df_data = db.by_tipo_repuesto(ForecastDataModel, self.tipo_rep)
+        self.df_forecast = db.by_tipo_repuesto(ForecastModel, self.tipo_rep)
 
 
     @execute_safely

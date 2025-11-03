@@ -14,7 +14,7 @@ from src.db_data.models.common_model.datos_garantias_model import DatosGarantias
 class FallasGarantiasPlotter:
     def __init__(self, cabecera: str, tipo_repuesto: str) -> None:
         read = CommonRead()
-        self.df_data = ServiceRead.by_cabecera_and_rep(FallaGarantiasModel, cabecera, tipo_repuesto)
+        self.df_data = ServiceRead.by_rep_and_cabecera(FallaGarantiasModel, cabecera, tipo_repuesto)
         self.min_date: dt = read.min_date(DatosGarantiasModel).strftime(PAGE_STRFTIME_YMD)
         self.max_date: dt = read.max_date(DatosGarantiasModel).strftime(PAGE_STRFTIME_YMD)
 

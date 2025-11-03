@@ -147,7 +147,7 @@ def centered_title(col, title: str):
 @execute_safely
 def select_box_repuesto(col, key: Union[int, str]):
     with col.container(height=SELECT_BOX_HEIGHT, vertical_alignment='center'):
-        return st.selectbox("Selecciona el repuesto reparado:", RepuestoReparadoEnum, index=None,
+        return st.selectbox("Selecciona el repuesto:", RepuestoReparadoEnum, index=None,
                             placeholder=PLACEHOLDER, key=key)
 
 

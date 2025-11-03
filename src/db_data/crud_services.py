@@ -90,15 +90,24 @@ class ServiceRead:
     
     
     @staticmethod
-    def by_repuesto(table, tipo_repuesto: str) -> pd.DataFrame:
+    def by_tipo_repuesto(table, tipo_repuesto: str) -> pd.DataFrame:
         """
             Hace un query a la base de datos de services_data.db,
             mediante la condicion de tipo_repuesto y lo devuelve en forma de dataframe.
             """
         query = select(table).where(table.TipoRepuesto == tipo_repuesto)  # type: ignore
         return pd.read_sql_query(query, con=services_engine)
-    
-    
+
+    @staticmethod
+    def by_repuesto(table, repuesto: str) -> pd.DataFrame:
+        """
+            Hace un query a la base de datos de services_data.db,
+            mediante la condicion de tipo_repuesto y lo devuelve en forma de dataframe.
+            """
+        query = select(table).where(table.Repuesto == repuesto)  # type: ignore
+        return pd.read_sql_query(query, con=services_engine)
+
+
     @staticmethod
     def by_rep_and_index(table, tipo_repuesto: str, tipo_indice: IndexTypeEnum) -> pd.DataFrame:
         query = select(table).where(
@@ -108,7 +117,7 @@ class ServiceRead:
 
 
     @staticmethod
-    def by_cabecera_and_rep(table, cabecera: str, tipo_repuesto: str) -> pd.DataFrame:
+    def by_rep_and_cabecera(table, cabecera: str, tipo_repuesto: str) -> pd.DataFrame:
         query = select(table).where(
             table.Cabecera == cabecera, table.TipoRepuesto == tipo_repuesto  # type: ignore
         )
@@ -131,6 +140,12 @@ class ServiceRead:
         return pd.read_sql_query(query, con=services_engine)
 
 
+    @staticmethod
+    def by_tipo_rep_and_cabecera(table, tipo_rep: str, cabecera: str) -> pd.DataFrame:
+        query = select(table).where(
+            table.TipoRepuesto == tipo_rep, table.Cabecera == cabecera # type: ignore
+        )
+        return pd.read_sql_query(query, con=services_engine)
 
 
 

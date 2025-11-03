@@ -91,7 +91,7 @@ class CommonRead:
 
 
     @staticmethod
-    def by_repuesto(table, tipo_repuesto: str) -> pd.DataFrame:
+    def by_tipo_repuesto(table, tipo_repuesto: str) -> pd.DataFrame:
         """
         Hace un query a la base de datos de common_data.db
         mediante la condicion de tipo_repuesto y lo devuelve en forma de dataframe.

@@ -81,6 +81,7 @@ class RepuestoReparadoEnum(StrEnum):
     RETEN_RUEDA_EJE_CENTRAL_MT27_EXTERIOR = auto()
     RETEN_RUEDA_EJE_CENTRAL_MT27_INTERIOR = auto()
     RULEMAN_RUEDA_EJE_CENTRAL_MT27 = auto()
+    MAZA_RUEDA_EJE_CENTRAL_MT27 = auto()
 
 
 class TipoDuracionEnum(StrEnum):
@@ -91,6 +92,7 @@ class TipoDuracionEnum(StrEnum):
     CAJAS_REPARADAS = auto()
     RETEN = auto()
     RULEMAN = auto()
+    MAZA = auto()
 
 
 class LoadDataEnum(StrEnum):
