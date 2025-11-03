@@ -1,19 +1,4 @@
-import sys, os
-from pathlib import Path
-
 import streamlit as st
-
-#
-# if os.name == "nt":
-#     sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
-# elif os.name == "posix":
-#     sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../../..")))
-
-
-ROOT = Path(__file__).resolve().parents[2]  # auto_plot
-if str(ROOT) not in sys.path:
-    sys.path.insert(0, str(ROOT))
-
 
 from src.db_data import CommonBase, ServicesBase
 from src.db_data import common_engine, services_engine
