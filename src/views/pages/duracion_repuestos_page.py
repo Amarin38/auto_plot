@@ -1,9 +1,9 @@
 import streamlit as st
 
-from src.config.constants import PAG_DURACION, TABS_DURACION, DURACION_TAB_BOX_HEIGHT, HTML_SIN_CAMBIOS
+from src.config.constants import PAG_DURACION, DURACION_TAB_BOX_HEIGHT, HTML_SIN_CAMBIOS
 from src.plot.duracion_repuestos_plotter import DuracionRepuestosPlotter
 from src.utils.exception_utils import execute_safely
-from src.utils.streamlit_utils import select_box_cabecera, select_box_repuesto, select_box_tipo_duracion
+from src.utils.streamlit_utils import select_box_repuesto
 
 
 @execute_safely

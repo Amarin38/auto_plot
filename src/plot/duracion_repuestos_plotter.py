@@ -3,7 +3,6 @@ from typing import Optional, Any
 import pandas as pd
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
-from selenium.webdriver.common.devtools.v140.media import Timestamp
 
 from src.db_data.crud_services import ServiceRead
 from src.db_data.models.services_model.distribucion_normal_model import DistribucionNormalModel
