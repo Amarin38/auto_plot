@@ -1,4 +1,10 @@
+import sys
 import streamlit as st
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[2]  # auto_plot
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
 
 from src.db_data import CommonBase, ServicesBase
 from src.db_data import common_engine, services_engine
