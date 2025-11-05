@@ -82,8 +82,7 @@ def load_data_page():
                     load_data_bttn(lambda: DuracionRepuestos(load_data(select_load, uploaded_files),
                                                              select_repuesto,
                                                              select_tipo,
-                                                             ).calcular_duracion()
-                                   )
+                                                             ).calcular_duracion())
 
 
 @execute_safely

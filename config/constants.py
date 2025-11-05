@@ -51,41 +51,40 @@ TABS_DURACION = (" 🛠️ General", " 🔧 Por repuesto")
 # Selectboxes
 PLACEHOLDER = "------"
 
+
+# HEIGHT
 PIE_PLOT_HEIGHT: int = 585
-PIE_PLOT_WIDTH: int = 585
-
-BARPLOT_WIDTH: int = 1100
-
 DATAFRAME_HEIGHT: int = 600
-
 LINK_BOX_HEIGHT: int = 72
-LINK_BOX_WIDTH: int = 350
 SELECT_BOX_HEIGHT: int = 120
-SELECT_BOX_WIDTH: int = 650
 CENTERED_TITLE_HEIGHT: int = 78
-CENTERED_TITLE_WIDTH: int = 570
-
 BARPLOT_BOX_HEIGHT: int = 700
-BARPLOT_BOX_WIDTH: int = 1600
-
 PLOT_BOX_HEIGHT: int = 535
-
 PIE_PLOT_BOX_HEIGHT: int = 700
-PIE_PLOT_BOX_WIDTH: int = 1550
-
 MULTIPLE_PLOT_BOX_HEIGHT: int = 700
 FULL_PLOT_BOX_HEIGHT: int = 650
-
 TEXT_BOX_HEIGHT: int = 450
-
 TAB_BOX_HEIGHT: int = 750
 FALLA_TAB_BOX_HEIGHT: int = 900
 DURACION_TAB_BOX_HEIGHT: int = 955
-
 FILE_UPLOADER_HEIGHT: int = 368
 
+
+# WIDTH
+PIE_PLOT_WIDTH: int = 585
+BARPLOT_WIDTH: int = 1100
+LINK_BOX_WIDTH: int = 350
+SELECT_BOX_WIDTH: int = 650
+CENTERED_TITLE_WIDTH: int = 570
+BARPLOT_BOX_WIDTH: int = 1600
+PIE_PLOT_BOX_WIDTH: int = 1550
+
+
+# FONT
 PIE_FONT_SIZE: int = 24
 
+
+# DISTANCE
 DISTANCE_COLS_SELECT_PLOT: Tuple[int, int] = (1, 5)
 DISTANCE_COLS_DUAL_PLOT: Tuple[int, float] = (1, 1.8)
 DISTANTE_COLS_DUAL_SELECT: Tuple[int, float] = (1, 0.5)
@@ -93,14 +92,15 @@ DISTANTE_COLS_DUAL_SELECT: Tuple[int, float] = (1, 0.5)
 DISTANCE_COLS_SELECTBIGGER_PLOT: Tuple[float, int] = (0.70, 3)
 DISTANCE_COLS_CENTER_TITLE: Tuple[float, int, int] = (2.78, 3, 1)
 
-# Paths
+
+# PATHS
 MAIN_PATH = Path().cwd()
 JSON_PATH: str = f"{MAIN_PATH}/data/json_data"
 COMMON_DB_PATH: str = f"{MAIN_PATH}/db_data/db/common_data.db"
 SERV_DB_PATH: str = f"{MAIN_PATH}/db_data/db/services_data.db"
 
 
-# Dates
+# DATES
 PAGE_STRFTIME_DMY = "%d/%m/%Y"
 PAGE_STRFTIME_YMD = "%Y/%m/%d"
 FILE_STRFTIME_DMY = "%d-%m-%Y"
@@ -112,7 +112,7 @@ TODAY_DATE_FILE = Timestamp.today().strftime(FILE_STRFTIME_DMY)
 TODAY_FOR_DELTA = Timestamp.today().strftime(DELTA_STRFTIME_YM)
 
 
-# Movs
+# MOVS
 MOV_SALIDAS: str = "Transf al Dep |Salida"
 MOV_ENTRADAS: str = "Tranf desde |Transf Recibida|Entrada "
 MOV_DEVOLUCIONES: str = "Devolucion"
@@ -126,7 +126,7 @@ COLORS: Tuple[str, ...] = ("#FFC300", "#FF5733", "#C70039", "#900C3F", "#5C6D70"
                            "#414770", "#5E6973", "#0E1117", "#3D4044")
 
 
-# html
+# HTML
 HTML_SIN_CAMBIOS = """<p style='
                     color: #5497A7; 
                     font: bold light 18px sans-serif;
@@ -137,7 +137,8 @@ HTML_SIN_CAMBIOS = """<p style='
                     border-color: #3D4044;
                     text-align: center'>"""
 
-# Text colors
+
+# TEXT COLORS
 T_RED = '\033[91m'
 T_LIGHT_RED = '\033[31m'
 T_GREEN = '\033[92m'
@@ -153,11 +154,13 @@ T_GRAY = '\033[90m'
 T_ORANGE = '\033[38;5;208m'
 T_FUCHSIA = '\033[38;5;170m'
 
-# Background colors
+
+# BACKGROUND COLORS
 B_RED = '\033[41m'
 B_ORANGE = '\033[48;5;208m'
 
-# Text mods.
+
+# TEXT MODS
 UNDERLINE = '\033[4m'
 ITALIC = '\033[3m'
 DIMM = '\033[22m'
