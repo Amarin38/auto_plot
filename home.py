@@ -1,10 +1,4 @@
-import sys
 import streamlit as st
-from pathlib import Path
-
-# ROOT = Path(__file__).resolve().parents[2]  # auto_plot
-# if str(ROOT) not in sys.path:
-#     sys.path.insert(0, str(ROOT))
 
 from db_data import CommonBase, ServicesBase
 from db_data import common_engine, services_engine
@@ -38,7 +32,6 @@ from db_data.models.common_model.datos_garantias_model import DatosGarantiasMode
 from db_data.models.common_model.json_config_model import JSONConfigModel
 
 # -----------------------------------------------------------------------------------------------
-
 st.set_page_config(
     page_title="Estadisticas Dota",
     page_icon="📊",
