@@ -16,7 +16,7 @@ from utils.exception_utils import execute_safely
 
 class MaxMin:
     @execute_safely
-    def calculate(self, df: Optional[pd.DataFrame] = None, mult_por_min: float = 2.5, mult_por_max: float = 4) -> None:
+    def calculate(self, df: Optional[pd.DataFrame] = None, mult_por_min: float = 2, mult_por_max: float = 3) -> None:
         if df is not None:
             df_final = df.groupby(["Familia", "Articulo", "Repuesto"]).agg({"Cantidad":"sum"}).reset_index()
             div_seis_meses = round(df_final["Cantidad"] / 6, 1)

@@ -1,12 +1,4 @@
-import os
-import sys
 import streamlit as st
-
-
-if os.name == "nt":
-    sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
-elif os.name == "posix":
-    sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../../..")))
 
 from config.constants import PAG_CARGAR_DATOS
 from config.enums import LoadDataEnum
@@ -72,8 +64,8 @@ def load_data_page():
                     load_data_bttn(lambda: calcular_consumo_garantias(load_data(select_load, uploaded_files)))
 
                 case LoadDataEnum.MAXIMOS_Y_MINIMOS:
-                    mult_por_min = st.text_input("Multiplicar al mínimo por: ", 2.5)
-                    mult_por_max = st.text_input("Multiplicar al máximo por: ", 4)
+                    mult_por_min = st.text_input("Multiplicar al mínimo por: ", 2)
+                    mult_por_max = st.text_input("Multiplicar al máximo por: ", 3)
 
                     if mult_por_min not in ("0", '', ' ') and mult_por_max not in ("0", '', ' '):
                         load_data_bttn(lambda: MaxMin().calculate(load_data(select_load, uploaded_files),
