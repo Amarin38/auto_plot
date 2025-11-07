@@ -3,7 +3,7 @@ import streamlit as st
 from infrastructure import CommonBase, ServicesBase
 from infrastructure import common_engine, services_engine
 
-from view.home import home
+from view.main import main
 from view.prevision_consumo import prevision
 from view.desviacion_indices import desviacion_indices
 from view.maximos_minimos import maximos_minimos
@@ -41,7 +41,7 @@ st.set_page_config(
 
 view = {
     "Inicio":[
-        st.Page(home, title=PAG_PRINCIPAL),
+        st.Page(main, title=PAG_PRINCIPAL),
         st.Page(cargar_datos, title=PAG_CARGAR_DATOS)
     ],
     "Estadísticas":[

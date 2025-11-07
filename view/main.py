@@ -1,7 +1,7 @@
 import streamlit as st
 from config.constants import LINK_BOX_HEIGHT, LINK_BOX_WIDTH, PAG_PRINCIPAL
 
-def home():
+def main():
     st.title(PAG_PRINCIPAL)
     st.text("Páginas de la empresa:")
 
