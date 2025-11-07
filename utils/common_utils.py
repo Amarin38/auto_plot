@@ -7,7 +7,7 @@ import pandas as pd
 from typing import List, Tuple
 
 from utils.exception_utils import execute_safely
-from db_data.crud_common import CommonRead
+from infrastructure.db.crud_common import CommonRead
 
 
 class CommonUtils:
@@ -54,7 +54,7 @@ class CommonUtils:
 
     @staticmethod
     @execute_safely
-    def del_by_content(df: pd.DataFrame, column: str, delete_by: Tuple[str, ...]):
+    def del_by_content(df: pd.DataFrame, column: str, delete_by: List[str]):
         delete = "|".join(delete_by)
         df[column] = df[column].fillna("").astype(str)
 

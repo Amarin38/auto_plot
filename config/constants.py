@@ -1,33 +1,36 @@
-from typing import Tuple
+from typing import Tuple, List
 from pathlib import Path
 from pandas import Timestamp
 
 # Inventory cleaner
-INTERNOS_DEVOLUCION: Tuple[str, ...] = ("C0488", "C0489", "C0500", "C0700", "C1400", 
-                                        "C4500", "C4900", "C6000", "C6700", "C9500",
-                                        "C9100", "C7000", "C5000", "C9000", "C3000",
-                                        "C4800", "C4700", "U4000", "C6600", "C6400",
-                                        "C0199", "C0599", "C0799", "C1499", "C4599", 
-                                        "C4999", "C6099", "C6799", "C9599", "C9199",
-                                        "C7099", "C5099", "C9099", "C3099", "C4899", 
-                                        "C4799", "C5599", "C6699", "C6199", "U1111")
+INTERNOS_DEVOLUCION: List[str] = ["C0488", "C0489", "C0500", "C0700", "C1400",
+                                  "C4500", "C4900", "C6000", "C6700", "C9500",
+                                  "C9100", "C7000", "C5000", "C9000", "C3000",
+                                  "C4800", "C4700", "U4000", "C6600", "C6400",
+                                  "C0199", "C0599", "C0799", "C1499", "C4599",
+                                  "C4999", "C6099", "C6799", "C9599", "C9199",
+                                  "C7099", "C5099", "C9099", "C3099", "C4899",
+                                  "C4799", "C5599", "C6699", "C6199", "U1111"]
 
+DEL_COLUMNS: List[str] = ["artipo", "ficdep", "fictra",
+                          "movnom", "ficpro", "pronom",
+                          "ficrem", "ficfac","corte",
+                          "signo", "transfe"]
 
-DEL_COLUMNS: Tuple[str, ...] = ("ficdep", "fictra", "artipo", "ficpro", 
-                                "pronom", "ficrem", "ficfac", "corte", 
-                                "signo", "transfe", "ficmov")
+FORECAST_TREND_COLUMNS: List[str] = ["Repuesto", "TipoRepuesto", "FechaCompleta",
+                                     "Año", "Mes", "Tendencia", "TendenciaEstacional"]
 
-
-FORECAST_TREND_COLUMNS: Tuple[str, ...] = ("Repuesto", "TipoRepuesto", "FechaCompleta",
-                                           "Año", "Mes", "Tendencia", "TendenciaEstacional") 
-
-
-FORECAST_DATA_COLUMNS: Tuple[str, ...] = ("Repuesto", "TipoRepuesto", "FechaCompleta", "Año", "Mes", 
-                                           "TotalAño", "TotalMes", "Promedio", "IndiceAnual", "IndiceEstacional")
+FORECAST_DATA_COLUMNS: List[str] = ["Repuesto", "TipoRepuesto", "FechaCompleta", "Año", "Mes",
+                                    "TotalAño", "TotalMes", "Promedio", "IndiceAnual", "IndiceEstacional"]
 
 # Filtro
 FILTRO_OBS = "0KM|TRANSMISIÓN|CAMBIO"
 
+# MOVS
+MOV_SALIDAS: str = "TRD|DES"
+# MOV_ENTRADAS: str = "Tranf desde |Transf Recibida|Entrada "
+MOV_ENTRADAS: str = "COM|TRA"
+MOV_DEVOLUCIONES: str = "DEU|DEC"
 
 # View Config.
 MAIN_TABS: Tuple[str, ...] = (" 🏠 Página principal", " 📊 Índices de consumo",
@@ -39,10 +42,10 @@ PAG_PRINCIPAL = "Página principal 🏠"
 PAG_CARGAR_DATOS = "Cargar datos 🔄️"
 PAG_INDICES = "Índices de consumo 📊"
 PAG_PREVISION = "Previsión de consumo 📈"
-PAG_DESVIACIONES = "Desviaciones de índices 📊"
+PAG_DESVIACION_INDICES = "Desviaciones de índices 📊"
 PAG_DURACION = "Duracion de repuestos 🛠️"
 PAG_FALLA_GARANTIAS = "Falla equipos garantías ⛔"
-PAG_MAXMIN = "Máximos y Mínimos ⬆️⬇️"
+PAG_maximos_minimos = "Máximos y Mínimos ⬆️⬇️"
 
 # Tabs
 TABS_FALLAS = (" 🚫 Falla Equipos Garantías", " 📊 Consumos Garantias y Transferencias")
@@ -96,8 +99,8 @@ DISTANCE_COLS_CENTER_TITLE: Tuple[float, int, int] = (2.78, 3, 1)
 # PATHS
 MAIN_PATH = Path().cwd()
 JSON_PATH: str = f"{MAIN_PATH}/data/json_data"
-COMMON_DB_PATH: str = f"{MAIN_PATH}/db_data/db/common_data.db"
-SERV_DB_PATH: str = f"{MAIN_PATH}/db_data/db/services_data.db"
+COMMON_DB_PATH: str = f"{MAIN_PATH}/infrastructure/db/common_data.db"
+SERV_DB_PATH: str = f"{MAIN_PATH}/infrastructure/db/services_data.db"
 
 
 # DATES
@@ -112,10 +115,6 @@ TODAY_DATE_FILE = Timestamp.today().strftime(FILE_STRFTIME_DMY)
 TODAY_FOR_DELTA = Timestamp.today().strftime(DELTA_STRFTIME_YM)
 
 
-# MOVS
-MOV_SALIDAS: str = "Transf al Dep |Salida"
-MOV_ENTRADAS: str = "Tranf desde |Transf Recibida|Entrada "
-MOV_DEVOLUCIONES: str = "Devolucion"
 
 
 # Colors

@@ -18,6 +18,10 @@ class ScrapEnum(UppercaseStrEnum):
     WEB = auto()
     LOCAL = auto()
 
+class MovimientoEnum(UppercaseStrEnum):
+    SALIDAS = auto()
+    ENTRADAS = auto()
+    DEVOLUCIONES = auto()
 
 class CabecerasEnum(PascalCaseStrEnum):
     @staticmethod
