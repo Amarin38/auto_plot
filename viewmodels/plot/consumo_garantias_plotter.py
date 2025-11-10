@@ -1,8 +1,8 @@
 import plotly.graph_objects as go
 
 from config.constants import COLORS
-from infrastructure.db.crud_services import ServiceRead
-from infrastructure.db.models.services_model.consumo_garantias_model import ConsumoGarantiasModel
+from infrastructure.repositories.services.crud_services import ServiceRead
+from infrastructure.db.models.services.consumo_garantias_model import ConsumoGarantiasModel
 from utils.exception_utils import execute_safely
 from utils.streamlit_utils import update_layout
 

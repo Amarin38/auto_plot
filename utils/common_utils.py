@@ -4,10 +4,10 @@ from zipfile import BadZipFile
 
 import pandas as pd
 
-from typing import List, Tuple
+from typing import List
 
 from utils.exception_utils import execute_safely
-from infrastructure.db.crud_common import CommonRead
+from infrastructure.repositories.common.crud_common import CommonRead
 
 
 class CommonUtils:

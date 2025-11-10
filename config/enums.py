@@ -3,6 +3,10 @@ from strenum import UppercaseStrEnum, StrEnum, PascalCaseStrEnum
 
 from config.dataclasses import Cabeceras
 
+class TipoCargarEnum(PascalCaseStrEnum):
+    UNICO = auto()
+    MULTIPLE = auto()
+
 
 class WithZeroEnum(UppercaseStrEnum):
     ZERO = auto()

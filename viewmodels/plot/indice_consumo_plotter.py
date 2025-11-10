@@ -6,8 +6,8 @@ import plotly.graph_objects as go
 from config.constants import COLORS
 from config.enums import IndexTypeEnum
 
-from infrastructure.db.crud_services import ServiceRead
-from infrastructure.db.models.services_model.indice_consumo_model import IndiceConsumoModel
+from infrastructure.repositories.services.crud_services import ServiceRead
+from infrastructure.db.models.services.indice_consumo_model import IndiceConsumoModel
 
 from utils.exception_utils import execute_safely
 from utils.streamlit_utils import update_layout, devolver_fecha, top_right_legend

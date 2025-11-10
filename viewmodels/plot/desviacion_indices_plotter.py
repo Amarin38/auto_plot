@@ -3,8 +3,8 @@ import plotly.graph_objects as go
 
 from config.constants import COLORS, FILE_STRFTIME_DMY
 
-from infrastructure.db.crud_services import ServiceRead
-from infrastructure.db.models.services_model.desviacion_indices_model import DesviacionIndicesModel
+from infrastructure.repositories.services.crud_services import ServiceRead
+from infrastructure.db.models.services.desviacion_indices_model import DesviacionIndicesModel
 
 from utils.exception_utils import execute_safely
 from utils.streamlit_utils import update_layout, top_right_legend

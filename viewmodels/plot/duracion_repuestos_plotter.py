@@ -4,9 +4,9 @@ import pandas as pd
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 
-from infrastructure.db.crud_services import ServiceRead
-from infrastructure.db.models.services_model.distribucion_normal_model import DistribucionNormalModel
-from infrastructure.db.models.services_model.duracion_repuestos_model import DuracionRepuestosModel
+from infrastructure.repositories.services.crud_services import ServiceRead
+from infrastructure.db.models.services.distribucion_normal_model import DistribucionNormalModel
+from infrastructure.db.models.services.duracion_repuestos_model import DuracionRepuestosModel
 
 from utils.exception_utils import execute_safely
 from utils.streamlit_utils import update_layout
