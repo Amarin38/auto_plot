@@ -1,0 +1,42 @@
+import pandas as pd
+
+from domain.entities.services.maximos_minimos import MaximosMinimos
+from infrastructure.repositories.services.maximos_minimos_repository import MaximosMinimosRepository
+
+
+class MaximosMinimosVM:
+    def __init__(self) -> None:
+        self.repo = MaximosMinimosRepository()
+
+    def save_df(self, df) -> None:
+        entities = []
+
+        for _, row in df.iterrows():
+            entity = MaximosMinimos(
+                id          = None,
+                Familia     = row['Familia'],
+                Articulo    = row['Articulo'],
+                Repuesto    = row['Repuesto'],
+                Minimo      = row['Minimo'],
+                Maximo      = row['Maximo'],
+            )
+            entities.append(entity)
+
+        self.repo.insert_many(entities)
+
+    def get_df(self) -> pd.DataFrame:
+        entities = self.repo.get_all()
+
+        data = [
+            {
+                "id"        : e.id,
+                "Familia"   : e.Familia,
+                "Articulo"  : e.Articulo,
+                "Repuesto"  : e.Repuesto,
+                "Minimo"    : e.Minimo,
+                "Maximo"    : e.Maximo
+            }
+            for e in entities
+        ]
+
+        return pd.DataFrame(data)

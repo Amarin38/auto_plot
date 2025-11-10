@@ -1,8 +1,10 @@
 from dataclasses import dataclass
+from typing import Optional
+
 
 @dataclass
 class MaximosMinimos:
-    id: int
+    id: Optional[int]
     Familia: int
     Articulo: int
     Repuesto: str

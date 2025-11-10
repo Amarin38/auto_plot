@@ -4,6 +4,7 @@ import pandas as pd
 
 from config.enums import ScrapEnum
 from infrastructure.repositories.services.crud_services import df_to_db
+from viewmodels.maximos_minimos_vm import MaximosMinimosVM
 from viewmodels.services.scraping.scrape_maximos_minimos import ScrapMaxMin
 from utils.exception_utils import execute_safely
 
@@ -27,8 +28,8 @@ class MaxMin:
             # print(div_seis_meses.loc[(df_final["Familia"] == 112) & (df_final["Articulo"] == 23)])
 
             df_final = df_final[["Familia", "Articulo", "Repuesto", "Minimo", "Maximo"]]
-            
-            df_to_db("maximos_minimos", df_final)
+
+            MaximosMinimosVM().save_df(df_final)
 
 
     @staticmethod
