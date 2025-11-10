@@ -7,6 +7,7 @@ from config.enums import IndexTypeEnum
 from infrastructure.db.models.common.coches_cabecera_model import CochesCabeceraModel
 
 from utils.exception_utils import execute_safely
+from viewmodels.indice_consumo_vm import IndiceConsumoVM
 
 from viewmodels.services.data_cleaning.listado_data_cleaner import InventoryDataCleaner
 
@@ -63,7 +64,8 @@ class Index:
             if filtro is not None:
                 df_rate = self.cleaner.filter(df_rate, 'Repuesto', filtro, 'startswith')
 
-            df_to_db('indice_consumo', df_rate) # guardo el proyecto en la base de datos
+            IndiceConsumoVM().save_df(df_rate)
+            # df_to_db('indice_consumo', df_rate) # guardo el proyecto en la base de datos
         else:
             print('El df está vacío.')
 

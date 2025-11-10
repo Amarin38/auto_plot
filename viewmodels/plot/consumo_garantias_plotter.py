@@ -9,7 +9,7 @@ from viewmodels.consumo_garantias_vm import ConsumoGarantiasVM
 
 
 class ConsumoGarantiasPlotter:
-    def __init__(self, cabecera, tipo_repuesto):
+    def __init__(self, tipo_repuesto, cabecera):
         self.df_data = ConsumoGarantiasVM().get_df_by_tipo_rep_and_cabecera(tipo_repuesto, cabecera)
         # self.df_data = ServiceRead().by_rep_and_cabecera(ConsumoGarantiasModel, cabecera, tipo_repuesto)
 

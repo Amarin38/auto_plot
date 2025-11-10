@@ -20,7 +20,7 @@ def falla_equipos_garantias():
 
         pie, bar = st.tabs(TABS_FALLAS)
 
-        if cabecera is not None and tipo_repuesto is not None:
+        if cabecera and tipo_repuesto:
             with pie:
                 pie_plot = FallasGarantiasPlotter(tipo_repuesto, cabecera).create_plot()
                 st.plotly_chart(pie_plot)

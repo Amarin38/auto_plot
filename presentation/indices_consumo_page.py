@@ -17,13 +17,12 @@ def indices_consumo() -> None:
     repuesto = select_box_tipo_repuesto(config_col, "INDEX_REPUESTO")
     tipo_indice = select_box_tipo_indice(config_col, "INDEX_TIPO_INDICE")
 
-    figs, titulo = IndexPlotter(tipo_indice, repuesto).create_plot()
-
     if repuesto and tipo_indice:
+        figs, titulo = IndexPlotter(tipo_indice, repuesto).create_plot()
         centered_title(titulo_col, titulo)
 
-    with graficos_col.container(height=MULTIPLE_PLOT_BOX_HEIGHT):
-        for fig in figs if figs is not None else figs:
-            with st.container(height=PLOT_BOX_HEIGHT):
-                st.plotly_chart(fig)
+        with graficos_col.container(height=MULTIPLE_PLOT_BOX_HEIGHT):
+            for fig in figs if figs is not None else figs:
+                with st.container(height=PLOT_BOX_HEIGHT):
+                    st.plotly_chart(fig)
 

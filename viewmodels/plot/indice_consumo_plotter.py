@@ -11,13 +11,14 @@ from infrastructure.db.models.services.indice_consumo_model import IndiceConsumo
 
 from utils.exception_utils import execute_safely
 from utils.streamlit_utils import update_layout, devolver_fecha, top_right_legend
+from viewmodels.indice_consumo_vm import IndiceConsumoVM
 
 
 class IndexPlotter:
     def __init__(self, index_type: IndexTypeEnum, tipo_rep: str) -> None:
         self.tipo_rep = tipo_rep
-        self.df = ServiceRead().by_rep_and_index(IndiceConsumoModel, self.tipo_rep, index_type)
-
+        # self.df = ServiceRead().by_rep_and_index(IndiceConsumoModel, self.tipo_rep, index_type)
+        self.df = IndiceConsumoVM().get_df_tipo_repuesto_and_tipo_indice(tipo_rep, index_type)
 
     @execute_safely
     def create_plot(self) -> tuple[list, str]:
