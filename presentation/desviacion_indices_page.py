@@ -4,6 +4,7 @@ from infrastructure.repositories.services.crud_services import ServiceRead
 from infrastructure.db.models.services.desviacion_indices_model import DesviacionIndicesModel
 
 from config.constants import FULL_PLOT_BOX_HEIGHT, TAB_BOX_HEIGHT, PAG_DESVIACION_INDICES, COLORS
+from viewmodels.desviacion_indices_vm import DesviacionIndicesVM
 from viewmodels.plot.desviacion_indices_plotter import DeviationPlotter
 from utils.exception_utils import execute_safely
 
@@ -45,4 +46,4 @@ def desviacion_indices():
                       superó la media en cada índice de consumo.\n
                     """, unsafe_allow_html=True)
         with data:
-            st.dataframe(ServiceRead().all_df(DesviacionIndicesModel), height=FULL_PLOT_BOX_HEIGHT)
+            st.dataframe(DesviacionIndicesVM().get_df(), height=FULL_PLOT_BOX_HEIGHT)
