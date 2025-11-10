@@ -4,20 +4,16 @@ import pandas as pd
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 
-from infrastructure.repositories.services.crud_services import ServiceRead
-from infrastructure.db.models.services.distribucion_normal_model import DistribucionNormalModel
-from infrastructure.db.models.services.duracion_repuestos_model import DuracionRepuestosModel
-
 from utils.exception_utils import execute_safely
 from utils.streamlit_utils import update_layout
+from viewmodels.distribucion_normal_vm import DistribucionNormalVM
+from viewmodels.duracion_repuestos_vm import DuracionRepuestosVM
 
 
 class DuracionRepuestosPlotter:
     def __init__(self, repuesto: str):
-        db = ServiceRead()
-
-        self.df_duracion = db.by_repuesto(DuracionRepuestosModel, repuesto)
-        self.df_distribucion = db.by_repuesto(DistribucionNormalModel, repuesto)
+        self.df_duracion = DuracionRepuestosVM().get_df_by_repuesto(repuesto)
+        self.df_distribucion = DistribucionNormalVM().get_df_by_repuesto(repuesto)
 
     def create_plot(self):
         fecha_min = self.df_duracion["FechaCambio"].min()

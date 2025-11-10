@@ -5,11 +5,13 @@ from infrastructure.repositories.services.crud_services import ServiceRead
 from infrastructure.db.models.services.consumo_garantias_model import ConsumoGarantiasModel
 from utils.exception_utils import execute_safely
 from utils.streamlit_utils import update_layout
+from viewmodels.consumo_garantias_vm import ConsumoGarantiasVM
 
 
 class ConsumoGarantiasPlotter:
     def __init__(self, cabecera, tipo_repuesto):
-        self.df_data = ServiceRead().by_rep_and_cabecera(ConsumoGarantiasModel, cabecera, tipo_repuesto)
+        self.df_data = ConsumoGarantiasVM().get_df_by_tipo_rep_and_cabecera(tipo_repuesto, cabecera)
+        # self.df_data = ServiceRead().by_rep_and_cabecera(ConsumoGarantiasModel, cabecera, tipo_repuesto)
 
 
     @execute_safely

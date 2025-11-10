@@ -1,8 +1,10 @@
 from dataclasses import dataclass
+from typing import Optional
+
 
 @dataclass
 class DistribucionNormal:
-    id: int
+    id: Optional[int]
     Años: int
     Cambio: int
     Cabecera: str

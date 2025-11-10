@@ -4,7 +4,8 @@ import pandas as pd
 from utils.common_utils import CommonUtils
 from utils.exception_utils import execute_safely
 
-from infrastructure.repositories.services.crud_services import df_to_db
+from viewmodels.desviacion_indices_vm import DesviacionIndicesVM
+
 
 class DeviationTrend:
     def __init__(self) -> None:
@@ -34,4 +35,4 @@ class DeviationTrend:
         media_cabecera["FechaCompleta"] = pd.Timestamp.today().dt.date # type: ignore
         # media_cabecera["FechaCompleta"] = media_cabecera["FechaCompleta"].dt.date
 
-        df_to_db("desviacion_indices", media_cabecera)
+        DesviacionIndicesVM().save_df(media_cabecera)

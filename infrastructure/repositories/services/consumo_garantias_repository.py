@@ -32,7 +32,7 @@ class ConsumoGarantiasRepository:
             return [ConsumoGarantiasMapper.to_entity(m) for m in models]
 
 
-    def get_by_id(self, _id) -> ConsumoGarantias:
+    def get_by_id(self, _id: int) -> ConsumoGarantias:
         with self.session as session:
             model = session.scalars(
                 select(ConsumoGarantiasModel)
@@ -43,8 +43,19 @@ class ConsumoGarantiasRepository:
             return ConsumoGarantiasMapper.to_entity(model)
 
 
+    def get_by_tipo_rep_and_cabecera(self, tipo_repuesto: str, cabecera: str) -> List[ConsumoGarantias]:
+        with self.session as session:
+            models = session.scalars(
+                select(ConsumoGarantiasModel)
+                .where(ConsumoGarantiasModel.TipoRepuesto == tipo_repuesto,
+                       ConsumoGarantiasModel.Cabecera == cabecera)
+            ).all()
+
+            return [ConsumoGarantiasMapper.to_entity(m) for m in models]
+
+
     # Delete -------------------------------------------
-    def delete_by_id(self, _id) -> None:
+    def delete_by_id(self, _id: int) -> None:
         with self.session as session:
             with session.begin():
                 row = session.get(ConsumoGarantiasModel, _id)

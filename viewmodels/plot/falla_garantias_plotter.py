@@ -12,12 +12,13 @@ from infrastructure.db.models.common.datos_garantias_model import DatosGarantias
 
 from utils.exception_utils import execute_safely
 from utils.streamlit_utils import update_layout, top_right_legend
+from viewmodels.falla_garantias_vm import FallaGarantiasVM
 
 
 class FallasGarantiasPlotter:
-    def __init__(self, cabecera: str, tipo_repuesto: str) -> None:
+    def __init__(self, tipo_repuesto: str, cabecera: str) -> None:
         read = CommonRead()
-        self.df_data = ServiceRead.by_rep_and_cabecera(FallaGarantiasModel, cabecera, tipo_repuesto)
+        self.df_data = FallaGarantiasVM().get_df_by_tipo_rep_and_cabecera(tipo_repuesto, cabecera)
         self.min_date: dt = read.min_date(DatosGarantiasModel).strftime(PAGE_STRFTIME_YMD)
         self.max_date: dt = read.max_date(DatosGarantiasModel).strftime(PAGE_STRFTIME_YMD)
 

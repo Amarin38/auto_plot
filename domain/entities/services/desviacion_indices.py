@@ -1,9 +1,11 @@
 from dataclasses import dataclass
 from datetime import date
+from typing import Optional
+
 
 @dataclass
 class DesviacionIndices:
-    id: int
+    id: Optional[int]
     Cabecera: str
     MediaCabecera: float
     MediaDeMedias: float

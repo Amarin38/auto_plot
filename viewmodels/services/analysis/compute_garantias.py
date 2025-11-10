@@ -1,8 +1,8 @@
 import pandas as pd
 
 from utils.exception_utils import execute_safely
-from viewmodels.df.consumo_garantias_vm import ConsumoGarantiasVM
-from viewmodels.df.falla_garantias_vm import FallaGarantiasVM
+from viewmodels.consumo_garantias_vm import ConsumoGarantiasVM
+from viewmodels.falla_garantias_vm import FallaGarantiasVM
 
 @execute_safely
 def compute_consumo_garantias(df: pd.DataFrame, tipo_repuesto: str) -> None:

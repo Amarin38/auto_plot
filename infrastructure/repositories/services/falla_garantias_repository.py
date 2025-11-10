@@ -32,7 +32,7 @@ class FallaGarantiasRepository:
             return [FallaGarantiasMapper.to_entity(m) for m in models]
 
 
-    def get_by_id(self, _id) -> FallaGarantias:
+    def get_by_id(self, _id: int) -> FallaGarantias:
         with self.session as session:
             model = session.scalars(
                 select(FallaGarantiasModel)
@@ -43,8 +43,19 @@ class FallaGarantiasRepository:
             return FallaGarantiasMapper.to_entity(model)
 
 
+    def get_by_tipo_rep_and_cabecera(self, tipo_repuesto: str, cabecera: str) -> List[FallaGarantias]:
+        with self.session as session:
+            models = session.scalars(
+                select(FallaGarantiasModel)
+                .where(FallaGarantiasModel.TipoRepuesto == tipo_repuesto,
+                       FallaGarantiasModel.Cabecera == cabecera)
+            ).all()
+
+        return [FallaGarantiasMapper.to_entity(m) for m in models]
+
+
     # Delete -------------------------------------------
-    def delete_by_id(self, _id) -> None:
+    def delete_by_id(self, _id: int) -> None:
         with self.session as session:
             with session.begin():
                 row = session.get(FallaGarantiasModel, _id)

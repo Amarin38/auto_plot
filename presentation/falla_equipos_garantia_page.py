@@ -20,10 +20,12 @@ def falla_equipos_garantias():
 
         pie, bar = st.tabs(TABS_FALLAS)
 
-        with pie:
-            pie_plot = FallasGarantiasPlotter(cabecera, tipo_repuesto).create_plot()
-            st.plotly_chart(pie_plot)
+        if cabecera is not None and tipo_repuesto is not None:
+            with pie:
+                pie_plot = FallasGarantiasPlotter(tipo_repuesto, cabecera).create_plot()
+                st.plotly_chart(pie_plot)
 
-        with bar:
-            consumo_plot = ConsumoGarantiasPlotter(cabecera, tipo_repuesto).create_plot()
-            st.plotly_chart(consumo_plot)
+            with bar:
+
+                consumo_plot = ConsumoGarantiasPlotter(tipo_repuesto, cabecera).create_plot()
+                st.plotly_chart(consumo_plot)

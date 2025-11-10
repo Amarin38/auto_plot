@@ -5,6 +5,8 @@ from scipy.stats import norm
 from config.constants import FILTRO_OBS
 from infrastructure.repositories.services.crud_services import df_to_db
 from utils.exception_utils import execute_safely
+from viewmodels.distribucion_normal_vm import DistribucionNormalVM
+from viewmodels.duracion_repuestos_vm import DuracionRepuestosVM
 
 
 class DuracionRepuestos:
@@ -53,8 +55,8 @@ class DuracionRepuestos:
         else:
             df_distribucion_normal = self.calcular_distribucion_normal_cabecera(df_duracion, cambios)
 
-        df_to_db("duracion_repuestos", df_duracion)
-        df_to_db("distribucion_normal", df_distribucion_normal)
+        DuracionRepuestosVM().save_df(df_duracion)
+        DistribucionNormalVM().save_df(df_distribucion_normal)
 
 
     @execute_safely
