@@ -7,10 +7,6 @@ from config.constants import COLORS, FILE_STRFTIME_YMD
 from utils.exception_utils import execute_safely
 from utils.streamlit_utils import update_layout, devolver_fecha, range_slider, top_right_legend
 
-from infrastructure.repositories.services.crud_services import ServiceRead
-
-from infrastructure.db.models.services.prevision_model import PrevisionModel
-from infrastructure.db.models.services.prevision_data_model import PrevisionDataModel
 from viewmodels.prevision_data_vm import PrevisionDataVM
 from viewmodels.prevision_vm import PrevisionVM
 

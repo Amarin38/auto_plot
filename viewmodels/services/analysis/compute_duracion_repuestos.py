@@ -3,7 +3,6 @@ import pandas as pd
 from scipy.stats import norm
 
 from config.constants import FILTRO_OBS
-from infrastructure.repositories.services.crud_services import df_to_db
 from utils.exception_utils import execute_safely
 from viewmodels.distribucion_normal_vm import DistribucionNormalVM
 from viewmodels.duracion_repuestos_vm import DuracionRepuestosVM

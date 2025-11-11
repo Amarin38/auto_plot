@@ -1,3 +1,4 @@
+multipledispatch
 scipy
 beautifulsoup4==4.14.2
 numpy==2.3.3

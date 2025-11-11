@@ -3,8 +3,6 @@ import streamlit as st
 from config.constants import TODAY_DATE_FILE, DATAFRAME_HEIGHT, PAG_maximos_minimos
 from utils.exception_utils import execute_safely
 from utils.streamlit_utils import download_df, to_excel
-from infrastructure.repositories.services.crud_services import ServiceRead
-from infrastructure.db.models.services.maximos_minimos_model import MaximosMinimosModel
 from viewmodels.maximos_minimos_vm import MaximosMinimosVM
 
 

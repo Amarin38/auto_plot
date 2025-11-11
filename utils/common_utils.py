@@ -7,7 +7,7 @@ import pandas as pd
 from typing import List
 
 from utils.exception_utils import execute_safely
-from infrastructure.repositories.common.crud_common import CommonRead
+from viewmodels.json_config_vm import JSONConfigVM
 
 
 class CommonUtils:
@@ -79,14 +79,18 @@ class CommonUtils:
     @execute_safely
     def upd_column_by_dict(df: pd.DataFrame, json_col: str) -> pd.DataFrame:
         """ Updates all the columns by the json file indicated. """
-        return df.rename(columns=CommonRead().json_config(json_col))
+        return df.rename(
+            columns=JSONConfigVM().get_df_by_id(json_col)
+        )
 
 
     @staticmethod
     @execute_safely
     def upd_rows_by_dict(df: pd.DataFrame, json_col: str, column: str) -> pd.DataFrame:
         """ Updates rows in the column specified by the json file indicated. """
-        df[column] = df[column].replace(CommonRead().json_config(json_col))
+        df[column] = df[column].replace(
+            JSONConfigVM().get_df_by_id(json_col)
+        )
         return df
 
 

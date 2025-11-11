@@ -3,7 +3,6 @@ import pandas as pd
 from statsmodels.tsa.holtwinters import ExponentialSmoothing
 
 from config.constants import T_RED, RESET, T_YELLOW, T_ORANGE, T_BLUE
-from infrastructure.repositories.services.crud_services import df_to_db
 from utils.exception_utils import execute_safely
 from viewmodels.prevision_data_vm import PrevisionDataVM
 from viewmodels.prevision_vm import PrevisionVM

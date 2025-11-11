@@ -4,21 +4,17 @@ import numpy as np
 from typing import Optional
 
 from config.enums import IndexTypeEnum
-from infrastructure.db.models.common.coches_cabecera_model import CochesCabeceraModel
 
 from utils.exception_utils import execute_safely
+
+from viewmodels.coches_cabecera_vm import CochesCabeceraVM
 from viewmodels.indice_consumo_vm import IndiceConsumoVM
-
 from viewmodels.services.data_cleaning.listado_data_cleaner import InventoryDataCleaner
-
-from infrastructure.repositories.services.crud_services import df_to_db
-from infrastructure.repositories.common.crud_common import CommonRead
 
 
 class Index:
     def __init__(self, ) -> None:
         self.cleaner = InventoryDataCleaner()
-        self.read = CommonRead()
 
     @execute_safely
     def calculate(self, df: pd.DataFrame, tipo_rep: str, tipo_op: IndexTypeEnum, filtro: Optional[str] = None) -> None:
@@ -38,15 +34,9 @@ class Index:
 
             match tipo_op:
                 case IndexTypeEnum.VEHICULO: 
-                    df_vehicles = self.read.all_df(CochesCabeceraModel)
+                    df_vehicles = CochesCabeceraVM().get_df()
                     df_mod = grouped.merge(df_vehicles, on='Cabecera', how='left')
                     df_mod['IndiceConsumo'] = (df_mod['Cantidad'] * 100) / df_mod['CantidadCoches']
-                # case IndexTypeEnum.MOTOR:
-                #     df_motors = self.read.all_df(MotoresCabeceraModel)
-                #     df_mod = grouped.merge(df_motors, on=['Cabecera', 'Repuesto'], how='right')
-                #     df_mod['IndiceConsumo'] = (df_mod['Cantidad'] * 100) / df_mod['CantidadMotores']
-                #     # TODO: arreglar para que funcione con motor
-                    
 
             df_rate = df_mod.rename(columns={'Cantidad':'TotalConsumo',
                                              'Precio':'TotalCoste'})[['Cabecera', 'Repuesto', 'TotalConsumo', 'TotalCoste', 'IndiceConsumo']]
@@ -65,25 +55,6 @@ class Index:
                 df_rate = self.cleaner.filter(df_rate, 'Repuesto', filtro, 'startswith')
 
             IndiceConsumoVM().save_df(df_rate)
-            # df_to_db('indice_consumo', df_rate) # guardo el proyecto en la base de datos
         else:
             print('El df está vacío.')
 
-
-    # def calculate_by_motor(self, df: pd.DataFrame, tipo: str) -> None:
-    #     df_motors = self.domain.db_to_df(MotoresCabeceraModel)
-        
-    #     if not df.empty:
-    #         grouped = df.groupby(['Cabecera', 'Repuesto']).agg({'Cantidad':'sum'}).reset_index()
-
-    #         df_with_motors = grouped.merge(df_motors, on=['Cabecera', 'Repuesto'], how='right') # hago join con la cantidad de coches para hacer el cálculo
-    #         df_with_motors['IndiceConsumo'] = round((df_with_motors['Cantidad']*100) / df_with_motors['CantidadMotores'], 1) # hago el cálculo y se lo asigno a una nueva columna
-
-    #         df_rate = df_with_motors[['Cabecera', 'Repuesto', 'IndiceConsumo']]
-    #         df_rate['IndiceConsumo'].replace([np.inf, -np.inf], np.nan, inplace=True)
-
-    #         df_rate.dropna(subset=['IndiceConsumo'], inplace=True)
-    #         df_rate.insert(2, 'TipoRepuesto', tipo)
-    #         df_rate['TipoOperacion'] = IndexTypeEnum.MOTOR
-    #     else:
-    #         print('El df está vacío.')

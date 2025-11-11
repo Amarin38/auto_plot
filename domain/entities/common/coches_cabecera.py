@@ -1,8 +1,10 @@
 from dataclasses import dataclass
+from typing import Optional
+
 
 @dataclass
 class CochesCabecera:
-    id: int
+    id: Optional[int]
     Cabecera: str
     CantidadCoches: int
     CantidadCochesNew: int

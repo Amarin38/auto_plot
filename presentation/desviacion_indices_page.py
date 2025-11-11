@@ -1,8 +1,5 @@
 import streamlit as st
 
-from infrastructure.repositories.services.crud_services import ServiceRead
-from infrastructure.db.models.services.desviacion_indices_model import DesviacionIndicesModel
-
 from config.constants import FULL_PLOT_BOX_HEIGHT, TAB_BOX_HEIGHT, PAG_DESVIACION_INDICES, COLORS
 from viewmodels.desviacion_indices_vm import DesviacionIndicesVM
 from viewmodels.plot.desviacion_indices_plotter import DeviationPlotter

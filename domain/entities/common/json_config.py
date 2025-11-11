@@ -1,9 +1,9 @@
 from dataclasses import dataclass
-from typing import Dict, Any
+from typing import Dict, Any, Optional
 
 
 @dataclass
 class JSONConfig:
-    id: int
+    id: Optional[int]
     nombre: str
     data: Dict[str, Any]

@@ -2,9 +2,10 @@ import pandas as pd
 
 from domain.entities.services.distribucion_normal import DistribucionNormal
 from infrastructure.repositories.services.distribucion_normal_repository import DistribucionNormalRepository
+from interfaces.viewmodel import ViewModel
 
 
-class DistribucionNormalVM:
+class DistribucionNormalVM(ViewModel):
     def __init__(self) -> None:
         self.repo = DistribucionNormalRepository()
 
