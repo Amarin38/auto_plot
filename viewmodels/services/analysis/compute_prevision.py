@@ -5,6 +5,8 @@ from statsmodels.tsa.holtwinters import ExponentialSmoothing
 from config.constants import T_RED, RESET, T_YELLOW, T_ORANGE, T_BLUE
 from infrastructure.repositories.services.crud_services import df_to_db
 from utils.exception_utils import execute_safely
+from viewmodels.prevision_data_vm import PrevisionDataVM
+from viewmodels.prevision_vm import PrevisionVM
 
 
 @execute_safely
@@ -40,7 +42,7 @@ def create_forecast(df: pd.DataFrame, tipo_repuesto: str):
             data["Repuesto"] = rep
             data["TipoRepuesto"] = tipo_repuesto
             data["FechaCompleta"] = data["FechaCompleta"].dt.date
-            df_to_db("prevision_data", data)
+            PrevisionDataVM().save_df(data)
 
             prevision: pd.DataFrame = prevision.to_frame("Prevision").reset_index()# type: ignore
             prevision.columns = ["FechaCompleta", "Prevision"]
@@ -49,7 +51,7 @@ def create_forecast(df: pd.DataFrame, tipo_repuesto: str):
             prevision["Repuesto"] = rep
             prevision["TipoRepuesto"] = tipo_repuesto
             prevision["FechaCompleta"] = prevision["FechaCompleta"].dt.date
-            df_to_db("prevision", prevision)
+            PrevisionVM().save_df(prevision)
 
         except ValueError:
             print(f"""
@@ -57,14 +59,3 @@ def create_forecast(df: pd.DataFrame, tipo_repuesto: str):
         {T_ORANGE} Faltan datos del repuesto:{RESET} {T_BLUE}{rep}{RESET}
         """)
             pass
-
-    # params = fit.model.params
-    # print("Parámetros encontrados:")
-    # for key, value in params.items():
-    #     if isinstance(value, float):
-    #         print(f"{key}: {value:.3f}")
-    #     else:
-    #         print(f"{key}: {value}")
-    #
-    # print("\nPronósticos:")
-    # print(prevision)

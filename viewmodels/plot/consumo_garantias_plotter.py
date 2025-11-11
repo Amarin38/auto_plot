@@ -1,8 +1,8 @@
+from typing import Union
+
 import plotly.graph_objects as go
 
 from config.constants import COLORS
-from infrastructure.repositories.services.crud_services import ServiceRead
-from infrastructure.db.models.services.consumo_garantias_model import ConsumoGarantiasModel
 from utils.exception_utils import execute_safely
 from utils.streamlit_utils import update_layout
 from viewmodels.consumo_garantias_vm import ConsumoGarantiasVM
@@ -11,63 +11,63 @@ from viewmodels.consumo_garantias_vm import ConsumoGarantiasVM
 class ConsumoGarantiasPlotter:
     def __init__(self, tipo_repuesto, cabecera):
         self.df_data = ConsumoGarantiasVM().get_df_by_tipo_rep_and_cabecera(tipo_repuesto, cabecera)
-        # self.df_data = ServiceRead().by_rep_and_cabecera(ConsumoGarantiasModel, cabecera, tipo_repuesto)
 
 
     @execute_safely
-    def create_plot(self):
-        x_data = self.df_data["Repuesto"]
-        y_garantias = self.df_data["Garantia"]
-        y_transfer = self.df_data["Transferencia"]
-        diferencia_gar = self.df_data["PorcentajeGarantia"]
-        diferencia_transfer = self.df_data["PorcentajeTransferencia"]
+    def create_plot(self) -> Union[go.Figure, None]:
+        if not self.df_data.empty:
+            x_data = self.df_data["Repuesto"]
+            y_garantias = self.df_data["Garantia"]
+            y_transfer = self.df_data["Transferencia"]
+            diferencia_gar = self.df_data["PorcentajeGarantia"]
+            diferencia_transfer = self.df_data["PorcentajeTransferencia"]
 
-        fig = go.Figure()
+            fig = go.Figure()
 
-        fig.add_trace(go.Bar(
-            x=x_data,
-            y=y_garantias,
-            name="Garantias",
+            fig.add_trace(go.Bar(
+                x=x_data,
+                y=y_garantias,
+                name="Garantias",
 
-            text=diferencia_gar,
-            textposition="outside",
-            textfont=dict(
-                size=15,
-                color='white',
-                family='Arial'
-            ),
+                text=diferencia_gar,
+                textposition="outside",
+                textfont=dict(
+                    size=15,
+                    color='white',
+                    family='Arial'
+                ),
 
-            marker=dict(color=COLORS[1])
-        ))
+                marker=dict(color=COLORS[1])
+            ))
 
-        fig.add_trace(go.Bar(
-            x=x_data,
-            y=y_transfer,
-            name="Transferencia",
+            fig.add_trace(go.Bar(
+                x=x_data,
+                y=y_transfer,
+                name="Transferencia",
 
-            text=diferencia_transfer,
-            textposition="outside",
-            textfont=dict(
-                size=15,
-                color='white',
-                family='Arial'
-            ),
+                text=diferencia_transfer,
+                textposition="outside",
+                textfont=dict(
+                    size=15,
+                    color='white',
+                    family='Arial'
+                ),
 
-            marker=dict(color=COLORS[12])
-        ))
-        update_layout(fig,'', 'Repuesto', 'Consumo', height=665)
+                marker=dict(color=COLORS[12])
+            ))
+            update_layout(fig,'', 'Repuesto', 'Consumo', height=665)
 
-        fig.update_layout(
-            legend=dict(
-                orientation='h',
-                yanchor='top',
-                y=1.15,
-                xanchor='left',
-                x=-0.01,
-                font=dict(size=13),
-                bgcolor=COLORS[4],
-                bordercolor=COLORS[5],
-            ),
-        )
-
-        return fig
+            fig.update_layout(
+                legend=dict(
+                    orientation='h',
+                    yanchor='top',
+                    y=1.15,
+                    xanchor='left',
+                    x=-0.01,
+                    font=dict(size=13),
+                    bgcolor=COLORS[4],
+                    bordercolor=COLORS[5],
+                ),
+            )
+            return fig
+        return None

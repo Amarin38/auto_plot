@@ -1,13 +1,11 @@
 from datetime import datetime as dt
+from typing import Union
 
 import plotly.graph_objects as go
 
 from config.constants import PIE_PLOT_HEIGHT, PIE_PLOT_WIDTH, PIE_FONT_SIZE, PAGE_STRFTIME_YMD
 
 from infrastructure.repositories.common.crud_common import CommonRead
-from infrastructure.repositories.services.crud_services import ServiceRead
-
-from infrastructure.db.models.services.falla_garantias_model import FallaGarantiasModel
 from infrastructure.db.models.common.datos_garantias_model import DatosGarantiasModel
 
 from utils.exception_utils import execute_safely
@@ -24,28 +22,30 @@ class FallasGarantiasPlotter:
 
 
     @execute_safely
-    def create_plot(self):
-        labels = self.df_data["Repuesto"]
-        values = self.df_data["PromedioTiempoFalla"]
-        text = self.df_data["PromedioTiempoFalla"].astype(str)
+    def create_plot(self) -> Union[go.Figure, None]:
+        if not self.df_data.empty and self.min_date is not None and self.max_date is not None:
+            labels = self.df_data["Repuesto"]
+            values = self.df_data["PromedioTiempoFalla"]
+            text = self.df_data["PromedioTiempoFalla"].astype(str)
 
-        fig = go.Figure()
+            fig = go.Figure()
 
-        fig.add_trace(go.Pie(
-                labels=labels,
-                values=values,
-                text=text,
-                textfont=dict(size=PIE_FONT_SIZE),
-                name='Fallos',
-                insidetextorientation='horizontal',
-                textposition='auto'
-        ))
+            fig.add_trace(go.Pie(
+                    labels=labels,
+                    values=values,
+                    text=text,
+                    textfont=dict(size=PIE_FONT_SIZE),
+                    name='Fallos',
+                    insidetextorientation='horizontal',
+                    textposition='auto'
+            ))
 
-        fig.update_traces(
-            hoverinfo='label+value+percent',
-            textinfo='value+percent',
-        )
+            fig.update_traces(
+                hoverinfo='label+value+percent',
+                textinfo='value+percent',
+            )
 
-        update_layout(fig, f'Fallos ({self.min_date} - {self.max_date})', '', '', PIE_PLOT_HEIGHT, PIE_PLOT_WIDTH)
-        top_right_legend(fig)
-        return fig
+            update_layout(fig, f'Fallos ({self.min_date} - {self.max_date})', '', '', PIE_PLOT_HEIGHT, PIE_PLOT_WIDTH)
+            top_right_legend(fig)
+            return fig
+        return None

@@ -6,7 +6,7 @@ from utils.exception_utils import execute_safely
 from viewmodels.plot.indice_consumo_plotter import  IndexPlotter
 
 from config.constants import (MULTIPLE_PLOT_BOX_HEIGHT, PLOT_BOX_HEIGHT, DISTANCE_COLS_CENTER_TITLE,
-                              DISTANCE_COLS_SELECTBIGGER_PLOT, PAG_INDICES)
+                              DISTANCE_COLS_SELECTBIGGER_PLOT, PAG_INDICES, SELECT_BOX_HEIGHT)
 
 @execute_safely
 def indices_consumo() -> None:
@@ -19,10 +19,16 @@ def indices_consumo() -> None:
 
     if repuesto and tipo_indice:
         figs, titulo = IndexPlotter(tipo_indice, repuesto).create_plot()
-        centered_title(titulo_col, titulo)
 
-        with graficos_col.container(height=MULTIPLE_PLOT_BOX_HEIGHT):
-            for fig in figs if figs is not None else figs:
-                with st.container(height=PLOT_BOX_HEIGHT):
-                    st.plotly_chart(fig)
+        if figs is None and titulo is None:
+            with graficos_col.container(height=SELECT_BOX_HEIGHT):
+                st.text("No hay datos de este repuesto.")
+
+        else:
+            centered_title(titulo_col, titulo)
+
+            with graficos_col.container(height=MULTIPLE_PLOT_BOX_HEIGHT):
+                for fig in figs if figs is not None else figs:
+                    with st.container(height=PLOT_BOX_HEIGHT):
+                        st.plotly_chart(fig)
 

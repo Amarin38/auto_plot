@@ -23,9 +23,14 @@ def falla_equipos_garantias():
         if cabecera and tipo_repuesto:
             with pie:
                 pie_plot = FallasGarantiasPlotter(tipo_repuesto, cabecera).create_plot()
-                st.plotly_chart(pie_plot)
+                if pie_plot is None:
+                    pie.write("No existe información de la cabecera o el repuesto.")
+                else:
+                    st.plotly_chart(pie_plot)
 
             with bar:
-
-                consumo_plot = ConsumoGarantiasPlotter(tipo_repuesto, cabecera).create_plot()
-                st.plotly_chart(consumo_plot)
+                bar_plot = ConsumoGarantiasPlotter(tipo_repuesto, cabecera).create_plot()
+                if bar_plot is None:
+                    bar.write("No existe información de la cabecera o el repuesto.")
+                else:
+                    st.plotly_chart(bar_plot)

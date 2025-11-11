@@ -1,9 +1,11 @@
 from dataclasses import dataclass
 from datetime import date
+from typing import Optional
+
 
 @dataclass
 class PrevisionData:
-    id: int
+    id: Optional[int]
     FechaCompleta: date
     Consumo: int
     Repuesto: str
