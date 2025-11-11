@@ -78,6 +78,7 @@ class RepuestoEnum(StrEnum):
     UREA = auto()
     CINTAS_FRENO = auto()
     PASTILLAS_FRENO = auto()
+    BANANAS = auto()
 
 
 class RepuestoReparadoEnum(StrEnum):
