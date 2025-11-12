@@ -1,5 +1,6 @@
 multipledispatch
 scipy
+matplotlib
 beautifulsoup4==4.14.2
 numpy==2.3.3
 pandas==2.3.3
