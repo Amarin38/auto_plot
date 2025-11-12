@@ -1,20 +1,10 @@
-import locale
-import platform
 import streamlit as st
+from babel.numbers import format_decimal
 
 from config.constants import PAG_TRANSFERENCIAS_ENTRE_DEPOSITOS, FULL_PLOT_BOX_TRANSFER_HEIGHT
 from utils.streamlit_utils import select_box_cabecera
 from viewmodels.diferencia_movimientos_entre_depositos_vm import DiferenciaMovimientosEntreDepositosVM
 from viewmodels.plot.transferencias_entre_depositos_plotter import TransferenciasEntreDepositosPlotter
-
-try:
-    if platform.system() == 'Windows':
-        locale.setlocale(locale.LC_ALL, 'Spanish_Argentina.1252')
-    else:  # Linux, macOS, etc.
-        locale.setlocale(locale.LC_ALL, 'es_AR.UTF-8')
-except locale.Error:
-    # Fallback si el locale no está disponible
-    locale.setlocale(locale.LC_ALL, '')  # usa el locale del sistema
 
 def transferencias_entre_depositos() -> None:
     st.title(PAG_TRANSFERENCIAS_ENTRE_DEPOSITOS)
@@ -34,6 +24,7 @@ def transferencias_entre_depositos() -> None:
 
     with diferencia:
         df = DiferenciaMovimientosEntreDepositosVM().get_df()
+        df["DiferenciaDeCostos"] = df["DiferenciaDeCostos"].fillna(0)
 
         styled_df = (df.style
                      .pipe(lambda s: s.background_gradient(subset=["DiferenciaDeCostos"], axis=0,
@@ -42,9 +33,9 @@ def transferencias_entre_depositos() -> None:
                                                            gmap=df["DiferenciaAnual"], cmap='YlOrRd'))
                      )
 
-        df["DiferenciaDeCostos"] = df["DiferenciaDeCostos"].apply(lambda x: f"$ {locale.format_string('%.0f', x, grouping=True)}")
-        df["CostoTotal2024"] = df["CostoTotal2024"].apply(lambda x: f"$ {locale.format_string('%.0f', x, grouping=True)}")
-        df["CostoTotal2025"] = df["CostoTotal2025"].apply(lambda x: f"$ {locale.format_string('%.0f', x, grouping=True)}")
+        df["DiferenciaDeCostos"] = df["DiferenciaDeCostos"].apply(lambda x: f"$ {format_decimal(round(x), locale='es_AR')}")
+        df["CostoTotal2024"] = df["CostoTotal2024"].apply(lambda x: f"$ {format_decimal(round(x), locale='es_AR')}")
+        df["CostoTotal2025"] = df["CostoTotal2025"].apply(lambda x: f"$ {format_decimal(round(x), locale='es_AR')}")
 
         st.write(styled_df)
 
