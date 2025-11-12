@@ -37,15 +37,20 @@ MAIN_TABS: Tuple[str, ...] = (" 🏠 Página principal", " 📊 Índices de cons
                               " 📈 Previsión de consumo", " 📊 Desviación de índices",
                               " 🚫 Falla Garantías", " ↕️ Máximos y Mínimos")
 
-# Pags
+
 PAG_PRINCIPAL = "Página principal 🏠"
+
+# Pags Generales
 PAG_CARGAR_DATOS = "Cargar datos 🔄️"
 PAG_INDICES = "Índices de consumo 📊"
 PAG_PREVISION = "Previsión de consumo 📈"
 PAG_DESVIACION_INDICES = "Desviaciones de índices 📊"
 PAG_DURACION = "Duracion de repuestos 🛠️"
 PAG_FALLA_GARANTIAS = "Falla equipos garantías ⛔"
-PAG_maximos_minimos = "Máximos y Mínimos ⬆️⬇️"
+PAG_MAXIMOS_MINIMOS = "Máximos y Mínimos ⬆️⬇️"
+
+# Pags Gomeria
+PAG_TRANSFERENCIAS_ENTRE_DEPOSITOS = "Transferencias entre depósitos 🔃"
 
 # Tabs
 TABS_FALLAS = (" 🚫 Falla Equipos Garantías", " 📊 Consumos Garantias y Transferencias")
@@ -66,6 +71,7 @@ PLOT_BOX_HEIGHT: int = 535
 PIE_PLOT_BOX_HEIGHT: int = 700
 MULTIPLE_PLOT_BOX_HEIGHT: int = 700
 FULL_PLOT_BOX_HEIGHT: int = 650
+FULL_PLOT_BOX_TRANSFER_HEIGHT: int = 670
 TEXT_BOX_HEIGHT: int = 450
 TAB_BOX_HEIGHT: int = 750
 FALLA_TAB_BOX_HEIGHT: int = 900

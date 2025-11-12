@@ -22,10 +22,12 @@ class ScrapEnum(UppercaseStrEnum):
     WEB = auto()
     LOCAL = auto()
 
+
 class MovimientoEnum(UppercaseStrEnum):
     SALIDAS = auto()
     ENTRADAS = auto()
     DEVOLUCIONES = auto()
+
 
 class CabecerasEnum(PascalCaseStrEnum):
     @staticmethod
@@ -54,6 +56,7 @@ class CabecerasEnum(PascalCaseStrEnum):
     SAN_ISIDRO = auto()
     MEGABUS_EJERCITO = auto()
     EL_PUENTE = auto()
+    EXP_SAN_ISIDRO = auto()
 
 
 class RepuestoEnum(StrEnum):
@@ -116,6 +119,8 @@ class LoadDataEnum(StrEnum):
     CONSUMO_GARANTIAS = auto()
     MAXIMOS_Y_MINIMOS = auto()
     DURACION_REPUESTOS = auto()
+    TRANSFERENCIAS_ENTRE_DEPOSITOS = auto()
+    DIFERENCIA_MOVIMIENTOS_ENTRE_DEPOSITOS = auto()
 
 
 class CabecerasCompletasEnum(Enum):
