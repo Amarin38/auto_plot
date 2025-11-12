@@ -1,5 +1,5 @@
 import locale
-
+import platform
 import streamlit as st
 
 from config.constants import PAG_TRANSFERENCIAS_ENTRE_DEPOSITOS, FULL_PLOT_BOX_TRANSFER_HEIGHT
@@ -8,9 +8,13 @@ from viewmodels.diferencia_movimientos_entre_depositos_vm import DiferenciaMovim
 from viewmodels.plot.transferencias_entre_depositos_plotter import TransferenciasEntreDepositosPlotter
 
 try:
-    locale.setlocale(locale.LC_ALL, 'es_AR.UTF-8')
+    if platform.system() == 'Windows':
+        locale.setlocale(locale.LC_ALL, 'Spanish_Argentina.1252')
+    else:  # Linux, macOS, etc.
+        locale.setlocale(locale.LC_ALL, 'es_AR.UTF-8')
 except locale.Error:
-    locale.setlocale(locale.LC_ALL, '')
+    # Fallback si el locale no está disponible
+    locale.setlocale(locale.LC_ALL, '')  # usa el locale del sistema
 
 def transferencias_entre_depositos() -> None:
     st.title(PAG_TRANSFERENCIAS_ENTRE_DEPOSITOS)
