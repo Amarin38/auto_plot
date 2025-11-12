@@ -7,7 +7,10 @@ from utils.streamlit_utils import select_box_cabecera
 from viewmodels.diferencia_movimientos_entre_depositos_vm import DiferenciaMovimientosEntreDepositosVM
 from viewmodels.plot.transferencias_entre_depositos_plotter import TransferenciasEntreDepositosPlotter
 
-locale.setlocale(locale.LC_ALL, 'es_AR.UTF-8')
+try:
+    locale.setlocale(locale.LC_ALL, 'es_AR.UTF-8')
+except locale.Error:
+    locale.setlocale(locale.LC_ALL, '')
 
 def transferencias_entre_depositos() -> None:
     st.title(PAG_TRANSFERENCIAS_ENTRE_DEPOSITOS)
