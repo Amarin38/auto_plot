@@ -1,10 +1,10 @@
 from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column
-from infrastructure import ServicesBase
+from infrastructure import DBBase
 
 
-class FallaGarantiasModel(ServicesBase):
-    __tablename__ = "falla_garantias"
+class FallaGarantiasModel(DBBase):
+    __tablename__ = "FALLA_GARANTIAS"
 
     id:                     Mapped[int] = mapped_column(primary_key=True)
     Cabecera:               Mapped[str]

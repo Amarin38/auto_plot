@@ -6,10 +6,11 @@ from sqlalchemy import DateTime
 from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column
 
-from infrastructure import CommonBase
+from infrastructure import DBBase
 
-class DatosGarantiasModel(CommonBase):
-    __tablename__ = "datos_garantias"
+
+class DatosGarantiasModel(DBBase):
+    __tablename__ = "DATOS_GARANTIAS"
 
     id:                 Mapped[int] = mapped_column(primary_key=True)
     Año:                Mapped[int] = mapped_column(Integer, nullable=True)

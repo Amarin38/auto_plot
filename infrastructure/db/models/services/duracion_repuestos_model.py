@@ -2,10 +2,11 @@ from datetime import date
 from sqlalchemy import Date, String
 from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column
-from infrastructure import ServicesBase
+from infrastructure import DBBase
 
-class DuracionRepuestosModel(ServicesBase):
-    __tablename__ = 'duracion_repuestos'
+
+class DuracionRepuestosModel(DBBase):
+    __tablename__ = "DURACION_REPUESTOS"
 
     id:                 Mapped[int] = mapped_column(primary_key=True)
     Patente:            Mapped[str] = mapped_column(String(8))

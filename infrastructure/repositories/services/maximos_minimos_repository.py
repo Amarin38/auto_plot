@@ -3,15 +3,15 @@ from typing import List
 from sqlalchemy import select
 
 from domain.entities.services.maximos_minimos import MaximosMinimos
-from infrastructure import SessionServices, services_engine
+from infrastructure import SessionDB, db_engine
 from infrastructure.db.models.services.maximos_minimos_model import MaximosMinimosModel
 from infrastructure.mappers.services.maximos_minimos_mapper import MaximosMinimosMapper
 
 
 class MaximosMinimosRepository:
     def __init__(self) -> None:
-        self.session = SessionServices()
-        self.engine = services_engine
+        self.session = SessionDB()
+        self.engine = db_engine
 
     # Create -------------------------------------------
     def insert_many(self, entities: List[MaximosMinimos]) -> None:

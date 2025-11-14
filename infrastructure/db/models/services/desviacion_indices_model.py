@@ -2,10 +2,11 @@ from datetime import date
 from sqlalchemy import Date
 from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column
-from infrastructure import ServicesBase
+from infrastructure import DBBase
 
-class DesviacionIndicesModel(ServicesBase):
-    __tablename__ = "desviacion_indices"
+
+class DesviacionIndicesModel(DBBase):
+    __tablename__ = "DESVIACION_INDICES"
     
     id:             Mapped[int] = mapped_column(primary_key=True)
     Cabecera:       Mapped[str]

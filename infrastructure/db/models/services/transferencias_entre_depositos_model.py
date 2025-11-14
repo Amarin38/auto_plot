@@ -1,10 +1,10 @@
 from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column
-from infrastructure import ServicesBase
+from infrastructure import DBBase
 
 
-class TransferenciasEntreDepositosModel(ServicesBase):
-    __tablename__ = "transferencias_entre_depositos"
+class TransferenciasEntreDepositosModel(DBBase):
+    __tablename__ = "TRANSFERENCIAS_ENTRE_DEP"
 
     id: Mapped[int] = mapped_column(primary_key=True)
     Repuesto: Mapped[str]

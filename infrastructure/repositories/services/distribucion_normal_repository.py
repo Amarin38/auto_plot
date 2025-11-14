@@ -3,15 +3,15 @@ from typing import List
 from sqlalchemy import select
 
 from domain.entities.services.distribucion_normal import DistribucionNormal
-from infrastructure import SessionServices, services_engine
+from infrastructure import SessionDB, db_engine
 from infrastructure.db.models.services.distribucion_normal_model import DistribucionNormalModel
 from infrastructure.mappers.services.distribucion_normal_mapper import DistribucionNormalMapper
 
 
 class DistribucionNormalRepository:
     def __init__(self) -> None:
-        self.session = SessionServices()
-        self.engine = services_engine
+        self.session = SessionDB()
+        self.engine = db_engine
 
     # Create -------------------------------------------
     def insert_many(self, entities: List[DistribucionNormal]) -> None:

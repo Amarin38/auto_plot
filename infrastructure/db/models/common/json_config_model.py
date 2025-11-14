@@ -2,10 +2,11 @@ from typing import Dict, Any
 from sqlalchemy import JSON
 from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column
-from infrastructure import CommonBase
+from infrastructure import DBBase
 
-class JSONConfigModel(CommonBase):
-    __tablename__ = "json_config"
+
+class JSONConfigModel(DBBase):
+    __tablename__ = "JSON_CONFIG"
     
     id:         Mapped[int] = mapped_column(primary_key=True)
     nombre:     Mapped[str]

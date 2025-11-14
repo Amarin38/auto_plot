@@ -1,10 +1,10 @@
 from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column
-from infrastructure import ServicesBase
+from infrastructure import DBBase
 
 
-class DiferenciaMovimientosEntreDepositosModel(ServicesBase):
-    __tablename__ = "diferencia_movimientos_entre_depositos"
+class DiferenciaMovimientosEntreDepositosModel(DBBase):
+    __tablename__ = "DIFERENCIA_MOVIMIENTOS_DEP"
 
     id: Mapped[int] = mapped_column(primary_key=True)
     Familia: Mapped[int]

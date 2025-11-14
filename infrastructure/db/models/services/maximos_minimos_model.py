@@ -1,9 +1,10 @@
 from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column
-from infrastructure import ServicesBase
+from infrastructure import DBBase
 
-class MaximosMinimosModel(ServicesBase):
-    __tablename__ = "maximos_minimos"
+
+class MaximosMinimosModel(DBBase):
+    __tablename__ = "MAXIMOS_MINIMOS"
     
     id:         Mapped[int] = mapped_column(primary_key=True)
     Familia:    Mapped[int]

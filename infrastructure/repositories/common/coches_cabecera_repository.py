@@ -3,7 +3,7 @@ from typing import List
 from sqlalchemy import select
 
 from domain.entities.common.coches_cabecera import CochesCabecera
-from infrastructure import SessionCommon, common_engine
+from infrastructure import SessionDB, db_engine
 from infrastructure.db.models.common.coches_cabecera_model import CochesCabeceraModel
 from infrastructure.mappers.common.coches_cabecera_mapper import CochesCabeceraMapper
 from interfaces.repository import Repository
@@ -11,8 +11,8 @@ from interfaces.repository import Repository
 
 class CochesCabeceraRepository(Repository):
     def __init__(self) -> None:
-        self.session = SessionCommon()
-        self.engine = common_engine
+        self.session = SessionDB()
+        self.engine = db_engine
 
     # Create -------------------------------------------
     def insert_many(self, entities: List[CochesCabecera]) -> None:

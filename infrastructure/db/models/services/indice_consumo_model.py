@@ -2,10 +2,11 @@ from datetime import date
 from sqlalchemy import Date, String
 from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column
-from infrastructure import ServicesBase
+from infrastructure import DBBase
 
-class IndiceConsumoModel(ServicesBase):
-    __tablename__ = "indice_consumo"
+
+class IndiceConsumoModel(DBBase):
+    __tablename__ = "INDICE_CONSUMO"
     
     id:            Mapped[int] = mapped_column(primary_key=True)
     Cabecera:      Mapped[str]

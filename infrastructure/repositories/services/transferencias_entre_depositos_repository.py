@@ -3,7 +3,7 @@ from typing import List
 from sqlalchemy import select
 
 from domain.entities.services.transferencias_entre_depositos import TransferenciasEntreDepositos
-from infrastructure import SessionServices, services_engine
+from infrastructure import SessionDB, db_engine
 from infrastructure.db.models.services.transferencias_entre_depositos_model import TransferenciasEntreDepositosModel
 from infrastructure.mappers.services.transferencias_entre_depositos_mapper import TransferenciasEntreDepositosMapper
 from interfaces.repository import Repository
@@ -11,8 +11,8 @@ from interfaces.repository import Repository
 
 class TransferenciasEntreDepositosRepository(Repository):
     def __init__(self) -> None:
-        self.session = SessionServices()
-        self.engine = services_engine
+        self.session = SessionDB()
+        self.engine = db_engine
 
     # Create -------------------------------------------
     def insert_many(self, entities: List[TransferenciasEntreDepositos]) -> None:

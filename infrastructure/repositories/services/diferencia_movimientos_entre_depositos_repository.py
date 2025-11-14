@@ -3,7 +3,7 @@ from typing import List
 from sqlalchemy import select
 
 from domain.entities.services.diferencia_movimientos_entre_depositos import DiferenciaMovimientosEntreDepositos
-from infrastructure import services_engine, SessionServices
+from infrastructure import db_engine, SessionDB
 from infrastructure.db.models.services.diferencia_movimientos_entre_depositos_model import \
     DiferenciaMovimientosEntreDepositosModel
 from infrastructure.mappers.services.diferencia_movimientos_entre_depositos_mapper import \
@@ -13,8 +13,8 @@ from interfaces.repository import Repository
 
 class DiferenciaMovimientosEntreDepositosRepository(Repository):
     def __init__(self) -> None:
-        self.session = SessionServices()
-        self.engine = services_engine
+        self.session = SessionDB()
+        self.engine = db_engine
 
     # Create -------------------------------------------
     def insert_many(self, entities: List[DiferenciaMovimientosEntreDepositos]) -> None:

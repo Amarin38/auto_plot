@@ -107,7 +107,7 @@ MAIN_PATH = Path().cwd()
 JSON_PATH: str = f"{MAIN_PATH}/data/json_data"
 COMMON_DB_PATH: str = f"{MAIN_PATH}/infrastructure/db/common_data.db"
 SERV_DB_PATH: str = f"{MAIN_PATH}/infrastructure/db/services_data.db"
-
+DB_PATH: str = f"sqlite:///{MAIN_PATH}/infrastructure/db/data.db"
 
 # DATES
 PAGE_STRFTIME_DMY = "%d/%m/%Y"

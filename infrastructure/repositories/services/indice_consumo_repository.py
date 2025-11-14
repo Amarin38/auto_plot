@@ -3,15 +3,15 @@ from typing import List
 from sqlalchemy import select
 
 from domain.entities.services.indice_consumo import IndiceConsumo
-from infrastructure import SessionServices, services_engine
+from infrastructure import SessionDB, db_engine
 from infrastructure.db.models.services.indice_consumo_model import IndiceConsumoModel
 from infrastructure.mappers.services.indice_consumo_mapper import IndiceConsumoMapper
 
 
 class IndiceConsumoRepository:
     def __init__(self):
-        self.session = SessionServices()
-        self.engine = services_engine
+        self.session = SessionDB()
+        self.engine = db_engine
 
     # Create -------------------------------------------
     def insert_many(self, entities: List[IndiceConsumo]) -> None:

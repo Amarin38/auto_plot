@@ -3,15 +3,15 @@ from typing import List
 from sqlalchemy import select
 
 from domain.entities.services.prevision import Prevision
-from infrastructure import SessionServices, services_engine
+from infrastructure import SessionDB, db_engine
 from infrastructure.db.models.services.prevision_model import PrevisionModel
 from infrastructure.mappers.services.prevision_mapper import PrevisionMapper
 
 
 class PrevisionRepository:
     def __init__(self) -> None:
-        self.session = SessionServices()
-        self.engine = services_engine
+        self.session = SessionDB()
+        self.engine = db_engine
 
     # Create -------------------------------------------
     def insert_many(self, entities: List[Prevision]) -> None:

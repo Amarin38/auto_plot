@@ -1,9 +1,10 @@
 from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column
-from infrastructure import ServicesBase
+from infrastructure import DBBase
 
-class DistribucionNormalModel(ServicesBase):
-    __tablename__ = 'distribucion_normal'
+
+class DistribucionNormalModel(DBBase):
+    __tablename__ = "DISTRIBUCION_NORMAL"
 
     id:                 Mapped[int] = mapped_column(primary_key=True)
     Años:               Mapped[int]

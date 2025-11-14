@@ -1,8 +1,6 @@
 import streamlit as st
 
-from infrastructure import CommonBase, ServicesBase
-from infrastructure import common_engine, services_engine
-
+from infrastructure import DBBase, db_engine
 from presentation.main_page import main
 from presentation.prevision_consumo_page import prevision
 from presentation.desviacion_indices_page import desviacion_indices
@@ -64,7 +62,7 @@ pages = {
 nav = st.navigation(pages, position="top")
 
 if __name__ == "__main__":
-    CommonBase.metadata.create_all(common_engine)
-    ServicesBase.metadata.create_all(services_engine)
-
+    # DBBase.metadata.create_all(db_engine)
+    # DBBase.metadata.create_all(db_engine)
+    DBBase.metadata.create_all(db_engine)
     nav.run()
