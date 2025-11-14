@@ -1,7 +1,7 @@
 import pandas as pd
 
-from domain.entities.services.prevision import Prevision
-from infrastructure.repositories.services.prevision_repository import PrevisionRepository
+from domain.entities.prevision import Prevision
+from infrastructure.repositories.prevision_repository import PrevisionRepository
 
 
 class PrevisionVM:

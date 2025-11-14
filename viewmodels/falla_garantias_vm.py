@@ -1,7 +1,7 @@
 import pandas as pd
 
-from domain.entities.services.falla_garantias import FallaGarantias
-from infrastructure.repositories.services.falla_garantias_repository import FallaGarantiasRepository
+from domain.entities.falla_garantias import FallaGarantias
+from infrastructure.repositories.falla_garantias_repository import FallaGarantiasRepository
 
 
 class FallaGarantiasVM:

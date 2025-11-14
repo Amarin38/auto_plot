@@ -5,8 +5,8 @@ from config.constants import PAG_TRANSFERENCIAS_ENTRE_DEPOSITOS, FULL_PLOT_BOX_T
     PLACEHOLDER
 from config.enums import ColoresMatplotlibEnum
 from utils.streamlit_utils import select_box_cabecera
-from viewmodels.diferencia_movimientos_entre_depositos_vm import DiferenciaMovimientosEntreDepositosVM
-from viewmodels.plot.transferencias_entre_depositos_plotter import TransferenciasEntreDepositosPlotter
+from viewmodels.diferencia_mov_entre_dep_vm import DiferenciaMovimientosEntreDepositosVM
+from viewmodels.plot.transferencias_entre_dep_plotter import TransferenciasEntreDepositosPlotter
 
 def transferencias_entre_depositos() -> None:
     st.title(PAG_TRANSFERENCIAS_ENTRE_DEPOSITOS)

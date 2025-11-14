@@ -1,7 +1,7 @@
 import pandas as pd
 
-from domain.entities.common.coches_cabecera import CochesCabecera
-from infrastructure.repositories.common.coches_cabecera_repository import CochesCabeceraRepository
+from domain.entities.coches_cabecera import CochesCabecera
+from infrastructure.repositories.coches_cabecera_repository import CochesCabeceraRepository
 from interfaces.viewmodel import ViewModel
 
 

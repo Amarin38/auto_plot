@@ -1,7 +1,7 @@
 import pandas as pd
 
-from domain.entities.services.duracion_repuestos import DuracionRepuestos
-from infrastructure.repositories.services.duracion_repuestos_repository import DuracionRepuestosRepository
+from domain.entities.duracion_repuestos import DuracionRepuestos
+from infrastructure.repositories.duracion_repuestos_repository import DuracionRepuestosRepository
 
 
 class DuracionRepuestosVM:

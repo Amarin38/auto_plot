@@ -1,7 +1,7 @@
 import pandas as pd
 
-from domain.entities.services.desviacion_indices import DesviacionIndices
-from infrastructure.repositories.services.desviacion_indices_repository import DesviacionIndicesRepository
+from domain.entities.desviacion_indices import DesviacionIndices
+from infrastructure.repositories.desviacion_indices_repository import DesviacionIndicesRepository
 
 
 class DesviacionIndicesVM:

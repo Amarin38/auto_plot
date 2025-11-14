@@ -2,7 +2,7 @@ import streamlit as st
 
 from config.constants import PAG_CARGAR_DATOS
 from config.enums import LoadDataEnum, TipoCargarEnum
-from viewmodels.diferencia_movimientos_entre_depositos_vm import DiferenciaMovimientosEntreDepositosVM
+from viewmodels.diferencia_mov_entre_dep_vm import DiferenciaMovimientosEntreDepositosVM
 
 from viewmodels.services.analysis.compute_desviacion_indices import DeviationTrend
 from viewmodels.services.analysis.compute_prevision import create_forecast
@@ -17,7 +17,7 @@ from utils.common_utils import CommonUtils
 from utils.exception_utils import execute_safely
 from utils.streamlit_utils import (load_data_bttn, error_dialog, select_box_load_data, select_box_tipo_repuesto,
                                    select_box_tipo_indice, select_box_repuesto, select_box_tipo_duracion)
-from viewmodels.transferencias_entre_despositos_vm import TransferenciasEntreDepositosVM
+from viewmodels.transferencias_entre_dep_vm import TransferenciasEntreDepositosVM
 
 
 def cargar_datos():

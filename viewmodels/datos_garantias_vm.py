@@ -1,8 +1,8 @@
 import pandas as pd
 
 from config.constants import PAGE_STRFTIME_YMD
-from domain.entities.common.datos_garantias import DatosGarantias
-from infrastructure.repositories.common.datos_garantias_repository import DatosGarantiasRepository
+from domain.entities.datos_garantias import DatosGarantias
+from infrastructure.repositories.datos_garantias_repository import DatosGarantiasRepository
 from interfaces.viewmodel import ViewModel
 
 

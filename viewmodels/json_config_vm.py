@@ -4,8 +4,8 @@ from multipledispatch import dispatch
 
 import pandas as pd
 
-from domain.entities.common.json_config import JSONConfig
-from infrastructure.repositories.common.json_config_repository import JSONConfigRepository
+from domain.entities.json_config import JSONConfig
+from infrastructure.repositories.json_config_repository import JSONConfigRepository
 from interfaces.viewmodel import ViewModel
 
 

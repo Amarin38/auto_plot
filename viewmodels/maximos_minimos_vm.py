@@ -1,7 +1,7 @@
 import pandas as pd
 
-from domain.entities.services.maximos_minimos import MaximosMinimos
-from infrastructure.repositories.services.maximos_minimos_repository import MaximosMinimosRepository
+from domain.entities.maximos_minimos import MaximosMinimos
+from infrastructure.repositories.maximos_minimos_repository import MaximosMinimosRepository
 
 
 class MaximosMinimosVM:

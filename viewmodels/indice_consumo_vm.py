@@ -1,7 +1,7 @@
 import pandas as pd
 
-from domain.entities.services.indice_consumo import IndiceConsumo
-from infrastructure.repositories.services.indice_consumo_repository import IndiceConsumoRepository
+from domain.entities.indice_consumo import IndiceConsumo
+from infrastructure.repositories.indice_consumo_repository import IndiceConsumoRepository
 
 
 class IndiceConsumoVM:

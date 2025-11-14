@@ -1,7 +1,7 @@
 import pandas as pd
 
-from domain.entities.services.consumo_garantias import ConsumoGarantias
-from infrastructure.repositories.services.consumo_garantias_repository import ConsumoGarantiasRepository
+from domain.entities.consumo_garantias import ConsumoGarantias
+from infrastructure.repositories.consumo_garantias_repository import ConsumoGarantiasRepository
 
 
 class ConsumoGarantiasVM:
