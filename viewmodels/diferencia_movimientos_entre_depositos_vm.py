@@ -50,4 +50,7 @@ class DiferenciaMovimientosEntreDepositosVM(ViewModel):
             for e in entities
         ]
 
-        return pd.DataFrame(data)
+        df = pd.DataFrame(data)
+        df["DiferenciaDeCostos"] = df["DiferenciaDeCostos"].fillna(0)
+
+        return df

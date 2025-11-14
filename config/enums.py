@@ -1,27 +1,17 @@
-from enum import auto, Enum
+from enum import auto
 from strenum import UppercaseStrEnum, StrEnum, PascalCaseStrEnum
-
-from config.dataclasses import Cabeceras
 
 class TipoCargarEnum(PascalCaseStrEnum):
     UNICO = auto()
     MULTIPLE = auto()
 
-
-class WithZeroEnum(UppercaseStrEnum):
-    ZERO = auto()
-    NON_ZERO = auto()
-
-
 class IndexTypeEnum(UppercaseStrEnum):
     VEHICULO = auto()
     MOTOR = auto()
 
-
 class ScrapEnum(UppercaseStrEnum):
     WEB = auto()
     LOCAL = auto()
-
 
 class MovimientoEnum(UppercaseStrEnum):
     SALIDAS = auto()
@@ -123,26 +113,11 @@ class LoadDataEnum(StrEnum):
     DIFERENCIA_MOVIMIENTOS_ENTRE_DEPOSITOS = auto()
 
 
-class CabecerasCompletasEnum(Enum):
-    POMPEYA = Cabeceras("Pompeya", "POMPEYA")
-    LA_NORIA = Cabeceras("La Noria", "LA NORIA")
-    BONZI = Cabeceras("Bonzi", "BONZI")
-    EVA_PERON = Cabeceras("Eva Perón", "EVA PERON")
-    MEDINA = Cabeceras("Medina", "MEDINA")
-    CUSA = Cabeceras("Cusa","CUSA")
-    ETAPSA = Cabeceras("Etapsa", "ETAPSA")
-    LUJAN = Cabeceras("Luján", "LUJAN")
-    MASCHWITZ = Cabeceras("Maschwitz", "MASCHWITZ")
-    BARRACAS = Cabeceras("Barracas", "BARRACAS")
-    PILAR = Cabeceras("Pilar", "PILAR")
-    CONSTITUYENTES = Cabeceras("Constituyentes", "CONSTITUYENTES")
-    SAN_VICENTE = Cabeceras("San Vicente", "SAN VICENTE")
-    LONGCHAMPS = Cabeceras("Longchamps", "LONGCHAMPS")
-    TG_LANUS = Cabeceras("TG Lanús", "TG LANUS")
-    TG_CALZADA = Cabeceras("TG Calzada", "TG CALZADA")
-    TG_CIUDADELA = Cabeceras("TG Ciudadela", "TG CIUDADELA")
-    TARSA_LANUS = Cabeceras("Tarsa Lanus", "TARSA 100")
-    TARSA_134 = Cabeceras("Tarsa 134", "TARSA 134")
-    SAN_ISIDRO = Cabeceras("San Isidro", "SAN ISIDRO")
-    MEGABUS_EJERCITO = Cabeceras("Megabus Ejercito", "MEGABUS EJERCITO")
-    EL_PUENTE = Cabeceras("El Puente", "EL PUENTE")
+class ColoresMatplotlibEnum(StrEnum):
+    YlOrRd = auto()
+    YlGnBu = auto()
+    plasma = auto()
+    viridis = auto()
+    magma = auto()
+    PuBuGn = auto()
+

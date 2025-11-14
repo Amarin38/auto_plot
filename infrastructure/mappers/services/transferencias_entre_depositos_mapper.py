@@ -1,5 +1,3 @@
-from typing import Any
-
 from domain.entities.services.transferencias_entre_depositos import TransferenciasEntreDepositos
 from infrastructure.db.models.services.transferencias_entre_depositos_model import TransferenciasEntreDepositosModel
 from interfaces.mapper import Mapper

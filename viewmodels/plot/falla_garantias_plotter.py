@@ -1,9 +1,8 @@
-from datetime import datetime as dt
 from typing import Union
 
 import plotly.graph_objects as go
 
-from config.constants import PIE_PLOT_HEIGHT, PIE_PLOT_WIDTH, PIE_FONT_SIZE, PAGE_STRFTIME_YMD
+from config.constants import PIE_PLOT_HEIGHT, PIE_PLOT_WIDTH, PIE_FONT_SIZE
 
 from utils.exception_utils import execute_safely
 from utils.streamlit_utils import update_layout, top_right_legend

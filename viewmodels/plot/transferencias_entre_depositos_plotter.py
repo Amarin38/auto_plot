@@ -2,8 +2,6 @@ import plotly.graph_objects as go
 
 from typing import Union
 
-from pandas import Series
-
 from config.constants import COLORS
 from utils.exception_utils import execute_safely
 from viewmodels.transferencias_entre_despositos_vm import TransferenciasEntreDepositosVM

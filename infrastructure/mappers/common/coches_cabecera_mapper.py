@@ -1,5 +1,3 @@
-from typing import Any
-
 from domain.entities.common.coches_cabecera import CochesCabecera
 from infrastructure.db.models.common.coches_cabecera_model import CochesCabeceraModel
 from interfaces.mapper import Mapper

@@ -1,5 +1,3 @@
-from typing import Any
-
 from domain.entities.services.diferencia_movimientos_entre_depositos import DiferenciaMovimientosEntreDepositos
 from infrastructure.db.models.services.diferencia_movimientos_entre_depositos_model import \
     DiferenciaMovimientosEntreDepositosModel

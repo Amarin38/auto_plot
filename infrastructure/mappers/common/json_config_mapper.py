@@ -1,5 +1,3 @@
-from typing import Any
-
 from domain.entities.common.json_config import JSONConfig
 from infrastructure.db.models.common.json_config_model import JSONConfigModel
 from interfaces.mapper import Mapper

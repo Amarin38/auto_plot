@@ -1,5 +1,5 @@
 import random
-from typing import Optional, Tuple, Union, List
+from typing import Tuple, Union, List
 
 import numpy as np
 import plotly.graph_objects as go
