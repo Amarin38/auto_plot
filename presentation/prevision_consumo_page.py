@@ -3,7 +3,7 @@ import streamlit as st
 from utils.streamlit_utils import centered_title, select_box_tipo_repuesto
 from utils.exception_utils import execute_safely
 
-from viewmodels.plot.prevision_plotter import ForecastPlotter
+from viewmodels.prevision.plotter import ForecastPlotter
 
 from config.constants import (MULTIPLE_PLOT_BOX_HEIGHT, PLOT_BOX_HEIGHT, DISTANCE_COLS_CENTER_TITLE,
                               DISTANCE_COLS_SELECTBIGGER_PLOT, PAG_PREVISION, SELECT_BOX_HEIGHT)

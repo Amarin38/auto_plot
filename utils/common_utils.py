@@ -7,7 +7,7 @@ import pandas as pd
 from typing import List
 
 from utils.exception_utils import execute_safely
-from viewmodels.json_config_vm import JSONConfigVM
+from viewmodels.common.json_config_vm import JSONConfigVM
 
 
 class CommonUtils:

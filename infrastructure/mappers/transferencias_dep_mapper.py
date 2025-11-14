@@ -1,5 +1,5 @@
-from domain.entities.transferencias_entre_dep import TransferenciasEntreDepositos
-from infrastructure.db.models.transferencias_entre_dep_model import TransferenciasEntreDepositosModel
+from domain.entities.transferencias_dep import TransferenciasEntreDepositos
+from infrastructure.db.models.transferencias_dep_model import TransferenciasEntreDepositosModel
 from interfaces.mapper import Mapper
 
 

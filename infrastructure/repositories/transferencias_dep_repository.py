@@ -2,9 +2,9 @@ from typing import List
 
 from sqlalchemy import select
 
-from domain.entities.transferencias_entre_dep import TransferenciasEntreDepositos
+from domain.entities.transferencias_dep import TransferenciasEntreDepositos
 from infrastructure import SessionDB, db_engine
-from infrastructure.db.models.transferencias_entre_dep_model import TransferenciasEntreDepositosModel
+from infrastructure.db.models.transferencias_dep_model import TransferenciasEntreDepositosModel
 from infrastructure.mappers.transferencias_dep_mapper import TransferenciasEntreDepositosMapper
 from interfaces.repository import Repository
 

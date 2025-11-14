@@ -9,7 +9,7 @@ from presentation.indices_consumo_page import indices_consumo
 from presentation.cargar_datos_page import cargar_datos
 from presentation.duracion_repuestos_page import duracion_repuestos
 from presentation.falla_equipos_garantia_page import falla_equipos_garantias
-from presentation.transferencias_entre_depositos_page import transferencias_entre_depositos
+from presentation.transferencias_depositos_page import transferencias_entre_depositos
 
 from config.constants import (PAG_PRINCIPAL, PAG_CARGAR_DATOS, PAG_INDICES, PAG_PREVISION,
                               PAG_DESVIACION_INDICES, PAG_FALLA_GARANTIAS, PAG_MAXIMOS_MINIMOS, PAG_DURACION,

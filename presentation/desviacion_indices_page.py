@@ -1,8 +1,8 @@
 import streamlit as st
 
 from config.constants import FULL_PLOT_BOX_HEIGHT, TAB_BOX_HEIGHT, PAG_DESVIACION_INDICES, COLORS
-from viewmodels.desviacion_indices_vm import DesviacionIndicesVM
-from viewmodels.plot.desviacion_indices_plotter import DeviationPlotter
+from viewmodels.desviacion_indices.vm import DesviacionIndicesVM
+from viewmodels.desviacion_indices.plotter import DeviationPlotter
 from utils.exception_utils import execute_safely
 
 

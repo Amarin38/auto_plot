@@ -2,22 +2,22 @@ import streamlit as st
 
 from config.constants import PAG_CARGAR_DATOS
 from config.enums import LoadDataEnum, TipoCargarEnum
-from viewmodels.diferencia_mov_entre_dep_vm import DiferenciaMovimientosEntreDepositosVM
+from viewmodels.gomeria.diferencia_mov_dep_vm import DiferenciaMovimientosEntreDepositosVM
 
-from viewmodels.services.analysis.compute_desviacion_indices import DeviationTrend
-from viewmodels.services.analysis.compute_prevision import create_forecast
-from viewmodels.services.analysis.compute_garantias import compute_consumo_garantias, compute_fallas_garantias
-from viewmodels.services.analysis.compute_indices_consumo import Index
-from viewmodels.services.analysis.compute_maximos_minimos import MaxMin
-from viewmodels.services.analysis.compute_duracion_repuestos import DuracionRepuestos
+from viewmodels.processing.compute.compute_desviacion_indices import DeviationTrend
+from viewmodels.processing.compute.compute_prevision import create_forecast
+from viewmodels.processing.compute.compute_garantias import compute_consumo_garantias, compute_fallas_garantias
+from viewmodels.processing.compute.compute_indices_consumo import Index
+from viewmodels.processing.compute.compute_maximos_minimos import MaxMin
+from viewmodels.processing.compute.compute_duracion_repuestos import DuracionRepuestos
 
-from viewmodels.services.data_cleaning.listado_data_cleaner import InventoryDataCleaner
+from viewmodels.processing.data_cleaning.listado_data_cleaner import InventoryDataCleaner
 
 from utils.common_utils import CommonUtils
 from utils.exception_utils import execute_safely
 from utils.streamlit_utils import (load_data_bttn, error_dialog, select_box_load_data, select_box_tipo_repuesto,
                                    select_box_tipo_indice, select_box_repuesto, select_box_tipo_duracion)
-from viewmodels.transferencias_entre_dep_vm import TransferenciasEntreDepositosVM
+from viewmodels.gomeria.transferencias_dep_vm import TransferenciasEntreDepositosVM
 
 
 def cargar_datos():
