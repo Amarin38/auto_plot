@@ -1,3 +1,5 @@
+from typing import Dict, Any
+
 from multipledispatch import dispatch
 
 import pandas as pd
@@ -24,6 +26,7 @@ class JSONConfigVM(ViewModel):
 
         self.repo.insert_many(entities)
 
+
     def get_df(self) -> pd.DataFrame:
         entities = self.repo.get_all()
 
@@ -38,31 +41,20 @@ class JSONConfigVM(ViewModel):
 
         return pd.DataFrame(data)
 
+
     @dispatch(int)
-    def get_df_by_id(self, _id: int) -> pd.DataFrame:
+    def get_df_by_id(self, _id: int) -> Dict[Any, Any]:
         entity = self.repo.get_by_id(_id)
 
-        data = [
-            {
-                "id": entity.id,
-                "nombre": entity.nombre,
-                "data": entity.data,
-            }
-        ]
-
-        return pd.DataFrame(data)
+        if entity is not None:
+            return entity.data
+        return {}
 
 
     @dispatch(str)
-    def get_df_by_id(self, nombre: str) -> pd.DataFrame:
+    def get_df_by_id(self, nombre: str) -> Dict[Any, Any]:
         entity = self.repo.get_by_id(nombre)
 
-        data = [
-            {
-                "id": entity.id,
-                "nombre": entity.nombre,
-                "data": entity.data,
-            }
-        ]
-
-        return pd.DataFrame(data)
+        if entity is not None:
+            return entity.data
+        return {}

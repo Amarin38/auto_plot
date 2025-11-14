@@ -26,6 +26,7 @@ def transferencias_entre_depositos() -> None:
         df = DiferenciaMovimientosEntreDepositosVM().get_df()
         df["DiferenciaDeCostos"] = df["DiferenciaDeCostos"].fillna(0)
 
+        # TODO: Añadir distintos colores de gradiente para elegir
         styled_df = (df.style
                      .pipe(lambda s: s.background_gradient(subset=["DiferenciaDeCostos"], axis=0,
                                                            gmap=df["DiferenciaDeCostos"], cmap='YlOrRd'))

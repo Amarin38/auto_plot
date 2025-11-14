@@ -77,7 +77,7 @@ class CommonUtils:
 
     @staticmethod
     @execute_safely
-    def upd_column_by_dict(df: pd.DataFrame, json_col: str) -> pd.DataFrame:
+    def update_columns(df: pd.DataFrame, json_col: str) -> pd.DataFrame:
         """ Updates all the columns by the json file indicated. """
         return df.rename(
             columns=JSONConfigVM().get_df_by_id(json_col)

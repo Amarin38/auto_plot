@@ -42,7 +42,7 @@ class InventoryDataCleaner:
             for col in df.columns
         ]
 
-        df_updated = self.common.upd_column_by_dict(df, "columns")
+        df_updated = self.common.update_columns(df, "columns")
         df_updated = df_updated.drop(columns=DEL_COLUMNS, axis=1, errors="ignore")
 
         df_updated["FechaCompleta"] = pd.to_datetime(df_updated["FechaCompleta"], format=PAGE_STRFTIME_DMY, errors="coerce", dayfirst=True)
@@ -99,8 +99,5 @@ class InventoryDataCleaner:
 
         df = self.common.del_unnamed_cols(df)
 
-        print(df.loc[~df["Movimiento"].str.contains(MOV_SALIDAS)])
-        print("DF FILTRADO POR MOV")
-        print(df)
         return df
 
