@@ -5,6 +5,7 @@ from config.enums import LoadDataEnum, TipoCargarEnum
 from viewmodels.gomeria.diferencia_mov_dep_vm import DiferenciaMovimientosEntreDepositosVM
 
 from viewmodels.processing.compute.compute_desviacion_indices import DeviationTrend
+from viewmodels.processing.compute.compute_historial_consumo import compute_historial
 from viewmodels.processing.compute.compute_prevision import create_forecast
 from viewmodels.processing.compute.compute_garantias import compute_consumo_garantias, compute_fallas_garantias
 from viewmodels.processing.compute.compute_indices_consumo import Index
@@ -16,7 +17,7 @@ from viewmodels.processing.data_cleaning.listado_data_cleaner import InventoryDa
 from utils.common_utils import CommonUtils
 from utils.exception_utils import execute_safely
 from utils.streamlit_utils import (load_data_bttn, error_dialog, select_box_load_data, select_box_tipo_repuesto,
-                                   select_box_tipo_indice, select_box_repuesto, select_box_tipo_duracion)
+                                   select_box_tipo_indice, select_box_repuesto, select_box_tipo_duracion,)
 from viewmodels.gomeria.transferencias_dep_vm import TransferenciasEntreDepositosVM
 
 
@@ -42,6 +43,7 @@ def cargar_datos():
         select_load = select_box_load_data(st, "LOAD_DATA_LOAD_CENTRO")
 
         if select_load and uploaded_files is not None:
+
             match select_load:
                 case LoadDataEnum.INDICES_DE_CONSUMO:
                     select_repuesto = select_box_tipo_repuesto(st, "LOAD_DATA_REPUESTO_INDICE")
@@ -50,16 +52,21 @@ def cargar_datos():
                     if select_repuesto and select_tipo_indice:
                         load_data_bttn(lambda: Index().calculate(load_data(select_load, uploaded_files),
                                                                  select_repuesto.upper(),
-                                                                 select_tipo_indice.upper()
-                                                                 ))
+                                                                 select_tipo_indice.upper()))
+
+                case LoadDataEnum.HISTORIAL_CONSUMO:
+                    select_repuesto = select_box_tipo_repuesto(st, "LOAD_DATA_REPUESTO_HISTORIAL")
+
+                    if select_repuesto:
+                        load_data_bttn(lambda: compute_historial(load_data(select_load, uploaded_files),
+                                                                 select_repuesto))
 
                 case LoadDataEnum.PREVISION_DE_CONSUMO:
                     select_prevision = select_box_tipo_repuesto(st, "LOAD_DATA_TIPO_PREVISION_CONSUMO")
 
                     if select_prevision:
                         load_data_bttn(lambda: create_forecast(load_data(select_load, uploaded_files),
-                                                               select_prevision.upper()
-                                                               ))
+                                                               select_prevision.upper()))
 
                 case LoadDataEnum.DESVIACION_DE_INDICES:
                     load_data_bttn(lambda: DeviationTrend().calculate(load_data(select_load, uploaded_files)))
@@ -85,8 +92,7 @@ def cargar_datos():
                     if mult_por_min not in ("0", '', ' ') and mult_por_max not in ("0", '', ' '):
                         load_data_bttn(lambda: MaxMin().calculate(load_data(select_load, uploaded_files),
                                                                   float(mult_por_min),
-                                                                  float(mult_por_max)
-                                                                  ))
+                                                                  float(mult_por_max)))
                     else:
                         error_dialog("No se puede multiplicar por 0, por 1 o por None")
 
@@ -96,7 +102,7 @@ def cargar_datos():
 
                     load_data_bttn(lambda: DuracionRepuestos(load_data(select_load, uploaded_files),
                                                              select_repuesto,
-                                                             select_tipo,
+                                                             select_tipo
                                                              ).calcular_duracion())
 
                 case LoadDataEnum.TRANSFERENCIAS_ENTRE_DEPOSITOS:

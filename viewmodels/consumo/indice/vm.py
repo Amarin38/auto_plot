@@ -21,7 +21,7 @@ class IndiceConsumoVM:
                 TotalCoste      = row['TotalCoste'],
                 IndiceConsumo   = row['IndiceConsumo'],
                 UltimaFecha     = row['UltimaFecha'],
-                TipoOperacion   = row['TipoOperacion']
+                TipoOperacion   = row['TipoOperacion'],
             )
             entities.append(entity)
 
@@ -40,7 +40,7 @@ class IndiceConsumoVM:
                 "TotalConsumo"  : e.TotalConsumo,
                 "IndiceConsumo" : e.IndiceConsumo,
                 "UltimaFecha"   : e.UltimaFecha,
-                "TipoOperacion" : e.TipoOperacion
+                "TipoOperacion" : e.TipoOperacion,
             }
             for e in entities
         ]
@@ -60,7 +60,7 @@ class IndiceConsumoVM:
                 "TotalConsumo"  : e.TotalConsumo,
                 "IndiceConsumo" : e.IndiceConsumo,
                 "UltimaFecha"   : e.UltimaFecha,
-                "TipoOperacion" : e.TipoOperacion
+                "TipoOperacion" : e.TipoOperacion,
             }
             for e in entities
         ]

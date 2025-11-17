@@ -6,7 +6,7 @@ import pandas as pd
 from config.enums import IndexTypeEnum
 from utils.exception_utils import execute_safely
 from viewmodels.common.coches_cabecera_vm import CochesCabeceraVM
-from viewmodels.indice_consumo.vm import IndiceConsumoVM
+from viewmodels.consumo.indice.vm import IndiceConsumoVM
 from viewmodels.processing.data_cleaning.listado_data_cleaner import InventoryDataCleaner
 
 

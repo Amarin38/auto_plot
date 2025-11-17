@@ -15,7 +15,7 @@ def transferencias_entre_depositos() -> None:
 
 
     with transfer:
-        aux1, centro, aux2 = st.columns([1,1,1])
+        aux1, centro, aux2 = st.columns([0.5,1,1])
         cabecera = select_box_cabecera(aux1, "CABECERA_TRANSFERENCIA")
 
     with transfer.container(height=FULL_PLOT_BOX_TRANSFER_HEIGHT):

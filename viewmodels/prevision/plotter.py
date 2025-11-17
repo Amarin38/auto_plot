@@ -32,6 +32,8 @@ class ForecastPlotter:
             else:
                 titulo = ""
 
+            # TODO: agregarle una leyenda con la media de consumo anual para que así siempre se pueda
+            #  saber cuanto debe tener disponible por mes para suplir la demanda.
 
             for repuesto in todos_repuestos:
                 x_data = self.df_data.loc[self.df_data['Repuesto'] == repuesto, 'FechaCompleta']

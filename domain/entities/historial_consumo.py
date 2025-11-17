@@ -4,13 +4,10 @@ from typing import Optional
 
 
 @dataclass
-class IndiceConsumo:
+class HistorialConsumo:
     id:             Optional[int]
-    Cabecera:       str
-    Repuesto:       str
     TipoRepuesto:   str
+    Año:            int
     TotalConsumo:   float
-    TotalCoste:     float
-    IndiceConsumo:  float
-    UltimaFecha:    date
-    TipoOperacion:  str
+    FechaMin:       date
+    FechaMax:       date

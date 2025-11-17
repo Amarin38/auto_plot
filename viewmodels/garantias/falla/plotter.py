@@ -26,6 +26,7 @@ class FallasGarantiasPlotter:
 
             fig = go.Figure()
 
+            # TODO: mejorar la leyenda para que sea más clara
             fig.add_trace(go.Pie(
                     labels=labels,
                     values=values,

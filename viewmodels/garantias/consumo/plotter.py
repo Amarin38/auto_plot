@@ -23,7 +23,8 @@ class ConsumoGarantiasPlotter:
             diferencia_transfer = self.df_data["PorcentajeTransferencia"]
 
             fig = go.Figure()
-
+            # TODO: modificar la leyenda para que solo se vea el nombre del tipo de dato,
+            #  ejemplo: Transferencia, Garantia
             fig.add_trace(go.Bar(
                 x=x_data,
                 y=y_garantias,

@@ -6,9 +6,10 @@ from domain.entities.indice_consumo import IndiceConsumo
 from infrastructure import SessionDB, db_engine
 from infrastructure.db.models.indice_consumo_model import IndiceConsumoModel
 from infrastructure.mappers.indice_consumo_mapper import IndiceConsumoMapper
+from interfaces.repository import Repository
 
 
-class IndiceConsumoRepository:
+class IndiceConsumoRepository(Repository):
     def __init__(self):
         self.session = SessionDB()
         self.engine = db_engine
@@ -48,7 +49,8 @@ class IndiceConsumoRepository:
             model = session.scalars(
                 select(IndiceConsumoModel)
                 .where(IndiceConsumoModel.TipoRepuesto == tipo_repuesto,
-                       IndiceConsumoModel.TipoOperacion == tipo_indice)
+                                    IndiceConsumoModel.TipoOperacion == tipo_indice,
+                                    )
             )
 
             return [IndiceConsumoMapper.to_entity(m) for m in model]

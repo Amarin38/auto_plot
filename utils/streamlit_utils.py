@@ -1,4 +1,4 @@
-from typing import Optional, Union
+from typing import Optional, Union, List, Dict
 
 import pandas as pd
 import streamlit as st
@@ -124,6 +124,29 @@ def range_slider(fig):
 
 
 @execute_safely
+def dropdown(fig, buttons: List[Dict]):
+    fig.update_layout(
+        updatemenus=[
+            dict(
+                type="dropdown",
+                direction="down",
+                x=0.5,
+                y=1.15,
+                xanchor="right",
+                yanchor="top",
+                font=dict(color="white", size=14),
+                active=0,
+                bgcolor=COLORS[-1],
+                pad=dict(l=1, r=525, t=12, b=5),
+                showactive=True,
+
+                buttons=buttons
+            )
+        ]
+    )
+
+
+@execute_safely
 def devolver_fecha(df: pd.DataFrame, columna: str) -> str:
     if df.size == 0:
         return ""
@@ -183,3 +206,4 @@ def select_box_load_data(col, key: Union[int, str]):
     with col.container(height=SELECT_BOX_HEIGHT, vertical_alignment='center'):
         return st.selectbox("Selecciona la estadística a cargar:", LoadDataEnum, index=None,
                             placeholder=PLACEHOLDER, key=key)
+

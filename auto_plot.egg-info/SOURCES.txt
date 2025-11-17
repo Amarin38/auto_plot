@@ -60,7 +60,7 @@ src/pages/desviacion_indices.py
 src/pages/duracion_repuestos.py
 src/pages/falla_equipos_garantia.py
 src/pages/prevision.py
-src/pages/indices_consumo.py
+src/pages/indice_consumo.py
 src/pages/cargar_datos.py
 src/pages/main.py
 src/pages/maximos_minimos.py

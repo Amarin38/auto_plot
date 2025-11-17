@@ -103,6 +103,7 @@ class LoadDataEnum(StrEnum):
         return name.replace("_", " ").capitalize()
 
     INDICES_DE_CONSUMO = auto()
+    HISTORIAL_CONSUMO = auto()
     PREVISION_DE_CONSUMO = auto()
     DESVIACION_DE_INDICES = auto()
     FALLA_GARANTIAS = auto()

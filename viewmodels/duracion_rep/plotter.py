@@ -34,6 +34,7 @@ class DuracionRepuestosPlotter:
                                             "Cambio 5", "Cambio 6"),
                             )
 
+        # TODO: personalizar las legendas para que se vean más grandes
         cambios_iter = iter(cambios)
         cambio = next(cambios_iter, None)
 

@@ -43,6 +43,7 @@ PAG_PRINCIPAL = "Página principal 🏠"
 # Pags Generales
 PAG_CARGAR_DATOS = "Cargar datos 🔄️"
 PAG_INDICES = "Índices de consumo 📊"
+PAG_HISTORIAL = "Historial de consumos 💽"
 PAG_PREVISION = "Previsión de consumo 📈"
 PAG_DESVIACION_INDICES = "Desviaciones de índices 📊"
 PAG_DURACION = "Duracion de repuestos 🛠️"
@@ -53,8 +54,8 @@ PAG_MAXIMOS_MINIMOS = "Máximos y Mínimos ⬆️⬇️"
 PAG_TRANSFERENCIAS_ENTRE_DEPOSITOS = "Transferencias entre depósitos 🔃"
 
 # Tabs
-TABS_FALLAS = (" 🚫 Falla Equipos Garantías", " 📊 Consumos Garantias y Transferencias")
-TABS_DURACION = (" 🛠️ General", " 🔧 Por repuesto")
+TABS_FALLAS = ("🚫 Falla Equipos Garantías", "📊 Consumos Garantias y Transferencias")
+TABS_DURACION = ("🛠️ General", "🔧 Por repuesto")
 
 # Selectboxes
 PLACEHOLDER = "------"
@@ -73,7 +74,7 @@ MULTIPLE_PLOT_BOX_HEIGHT: int = 700
 FULL_PLOT_BOX_HEIGHT: int = 650
 FULL_PLOT_BOX_TRANSFER_HEIGHT: int = 610
 TEXT_BOX_HEIGHT: int = 450
-TAB_BOX_HEIGHT: int = 750
+TAB_BOX_HEIGHT: int = 770
 FALLA_TAB_BOX_HEIGHT: int = 900
 DURACION_TAB_BOX_HEIGHT: int = 955
 FILE_UPLOADER_HEIGHT: int = 368
@@ -128,7 +129,8 @@ COLORS: Tuple[str, ...] = ("#FFC300", "#FF5733", "#C70039", "#900C3F", "#5C6D70"
                            "#2C2C54", "#5FAD56", "#F2C14E", "#F78154", "#4D9078",
                            "#4A1942", "#823329", "#3F7CAC", "#899878", "#5497A7", 
                            "#883677", "#3A7D44", "#254D32", "#F7CE5B", "#F7B05B",
-                           "#414770", "#5E6973", "#0E1117", "#3D4044")
+                           "#414770", "#5E6973", "#0E1117", "#2B303A", "#0C7C59",
+                           "#C44900", "#3D4044")
 
 
 # HTML

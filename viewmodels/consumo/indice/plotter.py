@@ -9,7 +9,7 @@ from config.enums import IndexTypeEnum
 
 from utils.exception_utils import execute_safely
 from utils.streamlit_utils import update_layout, devolver_fecha, top_right_legend
-from viewmodels.indice_consumo.vm import IndiceConsumoVM
+from viewmodels.consumo.indice.vm import IndiceConsumoVM
 
 
 class IndexPlotter:
