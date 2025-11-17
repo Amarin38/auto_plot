@@ -132,12 +132,12 @@ def dropdown(fig, buttons: List[Dict]):
                 direction="down",
                 x=0.5,
                 y=1.15,
-                xanchor="right",
+                xanchor="center",
                 yanchor="top",
                 font=dict(color="white", size=14),
                 active=0,
                 bgcolor=COLORS[-1],
-                pad=dict(l=1, r=525, t=12, b=5),
+                pad=dict(l=1, r=1100, t=12, b=5),
                 showactive=True,
 
                 buttons=buttons
