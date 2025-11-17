@@ -1,6 +1,7 @@
 import streamlit as st
 
 from infrastructure import DBBase, db_engine
+from presentation.consumo_obligatorio_page import consumo_obligatorio
 from presentation.main_page import main
 from presentation.prevision_consumo_page import prevision
 from presentation.desviacion_indices_page import desviacion_indices
@@ -14,7 +15,7 @@ from presentation.historial_consumo_page import historial_consumo
 
 from config.constants import (PAG_PRINCIPAL, PAG_CARGAR_DATOS, PAG_INDICES, PAG_PREVISION,
                               PAG_DESVIACION_INDICES, PAG_FALLA_GARANTIAS, PAG_MAXIMOS_MINIMOS, PAG_DURACION,
-                              PAG_TRANSFERENCIAS_ENTRE_DEPOSITOS, PAG_HISTORIAL)
+                              PAG_TRANSFERENCIAS_ENTRE_DEPOSITOS, PAG_HISTORIAL, PAG_CONSUMO_OBLIGATORIO)
 
 from infrastructure.db.models.coches_cabecera_model import CochesCabeceraModel
 from infrastructure.db.models.consumo_garantias_model import ConsumoGarantiasModel
@@ -47,6 +48,7 @@ pages = {
     "Estadísticas generales":[
         st.Page(indice_consumo, title=PAG_INDICES),
         st.Page(historial_consumo, title=PAG_HISTORIAL),
+        st.Page(consumo_obligatorio, title=PAG_CONSUMO_OBLIGATORIO),
         st.Page(prevision, title=PAG_PREVISION),
         st.Page(desviacion_indices, title=PAG_DESVIACION_INDICES),
         st.Page(duracion_repuestos, title=PAG_DURACION),
