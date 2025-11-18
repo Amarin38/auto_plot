@@ -6,5 +6,6 @@ from typing import Optional
 class CochesCabecera:
     id: Optional[int]
     Cabecera: str
-    CantidadCoches: int
-    CantidadCochesNew: int
+    CochesDuermen: int
+    CochesDuermenNuevo: int
+    CochesSinScania: int

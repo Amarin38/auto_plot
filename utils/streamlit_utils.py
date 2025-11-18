@@ -7,7 +7,7 @@ from io import BytesIO
 from config.constants import FILE_STRFTIME_DMY, COLORS, CENTERED_TITLE_HEIGHT, CENTERED_TITLE_WIDTH, PLACEHOLDER, \
     SELECT_BOX_HEIGHT
 from config.enums import RepuestoEnum, RepuestoReparadoEnum, CabecerasEnum, TipoDuracionEnum, IndexTypeEnum, \
-    LoadDataEnum
+    LoadDataEnum, ConsumoObligatorioEnum
 from utils.exception_utils import execute_safely
 
 
@@ -147,6 +147,20 @@ def dropdown(fig, buttons: List[Dict]):
 
 
 @execute_safely
+def hover(fig):
+    fig.update_layout(
+        hovermode="x unified",  # 🔹 muestra ambos hovers juntos
+        hoverlabel=dict(
+            bgcolor="#0E1117",  # color de fondo
+            bordercolor="black",
+            font_size=14.5,  # 🔹 aumenta el tamaño del texto
+            font_family="Arial",
+            namelength=-1
+        ),
+    )
+
+
+@execute_safely
 def devolver_fecha(df: pd.DataFrame, columna: str) -> str:
     if df.size == 0:
         return ""
@@ -202,8 +216,14 @@ def select_box_tipo_indice(col, key: Union[int, str]):
 
 
 @execute_safely
+def select_box_consumo_obligatorio(col, key: Union[int, str]):
+    with col.container(height=SELECT_BOX_HEIGHT, vertical_alignment='center'):
+        return st.selectbox("Selecciona el consumo obligatorio:", ConsumoObligatorioEnum, index=None,
+                            placeholder=PLACEHOLDER, key=key)
+
+
+@execute_safely
 def select_box_load_data(col, key: Union[int, str]):
     with col.container(height=SELECT_BOX_HEIGHT, vertical_alignment='center'):
         return st.selectbox("Selecciona la estadística a cargar:", LoadDataEnum, index=None,
                             placeholder=PLACEHOLDER, key=key)
-

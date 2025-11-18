@@ -50,6 +50,7 @@ PAG_DESVIACION_INDICES = "Desviaciones de índices 📊"
 PAG_DURACION = "Duracion de repuestos 🛠️"
 PAG_FALLA_GARANTIAS = "Falla equipos garantías ⛔"
 PAG_MAXIMOS_MINIMOS = "Máximos y Mínimos ⬆️⬇️"
+PAG_COCHES_CABECERA = "Coches por cabecera 🚌"
 
 # Pags Gomeria
 PAG_TRANSFERENCIAS_ENTRE_DEPOSITOS = "Transferencias entre depósitos 🔃"

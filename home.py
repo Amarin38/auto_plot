@@ -1,6 +1,7 @@
 import streamlit as st
 
 from infrastructure import DBBase, db_engine
+from presentation.coches_cabecera_page import coches_cabecera
 from presentation.consumo_obligatorio_page import consumo_obligatorio
 from presentation.main_page import main
 from presentation.prevision_consumo_page import prevision
@@ -15,7 +16,8 @@ from presentation.historial_consumo_page import historial_consumo
 
 from config.constants import (PAG_PRINCIPAL, PAG_CARGAR_DATOS, PAG_INDICES, PAG_PREVISION,
                               PAG_DESVIACION_INDICES, PAG_FALLA_GARANTIAS, PAG_MAXIMOS_MINIMOS, PAG_DURACION,
-                              PAG_TRANSFERENCIAS_ENTRE_DEPOSITOS, PAG_HISTORIAL, PAG_CONSUMO_OBLIGATORIO)
+                              PAG_TRANSFERENCIAS_ENTRE_DEPOSITOS, PAG_HISTORIAL, PAG_CONSUMO_OBLIGATORIO,
+                              PAG_COCHES_CABECERA)
 
 from infrastructure.db.models.coches_cabecera_model import CochesCabeceraModel
 from infrastructure.db.models.consumo_garantias_model import ConsumoGarantiasModel
@@ -45,21 +47,24 @@ pages = {
         st.Page(main, title=PAG_PRINCIPAL),
         st.Page(cargar_datos, title=PAG_CARGAR_DATOS)
     ],
-    "Estadísticas generales":[
+    "Estadísticas de consumo":[
         st.Page(indice_consumo, title=PAG_INDICES),
+        st.Page(prevision, title=PAG_PREVISION),
         st.Page(historial_consumo, title=PAG_HISTORIAL),
         st.Page(consumo_obligatorio, title=PAG_CONSUMO_OBLIGATORIO),
-        st.Page(prevision, title=PAG_PREVISION),
-        st.Page(desviacion_indices, title=PAG_DESVIACION_INDICES),
-        st.Page(duracion_repuestos, title=PAG_DURACION),
-        st.Page(maximos_minimos, title=PAG_MAXIMOS_MINIMOS)
     ],
-    "Estadísticas garantías":[
+    "Estadísticas de garantías":[
         st.Page(falla_equipos_garantias, title=PAG_FALLA_GARANTIAS),
     ],
-    "Estadísticas gomería":[
+    "Estadísticas de gomería":[
         st.Page(transferencias_entre_depositos, title=PAG_TRANSFERENCIAS_ENTRE_DEPOSITOS)
-    ]
+    ],
+    "Estadísticas generales":[
+        st.Page(desviacion_indices, title=PAG_DESVIACION_INDICES),
+        st.Page(duracion_repuestos, title=PAG_DURACION),
+        st.Page(maximos_minimos, title=PAG_MAXIMOS_MINIMOS),
+        st.Page(coches_cabecera, title=PAG_COCHES_CABECERA)
+    ],
 }
 
 nav = st.navigation(pages, position="top")

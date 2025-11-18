@@ -9,8 +9,9 @@ class CochesCabeceraMapper(Mapper):
         return CochesCabecera(
             id                  = model.id,
             Cabecera            = model.Cabecera,
-            CantidadCoches      = model.CantidadCoches,
-            CantidadCochesNew   = model.CantidadCochesNew,
+            CochesDuermen       = model.CochesDuermen,
+            CochesDuermenNuevo  = model.CochesDuermenNuevo,
+            CochesSinScania     = model.CochesSinScania,
         )
 
     @staticmethod
@@ -18,6 +19,7 @@ class CochesCabeceraMapper(Mapper):
         return CochesCabeceraModel(
             id                  = entity.id,
             Cabecera            = entity.Cabecera,
-            CantidadCoches      = entity.CantidadCoches,
-            CantidadCochesNew   = entity.CantidadCochesNew,
+            CochesDuermen       = entity.CochesDuermen,
+            CochesDuermenNuevo  = entity.CochesDuermenNuevo,
+            CochesSinScania     = entity.CochesSinScania,
         )

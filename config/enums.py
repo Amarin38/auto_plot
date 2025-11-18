@@ -5,13 +5,16 @@ class TipoCargarEnum(PascalCaseStrEnum):
     UNICO = auto()
     MULTIPLE = auto()
 
+
 class IndexTypeEnum(UppercaseStrEnum):
     VEHICULO = auto()
     MOTOR = auto()
 
+
 class ScrapEnum(UppercaseStrEnum):
     WEB = auto()
     LOCAL = auto()
+
 
 class MovimientoEnum(UppercaseStrEnum):
     SALIDAS = auto()
@@ -46,7 +49,6 @@ class CabecerasEnum(PascalCaseStrEnum):
     SAN_ISIDRO = auto()
     MEGABUS_EJERCITO = auto()
     EL_PUENTE = auto()
-    EXP_SAN_ISIDRO = auto()
 
 
 class RepuestoEnum(StrEnum):
@@ -97,14 +99,23 @@ class TipoDuracionEnum(StrEnum):
     MAZA = auto()
 
 
+class ConsumoObligatorioEnum(StrEnum):
+    @staticmethod
+    def _generate_next_value_(name, start, count, last_values):
+        return name.replace("_", " ").upper()
+
+    FILTRO_SECADOR_GOBERNADOR_APU_TB1394_16X = auto()
+
+
 class LoadDataEnum(StrEnum):
     @staticmethod
     def _generate_next_value_(name, start, count, last_values):
         return name.replace("_", " ").capitalize()
 
     INDICES_DE_CONSUMO = auto()
-    HISTORIAL_CONSUMO = auto()
     PREVISION_DE_CONSUMO = auto()
+    HISTORIAL_CONSUMO = auto()
+    CONSUMO_OBLIGATORIO = auto()
     DESVIACION_DE_INDICES = auto()
     FALLA_GARANTIAS = auto()
     CONSUMO_GARANTIAS = auto()
@@ -112,6 +123,7 @@ class LoadDataEnum(StrEnum):
     DURACION_REPUESTOS = auto()
     TRANSFERENCIAS_ENTRE_DEPOSITOS = auto()
     DIFERENCIA_MOVIMIENTOS_ENTRE_DEPOSITOS = auto()
+
 
 
 class ColoresMatplotlibEnum(StrEnum):

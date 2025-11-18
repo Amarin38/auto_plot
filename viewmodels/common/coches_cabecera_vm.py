@@ -16,8 +16,9 @@ class CochesCabeceraVM(ViewModel):
             entity = CochesCabecera(
                 id                  = None,
                 Cabecera            = row['Cabecera'],
-                CantidadCoches      = row['CantidadCoches'],
-                CantidadCochesNew   = row['CantidadCochesNew']
+                CochesDuermen       = row['CochesDuermen'],
+                CochesDuermenNuevo  = row['CochesDuermenNuevo'],
+                CochesSinScania     = row['CochesSinScania'],
             )
             entities.append(entity)
 
@@ -30,8 +31,9 @@ class CochesCabeceraVM(ViewModel):
             {
                 "id"                    : e.id,
                 "Cabecera"              : e.Cabecera,
-                "CantidadCoches"        : e.CantidadCoches,
-                "CantidadCochesNew"     : e.CantidadCochesNew
+                "CochesDuermen"         : e.CochesDuermen,
+                "CochesDuermenNuevo"    : e.CochesDuermenNuevo,
+                "CochesSinScania"       : e.CochesSinScania
             }
             for e in entities
         ]

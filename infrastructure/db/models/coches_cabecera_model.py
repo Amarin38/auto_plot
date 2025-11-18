@@ -8,5 +8,6 @@ class CochesCabeceraModel(DBBase):
     
     id:                 Mapped[int] = mapped_column(primary_key=True)
     Cabecera:           Mapped[str]
-    CantidadCoches:     Mapped[int] = mapped_column(nullable=True)
-    CantidadCochesNew:  Mapped[int] = mapped_column(nullable=True)
+    CochesDuermen:      Mapped[int] = mapped_column(nullable=True)
+    CochesDuermenNuevo: Mapped[int] = mapped_column(nullable=True)
+    CochesSinScania:    Mapped[int] = mapped_column(nullable=True)
