@@ -21,6 +21,7 @@ class ConsumoObligatorioVM(ViewModel):
                 Año2023             = row['Año2023'],
                 Año2024             = row['Año2024'],
                 Año2025             = row['Año2025'],
+                MinimoAntiguo       = row['MinimoAntiguo'],
                 MinimoObligatorio   = row['MinimoObligatorio'],
                 UltimaFecha         = row['UltimaFecha'],
             )
@@ -40,6 +41,7 @@ class ConsumoObligatorioVM(ViewModel):
                 "Año2023"               : e.Año2023,
                 "Año2024"               : e.Año2024,
                 "Año2025"               : e.Año2025,
+                "MinimoAntiguo"         : e.MinimoAntiguo,
                 "MinimoObligatorio"     : e.MinimoObligatorio,
                 "UltimaFecha"           : e.UltimaFecha,
             }
@@ -60,6 +62,7 @@ class ConsumoObligatorioVM(ViewModel):
                 "Año2023"               : e.Año2023,
                 "Año2024"               : e.Año2024,
                 "Año2025"               : e.Año2025,
+                "MinimoAntiguo"         : e.MinimoAntiguo,
                 "MinimoObligatorio"     : e.MinimoObligatorio,
                 "UltimaFecha"           : e.UltimaFecha,
             }

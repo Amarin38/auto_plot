@@ -54,15 +54,6 @@ class ConsumoObligatorioRepository(Repository):
             return [ConsumoObligatorioMapper.to_entity(m) for m in models]
 
 
-    # def get_by_cabecera(self, cabecera: CabecerasEnum) -> List[ConsumoObligatorio]:
-    #     with self.session as session:
-    #         models = session.scalars(
-    #             select(ConsumoObligatorioModel)
-    #             .where(ConsumoObligatorioModel.Cabecera == cabecera)
-    #         )
-    #
-    #         return [ConsumoObligatorioMapper.to_entity(m) for m in models]
-
     # Delete -------------------------------------------
     def delete_by_id(self, _id: int) -> None:
         with self.session as session:

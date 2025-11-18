@@ -11,5 +11,6 @@ class ConsumoObligatorio:
     Año2023:            int
     Año2024:            int
     Año2025:            int
+    MinimoAntiguo:      int
     MinimoObligatorio:  int
     UltimaFecha:        date

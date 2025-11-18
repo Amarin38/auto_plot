@@ -17,5 +17,6 @@ class ConsumoObligatorioModel(DBBase):
     Año2023:            Mapped[int]
     Año2024:            Mapped[int]
     Año2025:            Mapped[int]
+    MinimoAntiguo:      Mapped[int]
     MinimoObligatorio:  Mapped[int]
     UltimaFecha:        Mapped[date] = mapped_column(Date)

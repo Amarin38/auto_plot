@@ -13,6 +13,7 @@ class ConsumoObligatorioMapper(Mapper):
             Año2023             = model.Año2023,
             Año2024             = model.Año2024,
             Año2025             = model.Año2025,
+            MinimoAntiguo       = model.MinimoAntiguo,
             MinimoObligatorio   = model.MinimoObligatorio,
             UltimaFecha         = model.UltimaFecha,
         )
@@ -26,6 +27,7 @@ class ConsumoObligatorioMapper(Mapper):
             Año2023             = entity.Año2023,
             Año2024             = entity.Año2024,
             Año2025             = entity.Año2025,
+            MinimoAntiguo       = entity.MinimoAntiguo,
             MinimoObligatorio   = entity.MinimoObligatorio,
             UltimaFecha         = entity.UltimaFecha,
         )

@@ -18,11 +18,19 @@ def compute_consumo_obligatorio(df: pd.DataFrame, repuesto: ConsumoObligatorioEn
     df_final["Año2025"] = df["Año2025"]
 
     df_final = df_final.merge(
+        df_coches_cabecera[["Cabecera", "CochesDuermen"]],
+        on="Cabecera",
+        how="left"
+    )
+    df_final["MinimoAntiguo"] = df_final["CochesDuermen"] * 2
+    df_final = df_final.drop(columns=["CochesDuermen"])
+
+
+    df_final = df_final.merge(
         df_coches_cabecera[["Cabecera", "CochesSinScania"]],
         on="Cabecera",
-        how="left",
+        how="left"
     )
-
     df_final["MinimoObligatorio"] = df_final["CochesSinScania"] * 2
     df_final = df_final.drop(columns=["CochesSinScania"])
 
