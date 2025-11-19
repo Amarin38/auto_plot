@@ -31,7 +31,7 @@ def desviacion_indices():
         }
 
         /* Hover */
-        .stTabs [data-baseweb="tab"]:hover {
+        .stTabs [data-baseweb="tab"]:hover_unified {
             background-color: #0C7C59;
         }
 

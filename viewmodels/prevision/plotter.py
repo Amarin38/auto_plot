@@ -5,7 +5,8 @@ import plotly.graph_objects as go
 from config.constants import COLORS, FILE_STRFTIME_YMD
 
 from utils.exception_utils import execute_safely
-from utils.streamlit_utils import update_layout, devolver_fecha, range_slider, top_right_legend
+from utils.streamlit_utils import update_layout, devolver_fecha, range_slider, top_right_legend, hover_unified, \
+    hover_separado
 
 from viewmodels.prevision.data_vm import PrevisionDataVM
 from viewmodels.prevision.vm import PrevisionVM
@@ -32,15 +33,15 @@ class ForecastPlotter:
             else:
                 titulo = ""
 
-            # TODO: agregarle una leyenda con la media de consumo anual para que así siempre se pueda
-            #  saber cuanto debe tener disponible por mes para suplir la demanda.
-
             for repuesto in todos_repuestos:
                 x_data = self.df_data.loc[self.df_data['Repuesto'] == repuesto, 'FechaCompleta']
                 y_data = self.df_data.loc[self.df_data['Repuesto'] == repuesto, 'Consumo']
 
                 x_forecast = self.df_forecast.loc[self.df_forecast['Repuesto'] == repuesto, 'FechaCompleta']
                 y_forecast = self.df_forecast.loc[self.df_forecast['Repuesto'] == repuesto, 'Prevision']
+
+                total_prevision = y_forecast.sum()
+                valor_mensual = int(y_forecast.mean())
 
                 fig = go.Figure()
 
@@ -63,13 +64,20 @@ class ForecastPlotter:
                         size=8,
                         symbol='circle',
                     ),
+                    legendgroup="Consumo",
+                    hovertemplate="""
+<b>
+<span style='color:red'></span>
+</b>%{y}
+<extra></extra>
+"""
                 ))
 
 
                 fig.add_trace(go.Scatter(
                     x=x_forecast,
                     y=y_forecast,
-                    name=f'Prevision ({y_forecast.sum()})',
+                    name=f'Prevision',
                     mode='lines+markers+text',
 
                     text=y_forecast,
@@ -85,11 +93,40 @@ class ForecastPlotter:
                         size=8,
                         symbol='square',
                     ),
+                    legendgroup="Prevision",
+                    hovertemplate="""
+<b>
+<span style='color:green'></span>
+</b>%{y}
+<extra></extra>
+"""
                 ))
+
+                fig.add_trace(go.Scatter(
+                    x=[None],  # nada visible
+                    y=[None],
+                    mode="markers",
+                    marker=dict(color="rgba(0,0,0,0)"),  # transparente
+                    showlegend=True,
+                    name=f"Prevision total: {total_prevision}",
+                    legendgroup="Prevision"
+                ))
+
+                fig.add_trace(go.Scatter(
+                    x=[None],  # nada visible
+                    y=[None],
+                    mode="markers",
+                    marker=dict(color="rgba(0,0,0,0)"),  # transparente
+                    showlegend=True,
+                    name=f"Valor por mes: {valor_mensual}",
+                    legendgroup="Prevision"
+                ))
+
 
                 update_layout(fig, repuesto, "Fecha", "Consumo")
                 range_slider(fig)
                 top_right_legend(fig)
+                hover_separado(fig)
 
                 figuras.append(fig)
             return figuras, titulo

@@ -48,6 +48,7 @@ def cargar_datos():
 
             match select_load:
                 case LoadDataEnum.INDICES_DE_CONSUMO:
+                    st.image("resources/indice_consumo.png", caption="Como se debe ver la tabla a insertar")
                     select_repuesto = select_box_tipo_repuesto(st, "LOAD_DATA_REPUESTO_INDICE")
                     select_tipo_indice = select_box_tipo_indice(st, "LOAD_DATA_TIPO_INDICE_INDICE")
 
@@ -57,6 +58,7 @@ def cargar_datos():
                                                                  select_tipo_indice.upper()))
 
                 case LoadDataEnum.PREVISION_DE_CONSUMO:
+                    st.image("resources/prevision_consumo.png", caption="Como se debe ver la tabla a insertar")
                     select_prevision = select_box_tipo_repuesto(st, "LOAD_DATA_TIPO_PREVISION_CONSUMO")
 
                     if select_prevision:
@@ -64,6 +66,7 @@ def cargar_datos():
                                                                select_prevision.upper()))
 
                 case LoadDataEnum.HISTORIAL_CONSUMO:
+                    st.image("resources/historial_consumo.png", caption="Como se debe ver la tabla a insertar")
                     select_repuesto = select_box_tipo_repuesto(st, "LOAD_DATA_REPUESTO_HISTORIAL")
 
                     if select_repuesto:
@@ -96,6 +99,7 @@ def cargar_datos():
                                                                      select_tipo_repuesto))
 
                 case LoadDataEnum.MAXIMOS_Y_MINIMOS:
+                    st.image("resources/maxmins.png", caption="Como se debe ver la tabla a insertar")
                     mult_por_min = st.text_input("Multiplicar al mínimo por: ", 2)
                     mult_por_max = st.text_input("Multiplicar al máximo por: ", 3)
 
@@ -107,6 +111,7 @@ def cargar_datos():
                         error_dialog("No se puede multiplicar por 0, por 1 o por None")
 
                 case LoadDataEnum.DURACION_REPUESTOS:
+                    st.image("resources/duracion.png", caption="Como se debe ver la tabla a insertar")
                     select_repuesto = select_box_repuesto(st, "LOAD_DATA_REPUESTO_DURACION")
                     select_tipo = select_box_tipo_duracion(st, "LOAD_DATA_TIPO_DURACION")
 
@@ -116,10 +121,12 @@ def cargar_datos():
                                                              ).calcular_duracion())
 
                 case LoadDataEnum.TRANSFERENCIAS_ENTRE_DEPOSITOS:
+                    st.image("resources/transfer_entre_depo.png", caption="Como se debe ver la tabla a insertar")
                     load_data_bttn(lambda: TransferenciasEntreDepositosVM().save_df(
                         load_data(select_load, uploaded_files)))
 
                 case LoadDataEnum.DIFERENCIA_MOVIMIENTOS_ENTRE_DEPOSITOS:
+                    st.image("resources/difer_entre_depo.png", caption="Como se debe ver la tabla a insertar")
                     load_data_bttn(lambda: DiferenciaMovimientosEntreDepositosVM().save_df(
                         load_data(select_load, uploaded_files)))
 

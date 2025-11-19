@@ -85,6 +85,7 @@ def top_right_legend(fig):
 def range_slider(fig):
     fig.update_layout(
         xaxis=dict(
+            range=["2024-06-01", "2026-12-01"],
             rangeselector=dict(
                 buttons=list([
                     dict(count=1,
@@ -146,10 +147,24 @@ def dropdown(fig, buttons: List[Dict]):
     )
 
 
+# -------------------------------------------------- HOVERS -------------------------------------------------- #
 @execute_safely
-def hover(fig):
+def hover_unified(fig):
     fig.update_layout(
         hovermode="x unified",  # 🔹 muestra ambos hovers juntos
+        hoverlabel=dict(
+            bgcolor="#0E1117",  # color de fondo
+            bordercolor="black",
+            font_size=14.5,  # 🔹 aumenta el tamaño del texto
+            font_family="Arial",
+            namelength=-1
+        ),
+    )
+
+@execute_safely
+def hover_separado(fig):
+    fig.update_layout(
+        hovermode="x",  # 🔹 muestra ambos hovers juntos
         hoverlabel=dict(
             bgcolor="#0E1117",  # color de fondo
             bordercolor="black",
