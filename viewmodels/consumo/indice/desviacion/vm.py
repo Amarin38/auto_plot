@@ -1,18 +1,18 @@
 import pandas as pd
 
-from domain.entities.desviacion_indices import DesviacionIndices
-from infrastructure.repositories.desviacion_indices_repository import DesviacionIndicesRepository
+from domain.entities.consumo_desviacion_indices import ConsumoDesviacionIndices
+from infrastructure.repositories.consumo_desviacion_indices_repository import ConsumoDesviacionIndicesRepository
 
 
 class DesviacionIndicesVM:
     def __init__(self) -> None:
-        self.repo = DesviacionIndicesRepository()
+        self.repo = ConsumoDesviacionIndicesRepository()
 
     def save_df(self, df) -> None:
         entities = []
 
         for _, row in df.iterrows():
-            entity = DesviacionIndices(
+            entity = ConsumoDesviacionIndices(
                 id                  = None,
                 Cabecera            = row['Cabecera'],
                 MediaCabecera       = row['MediaCabecera'],

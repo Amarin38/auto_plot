@@ -4,7 +4,7 @@ from typing import Optional
 
 
 @dataclass
-class DesviacionIndices:
+class ConsumoDesviacionIndices:
     id: Optional[int]
     Cabecera: str
     MediaCabecera: float

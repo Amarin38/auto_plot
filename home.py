@@ -14,7 +14,7 @@ from presentation.maximos_minimos_page import maximos_minimos
 from presentation.duracion_repuestos_page import duracion_repuestos
 
 from config.constants import (PAG_PRINCIPAL, PAG_CARGAR_DATOS, PAG_INDICES, PAG_PREVISION,
-                              PAG_DESVIACION_INDICES, PAG_FALLA_GARANTIAS, PAG_MAXIMOS_MINIMOS, PAG_DURACION,
+                              PAG_FALLA_GARANTIAS, PAG_MAXIMOS_MINIMOS, PAG_DURACION,
                               PAG_TRANSFERENCIAS_ENTRE_DEPOSITOS, PAG_HISTORIAL, PAG_CONSUMO_OBLIGATORIO,
                               PAG_COCHES_CABECERA)
 
@@ -27,9 +27,9 @@ from infrastructure.db.models.consumo_historial_model import ConsumoHistorialMod
 from infrastructure.db.models.consumo_obligatorio_model import ConsumoObligatorioModel
 from infrastructure.db.models.consumo_prevision_data_model import ConsumoPrevisionDataModel
 from infrastructure.db.models.consumo_prevision_model import ConsumoPrevisionModel
+from infrastructure.db.models.consumo_desviacion_indices_model import ConsumoDesviacionIndicesModel
 from infrastructure.db.models.gomeria_diferencia_mov_dep_model import GomeriaDiferenciaMovEntreDepModel
 from infrastructure.db.models.gomeria_transferencias_dep_model import GomeriaTransferenciasEntreDepModel
-from infrastructure.db.models.desviacion_indices_model import DesviacionIndicesModel
 from infrastructure.db.models.distribucion_normal_model import DistribucionNormalModel
 from infrastructure.db.models.duracion_repuestos_model import DuracionRepuestosModel
 from infrastructure.db.models.maximos_minimos_model import MaximosMinimosModel

@@ -35,10 +35,10 @@ class HistorialPlotter:
             lineal_y = m * x_num + b
 
             a, b, c = np.polyfit(x_num, y_data, 2)
-            cuadratica_y = a * x_num ** 2 + b * x_num + c
+            cuadratica_y = a * x_num **2 + b * x_num + c
 
             a, b, c, d = np.polyfit(x_num, y_data, 3)
-            cubica_y = a * x_num ** 3 + b * x_num ** 2 + c * x_num + d
+            cubica_y = a * x_num **3 + b * x_num **2 + c * x_num + d
 
 
             fig = go.Figure()

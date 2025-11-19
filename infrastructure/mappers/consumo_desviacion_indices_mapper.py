@@ -1,10 +1,10 @@
-from domain.entities.desviacion_indices import DesviacionIndices
-from infrastructure.db.models.desviacion_indices_model import DesviacionIndicesModel
+from domain.entities.consumo_desviacion_indices import ConsumoDesviacionIndices
+from infrastructure.db.models.consumo_desviacion_indices_model import ConsumoDesviacionIndicesModel
 
-class DesviacionIndicesMapper:
+class ConsumoDesviacionIndicesMapper:
     @staticmethod
-    def to_entity(model: DesviacionIndicesModel) -> DesviacionIndices:
-        return DesviacionIndices(
+    def to_entity(model: ConsumoDesviacionIndicesModel) -> ConsumoDesviacionIndices:
+        return ConsumoDesviacionIndices(
             id              = model.id,
             Cabecera        = model.Cabecera,
             MediaCabecera   = model.MediaCabecera,
@@ -16,8 +16,8 @@ class DesviacionIndicesMapper:
         )
 
     @staticmethod
-    def to_model(entity: DesviacionIndices) -> DesviacionIndicesModel:
-        return DesviacionIndicesModel(
+    def to_model(entity: ConsumoDesviacionIndices) -> ConsumoDesviacionIndicesModel:
+        return ConsumoDesviacionIndicesModel(
             id              = entity.id,
             Cabecera        = entity.Cabecera,
             MediaCabecera   = entity.MediaCabecera,

@@ -5,8 +5,8 @@ from sqlalchemy.orm import mapped_column
 from infrastructure import DBBase
 
 
-class DesviacionIndicesModel(DBBase):
-    __tablename__ = "DESVIACION_INDICES"
+class ConsumoDesviacionIndicesModel(DBBase):
+    __tablename__ = "CONSUMO_DESVIACION_INDICES"
     
     id:             Mapped[int] = mapped_column(primary_key=True)
     Cabecera:       Mapped[str]
