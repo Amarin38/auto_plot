@@ -1,20 +1,20 @@
 import pandas as pd
 
-from domain.entities.transferencias_dep import TransferenciasEntreDepositos
-from infrastructure.repositories.transferencias_dep_repository import \
-    TransferenciasEntreDepositosRepository
+from domain.entities.gomeria_transferencias_dep import GomeriaTransferenciasEntreDep
+from infrastructure.repositories.gomeria_transferencias_dep_repository import \
+    GomeriaTransferenciasEntreDepRepository
 from interfaces.viewmodel import ViewModel
 
 
 class TransferenciasEntreDepositosVM(ViewModel):
     def __init__(self) -> None:
-        self.repo = TransferenciasEntreDepositosRepository()
+        self.repo = GomeriaTransferenciasEntreDepRepository()
 
     def save_df(self, df) -> None:
         entities = []
 
         for _, row in df.iterrows():
-            entity = TransferenciasEntreDepositos(
+            entity = GomeriaTransferenciasEntreDep(
                 id          = None,
                 Repuesto    = row["Repuesto"],
                 Año         = row["Año"],

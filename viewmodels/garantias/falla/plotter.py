@@ -10,7 +10,7 @@ from viewmodels.garantias.falla.datos_vm import DatosGarantiasVM
 from viewmodels.garantias.falla.vm import FallaGarantiasVM
 
 
-class FallasGarantiasPlotter:
+class FallaGarantiasPlotter:
     def __init__(self, tipo_repuesto: str, cabecera: str) -> None:
         self.df_data = FallaGarantiasVM().get_df_by_tipo_rep_and_cabecera(tipo_repuesto, cabecera)
         self.min_date: str = DatosGarantiasVM().get_min_date()

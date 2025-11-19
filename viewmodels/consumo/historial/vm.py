@@ -1,19 +1,19 @@
 import pandas as pd
 
 from config.enums import RepuestoEnum
-from domain.entities.historial_consumo import HistorialConsumo
-from infrastructure.repositories.historial_consumo_repository import HistorialConsumoRepository
+from domain.entities.consumo_historial import ConsumoHistorial
+from infrastructure.repositories.consumo_historial_repository import ConsumoHistorialRepository
 
 
 class HistorialConsumoVM:
     def __init__(self) -> None:
-        self.repo = HistorialConsumoRepository()
+        self.repo = ConsumoHistorialRepository()
 
     def save_df(self, df) -> None:
         entities = []
 
         for _, row in df.iterrows():
-            entity = HistorialConsumo(
+            entity = ConsumoHistorial(
                 id              = None,
                 TipoRepuesto    = row['TipoRepuesto'],
                 Año             = row['Año'],

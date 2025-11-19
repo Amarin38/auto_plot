@@ -1,18 +1,18 @@
 import pandas as pd
 
-from domain.entities.falla_garantias import FallaGarantias
-from infrastructure.repositories.falla_garantias_repository import FallaGarantiasRepository
+from domain.entities.garantias_falla import GarantiasFalla
+from infrastructure.repositories.garantias_falla_repository import GarantiasFallaRepository
 
 
 class FallaGarantiasVM:
     def __init__(self) -> None:
-        self.repo = FallaGarantiasRepository()
+        self.repo = GarantiasFallaRepository()
 
     def save_df(self, df) -> None:
         entities = []
 
         for _, row in df.iterrows():
-            entity = FallaGarantias(
+            entity = GarantiasFalla(
                 id                      = None,
                 Cabecera                = row['Cabecera'],
                 Repuesto                = row['Repuesto'],

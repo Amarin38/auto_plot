@@ -1,18 +1,18 @@
 import pandas as pd
 
-from domain.entities.consumo_garantias import ConsumoGarantias
-from infrastructure.repositories.consumo_garantias_repository import ConsumoGarantiasRepository
+from domain.entities.garantias_consumo import GarantiasConsumo
+from infrastructure.repositories.garantias_consumo_repository import GarantiasConsumoRepository
 
 
 class ConsumoGarantiasVM:
     def __init__(self) -> None:
-        self.repo = ConsumoGarantiasRepository()
+        self.repo = GarantiasConsumoRepository()
 
     def save_df(self, df) -> None:
         entities = []
 
         for _, row in df.iterrows():
-            entity = ConsumoGarantias(
+            entity = GarantiasConsumo(
                 id                          = None,
                 Cabecera                    = row['Cabecera'],
                 Repuesto                    = row['Repuesto'],

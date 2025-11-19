@@ -2,7 +2,7 @@ from typing import List
 
 from sqlalchemy import select
 
-from config.enums import CabecerasEnum, ConsumoObligatorioEnum
+from config.enums import ConsumoObligatorioEnum
 from domain.entities.consumo_obligatorio import ConsumoObligatorio
 from infrastructure import SessionDB, db_engine
 from infrastructure.db.models.consumo_obligatorio_model import ConsumoObligatorioModel

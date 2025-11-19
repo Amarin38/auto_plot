@@ -32,7 +32,7 @@ class IndexPlotter:
                 df_repuesto = self.df.loc[self.df["Repuesto"] == repuesto]
 
                 x_data = df_repuesto["Cabecera"]
-                y_data = df_repuesto["IndiceConsumo"]
+                y_data = df_repuesto["ConsumoIndice"]
                 median = [round(y_data.replace(0, np.nan).mean(), 1)] * len(x_data)
 
                 fig = go.Figure()

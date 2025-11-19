@@ -1,6 +1,3 @@
-import random
-from typing import List, Tuple, Union
-
 import numpy as np
 import plotly.graph_objects as go
 from plotly.graph_objs import Figure

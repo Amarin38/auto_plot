@@ -1,20 +1,20 @@
 import pandas as pd
 
 from config.constants import PAGE_STRFTIME_YMD
-from domain.entities.datos_garantias import DatosGarantias
-from infrastructure.repositories.datos_garantias_repository import DatosGarantiasRepository
+from domain.entities.garantias_datos import GarantiasDatos
+from infrastructure.repositories.garantias_datos_repository import GarantiasDatosRepository
 from interfaces.viewmodel import ViewModel
 
 
 class DatosGarantiasVM(ViewModel):
     def __init__(self) -> None:
-        self.repo = DatosGarantiasRepository()
+        self.repo = GarantiasDatosRepository()
 
     def save_df(self, df) -> None:
         entities = []
 
         for _, row in df.iterrows():
-            entity = DatosGarantias(
+            entity = GarantiasDatos(
                 id              = None,
                 Año             = row['Año'],
                 Mes             = row['Mes'],

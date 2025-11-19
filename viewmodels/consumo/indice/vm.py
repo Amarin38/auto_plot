@@ -1,25 +1,25 @@
 import pandas as pd
 
-from domain.entities.indice_consumo import IndiceConsumo
-from infrastructure.repositories.indice_consumo_repository import IndiceConsumoRepository
+from domain.entities.consumo_indice import ConsumoIndice
+from infrastructure.repositories.consumo_indice_repository import ConsumoIndiceRepository
 
 
 class IndiceConsumoVM:
     def __init__(self) -> None:
-        self.repo = IndiceConsumoRepository()
+        self.repo = ConsumoIndiceRepository()
 
     def save_df(self, df) -> None:
         entities = []
 
         for _, row in df.iterrows():
-            entity = IndiceConsumo(
+            entity = ConsumoIndice(
                 id              = None,
                 Cabecera        = row['Cabecera'],
                 Repuesto        = row['Repuesto'],
                 TipoRepuesto    = row['TipoRepuesto'],
                 TotalConsumo    = row['TotalConsumo'],
                 TotalCoste      = row['TotalCoste'],
-                IndiceConsumo   = row['IndiceConsumo'],
+                IndiceConsumo   = row['ConsumoIndice'],
                 UltimaFecha     = row['UltimaFecha'],
                 TipoOperacion   = row['TipoOperacion'],
             )
@@ -38,7 +38,7 @@ class IndiceConsumoVM:
                 "Repuesto"      : e.Repuesto,
                 "TipoRepuesto"  : e.TipoRepuesto,
                 "TotalConsumo"  : e.TotalConsumo,
-                "IndiceConsumo" : e.IndiceConsumo,
+                "ConsumoIndice" : e.IndiceConsumo,
                 "UltimaFecha"   : e.UltimaFecha,
                 "TipoOperacion" : e.TipoOperacion,
             }
@@ -58,7 +58,7 @@ class IndiceConsumoVM:
                 "Repuesto"      : e.Repuesto,
                 "TipoRepuesto"  : e.TipoRepuesto,
                 "TotalConsumo"  : e.TotalConsumo,
-                "IndiceConsumo" : e.IndiceConsumo,
+                "ConsumoIndice" : e.IndiceConsumo,
                 "UltimaFecha"   : e.UltimaFecha,
                 "TipoOperacion" : e.TipoOperacion,
             }

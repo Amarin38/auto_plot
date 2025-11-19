@@ -34,18 +34,18 @@ class Index:
                 case IndexTypeEnum.VEHICULO: 
                     df_vehicles = CochesCabeceraVM().get_df()
                     df_mod = grouped.merge(df_vehicles, on='Cabecera', how='left')
-                    df_mod['IndiceConsumo'] = (df_mod['Cantidad'] * 100) / df_mod['CantidadCoches']
+                    df_mod['ConsumoIndice'] = (df_mod['Cantidad'] * 100) / df_mod['CantidadCoches']
 
             df_rate = df_mod.rename(columns={'Cantidad':'TotalConsumo',
-                                             'Precio':'TotalCoste'})[['Cabecera', 'Repuesto', 'TotalConsumo', 'TotalCoste', 'IndiceConsumo']]
+                                             'Precio':'TotalCoste'})[['Cabecera', 'Repuesto', 'TotalConsumo', 'TotalCoste', 'ConsumoIndice']]
 
             # Modificaciones
             df_rate['TotalCoste'] = df_rate['TotalCoste'].round(0)
-            df_rate['IndiceConsumo'] = df_rate['IndiceConsumo'].replace([np.inf, -np.inf], np.nan).round(1)
+            df_rate['ConsumoIndice'] = df_rate['ConsumoIndice'].replace([np.inf, -np.inf], np.nan).round(1)
             df_rate['UltimaFecha'] = fecha_max
             df_rate['UltimaFecha'] = df_rate['UltimaFecha'].dt.date
 
-            df_rate.dropna(subset=['IndiceConsumo'], inplace=True)
+            df_rate.dropna(subset=['ConsumoIndice'], inplace=True)
             df_rate.insert(2, 'TipoRepuesto', tipo_rep)
             df_rate['TipoOperacion'] = tipo_op
 

@@ -38,7 +38,7 @@ src/services/__init__.py
 src/services/analysis/__init__.py
 src/services/analysis/deviation_trend.py
 src/services/analysis/duracion_repuestos.py
-src/services/analysis/prevision.py
+src/services/analysis/consumoprevision.py
 src/services/analysis/garantias.py
 src/services/analysis/index.py
 src/services/analysis/maximos_minimos.py
@@ -59,7 +59,7 @@ src/pages/__init__.py
 src/pages/desviacion_indices.py
 src/pages/duracion_repuestos.py
 src/pages/falla_equipos_garantia.py
-src/pages/prevision.py
+src/pages/consumoprevision.py
 src/pages/indice_consumo.py
 src/pages/cargar_datos.py
 src/pages/main.py

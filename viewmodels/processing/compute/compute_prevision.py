@@ -4,8 +4,8 @@ from statsmodels.tsa.holtwinters import ExponentialSmoothing
 
 from config.constants import T_RED, RESET, T_YELLOW, T_ORANGE, T_BLUE
 from utils.exception_utils import execute_safely
-from viewmodels.prevision.data_vm import PrevisionDataVM
-from viewmodels.prevision.vm import PrevisionVM
+from viewmodels.consumo.prevision.data_vm import PrevisionDataVM
+from viewmodels.consumo.prevision.vm import PrevisionVM
 
 
 @execute_safely
@@ -43,10 +43,10 @@ def create_forecast(df: pd.DataFrame, tipo_repuesto: str):
             data["FechaCompleta"] = data["FechaCompleta"].dt.date
             PrevisionDataVM().save_df(data)
 
-            prevision: pd.DataFrame = prevision.to_frame("Prevision").reset_index()# type: ignore
-            prevision.columns = ["FechaCompleta", "Prevision"]
-            prevision["Prevision"] = prevision["Prevision"].round(0)
-            prevision["Prevision"] = prevision["Prevision"].clip(lower=0)
+            prevision: pd.DataFrame = prevision.to_frame("ConsumoPrevision").reset_index()# type: ignore
+            prevision.columns = ["FechaCompleta", "ConsumoPrevision"]
+            prevision["ConsumoPrevision"] = prevision["ConsumoPrevision"].round(0)
+            prevision["ConsumoPrevision"] = prevision["ConsumoPrevision"].clip(lower=0)
             prevision["Repuesto"] = rep
             prevision["TipoRepuesto"] = tipo_repuesto
             prevision["FechaCompleta"] = prevision["FechaCompleta"].dt.date

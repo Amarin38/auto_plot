@@ -4,7 +4,6 @@ from sqlalchemy import Date
 from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column
 
-from config.enums import RepuestoEnum
 from infrastructure import DBBase
 
 

@@ -1,20 +1,20 @@
 import pandas as pd
 
-from domain.entities.diferencia_mov_dep import DiferenciaMovimientosEntreDepositos
-from infrastructure.repositories.diferencia_mov_dep_repository import \
-    DiferenciaMovimientosEntreDepositosRepository
+from domain.entities.gomeria_diferencia_mov_dep import GomeriaDiferenciaMovEntreDep
+from infrastructure.repositories.gomeria_diferencia_mov_dep_repository import \
+    GomeriaDiferenciaMovEntreDepRepository
 from interfaces.viewmodel import ViewModel
 
 
 class DiferenciaMovimientosEntreDepositosVM(ViewModel):
     def __init__(self) -> None:
-        self.repo = DiferenciaMovimientosEntreDepositosRepository()
+        self.repo = GomeriaDiferenciaMovEntreDepRepository()
 
     def save_df(self, df) -> None:
         entities = []
 
         for _, row in df.iterrows():
-            entity = DiferenciaMovimientosEntreDepositos(
+            entity = GomeriaDiferenciaMovEntreDep(
                 id                  = None,
                 Familia             = row["Familia"],
                 Articulo            = row["Articulo"],
