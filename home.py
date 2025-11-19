@@ -10,7 +10,6 @@ from presentation.consumo_indice_page import consumo_indice
 from presentation.consumo_historial_page import consumo_historial
 from presentation.garantias_falla_equipos_page import garantias_falla_equipos
 from presentation.gomeria_transferencias_depositos_page import gomeria_transferencias_entre_depositos
-from presentation.desviacion_indices_page import desviacion_indices
 from presentation.maximos_minimos_page import maximos_minimos
 from presentation.duracion_repuestos_page import duracion_repuestos
 
@@ -62,7 +61,6 @@ pages = {
         st.Page(gomeria_transferencias_entre_depositos, title=PAG_TRANSFERENCIAS_ENTRE_DEPOSITOS)
     ],
     "Estadísticas generales":[
-        st.Page(desviacion_indices, title=PAG_DESVIACION_INDICES),
         st.Page(duracion_repuestos, title=PAG_DURACION),
         st.Page(maximos_minimos, title=PAG_MAXIMOS_MINIMOS),
         st.Page(coches_cabecera, title=PAG_COCHES_CABECERA)

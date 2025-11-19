@@ -5,7 +5,7 @@ from config.constants import COLORS, FILE_STRFTIME_DMY
 
 from utils.exception_utils import execute_safely
 from utils.streamlit_utils import update_layout, top_right_legend
-from viewmodels.desviacion_indices.vm import DesviacionIndicesVM
+from viewmodels.consumo.indice.desviacion.vm import DesviacionIndicesVM
 
 
 class DeviationPlotter:

@@ -3,7 +3,7 @@ import pandas as pd
 
 from utils.common_utils import CommonUtils
 from utils.exception_utils import execute_safely
-from viewmodels.desviacion_indices.vm import DesviacionIndicesVM
+from viewmodels.consumo.indice.desviacion.vm import DesviacionIndicesVM
 
 
 class DeviationTrend:

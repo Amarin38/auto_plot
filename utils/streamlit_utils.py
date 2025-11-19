@@ -147,6 +147,51 @@ def dropdown(fig, buttons: List[Dict]):
     )
 
 
+@execute_safely
+def bar_tabs(contenedor_color: str, normal_text_color: str, normal_color: str, hover_color: str, active_bar_color: str, higlight_color: str):
+    texto = """
+            <style>
+            /* Tabs container */
+            .stTabs [data-baseweb="tab-list"] {{
+                background-color: {cont};
+                border-radius: 10px;
+                padding: 4px 8px;
+            }}
+
+            /* Normal tab */
+            .stTabs [data-baseweb="tab"] {{
+                color: {normal_text};
+                background-color: {normal};
+                border-radius: 10px;
+                margin-right: 2px;
+                padding: 6px 8px;
+            }}
+
+            /* Hover */
+            .stTabs [data-baseweb="tab"]:hover_unified {{
+                background-color: {hover};
+            }}
+
+            /* Active tab */
+            .stTabs [aria-selected="true"] {{
+                background-color: {active_bar} !important;
+                color: white !important;
+            }}
+
+            /* Highlight */
+            .stTabs [data-baseweb="tab-highlight"] {{
+                background-color: {highlight} !important;
+            }}
+            </style>
+            """.format(cont=contenedor_color,
+                       normal_text=normal_text_color,
+                       normal=normal_color,
+                       hover=hover_color,
+                       active_bar=active_bar_color,
+                       highlight=higlight_color)
+
+    st.markdown(texto, unsafe_allow_html=True)
+
 # -------------------------------------------------- HOVERS -------------------------------------------------- #
 @execute_safely
 def hover_unified(fig):
