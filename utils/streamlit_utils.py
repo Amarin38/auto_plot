@@ -271,8 +271,7 @@ def select_box_tipo_duracion(col, key: Union[int, str]):
 @execute_safely
 def select_box_tipo_indice(col, key: Union[int, str]):
     with col.container(height=SELECT_BOX_HEIGHT, vertical_alignment='center'):
-        return st.selectbox("Selecciona el tipo de índice:", IndexTypeEnum, index=None,
-                            placeholder=PLACEHOLDER, key=key)
+        return st.selectbox("Selecciona el tipo de índice:", IndexTypeEnum, index=0, key=key)
 
 
 @execute_safely
