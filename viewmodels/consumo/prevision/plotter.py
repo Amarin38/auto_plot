@@ -1,5 +1,5 @@
-import locale
 import pandas as pd
+from babel.dates import format_date
 
 import plotly.graph_objects as go
 
@@ -13,9 +13,10 @@ from viewmodels.consumo.prevision.data_vm import PrevisionDataVM
 from viewmodels.consumo.prevision.vm import PrevisionVM
 
 
+
+
 class PrevisionPlotter:
     def __init__(self, tipo_rep: str):
-        locale.setlocale(locale.LC_TIME, "es_ES.utf8")
 
         self.tipo_rep = tipo_rep
         self.df_data = PrevisionDataVM().get_df_by_tipo_repuesto(self.tipo_rep)
@@ -46,17 +47,16 @@ class PrevisionPlotter:
                 total_prevision = y_forecast.sum()
                 valor_mensual = int(y_forecast.mean())
 
-                # Ticks
-                x_data_year = x_data.dt.strftime("%b ").str.capitalize()
-                x_data_year = x_data_year.str.replace(".", ",")
+                # Ticks para datos reales
+                x_data_year = x_data.apply(lambda d: format_date(d, "MMM", locale="es").capitalize() + ", ")
                 x_data_month = x_data.dt.strftime("%Y")
-                x_data_new = (x_data_year + "" + x_data_month)
+                x_data_new = x_data_year + x_data_month
 
-                x_forecast_year = x_forecast.dt.strftime("%b ").str.capitalize()
-                x_forecast_year = x_forecast_year.str.replace(".", ",")
+                # Ticks para forecast
+                x_forecast_year = x_forecast.apply(lambda d: format_date(d, "MMM", locale="es").capitalize() + ", ")
                 x_forecast_month = x_forecast.dt.strftime("%Y")
+                x_forecast_new = x_forecast_year + x_forecast_month
 
-                x_forecast_new = (x_forecast_year + "" + x_forecast_month)
 
                 tickvals = pd.concat([x_data, x_forecast]).reset_index(drop=True)
                 ticktext = pd.concat([x_data_new, x_forecast_new]).reset_index(drop=True)
