@@ -42,8 +42,8 @@ class ScrapUtils:
         login = driver.find_element(By.ID, "btn_iniciar")
         login.click()
         
-        self.wait_by_xpath(wait, "//a[@href='#']//div[@class='hover_unified thumbnail']//div[@class='caption']")
-        licitaciones = driver.find_element(By.XPATH, "//a[@href='#']//div[@class='hover_unified thumbnail']//div[@class='caption']")
+        self.wait_by_xpath(wait, "//a[@href='#']//div[@class='hover_junto thumbnail']//div[@class='caption']")
+        licitaciones = driver.find_element(By.XPATH, "//a[@href='#']//div[@class='hover_junto thumbnail']//div[@class='caption']")
         licitaciones.click()
 
         return driver, wait

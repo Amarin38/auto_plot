@@ -8,7 +8,7 @@ from config.constants import COLORS
 from config.enums import IndexTypeEnum
 
 from utils.exception_utils import execute_safely
-from utils.streamlit_utils import update_layout, devolver_fecha, top_right_legend, hover_unified
+from utils.streamlit_utils import update_layout, devolver_fecha, top_right_legend, hover_junto
 from viewmodels.consumo.indice.vm import IndiceConsumoVM
 
 
@@ -104,7 +104,7 @@ class IndexPlotter:
 
                 update_layout(fig, repuesto, "Cabecera", "Indice de consumo")
                 # top_right_legend(fig)
-                hover_unified(fig)
+                hover_junto(fig)
 
                 figuras.append(fig)
             return figuras, titulo

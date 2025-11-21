@@ -67,6 +67,7 @@ pages = {
     ],
 }
 
+
 nav = st.navigation(pages, position="top")
 
 if __name__ == "__main__":

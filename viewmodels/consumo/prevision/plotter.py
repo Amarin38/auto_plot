@@ -1,3 +1,4 @@
+import locale
 import pandas as pd
 
 import plotly.graph_objects as go
@@ -5,7 +6,8 @@ import plotly.graph_objects as go
 from config.constants import COLORS, FILE_STRFTIME_YMD
 
 from utils.exception_utils import execute_safely
-from utils.streamlit_utils import update_layout, devolver_fecha, range_slider, top_right_legend, hover_separado
+from utils.streamlit_utils import update_layout, devolver_fecha, range_slider, top_right_legend, hover_separado, \
+    hover_junto, hover_x
 
 from viewmodels.consumo.prevision.data_vm import PrevisionDataVM
 from viewmodels.consumo.prevision.vm import PrevisionVM
@@ -13,6 +15,8 @@ from viewmodels.consumo.prevision.vm import PrevisionVM
 
 class PrevisionPlotter:
     def __init__(self, tipo_rep: str):
+        locale.setlocale(locale.LC_TIME, "es_ES.utf8")
+
         self.tipo_rep = tipo_rep
         self.df_data = PrevisionDataVM().get_df_by_tipo_repuesto(self.tipo_rep)
         self.df_forecast = PrevisionVM().get_df_by_tipo_repuesto(self.tipo_rep)
@@ -42,13 +46,29 @@ class PrevisionPlotter:
                 total_prevision = y_forecast.sum()
                 valor_mensual = int(y_forecast.mean())
 
+                # Ticks
+                x_data_year = x_data.dt.strftime("%b ").str.capitalize()
+                x_data_year = x_data_year.str.replace(".", ",")
+                x_data_month = x_data.dt.strftime("%Y")
+                x_data_new = (x_data_year + "" + x_data_month)
+
+                x_forecast_year = x_forecast.dt.strftime("%b ").str.capitalize()
+                x_forecast_year = x_forecast_year.str.replace(".", ",")
+                x_forecast_month = x_forecast.dt.strftime("%Y")
+
+                x_forecast_new = (x_forecast_year + "" + x_forecast_month)
+
+                tickvals = pd.concat([x_data, x_forecast]).reset_index(drop=True)
+                ticktext = pd.concat([x_data_new, x_forecast_new]).reset_index(drop=True)
+
+
                 fig = go.Figure()
 
                 fig.add_trace(go.Scatter(
                     x=x_data,
                     y=y_data,
                     name='Consumo',
-                    mode='lines+markers+text',
+                    mode='lines+markers',
 
                     text=y_data,
                     textposition='top center',
@@ -57,27 +77,27 @@ class PrevisionPlotter:
                         color=COLORS[15]
                     ),
 
-                    line=dict(color=COLORS[16], width=2),
+                    line=dict(color="#485696", width=2),
                     marker=dict(
-                        color=COLORS[16],
+                        color="#485696",
                         size=8,
                         symbol='circle',
                     ),
                     legendgroup="Consumo",
+                    customdata=x_data_new,
                     hovertemplate="""
-<b>
-<span style='color:red'></span>
-</b>%{y}
+<b><span style='color:#485696'>Consumo:</span></b> %{y}
 <extra></extra>
-"""
+""",
+
                 ))
 
 
                 fig.add_trace(go.Scatter(
                     x=x_forecast,
                     y=y_forecast,
-                    name=f'ConsumoPrevision',
-                    mode='lines+markers+text',
+                    name=f'Prevision',
+                    mode='lines+markers',
 
                     text=y_forecast,
                     textposition='top center',
@@ -86,17 +106,17 @@ class PrevisionPlotter:
                         color=COLORS[1]
                     ),
 
-                    line=dict(color=COLORS[3], width=2, dash='dash'),
+                    line=dict(color="#F24C00", width=2, dash='dash'),
                     marker=dict(
-                        color=COLORS[3],
+                        color="#F24C00",
                         size=8,
                         symbol='square',
                     ),
                     legendgroup="ConsumoPrevision",
+                    customdata=x_forecast_new,
+                    hoverinfo="skip",
                     hovertemplate="""
-<b>
-<span style='color:green'></span>
-</b>%{y}
+<b><span style='color:#F24C00'>Prevision:</span></b> %{y}
 <extra></extra>
 """
                 ))
@@ -107,7 +127,7 @@ class PrevisionPlotter:
                     mode="markers",
                     marker=dict(color="rgba(0,0,0,0)"),  # transparente
                     showlegend=True,
-                    name=f"ConsumoPrevision total: {total_prevision}",
+                    name=f"Prevision total: {total_prevision}",
                     legendgroup="ConsumoPrevision"
                 ))
 
@@ -124,8 +144,37 @@ class PrevisionPlotter:
 
                 update_layout(fig, repuesto, "Fecha", "Consumo")
                 range_slider(fig)
-                top_right_legend(fig)
-                hover_separado(fig)
+                hover_x(fig)
+
+                fig.update_layout(
+                    hovermode="x",
+                    hoverlabel=dict(
+                        font_size=16  # <-- tamaño del texto
+                    )
+                )
+
+                step = 3
+                ticktext_all = [
+                    ticktext[i]
+                    if i % step == 0
+                    else ""  # Dejar vacío NO borra el tick
+                    for i in range(len(ticktext))
+                ]
+                print(ticktext_all)
+
+                fig.update_xaxes(
+                    tickmode="array",
+                    tickvals=tickvals,
+                    ticktext=ticktext_all,
+
+                    showspikes=True,
+                    spikemode="across+marker",
+                    spikesnap="data",
+                    spikethickness=2,
+                    spikecolor="rgba(255,255,255)",  # invisible
+                    spikedash="solid",
+                )
+
 
                 figuras.append(fig)
             return figuras, titulo

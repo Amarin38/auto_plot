@@ -168,7 +168,7 @@ def bar_tabs(contenedor_color: str, normal_text_color: str, normal_color: str, h
             }}
 
             /* Hover */
-            .stTabs [data-baseweb="tab"]:hover_unified {{
+            .stTabs [data-baseweb="tab"]:hover_junto {{
                 background-color: {hover};
             }}
 
@@ -194,9 +194,22 @@ def bar_tabs(contenedor_color: str, normal_text_color: str, normal_color: str, h
 
 # -------------------------------------------------- HOVERS -------------------------------------------------- #
 @execute_safely
-def hover_unified(fig):
+def hover_junto(fig):
     fig.update_layout(
         hovermode="x unified",  # 🔹 muestra ambos hovers juntos
+        hoverlabel=dict(
+            bgcolor="#0E1117",  # color de fondo
+            bordercolor="black",
+            font_size=14.5,  # 🔹 aumenta el tamaño del texto
+            font_family="Arial",
+            namelength=-1
+        ),
+    )
+
+@execute_safely
+def hover_x(fig):
+    fig.update_layout(
+        hovermode="x",  # 🔹 muestra ambos hovers juntos
         hoverlabel=dict(
             bgcolor="#0E1117",  # color de fondo
             bordercolor="black",

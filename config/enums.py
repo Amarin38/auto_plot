@@ -52,6 +52,7 @@ class CabecerasEnum(PascalCaseStrEnum):
 
 
 class RepuestoEnum(StrEnum):
+
     @staticmethod
     def _generate_next_value_(name, start, count, last_values):
         return name.replace("_", " ").upper()
@@ -71,7 +72,13 @@ class RepuestoEnum(StrEnum):
     DVR = auto()
     HERRAMIENTA = auto()
     UREA = auto()
-    CINTAS_FRENO = auto()
+    REFRIGERANTE = auto()
+    ACEITE_DE_MOTOR = auto()
+    ACEITE_DE_CAJA = auto()
+    ACEITE_DE_DIFERENCIAL = auto()
+    CINTAS_FRENO_1 = auto()
+    CINTAS_FRENO_2 = auto()
+    CINTAS_FRENO_3 = auto()
     PASTILLAS_FRENO = auto()
     BANANAS = auto()
 

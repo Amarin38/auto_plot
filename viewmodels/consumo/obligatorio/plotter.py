@@ -2,7 +2,7 @@ import plotly.graph_objects as go
 
 from config.constants import COLORS
 from config.enums import ConsumoObligatorioEnum
-from utils.streamlit_utils import update_layout, hover_unified
+from utils.streamlit_utils import update_layout, hover_junto
 from viewmodels.consumo.obligatorio.vm import ConsumoObligatorioVM
 
 
@@ -149,7 +149,7 @@ class ConsumoObligatorioPlotter:
         )
 
         update_layout(fig, f"Ultima fecha: {fecha}", x_title="Cabecera", y_title="Consumo")
-        hover_unified(fig)
+        hover_junto(fig)
 
         fig.update_layout(
             margin={"r": 0, "t": 55, "l": 0, "b": 0},
