@@ -18,5 +18,4 @@ def compute_historial(df: pd.DataFrame, tipo_repuesto: RepuestoEnum) -> None:
     agrupado["FechaMin"] = df_historial["FechaCompleta"].min()
     agrupado["FechaMax"] = df_historial["FechaCompleta"].max()
 
-    print(agrupado)
     HistorialConsumoVM().save_df(agrupado)

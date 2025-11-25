@@ -58,7 +58,7 @@ class PrevisionPlotter:
                 x_forecast_new = x_forecast_year + x_forecast_month
 
 
-                tickvals = pd.concat([x_data, x_forecast]).reset_index(drop=True)
+                tickvals = pd.concat([x_data, x_forecast]).reset_index(drop=True) # type: ignore
                 ticktext = pd.concat([x_data_new, x_forecast_new]).reset_index(drop=True)
 
 
@@ -160,7 +160,6 @@ class PrevisionPlotter:
                     else ""  # Dejar vacío NO borra el tick
                     for i in range(len(ticktext))
                 ]
-                print(ticktext_all)
 
                 fig.update_xaxes(
                     tickmode="array",
@@ -171,7 +170,7 @@ class PrevisionPlotter:
                     spikemode="across+marker",
                     spikesnap="data",
                     spikethickness=2,
-                    spikecolor="rgba(255,255,255)",  # invisible
+                    spikecolor="rgba(255,255,255)",
                     spikedash="solid",
                 )
 
