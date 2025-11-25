@@ -2,10 +2,10 @@ from typing import Union
 
 import plotly.graph_objects as go
 
-from config.constants import PIE_PLOT_HEIGHT, PIE_PLOT_WIDTH, PIE_FONT_SIZE
+from config.constants import PIE_PLOT_HEIGHT, PIE_PLOT_WIDTH, PIE_FONT_SIZE, COLORS, FALLAS_GARANTIAS_COLORS
 
 from utils.exception_utils import execute_safely
-from utils.streamlit_utils import update_layout, top_right_legend
+from utils.streamlit_utils import update_layout, top_right_legend, hover_x
 from viewmodels.garantias.falla.datos_vm import DatosGarantiasVM
 from viewmodels.garantias.falla.vm import FallaGarantiasVM
 
@@ -26,23 +26,35 @@ class FallaGarantiasPlotter:
 
             fig = go.Figure()
 
-            # TODO: mejorar la leyenda para que sea más clara
+
             fig.add_trace(go.Pie(
                     labels=labels,
                     values=values,
                     text=text,
                     textfont=dict(size=PIE_FONT_SIZE),
-                    name='Fallos',
+                    name='Fallas',
                     insidetextorientation='horizontal',
-                    textposition='auto'
+                    textposition='auto',
+                    customdata=FALLAS_GARANTIAS_COLORS,
+                    marker=dict(colors=FALLAS_GARANTIAS_COLORS),
+                    hovertemplate="""
+<b>
+<span style='color:%{customdata}'>%{label}</span><br>
+<span style='color:white'>%{text} (%{percent})</span>
+</b>
+<extra></extra>
+""",
             ))
 
             fig.update_traces(
                 hoverinfo='label+value+percent',
-                textinfo='value+percent',
+                textinfo='percent',
+                showlegend=False,
             )
 
             update_layout(fig, f'Fallos ({self.min_date} - {self.max_date})', '', '', PIE_PLOT_HEIGHT, PIE_PLOT_WIDTH)
-            top_right_legend(fig)
+            # top_right_legend(fig)
+            hover_x(fig)
+
             return fig
         return None

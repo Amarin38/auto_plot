@@ -77,10 +77,11 @@ FULL_PLOT_BOX_HEIGHT: int = 650
 FULL_PLOT_BOX_TRANSFER_HEIGHT: int = 610
 TEXT_BOX_HEIGHT: int = 450
 TAB_BOX_HEIGHT: int = 770
-FALLA_TAB_BOX_HEIGHT: int = 900
 DURACION_TAB_BOX_HEIGHT: int = 955
 DESVIACION_BOX_HEIGHT: int = 685
 FILE_UPLOADER_HEIGHT: int = 368
+FALLA_TAB_BOX_HEIGHT: int = 870
+FALLA_GARANTIAS_BOX_HEIGHT: int = 700
 
 
 # WIDTH
@@ -134,6 +135,10 @@ COLORS: Tuple[str, ...] = ("#FFC300", "#FF5733", "#C70039", "#900C3F", "#5C6D70"
                            "#883677", "#3A7D44", "#254D32", "#F7CE5B", "#F7B05B",
                            "#414770", "#5E6973", "#0E1117", "#2B303A", "#0C7C59",
                            "#C44900", "#3D4044")
+
+
+FALLAS_GARANTIAS_COLORS: Tuple[str, ...] = ("#F1D764", "#F4A259", "#5B8E7D", "#BC4B51", "#897AEA")
+CONSUMO_GARANTIAS_COLORS: Tuple[str, str] = ("#C70039","#0C7C59")
 
 
 # HTML
