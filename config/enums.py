@@ -76,9 +76,9 @@ class RepuestoEnum(StrEnum):
     ACEITE_DE_MOTOR = auto()
     ACEITE_DE_CAJA = auto()
     ACEITE_DE_DIFERENCIAL = auto()
+    GRASA_DE_DIFERENCIAL = auto()
     CINTAS_FRENO_1 = auto()
     CINTAS_FRENO_2 = auto()
-    CINTAS_FRENO_3 = auto()
     PASTILLAS_FRENO = auto()
     BANANAS = auto()
 

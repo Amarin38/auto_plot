@@ -23,9 +23,14 @@ class InventoryDataCleaner:
         - Filtra por salida.
         """
         df: pd.DataFrame = self.common.concat_dataframes(df_directory)
-        
         if not df.empty:
+            try:
+                df = self.common.delete_by_content(df, "ficfec", ["  -   -"])
+            except Exception as e:
+                df = self.common.delete_by_content(df, "FechaCompleta", ["  -   -"])
+
             df = self._transform(df)
+
             df = self.common.delete_unnamed_cols(df)
 
             return self.filter_mov(df, MovimientoEnum.SALIDAS)
@@ -45,11 +50,8 @@ class InventoryDataCleaner:
         df_updated = self.common.update_columns(df, "columns")
         df_updated = df_updated.drop(columns=DEL_COLUMNS, axis=1, errors="ignore")
 
-        df_updated["FechaCompleta"] = pd.to_datetime(df_updated["FechaCompleta"], format=PAGE_STRFTIME_DMY, errors="coerce", dayfirst=True)
-        df_updated["Fecha"] = df_updated["FechaCompleta"].dt.strftime(DELTA_STRFTIME_YM)
-
         df_updated = self.common.update_rows_by_dict(df_updated, "depositos", "Cabecera")
-        
+
         return df_updated
 
 

@@ -18,6 +18,8 @@ class Index:
     def calculate(self, df: pd.DataFrame, tipo_rep: str, tipo_op: IndexTypeEnum, filtro: Optional[str] = None) -> None:
         if not df.empty:
             df_mod = pd.DataFrame()
+            df['FechaCompleta'] = pd.to_datetime(df['FechaCompleta'])
+
             fecha_max = df['FechaCompleta'].max()
 
             # Cambio de tipos de datos para evitar errores
@@ -34,7 +36,7 @@ class Index:
                 case IndexTypeEnum.VEHICULO: 
                     df_vehicles = CochesCabeceraVM().get_df()
                     df_mod = grouped.merge(df_vehicles, on='Cabecera', how='left')
-                    df_mod['ConsumoIndice'] = (df_mod['Cantidad'] * 100) / df_mod['CantidadCoches']
+                    df_mod['ConsumoIndice'] = (df_mod['Cantidad'] * 100) / df_mod['CochesDuermen']
 
             df_rate = df_mod.rename(columns={'Cantidad':'TotalConsumo',
                                              'Precio':'TotalCoste'})[['Cabecera', 'Repuesto', 'TotalConsumo', 'TotalCoste', 'ConsumoIndice']]

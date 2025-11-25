@@ -129,16 +129,24 @@ TODAY_FOR_DELTA = Timestamp.today().strftime(DELTA_STRFTIME_YM)
 
 
 # Colors
-COLORS: Tuple[str, ...] = ("#FFC300", "#FF5733", "#C70039", "#900C3F", "#5C6D70",
-                           "#2C2C54", "#5FAD56", "#F2C14E", "#F78154", "#4D9078",
+COLORS: Tuple[str, ...] = ("#F2C14E", "#FF5733", "#C70039", "#900C3F", "#5C6D70",
+                           "#2C2C54", "#5FAD56", "#FFC300", "#F78154", "#4D9078",
                            "#4A1942", "#823329", "#3F7CAC", "#899878", "#5497A7", 
                            "#883677", "#3A7D44", "#254D32", "#F7CE5B", "#F7B05B",
                            "#414770", "#5E6973", "#0E1117", "#2B303A", "#0C7C59",
                            "#C44900", "#3D4044")
 
+INDICE_COLORS: Tuple[str, ...] = ("#5497A7", "#C70039", "#900C3F", "#5C6D70", "#414770",
+                                  "#0C7C59", "#823329", "#883677", "#F78154", "#FE5F55",
+                                  "#0A2342", "#2CA58D", "#502F4C", "#9C88AC", "#225560",
+                                  "#E39774", "#698F3F", "#804E49", "#B0413E", "#226F54",
+                                  "#A4031F", "#7D8491")
+
+INDICE_MEDIA_COLOR: str = "#FF5733"
 
 FALLAS_GARANTIAS_COLORS: Tuple[str, ...] = ("#F1D764", "#F4A259", "#5B8E7D", "#BC4B51", "#897AEA")
 CONSUMO_GARANTIAS_COLORS: Tuple[str, str] = ("#C70039","#0C7C59")
+
 
 
 # HTML

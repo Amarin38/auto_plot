@@ -5,12 +5,16 @@ from plotly.graph_objs import Figure
 from config.constants import COLORS
 from config.enums import RepuestoEnum
 from utils.exception_utils import execute_safely
-from utils.streamlit_utils import update_layout, top_right_legend, dropdown
+from viewmodels.plotly_components import DefaultUpdateLayoutComponents, LegendComponents, DropDownComponents
 from viewmodels.consumo.historial.vm import HistorialConsumoVM
 
 
 class HistorialPlotter:
     def __init__(self, tipo_rep: RepuestoEnum) -> None:
+        self.default = DefaultUpdateLayoutComponents()
+        self.legend = LegendComponents()
+        self.dropdown = DropDownComponents()
+
         self.tipo_rep = tipo_rep
         self.df = HistorialConsumoVM().get_df_tipo_repuesto(tipo_rep)
 
@@ -88,9 +92,10 @@ class HistorialPlotter:
             ))
 
             fig.update_xaxes(tickmode="linear")
-            update_layout(fig, f"{fecha_min} | {fecha_max}", "Año", "Historial de consumo")
-            top_right_legend(fig)
-            dropdown(fig, [
+
+            self.default.update_layout(fig, f"{fecha_min} | {fecha_max}", "Año", "Historial de consumo")
+            self.legend.top_right_legend(fig)
+            self.dropdown.dropdown(fig, [
                 dict(
                     label="Lineal",
                     method="update",
@@ -107,8 +112,6 @@ class HistorialPlotter:
                     args=[{"visible": [True, False, False, True]}],
                 )
             ])
-
-
 
             return fig, titulo
         return [None, None]

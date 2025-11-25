@@ -6,6 +6,7 @@ import pandas as pd
 
 from typing import List
 
+from config.constants import FILE_STRFTIME_DMY
 from utils.exception_utils import execute_safely
 from viewmodels.common.json_config_vm import JSONConfigVM
 
@@ -18,12 +19,18 @@ class CommonUtils:
         """
         _xlsx_files = []
         if df_directory is not None:
+
+
             for file in df_directory:
                 try:
                     df = pd.read_excel(file, engine="openpyxl") # leo el xlsx
                 except BadZipFile:
                     df = pd.read_excel(file, engine="xlrd") # leo el xls
                 df = self.delete_unnamed_cols(df)
+
+                for col in df.columns:
+                    df[col] = [self.delete_error_bytes(str(string), "\x00") if pd.notnull(string) else string for string
+                               in df[col]]
 
                 buffer = io.BytesIO()
                 df.to_excel(buffer, index=False, engine="openpyxl")
@@ -33,12 +40,23 @@ class CommonUtils:
             
             df = pd.concat(_xlsx_files)
 
-            if "pronom" in df.columns:
-                df["pronom"] = [self.delete_error_bytes(str(string), "\x00") if pd.notnull(string) else string for string in df["pronom"]]
-
             return df
         return pd.DataFrame()
-    
+
+
+    @execute_safely
+    def to_excel(self, df: pd.DataFrame) -> bytes:
+        output = io.BytesIO()
+        with pd.ExcelWriter(output, engine="openpyxl") as writer:  # type: ignore
+            df.to_excel(writer, index=False, sheet_name="Datos")
+        return output.getvalue()
+
+
+    @execute_safely
+    def devolver_fecha(self, df: pd.DataFrame, columna: str) -> str:
+        if df.size == 0:
+            return ""
+        return pd.to_datetime(df[columna].unique()).strftime(FILE_STRFTIME_DMY)[0]
 
     # ------------------------------------------------------ DELETE ------------------------------------------------------
     @staticmethod

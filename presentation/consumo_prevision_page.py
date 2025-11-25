@@ -1,6 +1,6 @@
 import streamlit as st
 
-from utils.streamlit_utils import centered_title, select_box_tipo_repuesto
+from presentation.streamlit_components import SelectBoxComponents, OtherComponents
 from utils.exception_utils import execute_safely
 
 from viewmodels.consumo.prevision.plotter import PrevisionPlotter
@@ -10,12 +10,15 @@ from config.constants import (MULTIPLE_PLOT_BOX_HEIGHT, PLOT_BOX_HEIGHT, DISTANC
 
 @execute_safely
 def consumo_prevision():
+    select = SelectBoxComponents()
+    other = OtherComponents()
+
     st.title(PAG_PREVISION)
 
     aux1, titulo_col, aux2 = st.columns(DISTANCE_COLS_CENTER_TITLE)
     config_col, graficos_col = st.columns(DISTANCE_COLS_SELECTBIGGER_PLOT)
 
-    tipo_repuesto = select_box_tipo_repuesto(config_col, "FORECAST_REPUESTO")
+    tipo_repuesto = select.select_box_tipo_repuesto(config_col, "FORECAST_REPUESTO")
 
     if tipo_repuesto:
         figs, titulo = PrevisionPlotter(tipo_repuesto).create_plot()
@@ -24,7 +27,7 @@ def consumo_prevision():
             with graficos_col.container(height=SELECT_BOX_HEIGHT):
                 st.text("No hay datos de este repuesto.")
         else:
-            centered_title(titulo_col, titulo)
+            other.centered_title(titulo_col, titulo)
 
             with graficos_col.container(height=MULTIPLE_PLOT_BOX_HEIGHT):
                 for fig in figs:

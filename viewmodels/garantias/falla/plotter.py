@@ -2,16 +2,18 @@ from typing import Union
 
 import plotly.graph_objects as go
 
-from config.constants import PIE_PLOT_HEIGHT, PIE_PLOT_WIDTH, PIE_FONT_SIZE, COLORS, FALLAS_GARANTIAS_COLORS
+from config.constants import PIE_PLOT_HEIGHT, PIE_PLOT_WIDTH, PIE_FONT_SIZE, FALLAS_GARANTIAS_COLORS
 
 from utils.exception_utils import execute_safely
-from utils.streamlit_utils import update_layout, top_right_legend, hover_x
+from viewmodels.plotly_components import DefaultUpdateLayoutComponents, HoverComponents
 from viewmodels.garantias.falla.datos_vm import DatosGarantiasVM
 from viewmodels.garantias.falla.vm import FallaGarantiasVM
 
 
 class FallaGarantiasPlotter:
     def __init__(self, tipo_repuesto: str, cabecera: str) -> None:
+        self.default = DefaultUpdateLayoutComponents()
+        self.hover = HoverComponents()
         self.df_data = FallaGarantiasVM().get_df_by_tipo_rep_and_cabecera(tipo_repuesto, cabecera)
         self.min_date: str = DatosGarantiasVM().get_min_date()
         self.max_date: str = DatosGarantiasVM().get_max_date()
@@ -52,9 +54,9 @@ class FallaGarantiasPlotter:
                 showlegend=False,
             )
 
-            update_layout(fig, f'Fallos ({self.min_date} - {self.max_date})', '', '', PIE_PLOT_HEIGHT, PIE_PLOT_WIDTH)
-            # top_right_legend(fig)
-            hover_x(fig)
+            self.default.update_layout(fig, f'Fallos ({self.min_date} - {self.max_date})',
+                                       '', '', PIE_PLOT_HEIGHT, PIE_PLOT_WIDTH)
+            self.hover.hover_x(fig)
 
             return fig
         return None

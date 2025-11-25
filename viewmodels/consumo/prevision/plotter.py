@@ -6,8 +6,8 @@ import plotly.graph_objects as go
 from config.constants import COLORS, FILE_STRFTIME_YMD
 
 from utils.exception_utils import execute_safely
-from utils.streamlit_utils import update_layout, devolver_fecha, range_slider, top_right_legend, hover_separado, \
-    hover_junto, hover_x
+from utils.common_utils import CommonUtils
+from viewmodels.plotly_components import DefaultUpdateLayoutComponents, HoverComponents, SliderComponents
 
 from viewmodels.consumo.prevision.data_vm import PrevisionDataVM
 from viewmodels.consumo.prevision.vm import PrevisionVM
@@ -17,6 +17,10 @@ from viewmodels.consumo.prevision.vm import PrevisionVM
 
 class PrevisionPlotter:
     def __init__(self, tipo_rep: str):
+        self.common = CommonUtils()
+        self.default = DefaultUpdateLayoutComponents()
+        self.hover = HoverComponents()
+        self.slider = SliderComponents()
 
         self.tipo_rep = tipo_rep
         self.df_data = PrevisionDataVM().get_df_by_tipo_repuesto(self.tipo_rep)
@@ -33,7 +37,7 @@ class PrevisionPlotter:
             self.df_forecast['FechaCompleta'] = pd.to_datetime(self.df_forecast['FechaCompleta'], format=FILE_STRFTIME_YMD)
 
             if self.tipo_rep:
-                titulo = f'ConsumoPrevision de {self.tipo_rep} ({devolver_fecha(self.df_data, "FechaCompleta")})'
+                titulo = f'ConsumoPrevision de {self.tipo_rep} ({self.common.devolver_fecha(self.df_data, "FechaCompleta")})'
             else:
                 titulo = ""
 
@@ -142,9 +146,9 @@ class PrevisionPlotter:
                 ))
 
 
-                update_layout(fig, repuesto, "Fecha", "Consumo")
-                range_slider(fig)
-                hover_x(fig)
+                self.default.update_layout(fig, repuesto, "Fecha", "Consumo")
+                self.slider.range_slider(fig)
+                self.hover.hover_x(fig)
 
                 fig.update_layout(
                     hovermode="x",

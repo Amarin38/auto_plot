@@ -4,14 +4,17 @@ from babel.numbers import format_decimal
 from config.constants import PAG_TRANSFERENCIAS_ENTRE_DEPOSITOS, FULL_PLOT_BOX_TRANSFER_HEIGHT, SELECT_BOX_HEIGHT, \
     PLACEHOLDER
 from config.enums import ColoresMatplotlibEnum
-from utils.streamlit_utils import select_box_cabecera, bar_tabs
+from presentation.streamlit_components import SelectBoxComponents, OtherComponents
 from viewmodels.gomeria.diferencia_mov_dep_vm import DiferenciaMovimientosEntreDepositosVM
 from viewmodels.gomeria.transferencias_dep_plotter import TransferenciasEntreDepositosPlotter
 
 def gomeria_transferencias_entre_depositos() -> None:
+    select = SelectBoxComponents()
+    other = OtherComponents()
+
     st.title(PAG_TRANSFERENCIAS_ENTRE_DEPOSITOS)
 
-    bar_tabs("#BED4CE", "#131C1C", "#669DC7",
+    other.bar_tabs("#BED4CE", "#131C1C", "#669DC7",
              "#3F7CAC", "#AC3F46", "#C70039")
 
     transfer, diferencia = st.tabs(["🔛 Transferencias entre depósitos por cabecera", "ℹ️ Diferencias de movimientos"])
@@ -19,7 +22,7 @@ def gomeria_transferencias_entre_depositos() -> None:
 
     with transfer:
         aux1, centro, aux2 = st.columns([0.5,1,1])
-        cabecera = select_box_cabecera(aux1, "CABECERA_TRANSFERENCIA")
+        cabecera = select.select_box_cabecera(aux1, "CABECERA_TRANSFERENCIA")
 
     with transfer.container(height=FULL_PLOT_BOX_TRANSFER_HEIGHT):
         fig = TransferenciasEntreDepositosPlotter(cabecera).create_plot()

@@ -3,14 +3,16 @@ from typing import Union
 import pandas as pd
 import plotly.graph_objects as go
 
-from config.constants import COLORS, CONSUMO_GARANTIAS_COLORS
+from config.constants import CONSUMO_GARANTIAS_COLORS
 from utils.exception_utils import execute_safely
-from utils.streamlit_utils import update_layout, hover_junto
+from viewmodels.plotly_components import DefaultUpdateLayoutComponents, HoverComponents
 from viewmodels.garantias.consumo.vm import ConsumoGarantiasVM
 
 
 class ConsumoGarantiasPlotter:
     def __init__(self, tipo_repuesto, cabecera):
+        self.default = DefaultUpdateLayoutComponents()
+        self.hover = HoverComponents()
         self.df_data = ConsumoGarantiasVM().get_df_by_tipo_rep_and_cabecera(tipo_repuesto, cabecera)
 
 
@@ -84,7 +86,7 @@ class ConsumoGarantiasPlotter:
             ))
 
 
-            update_layout(fig,'Consumo garantias frente a transferencias', 'Repuesto', 'Consumo', height=665)
+            self.default.update_layout(fig,'Consumo garantias frente a transferencias', 'Repuesto', 'Consumo', height=665)
 
             fig.update_layout(
                 # legend=dict(
@@ -100,6 +102,6 @@ class ConsumoGarantiasPlotter:
                 showlegend=False,
             )
 
-            hover_junto(fig)
+            self.hover.hover_junto(fig)
             return fig
         return None

@@ -5,13 +5,14 @@ import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 
 from utils.exception_utils import execute_safely
-from utils.streamlit_utils import update_layout
+from viewmodels.plotly_components import DefaultUpdateLayoutComponents
 from viewmodels.duracion_rep.distri_normal_vm import DistribucionNormalVM
 from viewmodels.duracion_rep.duracion_vm import DuracionRepuestosVM
 
 
 class DuracionRepuestosPlotter:
     def __init__(self, repuesto: str):
+        self.default = DefaultUpdateLayoutComponents()
         self.df_duracion = DuracionRepuestosVM().get_df_by_repuesto(repuesto)
         self.df_distribucion = DistribucionNormalVM().get_df_by_repuesto(repuesto)
 
@@ -34,7 +35,7 @@ class DuracionRepuestosPlotter:
                                             "Cambio 5", "Cambio 6"),
                             )
 
-        # TODO: personalizar las legendas para que se vean más grandes
+
         cambios_iter = iter(cambios)
         cambio = next(cambios_iter, None)
 
@@ -73,7 +74,7 @@ class DuracionRepuestosPlotter:
         fig.update_yaxes(title_text="", secondary_y=False) # Histograma
         fig.update_yaxes(title_text="Distribución en %", secondary_y=True) # Campana de gauss
 
-        update_layout(fig, f"Duración repuestos ({fecha_min} | {fecha_max})",  height=725)
+        self.default.update_layout(fig, f"Duración repuestos ({fecha_min} | {fecha_max})",  height=725)
         fig.update_layout(
             barmode="overlay",
             showlegend=False,

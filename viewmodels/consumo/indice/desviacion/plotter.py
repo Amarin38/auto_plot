@@ -4,12 +4,15 @@ import plotly.graph_objects as go
 from config.constants import COLORS, FILE_STRFTIME_DMY
 
 from utils.exception_utils import execute_safely
-from utils.streamlit_utils import update_layout, top_right_legend
+from viewmodels.plotly_components import DefaultUpdateLayoutComponents, LegendComponents
 from viewmodels.consumo.indice.desviacion.vm import DesviacionIndicesVM
 
 
 class DeviationPlotter:
     def __init__(self) -> None:
+        self.default = DefaultUpdateLayoutComponents()
+        self.legend = LegendComponents()
+
         self.df = DesviacionIndicesVM().get_df()
 
     @execute_safely
@@ -36,8 +39,7 @@ class DeviationPlotter:
                 color='white', 
                 family='Arial'  
             ),
-
-            marker=dict(color=color)
+            marker=dict(color=color),
         ))
 
 
@@ -47,7 +49,7 @@ class DeviationPlotter:
             mode='lines',
 
             name="Centro de desviacion_indices (Media)",
-            line=dict(color='red', dash='dash')
+            line=dict(color='red', dash='dash'),
         ))
 
 
@@ -55,11 +57,9 @@ class DeviationPlotter:
             fig.add_shape(type="line",
                 x0=cab, y0=-105, x1=cab, y1=105,
                 line=dict(color=color, width=1))
-            
-        update_layout(fig, f"Desviacion {fecha[0]}", 'Cabecera', 'Desviacion de la media en %', 600, 200)
-        top_right_legend(fig)
 
-        fig.update_layout(
+        self.default.update_layout(fig, f"Desviacion {fecha[0]}", 'Cabecera',
+                                   'Desviacion de la media en %', 600, 200)
+        self.legend.top_right_legend(fig)
 
-        )
         return fig

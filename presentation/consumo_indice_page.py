@@ -1,6 +1,6 @@
 import streamlit as st
 
-from utils.streamlit_utils import centered_title, select_box_tipo_repuesto, select_box_tipo_indice, bar_tabs
+from presentation.streamlit_components import SelectBoxComponents, OtherComponents
 from utils.exception_utils import execute_safely
 
 from viewmodels.consumo.indice.plotter import  IndexPlotter
@@ -13,9 +13,12 @@ from viewmodels.consumo.indice.desviacion.plotter import DeviationPlotter
 
 @execute_safely
 def consumo_indice() -> None:
+    select = SelectBoxComponents()
+    other = OtherComponents()
+
     st.title(PAG_INDICES)
 
-    bar_tabs("#B2B9B0", "#BAC1B8", "#828E82",
+    other.bar_tabs("#B2B9B0", "#BAC1B8", "#828E82",
              "#0C7C59", "#4D9078", "#0C7C59")
 
     indice, desviacion = st.tabs(["📊 Indices", "📊↕️ Desviaciones de indices"])
@@ -25,14 +28,14 @@ def consumo_indice() -> None:
         aux1, titulo_col, aux2 = st.columns(DISTANCE_COLS_CENTER_TITLE)
         config_col, graficos_col = st.columns(DISTANCE_COLS_SELECTBIGGER_PLOT)
 
-        repuesto = select_box_tipo_repuesto(config_col, "INDEX_REPUESTO")
-        tipo_indice = select_box_tipo_indice(config_col, "INDEX_TIPO_INDICE")
+        repuesto = select.select_box_tipo_repuesto(config_col, "INDEX_REPUESTO")
+        tipo_indice = select.select_box_tipo_indice(config_col, "INDEX_TIPO_INDICE")
 
         if repuesto and tipo_indice:
             figs, titulo = IndexPlotter(tipo_indice, repuesto).create_plot()
 
             if figs and titulo:
-                centered_title(titulo_col, titulo)
+                other.centered_title(titulo_col, titulo)
 
                 with graficos_col.container(height=MULTIPLE_PLOT_BOX_HEIGHT):
                     for fig in figs if figs is not None else figs:
