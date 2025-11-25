@@ -1,6 +1,7 @@
 import streamlit as st
 
 from infrastructure import DBBase, db_engine
+
 from presentation.main_page import main
 from presentation.cargar_datos_page import cargar_datos
 from presentation.coches_cabecera_page import coches_cabecera
@@ -37,7 +38,7 @@ from infrastructure.db.models.json_config_model import JSONConfigModel
 
 # -----------------------------------------------------------------------------------------------
 st.set_page_config(
-    page_title="Estadisticas Dota",
+    page_title="Estadísticas Dota",
     page_icon="📊",
     layout="wide",
     initial_sidebar_state="collapsed"

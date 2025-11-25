@@ -61,8 +61,6 @@ class IndexPlotter:
                     x=x_data,
                     y=y_data,
                     name="Índice de consumo",
-
-                    text=y_data,
                     textposition="auto",
                     textfont=dict(
                         size=11,
@@ -99,6 +97,7 @@ class IndexPlotter:
 <extra></extra>
 """
                 ))
+
 
                 fig.add_trace(go.Scatter(
                         x=df_repuesto.loc[condicion_mayor, "Cabecera"],
@@ -168,7 +167,6 @@ class IndexPlotter:
 
                 self.default.update_layout(fig, repuesto, "Cabecera", "Indice de consumo")
                 self.hover.hover_junto(fig)
-                # top_right_legend(fig)
 
                 figuras.append(fig)
             return figuras, titulo

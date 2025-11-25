@@ -37,7 +37,7 @@ def consumo_indice() -> None:
             if figs and titulo:
                 other.centered_title(titulo_col, titulo)
 
-                with graficos_col.container(height=MULTIPLE_PLOT_BOX_HEIGHT):
+                with graficos_col:
                     for fig in figs if figs is not None else figs:
                         with st.container(height=PLOT_BOX_HEIGHT):
                             st.plotly_chart(fig)

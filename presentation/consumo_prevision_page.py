@@ -29,7 +29,7 @@ def consumo_prevision():
         else:
             other.centered_title(titulo_col, titulo)
 
-            with graficos_col.container(height=MULTIPLE_PLOT_BOX_HEIGHT):
+            with graficos_col:
                 for fig in figs:
                     with st.container(height=PLOT_BOX_HEIGHT):
                         st.plotly_chart(fig)

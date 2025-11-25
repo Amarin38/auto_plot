@@ -55,6 +55,7 @@ class LegendComponents:
     @execute_safely
     def top_right_legend(self, fig):
         fig.update_layout(
+            autosize=True,
             legend=dict(
                 orientation='v',
                 yanchor='top',

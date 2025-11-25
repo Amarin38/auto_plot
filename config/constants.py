@@ -104,7 +104,7 @@ DISTANCE_COLS_DUAL_PLOT: Tuple[int, float] = (1, 1.8)
 DISTANTE_COLS_DUAL_SELECT: Tuple[int, float] = (1, 0.5)
 
 DISTANCE_COLS_SELECTBIGGER_PLOT: Tuple[float, int] = (0.70, 3)
-DISTANCE_COLS_CENTER_TITLE: Tuple[float, int, int] = (2.78, 3, 1)
+DISTANCE_COLS_CENTER_TITLE: Tuple[float, int, int] = (0.95, 3, 1)
 
 
 # PATHS
