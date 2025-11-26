@@ -1,19 +1,21 @@
 import numpy as np
+import pandas as pd
 import plotly.graph_objects as go
 from plotly.graph_objs import Figure
 
 from config.constants import COLORS
 from config.enums import RepuestoEnum
 from utils.exception_utils import execute_safely
-from viewmodels.plotly_components import DefaultUpdateLayoutComponents, LegendComponents, DropDownComponents
+from viewmodels.plotly_components import DefaultUpdateLayoutComponents, LegendComponents, DropDownComponents, \
+    HoverComponents
 from viewmodels.consumo.historial.vm import HistorialConsumoVM
 
 
 class HistorialPlotter:
     def __init__(self, tipo_rep: RepuestoEnum) -> None:
         self.default = DefaultUpdateLayoutComponents()
-        self.legend = LegendComponents()
         self.dropdown = DropDownComponents()
+        self.hover = HoverComponents()
 
         self.tipo_rep = tipo_rep
         self.df = HistorialConsumoVM().get_df_tipo_repuesto(tipo_rep)
@@ -52,7 +54,7 @@ class HistorialPlotter:
                 y=y_data,
                 name="Historial de consumo",
 
-                text=y_data,
+                # text=y_data,
                 textposition="auto",
                 textfont=dict(
                     size=11,
@@ -60,7 +62,15 @@ class HistorialPlotter:
                     family='Arial'
                 ),
 
-                marker=dict(color=COLORS[3])
+                marker=dict(color=COLORS[10]),
+                customdata=pd.Series(COLORS[15], x_data),
+                hovertemplate="""
+<b>
+<span style='color:%{customdata}; font-size:15px'>Consumo:</span>
+%{y:.0f}
+</b>
+<extra></extra>
+"""
             ))
 
 
@@ -70,7 +80,8 @@ class HistorialPlotter:
                 mode="lines",
                 name=f"Tendencia",
                 line=dict(color=COLORS[12], dash='dash'),
-                visible=True
+                visible=True,
+                hoverinfo="skip",
             ))
 
             fig.add_trace(go.Scatter(
@@ -79,7 +90,8 @@ class HistorialPlotter:
                 mode="lines",
                 name=f"Tendencia",
                 line=dict(color=COLORS[8], dash='dash'),
-                visible=False
+                visible=False,
+                hoverinfo="skip",
             ))
 
             fig.add_trace(go.Scatter(
@@ -88,13 +100,13 @@ class HistorialPlotter:
                 mode="lines",
                 name=f"Tendencia",
                 line=dict(color=COLORS[7], dash='dash'),
-                visible=False
+                visible=False,
+                hoverinfo="skip",
             ))
 
             fig.update_xaxes(tickmode="linear")
 
             self.default.update_layout(fig, f"{fecha_min} | {fecha_max}", "Año", "Historial de consumo")
-            self.legend.top_right_legend(fig)
             self.dropdown.dropdown(fig, [
                 dict(
                     label="Lineal",
@@ -112,6 +124,8 @@ class HistorialPlotter:
                     args=[{"visible": [True, False, False, True]}],
                 )
             ])
+            self.hover.hover_junto(fig)
+            self.hover.color_hover_bar(fig, COLORS[15])
 
             return fig, titulo
         return [None, None]
