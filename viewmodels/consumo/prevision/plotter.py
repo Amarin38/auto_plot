@@ -7,7 +7,8 @@ from config.constants import COLORS, FILE_STRFTIME_YMD
 
 from utils.exception_utils import execute_safely
 from utils.common_utils import CommonUtils
-from viewmodels.plotly_components import DefaultUpdateLayoutComponents, HoverComponents, SliderComponents
+from viewmodels.plotly_components import DefaultUpdateLayoutComponents, HoverComponents, SliderComponents, \
+    ScatterComponents
 
 from viewmodels.consumo.prevision.data_vm import PrevisionDataVM
 from viewmodels.consumo.prevision.vm import PrevisionVM
@@ -21,6 +22,7 @@ class PrevisionPlotter:
         self.default = DefaultUpdateLayoutComponents()
         self.hover = HoverComponents()
         self.slider = SliderComponents()
+        self.scatter = ScatterComponents()
 
         self.tipo_rep = tipo_rep
         self.df_data = PrevisionDataVM().get_df_by_tipo_repuesto(self.tipo_rep)
@@ -90,10 +92,11 @@ class PrevisionPlotter:
                     legendgroup="Consumo",
                     customdata=x_data_new,
                     hovertemplate="""
-<b><span style='color:#485696'>Consumo:</span></b> %{y}
+<b>
+<span style='color:#485696'>Consumo:</span>
+</b> %{y}
 <extra></extra>
 """,
-
                 ))
 
 
@@ -125,37 +128,8 @@ class PrevisionPlotter:
 """
                 ))
 
-                fig.add_trace(go.Scatter(
-                    x=[None],  # nada visible
-                    y=[None],
-                    mode="markers",
-                    marker=dict(color="rgba(0,0,0,0)"),  # transparente
-                    showlegend=True,
-                    name=f"Prevision total: {total_prevision}",
-                    legendgroup="ConsumoPrevision"
-                ))
-
-                fig.add_trace(go.Scatter(
-                    x=[None],  # nada visible
-                    y=[None],
-                    mode="markers",
-                    marker=dict(color="rgba(0,0,0,0)"),  # transparente
-                    showlegend=True,
-                    name=f"Valor por mes: {valor_mensual}",
-                    legendgroup="ConsumoPrevision"
-                ))
-
-
-                self.default.update_layout(fig, repuesto, "Fecha", "Consumo")
-                self.slider.range_slider(fig)
-                self.hover.hover_x(fig)
-
-                fig.update_layout(
-                    hovermode="x",
-                    hoverlabel=dict(
-                        font_size=16  # <-- tamaño del texto
-                    )
-                )
+                self.scatter.empty(fig, f"Prevision total: {total_prevision}")
+                self.scatter.empty(fig, f"Valor por mes: {valor_mensual}")
 
                 step = 3
                 ticktext_all = [
@@ -165,19 +139,12 @@ class PrevisionPlotter:
                     for i in range(len(ticktext))
                 ]
 
-                fig.update_xaxes(
-                    tickmode="array",
-                    tickvals=tickvals,
-                    ticktext=ticktext_all,
+                self.default.update_layout(fig, repuesto, "Fecha", "Consumo")
+                self.slider.range_slider(fig)
 
-                    showspikes=True,
-                    spikemode="across+marker",
-                    spikesnap="data",
-                    spikethickness=2,
-                    spikecolor="rgba(255,255,255)",
-                    spikedash="solid",
-                )
-
+                self.hover.hover_x(fig)
+                self.hover.tick_array(fig, tickvals, ticktext_all)
+                self.hover.color_hover_bar(fig, "white")
 
                 figuras.append(fig)
             return figuras, titulo

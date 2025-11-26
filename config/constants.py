@@ -1,4 +1,4 @@
-from typing import Tuple, List
+from typing import Tuple, List, Union
 from pathlib import Path
 from pandas import Timestamp
 
@@ -147,11 +147,11 @@ INDICE_MEDIA_COLOR: str = "#FF5733"
 FALLAS_GARANTIAS_COLORS: Tuple[str, ...] = ("#F1D764", "#F4A259", "#5B8E7D", "#BC4B51", "#897AEA")
 CONSUMO_GARANTIAS_COLORS: Tuple[str, str] = ("#C70039","#0C7C59")
 
-
+DURACION_REPUESTOS_COLORS: Tuple[str, ...] = ("#FE7F2D", "#4C8DB4", "#806FA3", "#619B8A", "#A1C181", "#FCCA46")
 
 # HTML
 HTML_SIN_CAMBIOS = """<p style='
-                    color: #5497A7; 
+                    color: #F1D764; 
                     font: bold light 18px sans-serif;
                     background: #0E1117; 
                     border-radius: 5px;

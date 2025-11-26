@@ -1,8 +1,14 @@
-from typing import List, Dict, Optional
+from functools import singledispatchmethod
+from typing import List, Dict, Optional, Union, Tuple, Any
+
+import pandas as pd
+import plotly.graph_objects
+from multipledispatch import dispatch
+from plotly.graph_objs import Figure
 
 from config.constants import COLORS
 from utils.exception_utils import execute_safely
-
+import plotly.graph_objects as go
 
 class HoverComponents:
     def __init__(self):
@@ -28,7 +34,7 @@ class HoverComponents:
             hoverlabel=dict(
                 bgcolor="#0E1117",  # color de fondo
                 bordercolor="black",
-                font_size=14.5,  # 🔹 aumenta el tamaño del texto
+                font_size=16,  # 🔹 aumenta el tamaño del texto
                 font_family="Arial",
                 namelength=-1
             ),
@@ -47,6 +53,36 @@ class HoverComponents:
             ),
         )
 
+    @execute_safely
+    def color_hover_bar_subplot(self, fig):
+        for axis in fig.layout:
+            if axis.startswith("xaxis"):
+                fig.layout[axis].update(
+                    showspikes=True,
+                    spikemode="across+marker",
+                    spikecolor="rgba(255,255,255)",
+                    spikethickness=2,
+                    spikedash="solid"
+                )
+
+    @execute_safely
+    def color_hover_bar(self, fig, color: str):
+        fig.update_xaxes(
+            showspikes=True,
+            spikemode="across+marker",
+            spikesnap="data",
+            spikethickness=2,
+            spikecolor="rgba(255,255,255)",
+            spikedash="solid",
+        )
+
+    @execute_safely
+    def tick_array(self, fig, tickvals, ticktext):
+        fig.update_xaxes(
+            tickmode="array",
+            tickvals=tickvals,
+            ticktext=ticktext,
+        )
 
 class LegendComponents:
     def __init__(self):
@@ -141,6 +177,142 @@ class DropDownComponents:
                 )
             ]
         )
+
+
+class ScatterComponents:
+    def __init__(self):
+        ...
+
+    @execute_safely
+    def empty(self, fig, nombre: str):
+        fig.add_trace(go.Scatter(
+            x=[None],  # nada visible
+            y=[None],
+            mode="markers",
+            marker=dict(color="rgba(0,0,0,0)"),  # transparente
+            showlegend=True,
+            name=nombre,
+            legendgroup="ConsumoPrevision"
+        ))
+
+
+    @dispatch(Figure, pd.Series, pd.Series, str, str, pd.Series)
+    def cross(self, fig: Figure, x: pd.Series, y: pd.Series, nombre: str, texto: str, custom: Any):
+        fig.add_trace(go.Scatter(
+            x=x,
+            y=[val + 2 for val in y],
+            mode="markers",
+            name=nombre,
+            marker=dict(
+                size=10,
+                color="#C70039",
+                symbol="x",
+                line=dict(width=0.5),
+            ),
+            legendgroup="emoji",
+            customdata=custom,
+            hovertemplate="""
+<b>
+<span style='color:#C70039'>{texto}:</span>
+%{{customdata}}%
+</b>
+<extra></extra>
+        """.format(texto=texto)
+        ))
+
+    @dispatch(Figure, pd.Series, pd.Series, str, str)
+    def cross(self, fig: Figure, x: pd.Series, y: pd.Series, nombre: str, texto: str):
+        fig.add_trace(go.Scatter(
+            x=x,
+            y=[val + 2 for val in y],
+            mode="markers",
+            name=nombre,
+            marker=dict(
+                size=10,
+                color="#C70039",
+                symbol="x",
+                line=dict(width=0.5),
+            ),
+            legendgroup="emoji",
+            hovertemplate="""
+<b>
+<span style='color:#C70039'>{texto}</span>
+</b>
+<extra></extra>
+        """.format(texto=texto)
+        ))
+
+
+    @dispatch(Figure, pd.Series, pd.Series, str, str, pd.Series)
+    def tick(self, fig: Figure, x: pd.Series, y: pd.Series, nombre: str, texto: str, custom: Any):
+        fig.add_trace(go.Scatter(
+            x=x,
+            y=[val + 2 for val in y],
+            mode="markers+text",
+            name=nombre,
+            marker=dict(
+                size=11,
+                color="#3A7D44",
+                symbol="circle",
+                line=dict(width=0.5),
+            ),
+            text=["✔"] * 12,
+            legendgroup="emoji",
+            customdata=custom,
+            hovertemplate="""
+<b>
+<span style='color:#3A7D44'>{texto}:</span>
+%{{customdata}}%
+</b>
+<extra></extra>
+        """.format(texto=texto)
+        ))
+
+    @dispatch(Figure, pd.Series, pd.Series, str, str)
+    def tick(self, fig: Figure, x: pd.Series, y: pd.Series, nombre: str, texto: str):
+        fig.add_trace(go.Scatter(
+            x=x,
+            y=[val + 2 for val in y],
+            mode="markers+text",
+            name=nombre,
+            marker=dict(
+                size=11,
+                color="#3A7D44",
+                symbol="circle",
+                line=dict(width=0.5),
+            ),
+            text=["✔"] * 12,
+            legendgroup="emoji",
+            hovertemplate="""
+<b>
+<span style='color:#3A7D44'>{texto}</span>
+</b>
+<extra></extra>
+        """.format(texto=texto)
+        ))
+
+
+    @execute_safely
+    def mid_line(self, fig: Figure, x, y, nombre: str, texto: str):
+        fig.add_trace(go.Scatter(
+            x=x,
+            y=[val + 1 for val in y],
+            mode="markers",
+            name=nombre,
+            marker=dict(
+                size=11,
+                color="#F2C14E",
+                symbol="line-ew-open",
+                line=dict(width=2),
+            ),
+            legendgroup="emoji",
+            hovertemplate="""
+<b>
+<span style='color:#F2C14E'>{texto}</span>
+</b>
+<extra></extra>
+""".format(texto=texto)
+        ))
 
 
 class DefaultUpdateLayoutComponents:

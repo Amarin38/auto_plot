@@ -2,7 +2,7 @@ import plotly.graph_objects as go
 
 from config.constants import COLORS
 from config.enums import ConsumoObligatorioEnum
-from viewmodels.plotly_components import DefaultUpdateLayoutComponents, HoverComponents
+from viewmodels.plotly_components import DefaultUpdateLayoutComponents, HoverComponents, ScatterComponents
 from viewmodels.consumo.obligatorio.vm import ConsumoObligatorioVM
 
 
@@ -10,6 +10,7 @@ class ConsumoObligatorioPlotter:
     def __init__(self, tipo_rep: ConsumoObligatorioEnum) -> None:
         self.default = DefaultUpdateLayoutComponents()
         self.hover = HoverComponents()
+        self.scatter = ScatterComponents()
 
         self.df = ConsumoObligatorioVM().get_df_repuesto(tipo_rep)
 
@@ -105,51 +106,12 @@ class ConsumoObligatorioPlotter:
 """,
         ))
 
-        # Marcadores
-        fig.add_trace(go.Scatter(
-                x=self.df.loc[condicion_menor, "Cabecera"],
-                y=y2024.loc[condicion_menor] + 130,
-                mode="markers",
-                name="Falta para el umbral",
-                marker=dict(
-                    size=10,
-                    color="red",
-                    symbol="x",
-                    line=dict(width=0.5),
-                ),
-                legendgroup="B",
-                customdata=porcentaje,
-                hovertemplate="""
-<b>
-<span style='color:red'>Debajo del umbral por:</span>
-</b>
-%{customdata}%
-<extra></extra>
-"""
-            )
-        )
 
-        fig.add_trace(go.Scatter(
-                x=self.df.loc[condicion_mayor_igual, "Cabecera"],
-                y=y2024.loc[condicion_mayor_igual] + 130,
-                mode="markers+text",
-                name="Igual o sobre el umbral",
-                marker=dict(
-                    size=11,
-                    color="green",
-                    symbol="circle"
-                ),
-                text=["✔"] * 12,
-                textposition="middle center",
-                legendgroup="B",
-                hovertemplate="""
-<b>
-<span style='color:green'>Igual o sobre el umbral</span>
-</b>
-<extra></extra>
-"""
-            )
-        )
+        self.scatter.cross(fig, self.df.loc[condicion_menor, "Cabecera"], y2024.loc[condicion_menor],
+                           "Falta para el umbral", "Debajo del umbral por", porcentaje)
+
+        self.scatter.tick(fig, self.df.loc[condicion_mayor_igual, "Cabecera"], y2024.loc[condicion_mayor_igual],
+                          "Igual o sobre el umbral", "Igual o sobre el umbral")
 
         self.default.update_layout(fig, f"Ultima fecha: {fecha}", x_title="Cabecera", y_title="Consumo")
         self.hover.hover_junto(fig)

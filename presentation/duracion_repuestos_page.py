@@ -12,7 +12,7 @@ def duracion_repuestos():
     st.title(PAG_DURACION)
 
     with st.container(height=DURACION_TAB_BOX_HEIGHT):
-        aux1, rep_col, datos = st.columns((1, 1, 1))
+        aux1, aux2, rep_col, aux3, datos = st.columns((0.5, 0.3, 1, 0.3, 0.5))
 
         select_rep = select.select_box_repuesto(rep_col, "DURACION_REPUESTO_GENERAL")
 

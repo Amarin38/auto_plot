@@ -88,7 +88,7 @@ class RepuestoReparadoEnum(StrEnum):
     def _generate_next_value_(name, start, count, last_values):
         return name.replace("_", " ").upper()
 
-    CAJA_AUTOMATICA_REPARADA_T270 = auto()
+    CAJA_AUTOMATICA_REP_T270 = auto()
     RETEN_RUEDA_EJE_CENTRAL_MT27_EXTERIOR = auto()
     RETEN_RUEDA_EJE_CENTRAL_MT27_INTERIOR = auto()
     RULEMAN_RUEDA_EJE_CENTRAL_MT27 = auto()

@@ -10,7 +10,7 @@ from config.enums import IndexTypeEnum
 from utils.exception_utils import execute_safely
 from utils.common_utils import CommonUtils
 
-from viewmodels.plotly_components import DefaultUpdateLayoutComponents, HoverComponents
+from viewmodels.plotly_components import DefaultUpdateLayoutComponents, HoverComponents, ScatterComponents
 from viewmodels.consumo.indice.vm import IndiceConsumoVM
 
 class IndexPlotter:
@@ -18,6 +18,7 @@ class IndexPlotter:
         self.common = CommonUtils()
         self.default = DefaultUpdateLayoutComponents()
         self.hover = HoverComponents()
+        self.scatter = ScatterComponents()
 
         self.tipo_rep = tipo_rep
         self.df = IndiceConsumoVM().get_df_tipo_repuesto_and_tipo_indice(tipo_rep, index_type)
@@ -98,72 +99,14 @@ class IndexPlotter:
 """
                 ))
 
+                self.scatter.cross(fig, df_repuesto.loc[condicion_mayor, "Cabecera"], valores_mayores,
+                                   "Superior a la media", "Encima de la media por", porcentaje_mayor)
 
-                fig.add_trace(go.Scatter(
-                        x=df_repuesto.loc[condicion_mayor, "Cabecera"],
-                        y=[v + 1 for v in valores_mayores],
-                        mode="markers",
-                        name="Superior a la media",
-                        marker=dict(
-                            size=10,
-                            color="#C70039",
-                            symbol="x",
-                            line=dict(width=0.5),
-                        ),
-                        legendgroup="B",
-                        customdata=porcentaje_mayor,
-                        hovertemplate="""
-<b>
-<span style='color:#C70039'>Encima de la media por:</span>
-</b>
-%{customdata}%
-<extra></extra>
-"""
-                    )
-                )
+                self.scatter.tick(fig, df_repuesto.loc[condicion_menor, "Cabecera"], valores_menores,
+                                  "Inferior a la media", "Debajo de la media por", porcentaje_menor)
 
-                fig.add_trace(go.Scatter(
-                    x=df_repuesto.loc[condicion_menor, "Cabecera"],
-                    y=[v + 1 for v in valores_menores],
-                    mode="markers+text",
-                    name="Inferior a la media",
-                    marker=dict(
-                        size=11,
-                        color="#3A7D44",
-                        symbol="circle",
-                        line=dict(width=0.5),
-                    ),
-                    text=["✔"] * 15,
-                    legendgroup="B",
-                    customdata=porcentaje_menor,
-                    hovertemplate="""
-<b>
-<span style='color:#3A7D44'>Debajo de la media por:</span>
-</b>
-%{customdata}%
-<extra></extra>
-"""
-                ))
-
-                fig.add_trace(go.Scatter(
-                    x=df_repuesto.loc[condicion_igual, "Cabecera"],
-                    y=[v + 1 for v in valores_iguales],
-                    mode="markers",
-                    name="En la media",
-                    marker=dict(
-                        size=11,
-                        color="#F2C14E",
-                        symbol="line-ew-open",
-                        line=dict(width=2),
-                    ),
-                    legendgroup="B",
-                    hovertemplate="""
-<b>
-<span style='color:#F2C14E'>En la media</span>
-</b>
-<extra></extra>
-"""
-                ))
+                self.scatter.mid_line(fig, df_repuesto.loc[condicion_igual, "Cabecera"], valores_iguales,
+                                   "En la media", "En la media")
 
                 self.default.update_layout(fig, repuesto, "Cabecera", "Indice de consumo")
                 self.hover.hover_junto(fig)
