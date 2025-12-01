@@ -145,7 +145,7 @@ class PrevisionPlotter:
 
                 self.hover.hover_x(fig)
                 self.hover.tick_array(fig, tickvals, ticktext_all)
-                self.hover.color_hover_bar(fig, "white")
+                self.hover.color_hover_bar(fig)
 
                 figuras.append(fig)
             return figuras, titulo
