@@ -1,7 +1,8 @@
 from typing import List
 
-from sqlalchemy import select
+from sqlalchemy import select, delete
 
+from config.enums import RepuestoEnum
 from domain.entities.consumo_desviacion_indices import ConsumoDesviacionIndices
 from infrastructure import SessionDB, db_engine
 from infrastructure.db.models.consumo_desviacion_indices_model import ConsumoDesviacionIndicesModel
@@ -43,6 +44,16 @@ class ConsumoDesviacionIndicesRepository:
             return ConsumoDesviacionIndicesMapper.to_entity(model)
 
 
+    def get_by_tipo_rep(self, tipo_rep: RepuestoEnum) -> List[ConsumoDesviacionIndices]:
+        with self.session as session:
+            models = session.scalars(
+                select(ConsumoDesviacionIndicesModel)
+                .where(ConsumoDesviacionIndicesModel.TipoRepuesto == tipo_rep)
+            ).all()
+
+            return [ConsumoDesviacionIndicesMapper.to_entity(m) for m in models]
+
+
     # Delete -------------------------------------------
     def delete_by_id(self, _id: int) -> None:
         with self.session as session:
@@ -50,3 +61,11 @@ class ConsumoDesviacionIndicesRepository:
                 row = session.get(ConsumoDesviacionIndicesModel, _id)
                 if row:
                     session.delete(row)
+
+
+    def delete(self) -> None:
+        with self.session as session:
+            with session.begin():
+                stmt = delete(ConsumoDesviacionIndicesModel)
+                session.execute(stmt)
+                session.commit()

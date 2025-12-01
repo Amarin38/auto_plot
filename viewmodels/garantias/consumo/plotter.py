@@ -3,7 +3,7 @@ from typing import Union
 import pandas as pd
 import plotly.graph_objects as go
 
-from config.constants import CONSUMO_GARANTIAS_COLORS
+from config.constants_colors import CONSUMO_GARANTIAS_COLORS
 from utils.exception_utils import execute_safely
 from viewmodels.plotly_components import DefaultUpdateLayoutComponents, HoverComponents
 from viewmodels.garantias.consumo.vm import ConsumoGarantiasVM

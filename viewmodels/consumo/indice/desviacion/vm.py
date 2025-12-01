@@ -1,5 +1,6 @@
 import pandas as pd
 
+from config.enums import RepuestoEnum
 from domain.entities.consumo_desviacion_indices import ConsumoDesviacionIndices
 from infrastructure.repositories.consumo_desviacion_indices_repository import ConsumoDesviacionIndicesRepository
 
@@ -13,14 +14,20 @@ class DesviacionIndicesVM:
 
         for _, row in df.iterrows():
             entity = ConsumoDesviacionIndices(
-                id                  = None,
-                Cabecera            = row['Cabecera'],
-                MediaCabecera       = row['MediaCabecera'],
-                MediaDeMedias       = row['MediaDeMedias'],
-                Diferencia          = row['Diferencia'],
-                Desviacion          = row['Desviacion'],
-                DesviacionPor       = row['DesviacionPor'],
-                FechaCompleta       = row['FechaCompleta']
+                id                      = None,
+                Cabecera                = row['Cabecera'],
+                TipoRepuesto            = row['TipoRepuesto'],
+                MediaRepuesto           = row['MediaRepuesto'],
+                MediaDeMediasRepuesto   = row['MediaDeMediasRepuesto'],
+                DiferenciaRepuesto      = row['DiferenciaRepuesto'],
+                DesviacionRepuesto      = row['DesviacionRepuesto'],
+                DesviacionRepuestoPor   = row['DesviacionRepuestoPor'],
+                MediaCabecera           = row['MediaCabecera'],
+                MediaDeMediasCabecera   = row['MediaDeMediasCabecera'],
+                DiferenciaCabecera      = row['DiferenciaCabecera'],
+                DesviacionCabecera      = row['DesviacionCabecera'],
+                DesviacionCabeceraPor   = row['DesviacionCabeceraPor'],
+                FechaCompleta           = row['FechaCompleta']
             )
             entities.append(entity)
 
@@ -35,13 +42,38 @@ class DesviacionIndicesVM:
                 "id"            : e.id,
                 "Cabecera"      : e.Cabecera,
                 "MediaCabecera" : e.MediaCabecera,
-                "MediaDeMedias" : e.MediaDeMedias,
-                "Diferencia"    : e.Diferencia,
-                "Desviacion"    : e.Desviacion,
-                "DesviacionPor" : e.DesviacionPor,
+                "MediaDeMedias" : e.MediaDeMediasCabecera,
+                "Diferencia"    : e.DiferenciaCabecera,
+                "Desviacion"    : e.DesviacionCabecera,
+                "DesviacionPor" : e.DesviacionCabeceraPor,
                 "FechaCompleta" : e.FechaCompleta
             }
             for e in entities
         ]
 
         return pd.DataFrame(data)
+
+
+    def get_df_by_tipo_rep(self, tipo_rep: RepuestoEnum) -> pd.DataFrame:
+        entities = self.repo.get_by_tipo_rep(tipo_rep)
+
+        data = [
+            {
+                "id"            : e.id,
+                "Cabecera"      : e.Cabecera,
+                "TipoRepuesto"  : e.TipoRepuesto,
+                "MediaCabecera" : e.MediaRepuesto,
+                "MediaDeMedias" : e.MediaDeMediasRepuesto,
+                "Diferencia"    : e.DiferenciaRepuesto,
+                "Desviacion"    : e.DesviacionRepuesto,
+                "DesviacionPor" : e.DesviacionRepuestoPor,
+                "FechaCompleta" : e.FechaCompleta
+            }
+            for e in entities
+        ]
+
+        return pd.DataFrame(data)
+
+
+    def delete_all(self) -> None:
+        self.repo.delete()

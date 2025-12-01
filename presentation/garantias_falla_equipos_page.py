@@ -3,7 +3,7 @@ import streamlit as st
 from utils.exception_utils import execute_safely
 from presentation.streamlit_components import SelectBoxComponents
 
-from config.constants import FALLA_TAB_BOX_HEIGHT, PAG_FALLA_GARANTIAS, FALLA_GARANTIAS_BOX_HEIGHT
+from config.constants_views import FALLA_TAB_BOX_HEIGHT, PAG_FALLA_GARANTIAS, FALLA_GARANTIAS_BOX_HEIGHT
 
 from viewmodels.garantias.falla.plotter import FallaGarantiasPlotter
 from viewmodels.garantias.consumo.plotter import ConsumoGarantiasPlotter

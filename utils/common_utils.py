@@ -6,7 +6,7 @@ import pandas as pd
 
 from typing import List
 
-from config.constants import FILE_STRFTIME_DMY
+from config.constants_common import FILE_STRFTIME_DMY
 from utils.exception_utils import execute_safely
 from viewmodels.common.json_config_vm import JSONConfigVM
 

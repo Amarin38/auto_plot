@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 import plotly.graph_objects as go
 
-from config.constants import INDICE_MEDIA_COLOR, INDICE_COLORS
+from config.constants_colors import INDICE_MEDIA_COLOR, INDICE_COLORS
 from config.enums import IndexTypeEnum
 
 from utils.exception_utils import execute_safely

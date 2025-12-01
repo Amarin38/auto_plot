@@ -2,7 +2,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import declarative_base
 from sqlalchemy.orm import sessionmaker
 
-from config.constants import DB_PATH
+from config.constants_common import DB_PATH
 
 db_engine = create_engine(DB_PATH, echo=False)
 

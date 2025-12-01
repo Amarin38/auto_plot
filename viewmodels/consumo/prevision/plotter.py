@@ -3,7 +3,8 @@ from babel.dates import format_date
 
 import plotly.graph_objects as go
 
-from config.constants import COLORS, FILE_STRFTIME_YMD
+from config.constants_colors import COLORS
+from config.constants_common import FILE_STRFTIME_YMD
 
 from utils.exception_utils import execute_safely
 from utils.common_utils import CommonUtils

@@ -7,9 +7,15 @@ from typing import Optional
 class ConsumoDesviacionIndices:
     id: Optional[int]
     Cabecera: str
+    TipoRepuesto: str
+    MediaRepuesto: float
+    MediaDeMediasRepuesto: float
+    DiferenciaRepuesto: float
+    DesviacionRepuesto: float
+    DesviacionRepuestoPor: str
     MediaCabecera: float
-    MediaDeMedias: float
-    Diferencia: float
-    Desviacion: float
-    DesviacionPor: str
+    MediaDeMediasCabecera: float
+    DiferenciaCabecera: float
+    DesviacionCabecera: float
+    DesviacionCabeceraPor: str
     FechaCompleta: date

@@ -3,10 +3,10 @@ import pandas as pd
 import plotly.graph_objects as go
 from plotly.graph_objs import Figure
 
-from config.constants import COLORS
+from config.constants_colors import COLORS
 from config.enums import RepuestoEnum
 from utils.exception_utils import execute_safely
-from viewmodels.plotly_components import DefaultUpdateLayoutComponents, LegendComponents, DropDownComponents, \
+from viewmodels.plotly_components import DefaultUpdateLayoutComponents, DropDownComponents, \
     HoverComponents
 from viewmodels.consumo.historial.vm import HistorialConsumoVM
 
@@ -54,7 +54,6 @@ class HistorialPlotter:
                 y=y_data,
                 name="Historial de consumo",
 
-                # text=y_data,
                 textposition="auto",
                 textfont=dict(
                     size=11,

@@ -2,10 +2,10 @@ import numpy as np
 import pandas as pd
 from scipy.stats import norm
 
-from config.constants import FILTRO_OBS
+from config.constants_cleaner import FILTRO_OBS
 from utils.exception_utils import execute_safely
-from viewmodels.duracion_rep.distri_normal_vm import DistribucionNormalVM
-from viewmodels.duracion_rep.duracion_vm import DuracionRepuestosVM
+from viewmodels.consumo.duracion_rep.distri_normal_vm import DistribucionNormalVM
+from viewmodels.consumo.duracion_rep.duracion_vm import DuracionRepuestosVM
 
 
 class DuracionRepuestos:

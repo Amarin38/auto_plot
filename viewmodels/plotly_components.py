@@ -1,12 +1,10 @@
-from functools import singledispatchmethod
-from typing import List, Dict, Optional, Union, Tuple, Any
+from typing import List, Dict, Optional, Any
 
 import pandas as pd
-import plotly.graph_objects
 from multipledispatch import dispatch
 from plotly.graph_objs import Figure
 
-from config.constants import COLORS
+from config.constants_colors import COLORS
 from utils.exception_utils import execute_safely
 import plotly.graph_objects as go
 
@@ -66,7 +64,7 @@ class HoverComponents:
                 )
 
     @execute_safely
-    def color_hover_bar(self, fig, color: str):
+    def color_hover_bar(self, fig):
         fig.update_xaxes(
             showspikes=True,
             spikemode="across+marker",
@@ -75,6 +73,18 @@ class HoverComponents:
             spikecolor="rgba(255,255,255)",
             spikedash="solid",
         )
+
+    @execute_safely
+    def color_hover_bar_colored(self, fig, color: str):
+        fig.update_xaxes(
+            showspikes=True,
+            spikemode="across+marker",
+            spikesnap="data",
+            spikethickness=2,
+            spikecolor=color,
+            spikedash="solid",
+        )
+
 
     @execute_safely
     def tick_array(self, fig, tickvals, ticktext):

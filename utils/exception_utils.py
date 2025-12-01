@@ -2,9 +2,9 @@ import traceback
 import functools
 import logging
 
-from config.constants import T_GRAY, T_WHITE, T_RED, T_MAGENTA, T_YELLOW, T_BLUE, T_GREEN
-from config.constants import B_ORANGE, B_RED
-from config.constants import UNDERLINE, ITALIC, RESET
+from config.constants_colors import T_GRAY, T_WHITE, T_RED, T_MAGENTA, T_YELLOW, T_BLUE, T_GREEN
+from config.constants_colors import B_ORANGE, B_RED
+from config.constants_colors import UNDERLINE, ITALIC, RESET
 
 
 logging.basicConfig(

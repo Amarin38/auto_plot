@@ -1,20 +1,23 @@
 import streamlit as st
 
-from presentation.streamlit_components import SelectBoxComponents, OtherComponents
+from presentation.streamlit_components import SelectBoxComponents, OtherComponents, ButtonComponents
 from utils.exception_utils import execute_safely
 
 from viewmodels.consumo.indice.plotter import  IndexPlotter
 
-from config.constants import (MULTIPLE_PLOT_BOX_HEIGHT, PLOT_BOX_HEIGHT, DISTANCE_COLS_CENTER_TITLE,
-                              DISTANCE_COLS_SELECTBIGGER_PLOT, PAG_INDICES, SELECT_BOX_HEIGHT, FULL_PLOT_BOX_HEIGHT,
-                              COLORS, DESVIACION_BOX_HEIGHT)
+from config.constants_colors import COLORS
+from config.constants_views import (PLOT_BOX_HEIGHT, DISTANCE_COLS_CENTER_TITLE, DISTANCE_COLS_SELECTBIGGER_PLOT,
+                                    PAG_INDICES, SELECT_BOX_HEIGHT, FULL_PLOT_BOX_HEIGHT, DESVIACION_BOX_HEIGHT)
+
 from viewmodels.consumo.indice.desviacion.plotter import DeviationPlotter
+from viewmodels.processing.compute.compute_desviacion_indices import DeviationTrend
 
 
 @execute_safely
 def consumo_indice() -> None:
     select = SelectBoxComponents()
     other = OtherComponents()
+    button = ButtonComponents()
 
     st.title(PAG_INDICES)
 
@@ -48,10 +51,20 @@ def consumo_indice() -> None:
 
 
     with desviacion.container(height=DESVIACION_BOX_HEIGHT):
+        aux, recargar, selectbox = st.columns([5.65,0.3, 2])
+
+        if recargar.button(label="🔃", type="secondary", use_container_width=True):
+            DeviationTrend().calculate()
+
+        repuesto = select.select_box_tipo_repuesto(selectbox, "DESVIACION_TIPO_REP")
+
         grafico, explicacion = st.columns([3, 1])
 
         with grafico.container(height=FULL_PLOT_BOX_HEIGHT):
-            st.plotly_chart(DeviationPlotter().create_plot())
+            if repuesto:
+                st.plotly_chart(DeviationPlotter(repuesto).create_plot())
+            else:
+                st.plotly_chart(DeviationPlotter(None).create_plot())
 
         with explicacion.container(height=FULL_PLOT_BOX_HEIGHT):
             menor = f"<font color={COLORS[9]}>**menor**</font>"

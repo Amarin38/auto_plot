@@ -1,6 +1,6 @@
 import plotly.graph_objects as go
 
-from config.constants import COLORS
+from config.constants_colors import COLORS
 from config.enums import ConsumoObligatorioEnum
 from viewmodels.plotly_components import DefaultUpdateLayoutComponents, HoverComponents, ScatterComponents
 from viewmodels.consumo.obligatorio.vm import ConsumoObligatorioVM

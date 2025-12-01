@@ -2,8 +2,7 @@ from typing import Union, List, Tuple
 
 import pandas as pd
 
-from config.constants import INTERNOS_DEVOLUCION, MOV_SALIDAS, MOV_ENTRADAS, MOV_DEVOLUCIONES, DEL_COLUMNS, \
-    PAGE_STRFTIME_DMY, DELTA_STRFTIME_YM
+from config.constants_cleaner import INTERNOS_DEVOLUCION, MOV_SALIDAS, MOV_ENTRADAS, MOV_DEVOLUCIONES, DEL_COLUMNS
 from config.enums import MovimientoEnum
 from utils.common_utils import CommonUtils
 from utils.exception_utils import execute_safely
@@ -26,7 +25,7 @@ class InventoryDataCleaner:
         if not df.empty:
             try:
                 df = self.common.delete_by_content(df, "ficfec", ["  -   -"])
-            except Exception as e:
+            except (KeyError, IndexError):
                 df = self.common.delete_by_content(df, "FechaCompleta", ["  -   -"])
 
             df = self._transform(df)

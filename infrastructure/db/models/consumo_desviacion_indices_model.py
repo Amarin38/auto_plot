@@ -8,11 +8,17 @@ from infrastructure import DBBase
 class ConsumoDesviacionIndicesModel(DBBase):
     __tablename__ = "CONSUMO_DESVIACION_INDICES"
     
-    id:             Mapped[int] = mapped_column(primary_key=True)
-    Cabecera:       Mapped[str]
-    MediaCabecera:  Mapped[float]
-    MediaDeMedias:  Mapped[float]
-    Diferencia:     Mapped[float]
-    Desviacion:     Mapped[float]
-    DesviacionPor:  Mapped[str]
-    FechaCompleta:  Mapped[date] = mapped_column(Date)
+    id                      : Mapped[int] = mapped_column(primary_key=True)
+    Cabecera                : Mapped[str]
+    TipoRepuesto            : Mapped[str]
+    MediaRepuesto           : Mapped[float]
+    MediaDeMediasRepuesto   : Mapped[float]
+    DiferenciaRepuesto      : Mapped[float]
+    DesviacionRepuesto      : Mapped[float]
+    DesviacionRepuestoPor   : Mapped[str]
+    MediaCabecera           : Mapped[float]
+    MediaDeMediasCabecera   : Mapped[float]
+    DiferenciaCabecera      : Mapped[float]
+    DesviacionCabecera      : Mapped[float]
+    DesviacionCabeceraPor   : Mapped[str]
+    FechaCompleta           : Mapped[date] = mapped_column(Date)

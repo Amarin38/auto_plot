@@ -34,6 +34,7 @@ class CabecerasEnum(PascalCaseStrEnum):
     MEDINA = auto()
     CUSA = auto()
     ETAPSA = auto()
+    ESISA = auto()
     LUJAN = auto()
     MASCHWITZ = auto()
     BARRACAS = auto()
@@ -46,7 +47,6 @@ class CabecerasEnum(PascalCaseStrEnum):
     TG_CIUDADELA = auto()
     TARSA_LANUS = auto()
     TARSA_134 = auto()
-    SAN_ISIDRO = auto()
     MEGABUS_EJERCITO = auto()
     EL_PUENTE = auto()
 
@@ -123,14 +123,12 @@ class LoadDataEnum(StrEnum):
     PREVISION_DE_CONSUMO = auto()
     HISTORIAL_CONSUMO = auto()
     CONSUMO_OBLIGATORIO = auto()
-    DESVIACION_DE_INDICES = auto()
     FALLA_GARANTIAS = auto()
     CONSUMO_GARANTIAS = auto()
     MAXIMOS_Y_MINIMOS = auto()
     DURACION_REPUESTOS = auto()
     TRANSFERENCIAS_ENTRE_DEPOSITOS = auto()
     DIFERENCIA_MOVIMIENTOS_ENTRE_DEPOSITOS = auto()
-
 
 
 class ColoresMatplotlibEnum(StrEnum):

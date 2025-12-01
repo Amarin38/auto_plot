@@ -1,6 +1,6 @@
 import streamlit as st
 
-from config.constants import PAG_CARGAR_DATOS
+from config.constants_views import PAG_CARGAR_DATOS
 from config.enums import LoadDataEnum, TipoCargarEnum
 from viewmodels.gomeria.diferencia_mov_dep_vm import DiferenciaMovimientosEntreDepositosVM
 from viewmodels.processing.compute.compute_consumo_obligatorio import compute_consumo_obligatorio
@@ -83,9 +83,6 @@ def cargar_datos():
                         buttons.load_data_bttn(lambda: compute_consumo_obligatorio(load_data(select_load, uploaded_files),
                                                                            select_repuesto))
 
-                case LoadDataEnum.DESVIACION_DE_INDICES:
-                    buttons.load_data_bttn(lambda: DeviationTrend().calculate(load_data(select_load, uploaded_files)))
-
                 case LoadDataEnum.FALLA_GARANTIAS:
                     st.image("resources/datos_garantias.png", caption="Como se debe ver la tabla a insertar")
                     select_tipo_repuesto = select.select_box_tipo_repuesto(st, "LOAD_DATA_TIPO_REPUESTO_FALLAS")
@@ -135,7 +132,7 @@ def cargar_datos():
 @execute_safely
 def load_data(select_load: LoadDataEnum , uploaded_files):
     match select_load:
-        case LoadDataEnum.DESVIACION_DE_INDICES | LoadDataEnum.FALLA_GARANTIAS \
+        case   LoadDataEnum.FALLA_GARANTIAS \
              | LoadDataEnum.CONSUMO_GARANTIAS | LoadDataEnum.DURACION_REPUESTOS \
              | LoadDataEnum.TRANSFERENCIAS_ENTRE_DEPOSITOS | LoadDataEnum.DIFERENCIA_MOVIMIENTOS_ENTRE_DEPOSITOS \
              | LoadDataEnum.CONSUMO_OBLIGATORIO:

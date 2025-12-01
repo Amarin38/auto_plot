@@ -4,7 +4,7 @@ from utils.exception_utils import execute_safely
 
 from typing import Union
 
-from config.constants import SELECT_BOX_HEIGHT, PLACEHOLDER, CENTERED_TITLE_HEIGHT, CENTERED_TITLE_WIDTH
+from config.constants_views import SELECT_BOX_HEIGHT, PLACEHOLDER, CENTERED_TITLE_HEIGHT, CENTERED_TITLE_WIDTH
 from config.enums import RepuestoReparadoEnum, RepuestoEnum, CabecerasEnum, TipoDuracionEnum, IndexTypeEnum, \
     ConsumoObligatorioEnum, LoadDataEnum
 
@@ -30,6 +30,7 @@ class ButtonComponents:
             file_name=file_name,
             mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
         )
+
 
 
 class SelectBoxComponents:

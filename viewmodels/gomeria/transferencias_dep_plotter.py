@@ -2,7 +2,7 @@ import plotly.graph_objects as go
 
 from typing import Union
 
-from config.constants import COLORS
+from config.constants_colors import COLORS
 from utils.exception_utils import execute_safely
 from viewmodels.gomeria.transferencias_dep_vm import TransferenciasEntreDepositosVM
 

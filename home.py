@@ -13,11 +13,12 @@ from presentation.garantias_falla_equipos_page import garantias_falla_equipos
 from presentation.gomeria_transferencias_depositos_page import gomeria_transferencias_entre_depositos
 from presentation.maximos_minimos_page import maximos_minimos
 from presentation.duracion_repuestos_page import duracion_repuestos
+from presentation.parque_movil_page import parque_movil
 
-from config.constants import (PAG_PRINCIPAL, PAG_CARGAR_DATOS, PAG_INDICES, PAG_PREVISION,
-                              PAG_FALLA_GARANTIAS, PAG_MAXIMOS_MINIMOS, PAG_DURACION,
-                              PAG_TRANSFERENCIAS_ENTRE_DEPOSITOS, PAG_HISTORIAL, PAG_CONSUMO_OBLIGATORIO,
-                              PAG_COCHES_CABECERA)
+from config.constants_views import (PAG_PRINCIPAL, PAG_CARGAR_DATOS, PAG_INDICES, PAG_PREVISION,
+                                    PAG_FALLA_GARANTIAS, PAG_MAXIMOS_MINIMOS, PAG_DURACION,
+                                    PAG_TRANSFERENCIAS_ENTRE_DEPOSITOS, PAG_HISTORIAL, PAG_CONSUMO_OBLIGATORIO,
+                                    PAG_COCHES_CABECERA, PAG_PARQUE_MOVIL)
 
 from infrastructure.db.models.coches_cabecera_model import CochesCabeceraModel
 from infrastructure.db.models.garantias_consumo_model import GarantiasConsumoModel
@@ -35,6 +36,7 @@ from infrastructure.db.models.distribucion_normal_model import DistribucionNorma
 from infrastructure.db.models.duracion_repuestos_model import DuracionRepuestosModel
 from infrastructure.db.models.maximos_minimos_model import MaximosMinimosModel
 from infrastructure.db.models.json_config_model import JSONConfigModel
+from infrastructure.db.models.parque_movil_model import ParqueMovilModel
 
 # -----------------------------------------------------------------------------------------------
 st.set_page_config(
@@ -52,6 +54,7 @@ pages = {
     "Estadísticas de consumo":[
         st.Page(consumo_indice, title=PAG_INDICES),
         st.Page(consumo_prevision, title=PAG_PREVISION),
+        st.Page(duracion_repuestos, title=PAG_DURACION),
         st.Page(consumo_historial, title=PAG_HISTORIAL),
         st.Page(consumo_obligatorio, title=PAG_CONSUMO_OBLIGATORIO),
     ],
@@ -62,9 +65,9 @@ pages = {
         st.Page(gomeria_transferencias_entre_depositos, title=PAG_TRANSFERENCIAS_ENTRE_DEPOSITOS)
     ],
     "Estadísticas generales":[
-        st.Page(duracion_repuestos, title=PAG_DURACION),
         st.Page(maximos_minimos, title=PAG_MAXIMOS_MINIMOS),
-        st.Page(coches_cabecera, title=PAG_COCHES_CABECERA)
+        st.Page(coches_cabecera, title=PAG_COCHES_CABECERA),
+        st.Page(parque_movil, title=PAG_PARQUE_MOVIL)
     ],
 }
 
@@ -72,7 +75,5 @@ pages = {
 nav = st.navigation(pages, position="top")
 
 if __name__ == "__main__":
-    # DBBase.metadata.create_all(db_engine)
-    # DBBase.metadata.create_all(db_engine)
     DBBase.metadata.create_all(db_engine)
     nav.run()

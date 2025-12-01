@@ -1,7 +1,7 @@
 import streamlit as st
 
-from config.constants import PAG_DURACION, DURACION_TAB_BOX_HEIGHT, HTML_SIN_CAMBIOS
-from viewmodels.duracion_rep.plotter import DuracionRepuestosPlotter
+from config.constants_views import PAG_DURACION, DURACION_TAB_BOX_HEIGHT, HTML_SIN_CAMBIOS
+from viewmodels.consumo.duracion_rep.plotter import DuracionRepuestosPlotter
 from utils.exception_utils import execute_safely
 from presentation.streamlit_components import SelectBoxComponents
 

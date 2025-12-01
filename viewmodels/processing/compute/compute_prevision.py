@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 from statsmodels.tsa.holtwinters import ExponentialSmoothing
 
-from config.constants import T_RED, RESET, T_YELLOW, T_ORANGE, T_BLUE
+from config.constants_colors import T_RED, RESET, T_YELLOW, T_ORANGE, T_BLUE
 from utils.exception_utils import execute_safely
 from viewmodels.consumo.prevision.data_vm import PrevisionDataVM
 from viewmodels.consumo.prevision.vm import PrevisionVM

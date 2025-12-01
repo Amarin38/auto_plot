@@ -1,6 +1,6 @@
 import pandas as pd
 
-from config.constants import PAGE_STRFTIME_YMD
+from config.constants_common import PAGE_STRFTIME_YMD
 from domain.entities.garantias_datos import GarantiasDatos
 from infrastructure.repositories.garantias_datos_repository import GarantiasDatosRepository
 from interfaces.viewmodel import ViewModel

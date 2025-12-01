@@ -5,8 +5,8 @@ from utils.exception_utils import execute_safely
 
 from viewmodels.consumo.prevision.plotter import PrevisionPlotter
 
-from config.constants import (PLOT_BOX_HEIGHT, DISTANCE_COLS_CENTER_TITLE, DISTANCE_COLS_SELECTBIGGER_PLOT,
-                              PAG_PREVISION, SELECT_BOX_HEIGHT)
+from config.constants_views import (PLOT_BOX_HEIGHT, DISTANCE_COLS_CENTER_TITLE, DISTANCE_COLS_SELECTBIGGER_PLOT,
+                                     PAG_PREVISION, SELECT_BOX_HEIGHT)
 
 @execute_safely
 def consumo_prevision():

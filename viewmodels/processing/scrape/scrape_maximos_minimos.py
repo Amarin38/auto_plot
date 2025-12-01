@@ -6,7 +6,7 @@ from bs4 import BeautifulSoup
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.by import By
 
-from config.constants import MAIN_PATH
+from config.constants_common import MAIN_PATH
 from utils.exception_utils import execute_safely
 from utils.scraping_utils import ScrapUtils
 

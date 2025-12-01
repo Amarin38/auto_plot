@@ -1,14 +1,14 @@
-from typing import Any
+from typing import Any, Tuple, List
 
 import pandas as pd
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 
-from config.constants import DURACION_REPUESTOS_COLORS
+from config.constants_colors import DURACION_REPUESTOS_COLORS
 from utils.exception_utils import execute_safely
 from viewmodels.plotly_components import DefaultUpdateLayoutComponents, HoverComponents
-from viewmodels.duracion_rep.distri_normal_vm import DistribucionNormalVM
-from viewmodels.duracion_rep.duracion_vm import DuracionRepuestosVM
+from viewmodels.consumo.duracion_rep.distri_normal_vm import DistribucionNormalVM
+from viewmodels.consumo.duracion_rep.duracion_vm import DuracionRepuestosVM
 
 
 class DuracionRepuestosPlotter:
@@ -24,6 +24,8 @@ class DuracionRepuestosPlotter:
         cambios = self.df_distribucion["Cambio"].unique()
         rows: int = 2
         cols: int = 2
+        titles: Tuple[str, ...] = ()
+        specs: List[List[dict]] = []
 
         if rows == 2:
             specs = [[{"secondary_y": True}, {"secondary_y": True}],

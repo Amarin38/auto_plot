@@ -1,7 +1,7 @@
 import streamlit as st
 from babel.numbers import format_decimal
 
-from config.constants import PAG_TRANSFERENCIAS_ENTRE_DEPOSITOS, FULL_PLOT_BOX_TRANSFER_HEIGHT, SELECT_BOX_HEIGHT, \
+from config.constants_views import PAG_TRANSFERENCIAS_ENTRE_DEPOSITOS, FULL_PLOT_BOX_TRANSFER_HEIGHT, SELECT_BOX_HEIGHT, \
     PLACEHOLDER
 from config.enums import ColoresMatplotlibEnum
 from presentation.streamlit_components import SelectBoxComponents, OtherComponents
