@@ -11,9 +11,11 @@ class ParqueMovil:
     Interno             : int
     Dominio             : str
     Asientos            : int
-    Marca               : str
     Año                 : int
-    Serie               : str
-    Chasis              : str
-    Motor               : str
+    ChasisMarca         : str
+    ChasisModelo        : str
+    ChasisNum           : str
+    MotorMarca          : str
+    MotorModelo         : str
+    MotorNum            : str
     Carroceria          : str

@@ -9,15 +9,17 @@ class ParqueMovilModel(DBBase):
     __tablename__ = "PARQUE_MOVIL"
 
     id:                     Mapped[int] = mapped_column(primary_key=True)
-    FechaParqueMovil:       Mapped[date] = mapped_column(Date)
-    Linea:                  Mapped[int]
-    Interno:                Mapped[int]
-    Dominio:                Mapped[str] = mapped_column(String(8))
-    Asientos:               Mapped[int]
-    Marca:                  Mapped[str] = mapped_column(String(20))
-    Año:                    Mapped[int]
-    Serie:                  Mapped[str] = mapped_column(String(20))
-    Chasis:                 Mapped[str] = mapped_column(String(25))
-    Motor:                  Mapped[str] = mapped_column(String(25))
-    Carroceria:             Mapped[str] = mapped_column(String(20))
+    FechaParqueMovil:       Mapped[date] = mapped_column(Date, nullable=True)
+    Linea:                  Mapped[int] = mapped_column(nullable=True)
+    Interno:                Mapped[int] = mapped_column(nullable=True)
+    Dominio:                Mapped[str] = mapped_column(String(8), nullable=True)
+    Asientos:               Mapped[int] = mapped_column(nullable=True)
+    Año:                    Mapped[int] = mapped_column(nullable=True)
+    ChasisMarca:            Mapped[str] = mapped_column(nullable=True)
+    ChasisModelo:           Mapped[str] = mapped_column(nullable=True)
+    ChasisNum:              Mapped[str] = mapped_column(nullable=True)
+    MotorMarca:             Mapped[str] = mapped_column(nullable=True)
+    MotorModelo:            Mapped[str] = mapped_column(nullable=True)
+    MotorNum:               Mapped[str] = mapped_column(nullable=True)
+    Carroceria:             Mapped[str] = mapped_column(String(20), nullable=True)
 

@@ -2,6 +2,7 @@ import streamlit as st
 
 from config.constants_views import PAG_CARGAR_DATOS
 from config.enums import LoadDataEnum, TipoCargarEnum
+from viewmodels.common.parque_movil_vm import ParqueMovilVM
 from viewmodels.gomeria.diferencia_mov_dep_vm import DiferenciaMovimientosEntreDepositosVM
 from viewmodels.processing.compute.compute_consumo_obligatorio import compute_consumo_obligatorio
 
@@ -129,10 +130,15 @@ def cargar_datos():
                     buttons.load_data_bttn(lambda: DiferenciaMovimientosEntreDepositosVM().save_df(
                         load_data(select_load, uploaded_files)))
 
+                case LoadDataEnum.PARQUE_MOVIL:
+                    st.image("resources/parque.png", caption="Como se debe ver la tabla a insertar")
+                    print(uploaded_files)
+                    buttons.load_data_bttn(lambda: ParqueMovilVM().save_df(load_data(select_load, uploaded_files)))
+
 @execute_safely
 def load_data(select_load: LoadDataEnum , uploaded_files):
     match select_load:
-        case   LoadDataEnum.FALLA_GARANTIAS \
+        case   LoadDataEnum.PARQUE_MOVIL | LoadDataEnum.FALLA_GARANTIAS \
              | LoadDataEnum.CONSUMO_GARANTIAS | LoadDataEnum.DURACION_REPUESTOS \
              | LoadDataEnum.TRANSFERENCIAS_ENTRE_DEPOSITOS | LoadDataEnum.DIFERENCIA_MOVIMIENTOS_ENTRE_DEPOSITOS \
              | LoadDataEnum.CONSUMO_OBLIGATORIO:

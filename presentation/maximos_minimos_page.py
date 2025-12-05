@@ -18,4 +18,4 @@ def maximos_minimos():
     df = MaximosMinimosVM().get_df()
     buttons.download_df(common.to_excel(df), f"maximos_minimos {TODAY_DATE_FILE_DMY}.xlsx")
 
-    st.dataframe(df, height=DATAFRAME_HEIGHT)
+    st.dataframe(df, height=DATAFRAME_HEIGHT, hide_index=True)

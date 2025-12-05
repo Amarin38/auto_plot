@@ -1,6 +1,8 @@
+import datetime
 from typing import List
 
-from sqlalchemy import select
+from Demos.win32ts_logoff_disconnected import session
+from sqlalchemy import select, and_
 
 from domain.entities.parque_movil import ParqueMovil
 from infrastructure import SessionDB, db_engine
@@ -40,6 +42,35 @@ class ParqueMovilRepository(Repository):
                 ).first()
 
                 return ParqueMovilMapper.to_entity(model)
+
+        def get_by_args(self, fecha_inicio: datetime.date, fecha_fin: datetime.date,
+                              linea: int, interno: int, dominio: str, chasis_modelos: List[str]) -> List[ParqueMovil]:
+            filtros = []
+
+            with self.session as session:
+                if fecha_inicio and fecha_fin:
+                    filtros.append(ParqueMovilModel.FechaParqueMovil.between(fecha_inicio, fecha_fin))
+
+                if linea:
+                    filtros.append(ParqueMovilModel.Linea == linea)
+
+                if interno:
+                    filtros.append(ParqueMovilModel.Interno == interno)
+
+                if dominio:
+                    filtros.append(ParqueMovilModel.Dominio.like("%"+dominio+"%"))
+
+                if chasis_modelos:
+                    filtros.append(ParqueMovilModel.ChasisModelo.in_(chasis_modelos))
+
+                stmt = select(ParqueMovilModel)
+
+                if filtros:
+                    stmt = session.scalars(
+                        stmt.where(and_(*filtros))
+                    ).all()
+
+                return [ParqueMovilMapper.to_entity(m) for m in stmt]
 
         # Delete -------------------------------------------
         def delete_by_id(self, _id: int) -> None:

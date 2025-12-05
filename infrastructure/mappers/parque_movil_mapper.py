@@ -15,12 +15,14 @@ class ParqueMovilMapper(Mapper):
             Interno             = model.Interno,
             Dominio             = model.Dominio,
             Asientos            = model.Asientos,
-            Marca               = model.Marca,
             Año                 = model.Año,
-            Serie               = model.Serie,
-            Chasis              = model.Chasis,
-            Motor               = model.Motor,
-            Carroceria          = model.Carroceria,
+            ChasisMarca         = model.ChasisMarca,
+            ChasisModelo        = model.ChasisModelo,
+            ChasisNum           = model.ChasisNum,
+            MotorMarca          = model.MotorMarca,
+            MotorModelo         = model.MotorModelo,
+            MotorNum            = model.MotorNum,
+            Carroceria          = model.Carroceria
         )
 
     @staticmethod
@@ -32,10 +34,12 @@ class ParqueMovilMapper(Mapper):
             Interno             = entity.Interno,
             Dominio             = entity.Dominio,
             Asientos            = entity.Asientos,
-            Marca               = entity.Marca,
             Año                 = entity.Año,
-            Serie               = entity.Serie,
-            Chasis              = entity.Chasis,
-            Motor               = entity.Motor,
+            ChasisMarca         = entity.ChasisMarca,
+            ChasisModelo        = entity.ChasisModelo,
+            ChasisNum           = entity.ChasisNum,
+            MotorMarca          = entity.MotorMarca,
+            MotorModelo         = entity.MotorModelo,
+            MotorNum            = entity.MotorNum,
             Carroceria          = entity.Carroceria,
         )

@@ -129,6 +129,7 @@ class LoadDataEnum(StrEnum):
     DURACION_REPUESTOS = auto()
     TRANSFERENCIAS_ENTRE_DEPOSITOS = auto()
     DIFERENCIA_MOVIMIENTOS_ENTRE_DEPOSITOS = auto()
+    PARQUE_MOVIL = auto()
 
 
 class ColoresMatplotlibEnum(StrEnum):
