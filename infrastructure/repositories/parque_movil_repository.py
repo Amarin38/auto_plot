@@ -1,7 +1,6 @@
 import datetime
 from typing import List
 
-from Demos.win32ts_logoff_disconnected import session
 from sqlalchemy import select, and_
 
 from domain.entities.parque_movil import ParqueMovil
