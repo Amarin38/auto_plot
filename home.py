@@ -64,7 +64,7 @@ pages = {
     "Estadísticas de gomería":[
         st.Page(gomeria_transferencias_entre_depositos, title=PAG_TRANSFERENCIAS_ENTRE_DEPOSITOS)
     ],
-    "Estadísticas generales":[
+    "Datos":[
         st.Page(maximos_minimos, title=PAG_MAXIMOS_MINIMOS),
         st.Page(coches_cabecera, title=PAG_COCHES_CABECERA),
         st.Page(parque_movil, title=PAG_PARQUE_MOVIL)

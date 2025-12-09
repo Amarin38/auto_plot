@@ -1,6 +1,7 @@
-import datetime
+from datetime import date
 from typing import List
 
+import streamlit as st
 from sqlalchemy import select, and_
 
 from domain.entities.parque_movil import ParqueMovil
@@ -42,34 +43,16 @@ class ParqueMovilRepository(Repository):
 
                 return ParqueMovilMapper.to_entity(model)
 
-        def get_by_args(self, fecha_inicio: datetime.date, fecha_fin: datetime.date,
-                              linea: int, interno: int, dominio: str, chasis_modelos: List[str]) -> List[ParqueMovil]:
-            filtros = []
+        @staticmethod
+        @st.cache_data
+        def get_by_args(fecha_inicio: date, fecha_fin: date) -> List[ParqueMovil]:
+            with SessionDB() as session:
+                models = session.scalars(
+                    select(ParqueMovilModel)
+                    .where(ParqueMovilModel.FechaParqueMovil.between(fecha_inicio, fecha_fin))
+                ).all()
 
-            with self.session as session:
-                if fecha_inicio and fecha_fin:
-                    filtros.append(ParqueMovilModel.FechaParqueMovil.between(fecha_inicio, fecha_fin))
-
-                if linea:
-                    filtros.append(ParqueMovilModel.Linea == linea)
-
-                if interno:
-                    filtros.append(ParqueMovilModel.Interno == interno)
-
-                if dominio:
-                    filtros.append(ParqueMovilModel.Dominio.like("%"+dominio+"%"))
-
-                if chasis_modelos:
-                    filtros.append(ParqueMovilModel.ChasisModelo.in_(chasis_modelos))
-
-                stmt = select(ParqueMovilModel)
-
-                if filtros:
-                    stmt = session.scalars(
-                        stmt.where(and_(*filtros))
-                    ).all()
-
-                return [ParqueMovilMapper.to_entity(m) for m in stmt]
+                return [ParqueMovilMapper.to_entity(m) for m in models]
 
         # Delete -------------------------------------------
         def delete_by_id(self, _id: int) -> None:
