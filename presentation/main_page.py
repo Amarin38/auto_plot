@@ -8,7 +8,7 @@ def main():
     with st.container(height=LINK_BOX_HEIGHT, width=LINK_BOX_WIDTH):
         flota, licitaciones = st.columns([2, 2])
 
-        flota_url = "https://sistemasanantonio.com.ar/flota/login.aspx"
+        flota_url = "https://sistemasanantonio.com.ar/san_antonio/mod_flota/Grilla_ParqueMovil.aspx"
         licitaciones_url = "https://dota.sistemasanantonio.com.ar/licitaciones/login.aspx"
 
         flota.link_button("SISSSA FLOTA", flota_url)

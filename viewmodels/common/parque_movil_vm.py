@@ -1,5 +1,7 @@
 from datetime import date
 from typing import List, Optional, Any
+
+import numpy as np
 import streamlit as st
 import pandas as pd
 
@@ -63,56 +65,80 @@ class ParqueMovilVM(ViewModel):
 
         return pd.DataFrame(data)
 
-    def get_by_args(self, fecha_desde: date, fecha_hasta: date, parque: ParqueMovilFiltro) -> Optional[pd.Series]:
-        entities = self.repo.get_by_args(fecha_desde, fecha_hasta)
+    @staticmethod
+    @st.cache_data
+    def get_by_args(fecha_desde: date, fecha_hasta: date, parque: ParqueMovilFiltro) -> Optional[pd.Series]:
+        entities = ParqueMovilRepository().get_by_args(fecha_desde, fecha_hasta)
 
-        data = [
-            {
-                "id": e.id,
-                "FechaParqueMovil": e.FechaParqueMovil,
-                "Linea": e.Linea,
-                "Interno": e.Interno,
-                "Dominio": e.Dominio,
-                "Asientos": e.Asientos,
-                "Año": e.Año,
-                "ChasisMarca": e.ChasisMarca,
-                "ChasisModelo": e.ChasisModelo,
-                "ChasisNum": e.ChasisNum,
-                "MotorMarca": e.MotorMarca,
-                "MotorModelo": e.MotorModelo,
-                "MotorNum": e.MotorNum,
-                "Carroceria": e.Carroceria,
-            }
-            for e in entities
-        ]
+        if not entities:
+            return None
 
-        if entities:
-            data_filtrado = pd.DataFrame(data)
-            mask = pd.Series(True, index=data_filtrado.index) # me trae la tabla completa
+        rows = (
+            (
+                e.id, e.FechaParqueMovil, e.Linea, e.Interno, e.Dominio, e.Asientos,
+                e.Año, e.ChasisMarca, e.ChasisModelo, e.ChasisNum, e.MotorMarca,
+                e.MotorModelo, e.MotorNum, e.Carroceria
+            ) for e in entities
+        )
 
-            if parque.Linea:
-               mask &= data_filtrado["Linea"] == int(parque.Linea)
+        cols = ("id", "FechaParqueMovil", "Linea", "Interno", "Dominio", "Asientos",
+                "Año", "ChasisMarca", "ChasisModelo", "ChasisNum", "MotorMarca",
+                "MotorModelo", "MotorNum", "Carroceria")
 
-            if parque.Interno:
-                mask &= data_filtrado["Interno"] == int(parque.Interno)
+        df = pd.DataFrame.from_records(rows, columns=cols)
 
-            if parque.Dominio:
-                mask &= data_filtrado["Dominio"].str.startswith(parque.Dominio)
+        df["Linea"] = df["Linea"].fillna(0)
+        df["Interno"] = df["Interno"].fillna(0)
+        df["Dominio"] = df["Dominio"].fillna("")
+        df["Asientos"] = df["Asientos"].fillna(0)
+        df["Año"] = df["Año"].fillna(0)
+        df["ChasisMarca"] = df["ChasisMarca"].fillna("")
+        df["ChasisModelo"] = df["ChasisModelo"].fillna("")
+        df["ChasisNum"] = df["ChasisNum"].fillna("")
+        df["MotorMarca"] = df["MotorMarca"].fillna("")
+        df["MotorModelo"] = df["MotorModelo"].fillna("")
+        df["MotorNum"] = df["MotorNum"].fillna("")
+        df["Carroceria"] = df["Carroceria"].fillna("")
 
-            if parque.ChasisMarca:
-                mask &= data_filtrado["ChasisMarca"].isin(parque.ChasisMarca)
+        data_filtrado = df.astype({
+            "Linea":"category",
+            "Interno":"uint16",
+            "Dominio":"string[pyarrow]",
+            "Asientos":"category",
+            "Año":"uint16",
+            "ChasisMarca":"category",
+            "ChasisModelo":"category",
+            "ChasisNum":"string[pyarrow]",
+            "MotorMarca":"category",
+            "MotorModelo":"category",
+            "MotorNum":"string[pyarrow]",
+            "Carroceria":"category",
+        })
 
-            if parque.ChasisModelo:
-                mask &= data_filtrado["ChasisModelo"].isin(parque.ChasisModelo)
+        mask = np.ones(len(df), dtype=bool)
 
-            if parque.MotorMarca:
-                mask &= data_filtrado["MotorMarca"].isin(parque.MotorMarca)
+        if parque.Linea:
+           mask &= data_filtrado["Linea"] == int(parque.Linea)
 
-            if parque.MotorModelo:
-                mask &= data_filtrado["MotorModelo"].isin(parque.MotorModelo)
+        if parque.Interno:
+            mask &= data_filtrado["Interno"] == int(parque.Interno)
 
-            if parque.Carroceria:
-                mask &= data_filtrado["Carroceria"].isin(parque.Carroceria)
+        if parque.Dominio:
+            mask &= data_filtrado["Dominio"].str.startswith(parque.Dominio)
 
-            return data_filtrado[mask]
-        return None
+        if parque.ChasisMarca:
+            mask &= data_filtrado["ChasisMarca"].isin(parque.ChasisMarca)
+
+        if parque.ChasisModelo:
+            mask &= data_filtrado["ChasisModelo"].isin(parque.ChasisModelo)
+
+        if parque.MotorMarca:
+            mask &= data_filtrado["MotorMarca"].isin(parque.MotorMarca)
+
+        if parque.MotorModelo:
+            mask &= data_filtrado["MotorModelo"].isin(parque.MotorModelo)
+
+        if parque.Carroceria:
+            mask &= data_filtrado["Carroceria"].isin(parque.Carroceria)
+
+        return data_filtrado[mask]

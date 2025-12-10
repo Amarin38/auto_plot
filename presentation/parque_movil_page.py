@@ -3,7 +3,7 @@ import streamlit as st
 from config.constants_common import MODELOS_CHASIS, NORMAL_DATE_YMD, MARCAS_CHASIS, MARCAS_MOTOR, MODELOS_MOTOR, \
     CARROCERIAS
 from config.constants_views import PAG_PARQUE_MOVIL, PLACEHOLDER, FLOTA_CONTAINER_HEIGHT
-from domain.entities.parque_movil import ParqueMovil, ParqueMovilFiltro
+from domain.entities.parque_movil import ParqueMovilFiltro
 from viewmodels.common.parque_movil_vm import ParqueMovilVM
 
 
@@ -61,11 +61,22 @@ def parque_movil():
         datos_parque = ParqueMovilVM().get_by_args(fecha_desde, fecha_hasta, parque)
 
         if datos_parque is not None:
-            st.dataframe(datos_parque, hide_index=True,
-                         column_config={
-                             "FechaParqueMovil": st.column_config.DateColumn("FechaParqueMovil",
-                                                                             format="localized"),
-                         },
-                         height=650)
+            st.data_editor(datos_parque,
+                           disabled=True,
+                           hide_index=True,
+                           height=600,
+                           column_order=["FechaParqueMovil", "Linea", "Interno", "Dominio",
+                                         "Asientos", "Año", "ChasisMarca", "ChasisModelo", "ChasisNum",
+                                         "MotorMarca", "MotorModelo", "MotorNum", "Carroceria"],
+                           column_config={
+                                            "FechaParqueMovil": st.column_config.DateColumn("FechaParqueMovil",
+                                                                                            format="localized", width=120),
+                                            "Linea": st.column_config.NumberColumn("Linea", width=45),
+                                            "Interno": st.column_config.NumberColumn("Interno", width=60),
+                                            "Dominio": st.column_config.TextColumn("Dominio", width=70),
+                                            "Asientos": st.column_config.NumberColumn("Asientos", width=55),
+                                            "Año": st.column_config.NumberColumn("Año", width=50),
+                                        }
+                           )
         else:
             st.dataframe()
