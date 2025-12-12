@@ -124,7 +124,7 @@ class HistorialPlotter:
                 )
             ])
             self.hover.hover_junto(fig)
-            self.hover.color_hover_bar(fig, COLORS[15])
+            self.hover.color_hover_bar_colored(fig, COLORS[15])
 
             return fig, titulo
         return [None, None]
