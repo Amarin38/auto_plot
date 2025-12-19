@@ -8,6 +8,10 @@ COMMON_DB_PATH: str = f"{MAIN_PATH}/infrastructure/db/common_data.db"
 SERV_DB_PATH: str = f"{MAIN_PATH}/infrastructure/db/services_data.db"
 DB_PATH: str = f"sqlite:///{MAIN_PATH}/infrastructure/db/data.db"
 
+# PAGINAS
+FLOTA_URL = "https://sistemasanantonio.com.ar/san_antonio/mod_flota/Grilla_ParqueMovil.aspx"
+LICITACIONES_URL = "https://dota.sistemasanantonio.com.ar/licitaciones/login.aspx"
+
 # DATES
 PAGE_STRFTIME_DMY = "%d/%m/%Y"
 PAGE_STRFTIME_YMD = "%Y/%m/%d"

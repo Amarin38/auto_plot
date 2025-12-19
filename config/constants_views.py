@@ -7,6 +7,8 @@ MAIN_TABS: Tuple[str, ...] = (" 🏠 Página principal", " 📊 Índices de cons
 
 # Pags Inicio
 PAG_PRINCIPAL = "Página principal 🏠"
+PAG_SISSSA = "SISSSA FLOTA"
+PAG_DOTA_LICITACIONES = "DOTA LICITACIONES"
 PAG_CARGAR_DATOS = "Cargar datos 🔄️"
 
 # Pags Consumo

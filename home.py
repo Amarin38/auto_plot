@@ -1,6 +1,7 @@
 import streamlit as st
 
 from infrastructure import DBBase, db_engine
+from presentation.dota_licitaciones_page import dota_licitaciones_page
 
 from presentation.main_page import main
 from presentation.cargar_datos_page import cargar_datos
@@ -14,11 +15,12 @@ from presentation.gomeria_transferencias_depositos_page import gomeria_transfere
 from presentation.maximos_minimos_page import maximos_minimos
 from presentation.duracion_repuestos_page import duracion_repuestos
 from presentation.parque_movil_page import parque_movil
+from presentation.sisssa_page import sissa_page
 
 from config.constants_views import (PAG_PRINCIPAL, PAG_CARGAR_DATOS, PAG_INDICES, PAG_PREVISION,
                                     PAG_FALLA_GARANTIAS, PAG_MAXIMOS_MINIMOS, PAG_DURACION,
                                     PAG_TRANSFERENCIAS_ENTRE_DEPOSITOS, PAG_HISTORIAL, PAG_CONSUMO_OBLIGATORIO,
-                                    PAG_COCHES_CABECERA, PAG_PARQUE_MOVIL)
+                                    PAG_COCHES_CABECERA, PAG_PARQUE_MOVIL, PAG_SISSSA, PAG_DOTA_LICITACIONES)
 
 from infrastructure.db.models.coches_cabecera_model import CochesCabeceraModel
 from infrastructure.db.models.garantias_consumo_model import GarantiasConsumoModel
@@ -49,6 +51,8 @@ st.set_page_config(
 pages = {
     "Inicio":[
         st.Page(main, title=PAG_PRINCIPAL),
+        st.Page(sissa_page,title=PAG_SISSSA),
+        st.Page(dota_licitaciones_page, title=PAG_DOTA_LICITACIONES),
         st.Page(cargar_datos, title=PAG_CARGAR_DATOS)
     ],
     "Estadísticas de consumo":[
