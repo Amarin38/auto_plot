@@ -5,6 +5,7 @@ from typing import Union
 from config.constants_colors import COLORS
 from utils.exception_utils import execute_safely
 from viewmodels.gomeria.transferencias_dep_vm import TransferenciasEntreDepositosVM
+from viewmodels.plotly_components import HoverComponents
 
 
 class TransferenciasEntreDepositosPlotter:
@@ -32,8 +33,8 @@ class TransferenciasEntreDepositosPlotter:
                 name="2024",
                 mode='lines+markers',
 
-                line = dict(color=COLORS[12], width=2),
-                marker = dict(
+                line=dict(color=COLORS[12], width=2),
+                marker=dict(
                     color=COLORS[12],
                     size=8,
                     symbol='circle',
@@ -51,7 +52,7 @@ class TransferenciasEntreDepositosPlotter:
                 x=x_2025,
                 y=y_2025,
                 name="2025",
-                mode = 'lines+markers',
+                mode='lines+markers',
 
                 line = dict(color=COLORS[2], width=2, dash='dot'),
                 marker = dict(
@@ -69,6 +70,7 @@ class TransferenciasEntreDepositosPlotter:
             ))
 
             fig.update_layout(
+                showlegend=False,
                 hovermode="x unified",  # 🔹 muestra ambos hovers juntos
                 hoverlabel=dict(
                     bgcolor="#0E1117",  # color de fondo
@@ -77,7 +79,16 @@ class TransferenciasEntreDepositosPlotter:
                     font_family="Arial",
                     namelength=-1
                 ),
-                height=500
+                margin=dict(l=1, r=1, b=1, t=50),
+                height=550,
+
+                title = dict(
+                    text="🔛 Transferencias entre depósitos",
+                    y=0.98
+                )
             )
+            fig.update_xaxes(visible=False)
+
+            HoverComponents().color_hover_bar_colored(fig, "#833E73")
             return fig
         return None
