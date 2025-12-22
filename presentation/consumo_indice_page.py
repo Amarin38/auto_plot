@@ -1,6 +1,6 @@
 import streamlit as st
 
-from presentation.streamlit_components import SelectBoxComponents, OtherComponents, ButtonComponents
+from presentation.streamlit_components import SelectBoxComponents, OtherComponents
 from utils.exception_utils import execute_safely
 
 from viewmodels.consumo.indice.plotter import  IndexPlotter
@@ -17,7 +17,6 @@ from viewmodels.processing.compute.compute_desviacion_indices import DeviationTr
 def consumo_indice() -> None:
     select = SelectBoxComponents()
     other = OtherComponents()
-    button = ButtonComponents()
 
     st.title(PAG_INDICES)
 
@@ -46,8 +45,7 @@ def consumo_indice() -> None:
                             st.plotly_chart(fig)
 
             else:
-                with graficos_col.container(height=SELECT_BOX_HEIGHT):
-                    st.text("No hay datos de este repuesto.")
+                other.mensaje_falta_rep(graficos_col)
 
 
     with desviacion.container(height=DESVIACION_BOX_HEIGHT):

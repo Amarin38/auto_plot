@@ -145,3 +145,8 @@ class OtherComponents:
         with col.container(height=CENTERED_TITLE_HEIGHT, width=CENTERED_TITLE_WIDTH+250):
             st.markdown(f"<p style='text-align: center; font-size: 28px;'>{title}</p>", unsafe_allow_html=True)
 
+    @execute_safely
+    def mensaje_falta_rep(self, col):
+        with col.container(height=SELECT_BOX_HEIGHT):
+            st.text("No hay datos de este repuesto.")
+

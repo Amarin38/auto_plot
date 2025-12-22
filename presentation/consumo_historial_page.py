@@ -22,9 +22,8 @@ def consumo_historial():
 
         if fig and titulo:
             other.centered_title(titulo_col, titulo)
+
             with plot.container(height=PLOT_BOX_HEIGHT):
                 st.plotly_chart(fig)
         else:
-            with plot.container(height=SELECT_BOX_HEIGHT):
-                st.text("No hay datos de este repuesto.")
-
+            other.mensaje_falta_rep(plot)

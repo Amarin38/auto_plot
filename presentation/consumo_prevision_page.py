@@ -23,15 +23,15 @@ def consumo_prevision():
     if tipo_repuesto:
         figs, titulo = PrevisionPlotter(tipo_repuesto).create_plot()
 
-        if figs is None and titulo is None:
-            with graficos_col.container(height=SELECT_BOX_HEIGHT):
-                st.text("No hay datos de este repuesto.")
-        else:
+        if figs and titulo:
             other.centered_title(titulo_col, titulo)
 
             with graficos_col:
                 for fig in figs:
                     with st.container(height=PLOT_BOX_HEIGHT):
                         st.plotly_chart(fig)
+
+        else:
+            other.mensaje_falta_rep(graficos_col)
 
 

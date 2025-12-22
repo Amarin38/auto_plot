@@ -21,16 +21,20 @@ def garantias_falla_equipos():
         tipo_repuesto = select.select_box_tipo_repuesto(repuesto_col, "FALLA_GAR_TIPO_REP")
 
 
-        if cabecera and tipo_repuesto:
-            pie_col, bar_col = st.columns((1,1.5))
+        pie_col, bar_col = st.columns((1,1.5))
 
+        with pie_col.container(height=FALLA_GARANTIAS_BOX_HEIGHT):
             pie_plot = FallaGarantiasPlotter(tipo_repuesto, cabecera).create_plot()
+
+            if pie_plot:
+                st.plotly_chart(pie_plot)
+            else:
+                st.write("Selecciona un repuesto o cabecera válidos para mostrar los fallos.")
+
+        with bar_col.container(height=FALLA_GARANTIAS_BOX_HEIGHT):
             bar_plot = ConsumoGarantiasPlotter(tipo_repuesto, cabecera).create_plot()
 
-            if pie_plot is None or bar_plot is None:
-                st.write("No existe información de la cabecera o el repuesto.")
+            if bar_plot:
+                st.plotly_chart(bar_plot)
             else:
-                with pie_col.container(height=FALLA_GARANTIAS_BOX_HEIGHT):
-                    st.plotly_chart(pie_plot)
-                with bar_col.container(height=FALLA_GARANTIAS_BOX_HEIGHT):
-                    st.plotly_chart(bar_plot)
+                st.write("Selecciona un repuesto o cabecera válidos para mostrar los consumos de garantías y trasnferencias.")
