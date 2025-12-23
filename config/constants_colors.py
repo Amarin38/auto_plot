@@ -21,6 +21,7 @@ CONSUMO_GARANTIAS_COLORS: Tuple[str, str] = ("#C70039","#0C7C59")
 
 DURACION_REPUESTOS_COLORS: Tuple[str, ...] = ("#FE7F2D", "#4C8DB4", "#806FA3", "#619B8A", "#A1C181", "#FCCA46")
 
+PREVISION_COLORS: Tuple[str, str] = ("#485696", "#F24C00")
 
 # TEXT COLORS
 T_RED = '\033[91m'

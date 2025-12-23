@@ -1,9 +1,10 @@
+import streamlit as st
 import pandas as pd
 from babel.dates import format_date
 
 import plotly.graph_objects as go
 
-from config.constants_colors import COLORS
+from config.constants_colors import COLORS, PREVISION_COLORS
 from config.constants_common import FILE_STRFTIME_YMD
 
 from utils.exception_utils import execute_safely
@@ -13,7 +14,6 @@ from viewmodels.plotly_components import DefaultUpdateLayoutComponents, HoverCom
 
 from viewmodels.consumo.prevision.data_vm import PrevisionDataVM
 from viewmodels.consumo.prevision.vm import PrevisionVM
-
 
 
 
@@ -29,7 +29,6 @@ class PrevisionPlotter:
         self.df_data = PrevisionDataVM().get_df_by_tipo_repuesto(self.tipo_rep)
         self.df_forecast = PrevisionVM().get_df_by_tipo_repuesto(self.tipo_rep)
 
-
     @execute_safely
     def create_plot(self):
         if not self.df_data.empty and not self.df_forecast.empty:
@@ -44,29 +43,28 @@ class PrevisionPlotter:
             else:
                 titulo = ""
 
-            for repuesto in todos_repuestos:
-                x_data = self.df_data.loc[self.df_data['Repuesto'] == repuesto, 'FechaCompleta']
-                y_data = self.df_data.loc[self.df_data['Repuesto'] == repuesto, 'Consumo']
+            grupos_data = self.df_data.groupby('Repuesto')
+            grupos_forecast = self.df_forecast.groupby('Repuesto')
 
-                x_forecast = self.df_forecast.loc[self.df_forecast['Repuesto'] == repuesto, 'FechaCompleta']
-                y_forecast = self.df_forecast.loc[self.df_forecast['Repuesto'] == repuesto, 'ConsumoPrevision']
+            for repuesto in todos_repuestos:
+                df_rep_data = grupos_data.get_group(repuesto) # separo por el repuesto actual
+                df_rep_forecast = grupos_forecast.get_group(repuesto)
+
+                x_data = df_rep_data['FechaCompleta']
+                y_data = df_rep_data['Consumo'].values
+
+                x_forecast = df_rep_forecast['FechaCompleta']
+                y_forecast = df_rep_forecast['ConsumoPrevision'].values
 
                 total_prevision = y_forecast.sum()
                 valor_mensual = int(y_forecast.mean())
 
-                # Ticks para datos reales
-                x_data_year = x_data.apply(lambda d: format_date(d, "MMM", locale="es").capitalize() + ", ")
-                x_data_month = x_data.dt.strftime("%Y")
-                x_data_new = x_data_year + x_data_month
-
-                # Ticks para forecast
-                x_forecast_year = x_forecast.apply(lambda d: format_date(d, "MMM", locale="es").capitalize() + ", ")
-                x_forecast_month = x_forecast.dt.strftime("%Y")
-                x_forecast_new = x_forecast_year + x_forecast_month
-
+                # Ticks
+                ticks_text_data = calcular_ticks(x_data)
+                ticks_text_forecast = calcular_ticks(x_forecast)
 
                 tickvals = pd.concat([x_data, x_forecast]).reset_index(drop=True) # type: ignore
-                ticktext = pd.concat([x_data_new, x_forecast_new]).reset_index(drop=True)
+                ticktext = pd.concat([ticks_text_data, ticks_text_forecast]).reset_index(drop=True)
 
 
                 fig = go.Figure()
@@ -84,14 +82,14 @@ class PrevisionPlotter:
                         color=COLORS[15]
                     ),
 
-                    line=dict(color="#485696", width=2),
+                    line=dict(color=PREVISION_COLORS[0], width=2),
                     marker=dict(
-                        color="#485696",
+                        color=PREVISION_COLORS[0],
                         size=8,
                         symbol='circle',
                     ),
                     legendgroup="Consumo",
-                    customdata=x_data_new,
+                    customdata=ticks_text_data,
                     hovertemplate="""
 <b>
 <span style='color:#485696'>Consumo:</span>
@@ -114,14 +112,14 @@ class PrevisionPlotter:
                         color=COLORS[1]
                     ),
 
-                    line=dict(color="#F24C00", width=2, dash='dash'),
+                    line=dict(color=PREVISION_COLORS[1], width=2, dash='dash'),
                     marker=dict(
-                        color="#F24C00",
+                        color=PREVISION_COLORS[1],
                         size=8,
                         symbol='square',
                     ),
                     legendgroup="ConsumoPrevision",
-                    customdata=x_forecast_new,
+                    customdata=ticks_text_forecast,
                     hoverinfo="skip",
                     hovertemplate="""
 <b><span style='color:#F24C00'>Prevision:</span></b> %{y}
@@ -150,3 +148,11 @@ class PrevisionPlotter:
                 figuras.append(fig)
             return figuras, titulo
         return [None, None]
+
+@st.cache_data
+def calcular_ticks(x):
+    año = x.apply(
+        lambda d: format_date(d, "MMM", locale="es").capitalize()
+    )
+    mes = x.dt.strftime("%Y")
+    return año + ", " + mes
