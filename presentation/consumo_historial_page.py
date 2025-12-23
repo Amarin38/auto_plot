@@ -1,7 +1,7 @@
 import streamlit as st
 
 from config.constants_views import PAG_HISTORIAL, DISTANCE_COLS_SELECTBIGGER_PLOT, DISTANCE_COLS_CENTER_TITLE, \
-    PLOT_BOX_HEIGHT, SELECT_BOX_HEIGHT
+    PLOT_BOX_HEIGHT
 from viewmodels.consumo.historial.plotter import HistorialPlotter
 from presentation.streamlit_components import SelectBoxComponents, OtherComponents
 
