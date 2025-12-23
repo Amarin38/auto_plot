@@ -30,7 +30,6 @@ def consumo_prevision():
                 for fig in figs:
                     with st.container(height=PLOT_BOX_HEIGHT):
                         st.plotly_chart(fig)
-
         else:
             other.mensaje_falta_rep(graficos_col)
 
