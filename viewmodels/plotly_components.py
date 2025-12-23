@@ -383,7 +383,7 @@ class PlotComponents:
         )
 
     @execute_safely
-    def scatter_prevision(self, fig: Figure, x, y, name: str, color: str, color_line: str, symbol: SymbolEnum, dash: DashEnum, custom: Optional[str]):
+    def scatter_prevision(self, fig: Figure, x, y, name: str, color: str, color_line: str, symbol: SymbolEnum, dash: DashEnum, custom: Optional[list[str]]):
         fig.add_trace(go.Scatter(
             x=x,
             y=y,
@@ -413,6 +413,31 @@ class PlotComponents:
 """.format(color=color_line, name=name),
         ))
 
+    @execute_safely
+    def bar_indice_consumo(self, fig: Figure, x, y, name: str, text, color: str, custom):
+        fig.add_trace(go.Bar(
+            x=x,
+            y=y,
+            name=name,
+
+            text=text,
+            textposition="none",
+            textfont=dict(
+                size=15,
+                color='white',
+                family='Arial'
+            ),
+
+            marker=dict(color=color),
+            customdata=custom,
+            hovertemplate="""
+<b>
+<span style='color:%{customdata[1]}'>%{customdata[0]}:</span>
+<span style='color:white'>%{text} </span>
+</b>
+<extra></extra>
+""",
+        ))
 
 class DefaultUpdateLayoutComponents:
     def __init__(self):

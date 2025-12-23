@@ -5,7 +5,7 @@ import plotly.graph_objects as go
 
 from config.constants_colors import CONSUMO_GARANTIAS_COLORS
 from utils.exception_utils import execute_safely
-from viewmodels.plotly_components import DefaultUpdateLayoutComponents, HoverComponents
+from viewmodels.plotly_components import DefaultUpdateLayoutComponents, HoverComponents, PlotComponents
 from viewmodels.garantias.consumo.vm import ConsumoGarantiasVM
 
 
@@ -13,6 +13,8 @@ class ConsumoGarantiasPlotter:
     def __init__(self, tipo_repuesto, cabecera):
         self.default = DefaultUpdateLayoutComponents()
         self.hover = HoverComponents()
+        self.plots = PlotComponents()
+
         self.df_data = ConsumoGarantiasVM().get_df_by_tipo_rep_and_cabecera(tipo_repuesto, cabecera)
 
 
@@ -43,53 +45,8 @@ class ConsumoGarantiasPlotter:
 
             fig = go.Figure()
 
-            fig.add_trace(go.Bar(
-                x=x_data,
-                y=y_garantias,
-                name="Garantias",
-
-                text=diferencia_gar,
-                textposition="none",
-                textfont=dict(
-                    size=15,
-                    color='white',
-                    family='Arial'
-                ),
-
-                marker=dict(color=color_garantias),
-                customdata=custom_garantias,
-                hovertemplate = """
-<b>
-<span style='color:%{customdata[1]}'>%{customdata[0]}:</span>
-<span style='color:white'>%{text} </span>
-</b>
-<extra></extra>
-"""
-            ))
-
-            fig.add_trace(go.Bar(
-                x=x_data,
-                y=y_transfer,
-                name="Transferencia",
-
-                text=diferencia_transfer,
-                textposition="none",
-                textfont=dict(
-                    size=15,
-                    color='white',
-                    family='Arial'
-                ),
-
-                marker=dict(color=color_transferencias),
-                customdata=custom_transferencias,
-                hovertemplate = """
-<b>
-<span style='color:%{customdata[1]}'>%{customdata[0]}:</span>
-<span style='color:white'>%{text} </span>
-</b>
-<extra></extra>
-""",
-            ))
+            self.plots.bar_indice_consumo(fig, x_data, y_garantias, "Garantias", diferencia_gar, color_garantias, custom_garantias)
+            self.plots.bar_indice_consumo(fig, x_data, y_transfer, "Transferencia", diferencia_transfer, color_transferencias, custom_transferencias)
 
             self.default.update_layout(fig,'Consumo garantias frente a transferencias', 'Repuesto', 'Consumo', height=665)
             self.hover.hover_junto(fig)

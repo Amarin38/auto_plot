@@ -33,7 +33,9 @@ class FallaGarantiasPlotter:
                     labels=labels,
                     values=values,
                     text=text,
-                    textfont=dict(size=PIE_FONT_SIZE),
+                    textfont=dict(
+                        size=PIE_FONT_SIZE
+                    ),
                     name='Fallas',
                     insidetextorientation='horizontal',
                     textposition='auto',
