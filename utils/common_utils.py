@@ -58,6 +58,20 @@ class CommonUtils:
             return ""
         return pd.to_datetime(df[columna].unique()).strftime(FILE_STRFTIME_DMY)[0]
 
+
+    @execute_safely
+    def abreviar_es(self, n):
+        if n >= 1_000_000_000:
+            return f"{n / 1_000_000_000:.1f} mil M"
+
+        if n >= 1_000_000:
+            return f"{n / 1_000_000:.1f} M"
+
+        if n >= 1_000:
+            return f"{n / 1_000:.0f} mil"
+
+        return f"{int(n)}"
+
     # ------------------------------------------------------ DELETE ------------------------------------------------------
     @staticmethod
     @execute_safely

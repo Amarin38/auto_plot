@@ -26,6 +26,13 @@ TODAY_DATE_FILE_DMY = Timestamp.today().strftime(FILE_STRFTIME_DMY)
 TODAY_DATE_FILE_YMD = Timestamp.today().strftime(FILE_STRFTIME_YMD)
 TODAY_FOR_DELTA = Timestamp.today().strftime(DELTA_STRFTIME_YM)
 
+# Plots
+TITULOS_GOMERIA = ("Consumos", "", "Costos", "", "Diferencias consumos", "", "Diferencias costos")
+ANCHO_COLS_GOMERIA = (0.30, 0.15, 0.30, 0.20, 0.20, 0.15, 0.20)
+TICK_VALS_GOMERIA = ("2024", "2025", "DiferenciaConsumos", "DiferenciaCostos")
+TICK_TEXT_GOMERIA = ("Año 2024", "Año 2025", "Diferencia Consumos", "Diferencia Costos")
+
+
 MODELOS_CHASIS = ("MT 12","MT 13","MT 15","MT 17","MT 17 BOOGIE","MT 27"
         ,"MA 10","MA 15","MA 15" ,"MA 17","MA 27","1114","1115"
         ,"1315","1316","1320","1418","1618","1621","1718","1720"

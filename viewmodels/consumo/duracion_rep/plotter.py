@@ -3,8 +3,10 @@ from typing import Any, Tuple, List
 import pandas as pd
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
+from itertools import product
 
 from config.constants_colors import DURACION_REPUESTOS_COLORS
+from config.constants_common import FILE_STRFTIME_YMD
 from utils.exception_utils import execute_safely
 from viewmodels.plotly_components import DefaultUpdateLayoutComponents, HoverComponents
 from viewmodels.consumo.duracion_rep.distri_normal_vm import DistribucionNormalVM
@@ -18,12 +20,19 @@ class DuracionRepuestosPlotter:
         self.df_duracion = DuracionRepuestosVM().get_df_by_repuesto(repuesto)
         self.df_distribucion = DistribucionNormalVM().get_df_by_repuesto(repuesto)
 
+        self.df_duracion["FechaCambio"] = pd.to_datetime(
+            self.df_duracion["FechaCambio"], errors="coerce"
+        )
+
     def create_plot(self):
-        fecha_min = self.df_duracion["FechaCambio"].min()
-        fecha_max = self.df_duracion["FechaCambio"].max()
+        fecha_min = self.df_duracion["FechaCambio"].min().strftime(FILE_STRFTIME_YMD)
+        fecha_max = self.df_duracion["FechaCambio"].max().strftime(FILE_STRFTIME_YMD)
         cambios = self.df_distribucion["Cambio"].unique()
         rows: int = 2
         cols: int = 2
+        positions = list(product(
+            range(1, rows + 1), range(1, cols + 1)
+        ))
         titles: Tuple[str, ...] = ()
         specs: List[List[dict]] = []
 
@@ -40,37 +49,31 @@ class DuracionRepuestosPlotter:
         fig = make_subplots(rows=rows, cols=cols, x_title="Duración en años", y_title="Frecuencia relativa en %",
                             horizontal_spacing=0.1, specs=specs, subplot_titles=titles)
 
-        cambios_iter = iter(cambios)
-        cambio = next(cambios_iter, None)
-        colors = iter(DURACION_REPUESTOS_COLORS)
 
-        for r in range(1, rows + 1):
-            for c in range(1, cols + 1):
-                df_distri_cambio = self.df_distribucion.loc[self.df_distribucion["Cambio"] == cambio]
-                df_duracion_cambio = self.df_duracion.loc[self.df_duracion["Cambio"] == cambio]
+        df_distri_cambio = self.df_distribucion.groupby("Cambio")
+        df_duracion_cambio = self.df_duracion.groupby("Cambio")
 
-                color_actual = next(colors)
+        for (row, col), cambio, color_actual in zip(positions, cambios, DURACION_REPUESTOS_COLORS):
+                df_distri = df_distri_cambio.get_group(cambio)
+                df_duracion = df_duracion_cambio.get_group(cambio)
 
                 # Campana de gauss
-                x = df_distri_cambio["Años"]
-                y = df_distri_cambio["DistribucionNormal"]
+                x = df_distri["Años"].to_numpy()
+                y = df_distri["DistribucionNormal"].to_numpy()
 
                 # Histograma
-                data = df_duracion_cambio["DuracionEnAños"]
+                data = df_duracion["DuracionEnAños"].to_numpy()
 
                 fig.add_trace(go.Histogram(
                     x=data,
                     name="Frecuencia de aparición anual",
                     histnorm="percent",
                     nbinsx=10,
-                    nbinsy=10,
                     opacity=0.4,
                     legendgroup=f"Cambio: {cambio}",
                     marker=dict(color=color_actual, opacity=0.5),
-
                     hoverinfo="skip",
-                ), col=c, row=r, secondary_y=False)
-
+                ), col=col, row=row, secondary_y=False)
 
                 fig.add_trace(go.Scatter(
                     x=x,
@@ -79,8 +82,7 @@ class DuracionRepuestosPlotter:
                     name="Distribucion",
                     legendgroup=f"Cambio: {cambio}",
                     marker=dict(color=color_actual, opacity=1),
-                    customdata=pd.Series(color_actual, x),
-
+                    customdata=[color_actual] * len(x),
                     hovertemplate="""
 <b>
 <span style='color:white'>Duracion en años: %{x}</span>
@@ -88,9 +90,9 @@ class DuracionRepuestosPlotter:
 <extra></extra>
 """,
                     hoverlabel=dict(bgcolor=color_actual)  # ← color de la barra unified
-                ), col=c, row=r, secondary_y=True)
+                ), col=col, row=row, secondary_y=True)
 
-                cambio = next(cambios_iter, None)
+
 
         fig.update_yaxes(title_text="", secondary_y=False) # Histograma
         fig.update_yaxes(title_text="Distribución en %", secondary_y=True) # Campana de gauss
@@ -110,20 +112,22 @@ class DuracionRepuestosPlotter:
 
 
     @execute_safely
-    def calcular_sin_cambios(self, year: str) -> Any:
-        self.df_duracion["FechaCambio"] = pd.to_datetime(self.df_duracion["FechaCambio"], errors="coerce")
-        year = pd.to_datetime(year, errors="coerce")
+    def calcular_sin_cambios(self, year_str: str) -> Any:
+        year = pd.to_datetime(year_str, errors="coerce")
 
         df_year = self.df_duracion.loc[
                 (self.df_duracion["FechaCambio"].dt.year == year.year) &
-                (self.df_duracion["Cambio"] == 0)
+                (self.df_duracion["Cambio"] == 0),
+                ["Patente"]
         ]
 
-        df_sin_cambios = self.df_duracion.loc[
-            (self.df_duracion["Patente"].isin(df_year["Patente"])) &
-            (self.df_duracion["Cambio"] == 1) &
-            (self.df_duracion["FechaCambio"] == pd.to_datetime("2025-10-28")),
-            ["Patente", "FechaCambio", "Cambio"]
-        ]
+        df_sin_cambios = (
+            self.df_duracion
+            .merge(df_year, on="Patente", how="inner")
+            .loc[
+                (self.df_duracion["Cambio"] == 1) &
+                (self.df_duracion["FechaCambio"] == pd.Timestamp("2025-10-28"))
+            ]
+        )
 
         return df_sin_cambios.count().iat[0]

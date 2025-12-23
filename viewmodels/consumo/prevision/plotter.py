@@ -6,11 +6,12 @@ import plotly.graph_objects as go
 
 from config.constants_colors import COLORS, PREVISION_COLORS
 from config.constants_common import FILE_STRFTIME_YMD
+from config.enums import SymbolEnum, DashEnum
 
 from utils.exception_utils import execute_safely
 from utils.common_utils import CommonUtils
 from viewmodels.plotly_components import DefaultUpdateLayoutComponents, HoverComponents, SliderComponents, \
-    ScatterComponents
+    PlotComponents
 
 from viewmodels.consumo.prevision.data_vm import PrevisionDataVM
 from viewmodels.consumo.prevision.vm import PrevisionVM
@@ -23,11 +24,12 @@ class PrevisionPlotter:
         self.default = DefaultUpdateLayoutComponents()
         self.hover = HoverComponents()
         self.slider = SliderComponents()
-        self.scatter = ScatterComponents()
+        self.plots = PlotComponents()
 
         self.tipo_rep = tipo_rep
         self.df_data = PrevisionDataVM().get_df_by_tipo_repuesto(self.tipo_rep)
         self.df_forecast = PrevisionVM().get_df_by_tipo_repuesto(self.tipo_rep)
+        self.fecha = self.common.devolver_fecha(self.df_data, "FechaCompleta")
 
     @execute_safely
     def create_plot(self):
@@ -38,10 +40,7 @@ class PrevisionPlotter:
             self.df_data['FechaCompleta'] = pd.to_datetime(self.df_data['FechaCompleta'], format=FILE_STRFTIME_YMD)
             self.df_forecast['FechaCompleta'] = pd.to_datetime(self.df_forecast['FechaCompleta'], format=FILE_STRFTIME_YMD)
 
-            if self.tipo_rep:
-                titulo = f'ConsumoPrevision de {self.tipo_rep} ({self.common.devolver_fecha(self.df_data, "FechaCompleta")})'
-            else:
-                titulo = ""
+            titulo = f'ConsumoPrevision de {self.tipo_rep} ({self.fecha})' if self.tipo_rep else ""
 
             grupos_data = self.df_data.groupby('Repuesto')
             grupos_forecast = self.df_forecast.groupby('Repuesto')
@@ -51,10 +50,10 @@ class PrevisionPlotter:
                 df_rep_forecast = grupos_forecast.get_group(repuesto)
 
                 x_data = df_rep_data['FechaCompleta']
-                y_data = df_rep_data['Consumo'].values
+                y_data = df_rep_data['Consumo'].to_numpy()
 
                 x_forecast = df_rep_forecast['FechaCompleta']
-                y_forecast = df_rep_forecast['ConsumoPrevision'].values
+                y_forecast = df_rep_forecast['ConsumoPrevision'].to_numpy()
 
                 total_prevision = y_forecast.sum()
                 valor_mensual = int(y_forecast.mean())
@@ -66,69 +65,16 @@ class PrevisionPlotter:
                 tickvals = pd.concat([x_data, x_forecast]).reset_index(drop=True) # type: ignore
                 ticktext = pd.concat([ticks_text_data, ticks_text_forecast]).reset_index(drop=True)
 
-
                 fig = go.Figure()
 
-                fig.add_trace(go.Scatter(
-                    x=x_data,
-                    y=y_data,
-                    name='Consumo',
-                    mode='lines+markers',
+                self.plots.scatter_prevision(fig, x_data, y_data, "Consumo", COLORS[15], PREVISION_COLORS[0],
+                                             SymbolEnum.circle, DashEnum.solid, ticks_text_data)
 
-                    text=y_data,
-                    textposition='top center',
-                    textfont=dict(
-                        size=19,
-                        color=COLORS[15]
-                    ),
+                self.plots.scatter_prevision(fig, x_forecast, y_forecast, "Prevision", COLORS[1], PREVISION_COLORS[1],
+                                             SymbolEnum.square, DashEnum.dash, ticks_text_forecast)
 
-                    line=dict(color=PREVISION_COLORS[0], width=2),
-                    marker=dict(
-                        color=PREVISION_COLORS[0],
-                        size=8,
-                        symbol='circle',
-                    ),
-                    legendgroup="Consumo",
-                    customdata=ticks_text_data,
-                    hovertemplate="""
-<b>
-<span style='color:#485696'>Consumo:</span>
-</b> %{y}
-<extra></extra>
-""",
-                ))
-
-
-                fig.add_trace(go.Scatter(
-                    x=x_forecast,
-                    y=y_forecast,
-                    name=f'Prevision',
-                    mode='lines+markers',
-
-                    text=y_forecast,
-                    textposition='top center',
-                    textfont=dict(
-                        size=19,
-                        color=COLORS[1]
-                    ),
-
-                    line=dict(color=PREVISION_COLORS[1], width=2, dash='dash'),
-                    marker=dict(
-                        color=PREVISION_COLORS[1],
-                        size=8,
-                        symbol='square',
-                    ),
-                    legendgroup="ConsumoPrevision",
-                    customdata=ticks_text_forecast,
-                    hoverinfo="skip",
-                    hovertemplate="""
-<b><span style='color:#F24C00'>Prevision:</span></b> %{y}
-<extra></extra>
-"""
-                ))
-
-                self.scatter.empty(fig, f"Prevision total: {total_prevision}")
-                self.scatter.empty(fig, f"Valor por mes: {valor_mensual}")
+                self.plots.empty(fig, f"Prevision total: {total_prevision}")
+                self.plots.empty(fig, f"Valor por mes: {valor_mensual}")
 
                 step = 3
                 ticktext_all = [

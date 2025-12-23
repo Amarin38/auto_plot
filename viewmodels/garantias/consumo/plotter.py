@@ -20,8 +20,8 @@ class ConsumoGarantiasPlotter:
     def create_plot(self) -> Union[go.Figure, None]:
         if not self.df_data.empty:
             x_data = self.df_data["Repuesto"]
-            y_garantias = self.df_data["Garantia"]
-            y_transfer = self.df_data["Transferencia"]
+            y_garantias = self.df_data["Garantia"].to_numpy()
+            y_transfer = self.df_data["Transferencia"].to_numpy()
             diferencia_gar = self.df_data["PorcentajeGarantia"]
             diferencia_transfer = self.df_data["PorcentajeTransferencia"]
 
@@ -29,11 +29,17 @@ class ConsumoGarantiasPlotter:
             color_garantias = CONSUMO_GARANTIAS_COLORS[0]
             color_transferencias = CONSUMO_GARANTIAS_COLORS[1]
 
-            custom_garantias = list(zip(pd.Series("Garantias", index=x_data),
-                                        pd.Series(color_garantias, index=x_data)))
+            len_data = len(x_data)
 
-            custom_transferencias = list(zip(pd.Series("Transferencias", index=x_data),
-                                             pd.Series(color_transferencias, index=x_data)))
+            custom_garantias = list(zip(
+                ["Garantias"] * len_data,
+                [color_garantias] * len_data
+            ))
+
+            custom_transferencias = list(zip(
+                ["Transferencias"] * len_data,
+                [color_transferencias] * len_data
+            ))
 
             fig = go.Figure()
 
@@ -85,23 +91,12 @@ class ConsumoGarantiasPlotter:
 """,
             ))
 
-
             self.default.update_layout(fig,'Consumo garantias frente a transferencias', 'Repuesto', 'Consumo', height=665)
+            self.hover.hover_junto(fig)
 
             fig.update_layout(
-                # legend=dict(
-                #     orientation='h',
-                #     yanchor='top',
-                #     y=1.15,
-                #     xanchor='left',
-                #     x=-0.01,
-                #     font=dict(size=13),
-                #     bgcolor=COLORS[4],
-                #     bordercolor=COLORS[5],
-                # ),
                 showlegend=False,
             )
 
-            self.hover.hover_junto(fig)
             return fig
         return None

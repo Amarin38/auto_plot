@@ -1,4 +1,5 @@
 import numpy as np
+import streamlit as st
 import plotly.graph_objects as go
 from plotly.graph_objs import Figure
 
@@ -28,11 +29,10 @@ class HistorialPlotter:
 
             titulo = f"Historial {self.tipo_rep}" if self.tipo_rep else ""
 
-            x_data = self.df["Año"].values
-            y_data = self.df["TotalConsumo"].values
+            x_data = self.df["Año"].to_numpy()
+            y_data = self.df["TotalConsumo"].to_numpy()
 
             lineal_y = calcular_tendencia(x_data, y_data, 1)
-
 
             fig = go.Figure()
 
@@ -116,6 +116,7 @@ class HistorialPlotter:
             return fig, titulo
         return [None, None]
 
+@st.cache_data
 def calcular_tendencia(x_num: np.ndarray, y_data: np.ndarray, grado: int) -> np.ndarray:
     coeficientes = np.polyfit(x_num, y_data, grado)
     return np.polyval(coeficientes, x_num)

@@ -2,16 +2,19 @@ import plotly.graph_objects as go
 
 from typing import Union
 
-from config.constants_colors import COLORS
+from config.constants_colors import COLORS, HOVER_BAR_TANSF_COLOR
+from config.enums import SymbolEnum, DashEnum
 from utils.exception_utils import execute_safely
 from viewmodels.gomeria.transferencias_dep_vm import TransferenciasEntreDepositosVM
-from viewmodels.plotly_components import HoverComponents
+from viewmodels.plotly_components import HoverComponents, PlotComponents
 
 
 class TransferenciasEntreDepositosPlotter:
     def __init__(self, cabecera: str) -> None:
         self.cabecera = cabecera
         self.df_transfer = TransferenciasEntreDepositosVM().get_df_by_cabecera(cabecera)
+        self.hover = HoverComponents()
+        self.plots = PlotComponents()
 
     @execute_safely
     def create_plot(self) -> Union[go.Figure, None]:
@@ -19,76 +22,27 @@ class TransferenciasEntreDepositosPlotter:
             df_2024 = self.df_transfer.loc[self.df_transfer["Año"] == 2024]
             df_2025 = self.df_transfer.loc[self.df_transfer["Año"] == 2025]
 
-            x_2024 = df_2024["Repuesto"]
-            y_2024 = df_2024["Cantidad"]
+            x_2024 = df_2024["Repuesto"].to_list()
+            y_2024 = df_2024["Cantidad"].to_numpy()
 
-            x_2025 = df_2025["Repuesto"]
-            y_2025 = df_2025["Cantidad"]
+            x_2025 = df_2025["Repuesto"].to_list()
+            y_2025 = df_2025["Cantidad"].to_numpy()
 
             fig = go.Figure()
 
-            fig.add_trace(go.Scatter(
-                x=x_2024,
-                y=y_2024,
-                name="2024",
-                mode='lines+markers',
+            self.plots.scatter_gomeria(fig, x_2024, y_2024, "2024", COLORS[12], SymbolEnum.circle, DashEnum.solid)
+            self.plots.scatter_gomeria(fig, x_2025, y_2025, "2025", COLORS[2], SymbolEnum.circle, DashEnum.dot)
 
-                line=dict(color=COLORS[12], width=2),
-                marker=dict(
-                    color=COLORS[12],
-                    size=8,
-                    symbol='circle',
-                ),
-
-                hovertemplate="""
-<b><span style='color:#3F7CAC'>2024</span></b>
-<br>
-<b>Cantidad:</b> %{y}
-<extra></extra>
-""",
-            ))
-
-            fig.add_trace(go.Scatter(
-                x=x_2025,
-                y=y_2025,
-                name="2025",
-                mode='lines+markers',
-
-                line = dict(color=COLORS[2], width=2, dash='dot'),
-                marker = dict(
-                    color=COLORS[2],
-                    size=8,
-                    symbol='square',
-                ),
-
-                hovertemplate="""
-<b><span style='color:#C70039'>2025</span></b>
-<br>
-<b>Cantidad:</b> %{y}
-<extra></extra>
-""",
-            ))
-
+            fig.update_xaxes(visible=False)
             fig.update_layout(
                 showlegend=False,
-                hovermode="x unified",  # 🔹 muestra ambos hovers juntos
-                hoverlabel=dict(
-                    bgcolor="#0E1117",  # color de fondo
-                    bordercolor="black",
-                    font_size=14.5,  # 🔹 aumenta el tamaño del texto
-                    font_family="Arial",
-                    namelength=-1
-                ),
                 margin=dict(l=1, r=1, b=1, t=50),
                 height=550,
 
-                title = dict(
-                    text="🔛 Transferencias entre depósitos",
-                    y=0.98
-                )
+                title = dict(text="🔛 Transferencias entre depósitos", y=0.98)
             )
-            fig.update_xaxes(visible=False)
 
-            HoverComponents().color_hover_bar_colored(fig, "#833E73")
+            self.hover.hover_junto(fig)
+            self.hover.color_hover_bar_colored(fig, HOVER_BAR_TANSF_COLOR)
             return fig
         return None

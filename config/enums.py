@@ -140,3 +140,11 @@ class ColoresMatplotlibEnum(StrEnum):
     magma = auto()
     PuBuGn = auto()
 
+class SymbolEnum(StrEnum):
+    circle = auto()
+    square = auto()
+
+class DashEnum(StrEnum):
+    solid = auto()
+    dot = auto()
+    dash = auto()

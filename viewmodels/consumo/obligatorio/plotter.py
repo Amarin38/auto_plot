@@ -1,8 +1,9 @@
 import plotly.graph_objects as go
 
 from config.constants_colors import COLORS
+from config.constants_common import FILE_STRFTIME_YMD
 from config.enums import ConsumoObligatorioEnum
-from viewmodels.plotly_components import DefaultUpdateLayoutComponents, HoverComponents, ScatterComponents
+from viewmodels.plotly_components import DefaultUpdateLayoutComponents, HoverComponents, PlotComponents
 from viewmodels.consumo.obligatorio.vm import ConsumoObligatorioVM
 
 
@@ -10,7 +11,7 @@ class ConsumoObligatorioPlotter:
     def __init__(self, tipo_rep: ConsumoObligatorioEnum) -> None:
         self.default = DefaultUpdateLayoutComponents()
         self.hover = HoverComponents()
-        self.scatter = ScatterComponents()
+        self.scatter = PlotComponents()
 
         self.df = ConsumoObligatorioVM().get_df_repuesto(tipo_rep)
 
@@ -22,13 +23,13 @@ class ConsumoObligatorioPlotter:
         y2024 = self.df["Año2024"]
         y2025 = self.df["Año2025"]
 
-        minimo_viejo = self.df["MinimoAntiguo"]
-        minimo_nuevo = self.df["MinimoObligatorio"]
+        minimo_viejo = self.df["MinimoAntiguo"].to_numpy()
+        minimo_nuevo = self.df["MinimoObligatorio"].to_numpy()
 
-        fecha = self.df["UltimaFecha"][0].strftime("%d/%m/%Y")
+        fecha = self.df["UltimaFecha"].iloc[0].strftime(FILE_STRFTIME_YMD)
 
-        condicion_menor = self.df["Año2025"] < self.df["MinimoObligatorio"]
-        condicion_mayor_igual = self.df["Año2025"] >= self.df["MinimoObligatorio"]
+        condicion_menor = y2025 < minimo_nuevo
+        condicion_mayor_igual = y2025 >= minimo_nuevo
 
         porcentaje = 100 - round((self.df.loc[condicion_menor, "Año2025"] * 100) /
                                  self.df.loc[condicion_menor, "MinimoObligatorio"], 0)
@@ -82,7 +83,7 @@ class ConsumoObligatorioPlotter:
             name="Minimo Actual",
             orientation="v",
             marker=dict(color=COLORS[14], opacity=1),
-            legendgroup="B",
+            legendgroup="emoji",
             hovertemplate = """
 <b>
 <span style='color:#5497A7'>Minimo Actual:</span>
@@ -97,7 +98,7 @@ class ConsumoObligatorioPlotter:
             name="2025",
             orientation="v",
             marker = dict(color=COLORS[9], opacity=1),
-            legendgroup="B",
+            legendgroup="emoji",
             hovertemplate="""
 <b>
 <span style='color:#4D9078'>2025:</span>

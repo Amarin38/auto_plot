@@ -39,7 +39,7 @@ class DeviationPlotter:
 
         y_porcentual = self.df["Desviacion"].astype(str) + "%"
 
-        fecha = pd.to_datetime(self.df["FechaCompleta"].unique()).strftime(FILE_STRFTIME_DMY)
+        fecha = pd.to_datetime(self.df["FechaCompleta"].iloc[0]).strftime(FILE_STRFTIME_DMY)
 
         fig = go.Figure()
 
@@ -83,12 +83,15 @@ class DeviationPlotter:
 
 
         for cab in x_data:
+            y0 = y_data.min() - 50
+            y1 = y_data.max() + 50
+
             fig.add_shape(type="line",
-                x0=cab, y0=y_data.min()+(-50), x1=cab, y1=y_data.max()+50,
+                x0=cab, y0=y0, x1=cab, y1=y1,
                 line=dict(color=self.color, width=1), opacity=0.6)
 
 
-        self.default.update_layout(fig, f"Desviacion {self.tipo_rep} {fecha[0]}", 'Cabecera',
+        self.default.update_layout(fig, f"Desviacion {self.tipo_rep} {fecha}", 'Cabecera',
                                    'Desviacion de la media en %', 600, 200)
 
         self.legend.top_right_legend(fig)

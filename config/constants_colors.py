@@ -14,6 +14,8 @@ INDICE_COLORS: Tuple[str, ...] = ("#5497A7", "#C70039", "#900C3F", "#5C6D70", "#
                                   "#A4031F", "#7D8491")
 
 INDICE_MEDIA_COLOR: str = "#FF5733"
+HOVER_COLOR: str = "#0E1117"
+HOVER_BAR_TANSF_COLOR: str = "#833E73"
 
 FALLAS_GARANTIAS_COLORS: Tuple[str, ...] = ("#F1D764", "#F4A259", "#5B8E7D", "#BC4B51", "#897AEA")
 

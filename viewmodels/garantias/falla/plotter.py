@@ -22,13 +22,12 @@ class FallaGarantiasPlotter:
 
     @execute_safely
     def create_plot(self) -> Union[go.Figure, None]:
-        if not self.df_data.empty and self.min_date is not None and self.max_date is not None:
+        if not self.df_data.empty and self.min_date and self.max_date:
             labels = self.df_data["Repuesto"]
-            values = self.df_data["PromedioTiempoFalla"]
+            values = self.df_data["PromedioTiempoFalla"].to_numpy()
             text = self.df_data["PromedioTiempoFalla"].astype(str)
 
             fig = go.Figure()
-
 
             fig.add_trace(go.Pie(
                     labels=labels,

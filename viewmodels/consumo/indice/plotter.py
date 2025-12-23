@@ -10,7 +10,7 @@ from config.enums import IndexTypeEnum
 from utils.exception_utils import execute_safely
 from utils.common_utils import CommonUtils
 
-from viewmodels.plotly_components import DefaultUpdateLayoutComponents, HoverComponents, ScatterComponents
+from viewmodels.plotly_components import DefaultUpdateLayoutComponents, HoverComponents, PlotComponents
 from viewmodels.consumo.indice.vm import IndiceConsumoVM
 
 class IndexPlotter:
@@ -18,7 +18,7 @@ class IndexPlotter:
         self.common = CommonUtils()
         self.default = DefaultUpdateLayoutComponents()
         self.hover = HoverComponents()
-        self.scatter = ScatterComponents()
+        self.scatter = PlotComponents()
 
         self.tipo_rep = tipo_rep
         self.df = IndiceConsumoVM().get_df_tipo_repuesto_and_tipo_indice(tipo_rep, index_type)
@@ -26,31 +26,28 @@ class IndexPlotter:
     @execute_safely
     def create_plot(self) -> Union[Tuple[list, str], List[None]]:
         if not self.df.empty:
-            if self.tipo_rep:
-                titulo = f"Indice {self.tipo_rep} ({self.common.devolver_fecha(self.df, "UltimaFecha")})"
-            else:
-                titulo = ""
+            titulo = f"Indice {self.tipo_rep} ({self.common.devolver_fecha(self.df, "UltimaFecha")})" \
+                if self.tipo_rep else ""
 
-            todos_repuestos = self.df["Repuesto"].unique()
             figuras = []
 
-            iter_colors = iter(INDICE_COLORS)
+            todos_repuestos = self.df["Repuesto"].unique()
+            grouped_repuesto = self.df.groupby("Repuesto")
 
-            for repuesto in todos_repuestos:
-                color = next(iter_colors, None)
-
-                df_repuesto = self.df.loc[self.df["Repuesto"] == repuesto]
+            for repuesto, color in zip(todos_repuestos, INDICE_COLORS):
+                df_repuesto = grouped_repuesto.get_group(repuesto)
 
                 x_data = df_repuesto["Cabecera"]
                 y_data = df_repuesto["ConsumoIndice"]
                 median = [round(y_data.replace(0, np.nan).mean(), 1)] * len(x_data)
+                avg = median[0]
 
-                condicion_mayor = df_repuesto["ConsumoIndice"] > median[0]
-                condicion_menor = df_repuesto["ConsumoIndice"] < median[0]
-                condicion_igual = df_repuesto["ConsumoIndice"] == median[0]
+                condicion_mayor = df_repuesto["ConsumoIndice"] > avg
+                condicion_menor = df_repuesto["ConsumoIndice"] < avg
+                condicion_igual = df_repuesto["ConsumoIndice"] == avg
 
-                porcentaje_mayor = round((df_repuesto.loc[condicion_mayor, "ConsumoIndice"] * 100) / median[0], 0) - 100
-                porcentaje_menor = round((df_repuesto.loc[condicion_menor, "ConsumoIndice"] * 100) / median[0], 0) - 100
+                porcentaje_mayor = round((df_repuesto.loc[condicion_mayor, "ConsumoIndice"] * 100) / avg, 0) - 100
+                porcentaje_menor = round((df_repuesto.loc[condicion_menor, "ConsumoIndice"] * 100) / avg, 0) - 100
 
                 valores_mayores = y_data.loc[condicion_mayor]
                 valores_menores = y_data.loc[condicion_menor]
@@ -60,7 +57,7 @@ class IndexPlotter:
 
                 fig.add_trace(go.Bar(
                     x=x_data,
-                    y=y_data,
+                    y=y_data.to_numpy(),
                     name="Índice de consumo",
                     textposition="auto",
                     textfont=dict(
@@ -68,7 +65,7 @@ class IndexPlotter:
                         color='white',
                         family='Arial'
                     ),
-                    customdata=pd.Series(color, x_data),
+                    customdata=[color] * len(x_data),
                     marker=dict(color=color),
                     hovertemplate = """
 <b>
@@ -79,17 +76,16 @@ class IndexPlotter:
 """
                 ))
 
-
                 fig.add_trace(go.Scatter(
                     x=x_data,
                     y=median,
                     mode="lines",
-                    name=f"Media {median[0]}",
+                    name=f"Media {avg}",
                     line=dict(
                         color=INDICE_MEDIA_COLOR,
                         dash='dash'
                     ),
-                    customdata=pd.Series(INDICE_MEDIA_COLOR, x_data),
+                    customdata=[INDICE_MEDIA_COLOR] * len(x_data),
                     hovertemplate = """
 <b>
 <span style='color:%{customdata}'>Media:</span>
@@ -99,6 +95,7 @@ class IndexPlotter:
 """
                 ))
 
+
                 self.scatter.cross(fig, df_repuesto.loc[condicion_mayor, "Cabecera"], valores_mayores,
                                    "Superior a la media", "Encima de la media por", porcentaje_mayor)
 
@@ -107,6 +104,7 @@ class IndexPlotter:
 
                 self.scatter.mid_line(fig, df_repuesto.loc[condicion_igual, "Cabecera"], valores_iguales,
                                    "En la media", "En la media")
+
 
                 self.default.update_layout(fig, repuesto, "Cabecera", "Indice de consumo")
                 self.hover.hover_junto(fig)

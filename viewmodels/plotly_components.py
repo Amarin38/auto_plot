@@ -1,11 +1,15 @@
 from typing import List, Dict, Optional, Any
 
+import numpy as np
 import pandas as pd
 from multipledispatch import dispatch
 from plotly.graph_objs import Figure
 
-from config.constants_colors import COLORS
+
+from config.constants_colors import COLORS, HOVER_COLOR
+from config.enums import SymbolEnum, DashEnum
 from utils.exception_utils import execute_safely
+from utils.common_utils import CommonUtils
 import plotly.graph_objects as go
 
 class HoverComponents:
@@ -15,11 +19,11 @@ class HoverComponents:
     @execute_safely
     def hover_junto(self, fig):
         fig.update_layout(
-            hovermode="x unified",  # 🔹 muestra ambos hovers juntos
+            hovermode="x unified",
             hoverlabel=dict(
-                bgcolor="#0E1117",  # color de fondo
-                bordercolor="black",
-                font_size=14.5,  # 🔹 aumenta el tamaño del texto
+                bgcolor=HOVER_COLOR,
+                bordercolor="gray",
+                font_size=14.5,
                 font_family="Arial",
                 namelength=-1
             ),
@@ -28,11 +32,11 @@ class HoverComponents:
     @execute_safely
     def hover_x(self, fig):
         fig.update_layout(
-            hovermode="x",  # 🔹 muestra ambos hovers juntos
+            hovermode="x",
             hoverlabel=dict(
-                bgcolor="#0E1117",  # color de fondo
-                bordercolor="black",
-                font_size=16,  # 🔹 aumenta el tamaño del texto
+                bgcolor=HOVER_COLOR,
+                bordercolor="gray",
+                font_size=16,
                 font_family="Arial",
                 namelength=-1
             ),
@@ -93,6 +97,7 @@ class HoverComponents:
             tickvals=tickvals,
             ticktext=ticktext,
         )
+
 
 class LegendComponents:
     def __init__(self):
@@ -189,9 +194,9 @@ class DropDownComponents:
         )
 
 
-class ScatterComponents:
+class PlotComponents:
     def __init__(self):
-        ...
+        self.common = CommonUtils()
 
     @execute_safely
     def empty(self, fig, nombre: str):
@@ -322,6 +327,90 @@ class ScatterComponents:
 </b>
 <extra></extra>
 """.format(texto=texto)
+        ))
+
+
+    @execute_safely
+    def heat_map(self, fig: Figure, xyz: pd.DataFrame, n_row: int, n_col: int, color: str, x_pos: float):
+        z_numpy     = xyz.to_numpy(dtype=int)
+        zmin, zmax  = z_numpy.min(), z_numpy.max()
+        ticks       = np.linspace(zmin, zmax, 5).astype(int)
+        ticks_texto = [self.common.abreviar_es(v) for v in ticks]
+        hover_text  = [[self.common.abreviar_es(v) for v in row] for row in z_numpy]
+
+        fig.add_trace(go.Heatmap(
+            x=xyz.columns,
+            y=xyz.index,
+            z=z_numpy,
+            text=hover_text,
+            colorscale=color,
+            colorbar=dict(
+                title="",
+                tickmode="array",
+                tickvals=ticks,
+                ticktext=ticks_texto,
+                thickness=15,
+                x=x_pos,
+                y=0.5,
+                len=0.9
+            ),
+            hovertemplate="""
+<b>Cantidad:</b> %{text}
+<extra></extra>
+""",
+        ), row=n_row, col=n_col)
+
+    @execute_safely
+    def scatter_gomeria(self, fig: Figure, x, y, name: str, color: str, symbol: SymbolEnum, dash: DashEnum):
+        fig.add_trace(go.Scatter(
+            x=x,
+            y=y,
+            name=name,
+            mode='lines+markers',
+
+            line=dict(color=color, width=2, dash=dash),
+            marker=dict(
+                color=color,
+                size=8,
+                symbol=symbol,
+            ),
+            hovertemplate="""
+<b><span style='color:{color}'>{name}</span></b>
+<br>
+<b>Cantidad:</b> %{{y}}
+<extra></extra>
+""".format(color=color, name=name)),
+        )
+
+    @execute_safely
+    def scatter_prevision(self, fig: Figure, x, y, name: str, color: str, color_line: str, symbol: SymbolEnum, dash: DashEnum, custom: Optional[str]):
+        fig.add_trace(go.Scatter(
+            x=x,
+            y=y,
+            name=name,
+            mode='lines+markers',
+
+            text=y,
+            textposition='top center',
+            textfont=dict(
+                size=19,
+                color=color
+            ),
+
+            line=dict(color=color_line, width=2, dash=dash),
+            marker=dict(
+                color=color_line,
+                size=8,
+                symbol=symbol,
+            ),
+            legendgroup=name,
+            customdata=custom,
+            hovertemplate="""
+<b>
+<span style='color:{color}'>{name}:</span>
+%{{y}}</b>
+<extra></extra>
+""".format(color=color_line, name=name),
         ))
 
 
