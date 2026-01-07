@@ -27,7 +27,7 @@ class IndexPlotter:
     def create_plot(self) -> Union[Tuple[list, str], List[None]]:
         if not self.df.empty:
             titulo = f"Indice {self.tipo_rep} ({self.common.devolver_fecha(self.df, "UltimaFecha")})" \
-                if self.tipo_rep else ""
+                      if self.tipo_rep else ""
 
             figuras = []
 

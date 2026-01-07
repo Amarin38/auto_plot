@@ -42,16 +42,16 @@ class Index:
                                              'Precio':'TotalCoste'})[['Cabecera', 'Repuesto', 'TotalConsumo', 'TotalCoste', 'ConsumoIndice']]
 
             # Modificaciones
-            df_rate['TotalCoste'] = df_rate['TotalCoste'].round(0)
-            df_rate['ConsumoIndice'] = df_rate['ConsumoIndice'].replace([np.inf, -np.inf], np.nan).round(1)
-            df_rate['UltimaFecha'] = fecha_max
-            df_rate['UltimaFecha'] = df_rate['UltimaFecha'].dt.date
+            df_rate['TotalCoste']       = df_rate['TotalCoste'].round(0)
+            df_rate['ConsumoIndice']    = df_rate['ConsumoIndice'].replace([np.inf, -np.inf], np.nan).round(1)
+            df_rate['UltimaFecha']      = fecha_max
+            df_rate['UltimaFecha']      = df_rate['UltimaFecha'].dt.date
 
             df_rate.dropna(subset=['ConsumoIndice'], inplace=True)
             df_rate.insert(2, 'TipoRepuesto', tipo_rep)
             df_rate['TipoOperacion'] = tipo_op
 
-            if filtro is not None:
+            if filtro:
                 df_rate = self.cleaner.filter(df_rate, 'Repuesto', filtro, 'startswith')
 
             IndiceConsumoVM().save_df(df_rate)

@@ -10,7 +10,8 @@ def compute_historial(df: pd.DataFrame, tipo_repuesto: RepuestoEnum) -> None:
     df_historial["TipoRepuesto"] = tipo_repuesto
 
     agrupado = (
-        (df_historial.groupby(["TipoRepuesto", "Año"]).agg({"Cantidad":"sum"})
+        (df_historial.groupby(["TipoRepuesto", "Año"])
+         .agg({"Cantidad":"sum"})
          .rename(columns={"Cantidad":"TotalConsumo"}))
          .reset_index()
     )

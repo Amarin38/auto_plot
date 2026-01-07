@@ -2,7 +2,7 @@ import streamlit as st
 
 from utils.exception_utils import execute_safely
 
-from typing import Union
+from typing import Union, Optional
 
 from config.constants_views import SELECT_BOX_HEIGHT, PLACEHOLDER, CENTERED_TITLE_HEIGHT, CENTERED_TITLE_WIDTH
 from config.enums import RepuestoReparadoEnum, RepuestoEnum, CabecerasEnum, TipoDuracionEnum, IndexTypeEnum, \
@@ -150,3 +150,29 @@ class OtherComponents:
         with col.container(height=SELECT_BOX_HEIGHT):
             st.text("No hay datos de este repuesto.")
 
+    @execute_safely
+    def custom_metric(self, col, label: str, value: Union[str, int, float], border_color: str, val_color: str,
+                      delta: Optional[Union[str, int, float]] = "", delta_color: Optional[str] = ""):
+        col.markdown(f"""
+        <div style="
+            padding:14px;
+            border-radius:10px;
+            border-left:5px outset {border_color};
+            border-bottom:2px outset {border_color};
+            background:#222;
+        ">
+            <div style="color:#BBB">{label}</div>
+            <div style="font-size:26px; color:{val_color}">{value}</div>
+            <div style="
+                display: inline-flex;
+                align-items: center;
+                gap: 6px;
+                padding: 4px 10px;
+                border-radius: 999px;
+                background: rgba(76,175,80,.15);
+                color: #4CAF50;
+                font-weight: 600;
+                font-size: 13px;
+                ">{delta}</div>
+        </div>
+        """, unsafe_allow_html=True)

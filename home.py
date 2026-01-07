@@ -39,6 +39,7 @@ from infrastructure.db.models.duracion_repuestos_model import DuracionRepuestosM
 from infrastructure.db.models.maximos_minimos_model import MaximosMinimosModel
 from infrastructure.db.models.json_config_model import JSONConfigModel
 from infrastructure.db.models.parque_movil_model import ParqueMovilModel
+from infrastructure.db.models.conteo_stock_model import ConteoStockModel
 
 # -----------------------------------------------------------------------------------------------
 st.set_page_config(

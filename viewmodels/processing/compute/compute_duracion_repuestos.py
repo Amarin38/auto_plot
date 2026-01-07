@@ -10,19 +10,24 @@ from viewmodels.consumo.duracion_rep.duracion_vm import DuracionRepuestosVM
 
 class DuracionRepuestos:
     def __init__(self, df: pd.DataFrame, repuesto_rep: str, tipo_duracion: str) -> None:
-        self.df = df
-        self.repuesto = repuesto_rep
-        self.tipo_rep = tipo_duracion
+        self.df         = df
+        self.repuesto   = repuesto_rep
+        self.tipo_rep   = tipo_duracion
 
-        self.patentes = self.df["Patente"].unique()
-        self.cabeceras = self.df["Cabecera"].unique()
+        self.patentes   = self.df["Patente"].unique()
+        self.cabeceras  = self.df["Cabecera"].unique()
 
 
     @execute_safely
     def calcular_duracion(self):
-        df = self.df.loc[self.df["Observaciones"].str.contains(FILTRO_OBS, na=False)].copy()
+        df = self.df.loc[
+             self.df["Observaciones"].str.contains(FILTRO_OBS, na=False)
+        ].copy()
 
-        for patente in self.patentes:
+        grouped_patente = df.groupby("Patente")
+
+        for patente in self.patentes: # TODO: queda cambiarlo a groupby
+            df_pat = grouped_patente.get_group(patente)
             df_separado_pat = df["Patente"] == patente
 
             # Separo por cada patende y traigo la columna Cambio, y a esa columna en ese espacio
@@ -30,8 +35,8 @@ class DuracionRepuestos:
             df.loc[df_separado_pat, "Cambio"] = range( # type: ignore
                 len(df.loc[df_separado_pat])
             )
-            df["Repuesto"] = self.repuesto
-            df["TipoRepuesto"] = self.tipo_rep
+            df["Repuesto"]      = self.repuesto
+            df["TipoRepuesto"]  = self.tipo_rep
 
             # Resto las fechas para saber cuanto duraron
             df.loc[df_separado_pat, "DuracionEnDias"] = df["FechaCambio"] - df["FechaCambio"].shift(1)
@@ -41,9 +46,9 @@ class DuracionRepuestos:
         df["DuracionEnDias"] = df["DuracionEnDias"].dt.days.fillna(0).astype(int) # limpio de valores nulos
         df.loc[df["DuracionEnDias"] < 0, "DuracionEnDias"] = 0 # limpio de valores negativos
 
-        df["DuracionEnMeses"] = round(df["DuracionEnDias"] / 30, 1)
-        df["DuracionEnAños"] = round(df["DuracionEnDias"] / 365, 1)
-        df["FechaCambio"] = df["FechaCambio"].dt.date
+        df["DuracionEnMeses"]   = round(df["DuracionEnDias"] / 30, 1)
+        df["DuracionEnAños"]    = round(df["DuracionEnDias"] / 365, 1)
+        df["FechaCambio"]       = df["FechaCambio"].dt.date
 
         cambios = df["Cambio"].unique()[1:]
 
@@ -62,26 +67,28 @@ class DuracionRepuestos:
     def calcular_distribucion_normal(self, df: pd.DataFrame, cambios) -> pd.DataFrame:
         df_list = []
 
+        grouped_cambio = df.groupby("Cambio")
+
         for cambio in cambios:
-            df_aux = pd.DataFrame()
-            df_cambio = df["Cambio"] == cambio
+            df_final = pd.DataFrame()
+            df_cambio = grouped_cambio.get_group(cambio)
 
             # Gauss
-            mu = df.loc[df_cambio, "AñoPromedio"].values[0] # type: ignore
-            sigma = df.loc[df_cambio, "desviacion_indicestandar"].values[0] # type: ignore
-            x = np.arange(1, 16)
+            mu      = df_cambio["AñoPromedio"].iloc[0]
+            sigma   = df_cambio["desviacion_indicestandar"].iloc[0]
+            x       = np.arange(1, 16)
 
             # Creo el DataFrame
-            df_aux["Años"] = x
-            df_aux["Cambio"] = cambio
-            df_aux["Repuesto"] = self.repuesto
-            df_aux["TipoRepuesto"] = self.tipo_rep
-            df_aux["AñoPromedio"] = mu
-            df_aux["desviacion_indicestandar"] = sigma
-            df_aux["DistribucionNormal"] = (norm.pdf(x, mu, sigma).round(2)) * 100
-            df_aux["DistribucionNormal"] = df_aux["DistribucionNormal"].fillna(0)
+            df_final["Años"]                      = x
+            df_final["Cambio"]                    = cambio
+            df_final["Repuesto"]                  = self.repuesto
+            df_final["TipoRepuesto"]              = self.tipo_rep
+            df_final["AñoPromedio"]               = mu
+            df_final["desviacion_indicestandar"]  = sigma
+            df_final["DistribucionNormal"]        = (norm.pdf(x, mu, sigma).round(2)) * 100
+            df_final["DistribucionNormal"]        = df_final["DistribucionNormal"].fillna(0)
 
-            df_list.append(df_aux)
+            df_list.append(df_final)
         return pd.concat(df_list)
 
 
@@ -111,11 +118,11 @@ class DuracionRepuestos:
 
                 # Gauss
                 try:
-                    mu = df.loc[df_cambio & df_cabeceras, "AñoPromedio"].values[0]
-                    sigma = df.loc[df_cambio & df_cabeceras, "desviacion_indicestandar"].values[0]
+                    mu      = df.loc[df_cambio & df_cabeceras, "AñoPromedio"].iloc[0]
+                    sigma   = df.loc[df_cambio & df_cabeceras, "desviacion_indicestandar"].iloc[0]
                 except IndexError:
-                    mu = 0
-                    sigma = 0
+                    mu      = 0
+                    sigma   = 0
 
                 x = np.arange(1, 16)
 
@@ -124,21 +131,16 @@ class DuracionRepuestos:
                 else:
                     distribucion_normal = 0
 
-                # print(f"Cabecera -> {cab}")
-                # print(f"mu -> {df.loc[df_cambio & df_cabeceras, "AñoPromedio"].values}")
-                # print(f"sigma -> {df.loc[df_cambio & df_cabeceras, "desviacion_indicestandar"].values}")
-                # print(f"Distribucion normal -> {distribucion_normal}")
-
                 # Creo el DataFrame
-                df_aux["Años"] = x
-                df_aux["Cambio"] = cambio
-                df_aux["Cabecera"] = cab
-                df_aux["Repuesto"] = self.repuesto
-                df_aux["TipoRepuesto"] = self.tipo_rep
-                df_aux["AñoPromedio"] = mu
-                df_aux["desviacion_indicestandar"] = sigma
-                df_aux["DistribucionNormal"] = distribucion_normal
-                df_aux["DistribucionNormal"] = df_aux["DistribucionNormal"].fillna(0)
+                df_aux["Años"]                      = x
+                df_aux["Cambio"]                    = cambio
+                df_aux["Cabecera"]                  = cab
+                df_aux["Repuesto"]                  = self.repuesto
+                df_aux["TipoRepuesto"]              = self.tipo_rep
+                df_aux["AñoPromedio"]               = mu
+                df_aux["desviacion_indicestandar"]  = sigma
+                df_aux["DistribucionNormal"]        = distribucion_normal
+                df_aux["DistribucionNormal"]        = df_aux["DistribucionNormal"].fillna(0)
 
                 df_list.append(df_aux)
         return pd.concat(df_list)

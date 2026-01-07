@@ -130,6 +130,7 @@ class LoadDataEnum(StrEnum):
     TRANSFERENCIAS_ENTRE_DEPOSITOS = auto()
     DIFERENCIA_MOVIMIENTOS_ENTRE_DEPOSITOS = auto()
     PARQUE_MOVIL = auto()
+    CONTEO_STOCK = auto()
 
 
 class ColoresMatplotlibEnum(StrEnum):

@@ -2,7 +2,6 @@ from datetime import datetime
 
 import numpy as np
 import pandas as pd
-from sqlalchemy.dialects.mssql.information_schema import columns
 
 from config.constants_common import TODAY_DATE_FILE_YMD, FILE_STRFTIME_YMD
 from utils.common_utils import CommonUtils

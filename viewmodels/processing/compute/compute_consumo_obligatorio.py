@@ -11,11 +11,11 @@ def compute_consumo_obligatorio(df: pd.DataFrame, repuesto: ConsumoObligatorioEn
     df_final: pd.DataFrame = pd.DataFrame()
     df_coches_cabecera: pd.DataFrame = CochesCabeceraVM().get_df()
 
-    df_final["Cabecera"] = df["Cabecera"]
-    df_final["Repuesto"] = repuesto
-    df_final["Año2023"] = df["Año2023"]
-    df_final["Año2024"] = df["Año2024"]
-    df_final["Año2025"] = df["Año2025"]
+    df_final["Cabecera"]    = df["Cabecera"]
+    df_final["Repuesto"]    = repuesto
+    df_final["Año2023"]     = df["Año2023"]
+    df_final["Año2024"]     = df["Año2024"]
+    df_final["Año2025"]     = df["Año2025"]
 
     df_final = df_final.merge(
         df_coches_cabecera[["Cabecera", "CochesDuermen"]],

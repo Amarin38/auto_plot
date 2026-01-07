@@ -17,10 +17,10 @@ def create_forecast(df: pd.DataFrame, tipo_repuesto: str):
 
         # Fechas
         df_rep["FechaCompleta"] = pd.to_datetime(df_rep["FechaCompleta"])
-        df_rep = df_rep.groupby(df_rep["FechaCompleta"].dt.to_period("M")).agg({"Cantidad":"sum"})
-        df_rep.index = pd.PeriodIndex(df_rep.index, freq='M').to_timestamp()
-        df_rep = df_rep.asfreq("MS")
-        df_rep = df_rep.replace(np.nan, 0)
+        df_rep                  = df_rep.groupby(df_rep["FechaCompleta"].dt.to_period("M")).agg({"Cantidad":"sum"})
+        df_rep.index            = pd.PeriodIndex(df_rep.index, freq='M').to_timestamp()
+        df_rep                  = df_rep.asfreq("MS")
+        df_rep                  = df_rep.replace(np.nan, 0)
 
         series: pd.Series = pd.Series(df_rep["Cantidad"].values, index=df_rep.index)
 
@@ -35,21 +35,23 @@ def create_forecast(df: pd.DataFrame, tipo_repuesto: str):
 
             prevision: pd.Series = fit.forecast(12)
 
-            data: pd.DataFrame = series.to_frame("Consumo").reset_index() # type: ignore
-            data.columns = ["FechaCompleta", "Consumo"]
-            data["Consumo"] = data["Consumo"].round(0)
-            data["Repuesto"] = rep
-            data["TipoRepuesto"] = tipo_repuesto
-            data["FechaCompleta"] = data["FechaCompleta"].dt.date
+            data: pd.DataFrame      = series.to_frame("Consumo").reset_index()
+            data.columns            = ["FechaCompleta", "Consumo"]
+            data["Consumo"]         = data["Consumo"].round(0)
+            data["Repuesto"]        = rep
+            data["TipoRepuesto"]    = tipo_repuesto
+            data["FechaCompleta"]   = data["FechaCompleta"].dt.date
+
             PrevisionDataVM().save_df(data)
 
-            prevision: pd.DataFrame = prevision.to_frame("ConsumoPrevision").reset_index()# type: ignore
-            prevision.columns = ["FechaCompleta", "ConsumoPrevision"]
-            prevision["ConsumoPrevision"] = prevision["ConsumoPrevision"].round(0)
-            prevision["ConsumoPrevision"] = prevision["ConsumoPrevision"].clip(lower=0)
-            prevision["Repuesto"] = rep
-            prevision["TipoRepuesto"] = tipo_repuesto
-            prevision["FechaCompleta"] = prevision["FechaCompleta"].dt.date
+            prevision: pd.DataFrame         = prevision.to_frame("ConsumoPrevision").reset_index()
+            prevision.columns               = ["FechaCompleta", "ConsumoPrevision"]
+            prevision["ConsumoPrevision"]   = prevision["ConsumoPrevision"].round(0)
+            prevision["ConsumoPrevision"]   = prevision["ConsumoPrevision"].clip(lower=0)
+            prevision["Repuesto"]           = rep
+            prevision["TipoRepuesto"]       = tipo_repuesto
+            prevision["FechaCompleta"]      = prevision["FechaCompleta"].dt.date
+
             PrevisionVM().save_df(prevision)
 
         except ValueError:

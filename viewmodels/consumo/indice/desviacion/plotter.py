@@ -14,9 +14,9 @@ from viewmodels.consumo.indice.desviacion.vm import DesviacionIndicesVM
 
 class DeviationPlotter:
     def __init__(self, tipo_rep: Optional[RepuestoEnum]) -> None:
-        self.default = DefaultUpdateLayoutComponents()
-        self.legend = LegendComponents()
-        self.hover = HoverComponents()
+        self.default    = DefaultUpdateLayoutComponents()
+        self.legend     = LegendComponents()
+        self.hover      = HoverComponents()
 
         self.tipo_rep = tipo_rep
 
@@ -89,6 +89,7 @@ class DeviationPlotter:
             fig.add_shape(type="line",
                 x0=cab, y0=y0, x1=cab, y1=y1,
                 line=dict(color=self.color, width=1), opacity=0.6)
+
 
 
         self.default.update_layout(fig, f"Desviacion {self.tipo_rep} {fecha}", 'Cabecera',

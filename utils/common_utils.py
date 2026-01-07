@@ -1,5 +1,7 @@
+import math
 import re
 import io
+from datetime import datetime, date
 from zipfile import BadZipFile
 
 import pandas as pd
@@ -19,25 +21,27 @@ class CommonUtils:
         """
         _xlsx_files = []
         if df_directory is not None:
-
-
             for file in df_directory:
-                try:
-                    df = pd.read_excel(file, engine="openpyxl") # leo el xlsx
-                except BadZipFile:
-                    df = pd.read_excel(file, engine="xlrd") # leo el xls
-                df = self.delete_unnamed_cols(df)
+                if isinstance(file, pd.DataFrame):
+                    _xlsx_files.append(file)
+                else:
+                    try:
+                        df = pd.read_excel(file, engine="openpyxl") # leo el xlsx
+                    except BadZipFile:
+                        df = pd.read_excel(file, engine="xlrd") # leo el xls
+                    df = self.delete_unnamed_cols(df)
 
-                for col in df.columns:
-                    df[col] = [self.delete_error_bytes(str(string), "\x00") if pd.notnull(string) else string for string
-                               in df[col]]
+                    for col in df.columns:
+                        df[col] = [self.delete_error_bytes(str(string), "\x00")
+                                   if pd.notnull(string) else string for string
+                                   in df[col]]
 
-                buffer = io.BytesIO()
-                df.to_excel(buffer, index=False, engine="openpyxl")
-                buffer.seek(0) # muevo el puntero a la primera posicion otra vez
+                    buffer = io.BytesIO()
+                    df.to_excel(buffer, index=False, engine="openpyxl")
+                    buffer.seek(0) # muevo el puntero a la primera posicion otra vez
 
-                _xlsx_files.append(df)
-            
+                    _xlsx_files.append(df)
+
             df = pd.concat(_xlsx_files)
 
             return df
@@ -60,15 +64,15 @@ class CommonUtils:
 
 
     @execute_safely
-    def abreviar_es(self, n):
+    def abreviar_es(self, n) -> str:
         if n >= 1_000_000_000:
-            return f"{n / 1_000_000_000:.1f} mil M"
+            return f"{int(n / 1_000_000_000)} mil M"
 
         if n >= 1_000_000:
-            return f"{n / 1_000_000:.1f} M"
+            return f"{int(n / 1_000_000)} M"
 
         if n >= 1_000:
-            return f"{n / 1_000:.0f} mil"
+            return f"{int(n / 1_000)} mil"
 
         return f"{int(n)}"
 
@@ -125,3 +129,67 @@ class CommonUtils:
         )
         return df
 
+
+    @staticmethod
+    def safe_int(value):
+        if value is None:
+            return None
+
+        if isinstance(value, float) and math.isnan(value):
+            return None
+
+        if isinstance(value, str):
+            value = value.strip()
+            if value == "":
+                return None
+
+        try:
+            return int(float(value))
+        except (ValueError, TypeError):
+            return None
+
+    @staticmethod
+    def safe_float(value):
+        if value is None:
+            return None
+
+        if isinstance(value, int) and math.isnan(value):
+            return None
+
+        return float(value)
+
+    @staticmethod
+    def safe_date(value):
+        if value is None:
+            return None
+
+            # NaN / NaT (pandas)
+        if isinstance(value, float) and math.isnan(value):
+            return None
+
+        if pd.isna(value):
+            return None
+
+            # pandas Timestamp
+        if isinstance(value, pd.Timestamp):
+            return value.date()
+
+            # datetime
+        if isinstance(value, datetime):
+            return value.date()
+
+            # date
+        if isinstance(value, date):
+            return value
+
+            # string
+        if isinstance(value, str):
+            value = value.strip()
+            if value == "":
+                return None
+            try:
+                return pd.to_datetime(value).date()
+            except Exception:
+                return None
+
+        return None

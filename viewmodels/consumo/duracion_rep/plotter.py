@@ -15,19 +15,19 @@ from viewmodels.consumo.duracion_rep.duracion_vm import DuracionRepuestosVM
 
 class DuracionRepuestosPlotter:
     def __init__(self, repuesto: str):
-        self.default = DefaultUpdateLayoutComponents()
-        self.hover = HoverComponents()
-        self.df_duracion = DuracionRepuestosVM().get_df_by_repuesto(repuesto)
-        self.df_distribucion = DistribucionNormalVM().get_df_by_repuesto(repuesto)
+        self.hover              = HoverComponents()
+        self.default            = DefaultUpdateLayoutComponents()
+        self.df_duracion        = DuracionRepuestosVM().get_df_by_repuesto(repuesto)
+        self.df_distribucion    = DistribucionNormalVM().get_df_by_repuesto(repuesto)
 
         self.df_duracion["FechaCambio"] = pd.to_datetime(
             self.df_duracion["FechaCambio"], errors="coerce"
         )
 
     def create_plot(self):
-        fecha_min = self.df_duracion["FechaCambio"].min().strftime(FILE_STRFTIME_YMD)
-        fecha_max = self.df_duracion["FechaCambio"].max().strftime(FILE_STRFTIME_YMD)
-        cambios = self.df_distribucion["Cambio"].unique()
+        fecha_min   = self.df_duracion["FechaCambio"].min().strftime(FILE_STRFTIME_YMD)
+        fecha_max   = self.df_duracion["FechaCambio"].max().strftime(FILE_STRFTIME_YMD)
+        cambios     = self.df_distribucion["Cambio"].unique()
         rows: int = 2
         cols: int = 2
         positions = list(product(
@@ -93,7 +93,6 @@ class DuracionRepuestosPlotter:
                 ), col=col, row=row, secondary_y=True)
 
 
-
         fig.update_yaxes(title_text="", secondary_y=False) # Histograma
         fig.update_yaxes(title_text="Distribución en %", secondary_y=True) # Campana de gauss
 
@@ -122,7 +121,7 @@ class DuracionRepuestosPlotter:
         ]
 
         df_sin_cambios = (
-            self.df_duracion
+             self.df_duracion
             .merge(df_year, on="Patente", how="inner")
             .loc[
                 (self.df_duracion["Cambio"] == 1) &

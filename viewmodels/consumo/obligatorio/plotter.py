@@ -32,7 +32,7 @@ class ConsumoObligatorioPlotter:
         condicion_mayor_igual = y2025 >= minimo_nuevo
 
         porcentaje = 100 - round((self.df.loc[condicion_menor, "Año2025"] * 100) /
-                                 self.df.loc[condicion_menor, "MinimoObligatorio"], 0)
+                                  self.df.loc[condicion_menor, "MinimoObligatorio"], 0)
 
         fig.add_trace(go.Bar(
             x=cabeceras,
