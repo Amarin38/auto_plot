@@ -1,6 +1,6 @@
 from typing import Union
 
-from config.constants_colors import FALLAS_GARANTIAS_COLORS
+from config.constants_colors import FALLAS_GARANTIAS_COLORS, RECUENTO_COLORS
 from config.constants_views import PIE_FONT_SIZE, PIE_PLOT_HEIGHT, PIE_PLOT_WIDTH
 import plotly.graph_objects as go
 import plotly.express as px
@@ -36,8 +36,8 @@ class ConteoStockPlotter:
                     name='Conteo',
                     insidetextorientation='horizontal',
                     textposition='auto',
-                    customdata=FALLAS_GARANTIAS_COLORS,
-                    marker=dict(colors=FALLAS_GARANTIAS_COLORS),
+                    customdata=RECUENTO_COLORS,
+                    marker=dict(colors=RECUENTO_COLORS),
                     hovertemplate="""
 <b>
 <span style='color:%{customdata}'>%{label}</span><br>

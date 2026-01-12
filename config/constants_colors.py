@@ -25,6 +25,8 @@ DURACION_REPUESTOS_COLORS: Tuple[str, ...] = ("#FE7F2D", "#4C8DB4", "#806FA3", "
 
 PREVISION_COLORS: Tuple[str, str] = ("#485696", "#F24C00")
 
+RECUENTO_COLORS: Tuple[str, ...] = ("#5B8E7D", "#BC4B51", "#4C8DB4", "#F1D764", "#806FA3", "#F78154")
+
 # TEXT COLORS
 T_RED = '\033[91m'
 T_LIGHT_RED = '\033[31m'
