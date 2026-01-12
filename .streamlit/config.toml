@@ -2,6 +2,7 @@
 #port = 443
 runOnSave = true
 maxUploadSize = 500
+fileWatcherType = "poll"
 
 
 [theme]
