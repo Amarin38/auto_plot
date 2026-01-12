@@ -30,7 +30,7 @@ def main():
         precio_abs_anterior         = num_parser(datos[2])
         precio_abs_actual           = num_parser(datos[3])
         porcentaje_perdida_stock    = datos[4]
-        porcentaje_error            = round(((datos[0] - datos[1]) * 100) / datos[3], 1)
+        porcentaje_error            = round((((-datos[0]) - datos[1]) * 100) / datos[3], 2)
 
         aux, medio, aux2 = st.columns([1,2,1])
 
