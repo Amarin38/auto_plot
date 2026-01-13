@@ -2,6 +2,7 @@
 __pycache__/
 *.pyc
 
+# dev
 .devcontainer/
 *.dbcnb
 *.ipynb
@@ -10,3 +11,4 @@ __pycache__/
 # uv/lock
 .venv/
 uv.lock
+.python-version
