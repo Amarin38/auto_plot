@@ -1,6 +1,12 @@
+# cache
 __pycache__/
-.devcontainer/
 *.pyc
+
+.devcontainer/
 *.dbcnb
 *.ipynb
 *.todo/
+
+# uv/lock
+.venv
+uv.lock

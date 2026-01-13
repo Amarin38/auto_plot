@@ -1,8 +1,7 @@
 import streamlit as st
 
 from config.constants_colors import *
-from config.constants_views import LINK_BOX_HEIGHT, LINK_BOX_WIDTH, PAG_PRINCIPAL, PIE_PLOT_BOX_HEIGHT, \
-    CONTEO_BOX_HEIGHT, CONTEO_STATS_HEIGHT, CSS_CONTEO
+from config.constants_views import PAG_PRINCIPAL, CONTEO_BOX_HEIGHT, CONTEO_STATS_HEIGHT
 from presentation.streamlit_components import OtherComponents
 from viewmodels.conteo_stock.plotter import ConteoStockPlotter
 from viewmodels.conteo_stock.vm import ConteoStockVM, calcular_porcentaje
