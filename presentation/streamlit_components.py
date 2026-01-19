@@ -1,3 +1,5 @@
+import time
+
 import streamlit as st
 
 from utils.exception_utils import execute_safely
@@ -6,7 +8,7 @@ from typing import Union, Optional
 
 from config.constants_views import SELECT_BOX_HEIGHT, PLACEHOLDER, CENTERED_TITLE_HEIGHT, CENTERED_TITLE_WIDTH
 from config.enums import RepuestoReparadoEnum, RepuestoEnum, CabecerasEnum, TipoDuracionEnum, IndexTypeEnum, \
-    ConsumoObligatorioEnum, LoadDataEnum
+    ConsumoObligatorioEnum, LoadDataEnum, RoleEnum
 
 
 class ButtonComponents:
@@ -30,7 +32,6 @@ class ButtonComponents:
             file_name=file_name,
             mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
         )
-
 
 
 class SelectBoxComponents:
@@ -76,6 +77,12 @@ class SelectBoxComponents:
     def select_box_load_data(self, col, key: Union[int, str]):
         with col.container(height=SELECT_BOX_HEIGHT, vertical_alignment='center'):
             return st.selectbox("Selecciona la estadística a cargar:", LoadDataEnum, index=None,
+                                placeholder=PLACEHOLDER, key=key)
+
+    @execute_safely
+    def select_box_rol(self, col, key: Union[int, str]):
+        with col.container(height=SELECT_BOX_HEIGHT, vertical_alignment='center'):
+            return st.selectbox("Selecciona el rol:", RoleEnum, index=None,
                                 placeholder=PLACEHOLDER, key=key)
 
 
@@ -176,3 +183,17 @@ class OtherComponents:
                 ">{delta}</div>
         </div>
         """, unsafe_allow_html=True)
+
+    @execute_safely
+    def flash_alert_success(self, mensaje: str) -> None:
+        placeholder = st.empty()
+        placeholder.success(mensaje)
+        time.sleep(2)
+        placeholder.empty()
+
+    @execute_safely
+    def flash_alert_error(self, mensaje: str) -> None:
+        placeholder = st.empty()
+        placeholder.error(mensaje)
+        time.sleep(2)
+        placeholder.empty()

@@ -1,9 +1,11 @@
+import random
+
 import streamlit as st
 
-from config.constants_common import RESOURCES_PATH, IMG_PATH
+from config.constants_common import IMG_PATH
 from config.constants_views import PAG_CARGAR_DATOS
-from config.enums import LoadDataEnum, TipoCargarEnum
-from domain.entities.conteo_stock import ConteoStock
+from config.enums import LoadDataEnum, TipoCargarEnum, RoleEnum
+from viewmodels.autenticacion.usuario_vm import UsuarioVM
 from viewmodels.common.parque_movil_vm import ParqueMovilVM
 from viewmodels.conteo_stock.vm import ConteoStockVM
 from viewmodels.gomeria.diferencia_mov_dep_vm import DiferenciaMovimientosEntreDepositosVM
@@ -33,112 +35,120 @@ def cargar_datos():
     centro.title(PAG_CARGAR_DATOS)
 
     with centro:
-        tipo_cargar = st.radio("Selecciona el tipo de ingreso", [TipoCargarEnum.UNICO, TipoCargarEnum.MULTIPLE],
-                               captions=["Seleccion de archivos simple", "Seleccion de archivos por carpeta"])
-
-        match tipo_cargar:
-            case TipoCargarEnum.UNICO:
-                uploaded_files = st.file_uploader("Ingresa datos para actualizar")
-                if uploaded_files:
-                    uploaded_files = [uploaded_files]
-            case TipoCargarEnum.MULTIPLE:
-                uploaded_files = st.file_uploader("Ingresa datos para actualizar", accept_multiple_files="directory")
-            case _:
-                uploaded_files = None
-
-
         select_load = select.select_box_load_data(st, "LOAD_DATA_LOAD_CENTRO")
 
-        if select_load and uploaded_files is not None:
+        if select_load == LoadDataEnum.USUARIO:
+            _id: int = random.randint(0, 100)
+            nombre: str = st.text_input("Nombre")
+            contraseña: str = st.text_input("Contraseña")
+            rol: RoleEnum = select.select_box_rol(st, "LOAD_DATA_ROL")
 
-            match select_load:
-                case LoadDataEnum.INDICES_DE_CONSUMO:
-                    st.image(f"{IMG_PATH}indice_consumo.png", caption="Como se debe ver la tabla a insertar")
-                    select_repuesto = select.select_box_tipo_repuesto(st, "LOAD_DATA_REPUESTO_INDICE")
-                    select_tipo_indice = select.select_box_tipo_indice(st, "LOAD_DATA_TIPO_INDICE_INDICE")
+            print(rol)
+            if nombre and contraseña and rol:
+                buttons.load_data_bttn(lambda: UsuarioVM().save_user(nombre, contraseña, rol))
+        else:
+            tipo_cargar = st.radio("Selecciona el tipo de ingreso", [TipoCargarEnum.UNICO, TipoCargarEnum.MULTIPLE],
+                                   captions=["Seleccion de archivos simple", "Seleccion de archivos por carpeta"])
 
-                    if select_repuesto and select_tipo_indice:
-                        buttons.load_data_bttn(lambda: Index().calculate(load_data(select_load, uploaded_files),
-                                                                 select_repuesto.upper(),
-                                                                 select_tipo_indice.upper()))
+            match tipo_cargar:
+                case TipoCargarEnum.UNICO:
+                    uploaded_files = st.file_uploader("Ingresa datos para actualizar")
+                    if uploaded_files:
+                        uploaded_files = [uploaded_files]
+                case TipoCargarEnum.MULTIPLE:
+                    uploaded_files = st.file_uploader("Ingresa datos para actualizar", accept_multiple_files="directory")
+                case _:
+                    uploaded_files = None
 
-                case LoadDataEnum.PREVISION_DE_CONSUMO:
-                    st.image(f"{IMG_PATH}prevision_consumo.png", caption="Como se debe ver la tabla a insertar")
-                    select_prevision = select.select_box_tipo_repuesto(st, "LOAD_DATA_TIPO_PREVISION_CONSUMO")
+            if select_load and uploaded_files is not None:
+                match select_load:
+                    case LoadDataEnum.INDICES_DE_CONSUMO:
+                        st.image(f"{IMG_PATH}indice_consumo.png", caption="Como se debe ver la tabla a insertar")
+                        select_repuesto = select.select_box_tipo_repuesto(st, "LOAD_DATA_REPUESTO_INDICE")
+                        select_tipo_indice = select.select_box_tipo_indice(st, "LOAD_DATA_TIPO_INDICE_INDICE")
 
-                    if select_prevision:
-                        buttons.load_data_bttn(lambda: create_forecast(load_data(select_load, uploaded_files),
-                                                               select_prevision.upper()))
+                        if select_repuesto and select_tipo_indice:
+                            buttons.load_data_bttn(lambda: Index().calculate(load_data(select_load, uploaded_files),
+                                                                     select_repuesto.upper(),
+                                                                     select_tipo_indice.upper()))
 
-                case LoadDataEnum.HISTORIAL_CONSUMO:
-                    st.image(f"{IMG_PATH}historial_consumo.png", caption="Como se debe ver la tabla a insertar")
-                    select_repuesto = select.select_box_tipo_repuesto(st, "LOAD_DATA_REPUESTO_HISTORIAL")
+                    case LoadDataEnum.PREVISION_DE_CONSUMO:
+                        st.image(f"{IMG_PATH}prevision_consumo.png", caption="Como se debe ver la tabla a insertar")
+                        select_prevision = select.select_box_tipo_repuesto(st, "LOAD_DATA_TIPO_PREVISION_CONSUMO")
 
-                    if select_repuesto:
-                        buttons.load_data_bttn(lambda: compute_historial(load_data(select_load, uploaded_files),
-                                                                 select_repuesto))
+                        if select_prevision:
+                            buttons.load_data_bttn(lambda: create_forecast(load_data(select_load, uploaded_files),
+                                                                   select_prevision.upper()))
 
-                case LoadDataEnum.CONSUMO_OBLIGATORIO:
-                    st.image(f"{IMG_PATH}consumo_obligatorio.png", caption="Como se debe ver la tabla a insertar")
-                    select_repuesto = select.select_box_consumo_obligatorio(st, "LOAD_DATA_REPUESTO_CONSUMO_OBLIGATORIO")
+                    case LoadDataEnum.HISTORIAL_CONSUMO:
+                        st.image(f"{IMG_PATH}historial_consumo.png", caption="Como se debe ver la tabla a insertar")
+                        select_repuesto = select.select_box_tipo_repuesto(st, "LOAD_DATA_REPUESTO_HISTORIAL")
 
-                    if select_repuesto:
-                        buttons.load_data_bttn(lambda: compute_consumo_obligatorio(load_data(select_load, uploaded_files),
-                                                                           select_repuesto))
+                        if select_repuesto:
+                            buttons.load_data_bttn(lambda: compute_historial(load_data(select_load, uploaded_files),
+                                                                     select_repuesto))
 
-                case LoadDataEnum.FALLA_GARANTIAS:
-                    st.image(f"{IMG_PATH}datos_garantias.png", caption="Como se debe ver la tabla a insertar")
-                    select_tipo_repuesto = select.select_box_tipo_repuesto(st, "LOAD_DATA_TIPO_REPUESTO_FALLAS")
+                    case LoadDataEnum.CONSUMO_OBLIGATORIO:
+                        st.image(f"{IMG_PATH}consumo_obligatorio.png", caption="Como se debe ver la tabla a insertar")
+                        select_repuesto = select.select_box_consumo_obligatorio(st, "LOAD_DATA_REPUESTO_CONSUMO_OBLIGATORIO")
 
-                    buttons.load_data_bttn(lambda: compute_fallas_garantias(load_data(select_load, uploaded_files),
-                                                                    select_tipo_repuesto))
+                        if select_repuesto:
+                            buttons.load_data_bttn(lambda: compute_consumo_obligatorio(load_data(select_load, uploaded_files),
+                                                                               select_repuesto))
 
-                case LoadDataEnum.CONSUMO_GARANTIAS:
-                    st.image(f"{IMG_PATH}datos_garantias.png", caption="Como se debe ver la tabla a insertar")
-                    select_tipo_repuesto = select.select_box_tipo_repuesto(st, "LOAD_DATA_TIPO_REPUESTO_CONSUMO")
+                    case LoadDataEnum.FALLA_GARANTIAS:
+                        st.image(f"{IMG_PATH}datos_garantias.png", caption="Como se debe ver la tabla a insertar")
+                        select_tipo_repuesto = select.select_box_tipo_repuesto(st, "LOAD_DATA_TIPO_REPUESTO_FALLAS")
 
-                    buttons.load_data_bttn(lambda: compute_consumo_garantias(load_data(select_load, uploaded_files),
-                                                                     select_tipo_repuesto))
+                        buttons.load_data_bttn(lambda: compute_fallas_garantias(load_data(select_load, uploaded_files),
+                                                                        select_tipo_repuesto))
 
-                case LoadDataEnum.MAXIMOS_Y_MINIMOS:
-                    st.image(f"{IMG_PATH}maxmins.png", caption="Como se debe ver la tabla a insertar")
-                    mult_por_min = st.text_input("Multiplicar al mínimo por: ", 2)
-                    mult_por_max = st.text_input("Multiplicar al máximo por: ", 3)
+                    case LoadDataEnum.CONSUMO_GARANTIAS:
+                        st.image(f"{IMG_PATH}datos_garantias.png", caption="Como se debe ver la tabla a insertar")
+                        select_tipo_repuesto = select.select_box_tipo_repuesto(st, "LOAD_DATA_TIPO_REPUESTO_CONSUMO")
 
-                    if mult_por_min not in ("0", '', ' ') and mult_por_max not in ("0", '', ' '):
-                        buttons.load_data_bttn(lambda: MaxMin().calculate(load_data(select_load, uploaded_files),
-                                                                  float(mult_por_min),
-                                                                  float(mult_por_max)))
-                    else:
-                        dialog.error_dialog("No se puede multiplicar por 0, por 1 o por None")
+                        buttons.load_data_bttn(lambda: compute_consumo_garantias(load_data(select_load, uploaded_files),
+                                                                         select_tipo_repuesto))
 
-                case LoadDataEnum.DURACION_REPUESTOS:
-                    st.image(f"{IMG_PATH}duracion.png", caption="Como se debe ver la tabla a insertar")
-                    select_repuesto = select.select_box_repuesto(st, "LOAD_DATA_REPUESTO_DURACION")
-                    select_tipo = select.select_box_tipo_duracion(st, "LOAD_DATA_TIPO_DURACION")
+                    case LoadDataEnum.MAXIMOS_Y_MINIMOS:
+                        st.image(f"{IMG_PATH}maxmins.png", caption="Como se debe ver la tabla a insertar")
+                        mult_por_min = st.text_input("Multiplicar al mínimo por: ", 2)
+                        mult_por_max = st.text_input("Multiplicar al máximo por: ", 3)
 
-                    buttons.load_data_bttn(lambda: DuracionRepuestos(load_data(select_load, uploaded_files),
-                                                             select_repuesto,
-                                                             select_tipo
-                                                             ).calcular_duracion())
+                        if mult_por_min not in ("0", '', ' ') and mult_por_max not in ("0", '', ' '):
+                            buttons.load_data_bttn(lambda: MaxMin().calculate(load_data(select_load, uploaded_files),
+                                                                      float(mult_por_min),
+                                                                      float(mult_por_max)))
+                        else:
+                            dialog.error_dialog("No se puede multiplicar por 0, por 1 o por None")
 
-                case LoadDataEnum.TRANSFERENCIAS_ENTRE_DEPOSITOS:
-                    st.image(f"{IMG_PATH}transfer_entre_depo.png", caption="Como se debe ver la tabla a insertar")
-                    buttons.load_data_bttn(lambda: TransferenciasEntreDepositosVM().save_df(
-                        load_data(select_load, uploaded_files)))
+                    case LoadDataEnum.DURACION_REPUESTOS:
+                        st.image(f"{IMG_PATH}duracion.png", caption="Como se debe ver la tabla a insertar")
+                        select_repuesto = select.select_box_repuesto(st, "LOAD_DATA_REPUESTO_DURACION")
+                        select_tipo = select.select_box_tipo_duracion(st, "LOAD_DATA_TIPO_DURACION")
 
-                case LoadDataEnum.DIFERENCIA_MOVIMIENTOS_ENTRE_DEPOSITOS:
-                    st.image(f"{IMG_PATH}difer_entre_depo.png", caption="Como se debe ver la tabla a insertar")
-                    buttons.load_data_bttn(lambda: DiferenciaMovimientosEntreDepositosVM().save_df(
-                        load_data(select_load, uploaded_files)))
+                        buttons.load_data_bttn(lambda: DuracionRepuestos(load_data(select_load, uploaded_files),
+                                                                 select_repuesto,
+                                                                 select_tipo
+                                                                 ).calcular_duracion())
 
-                case LoadDataEnum.PARQUE_MOVIL:
-                    st.image(f"{IMG_PATH}parque.png", caption="Como se debe ver la tabla a insertar")
-                    buttons.load_data_bttn(lambda: ParqueMovilVM().save_df(load_data(select_load, uploaded_files)))
+                    case LoadDataEnum.TRANSFERENCIAS_ENTRE_DEPOSITOS:
+                        st.image(f"{IMG_PATH}transfer_entre_depo.png", caption="Como se debe ver la tabla a insertar")
+                        buttons.load_data_bttn(lambda: TransferenciasEntreDepositosVM().save_df(
+                            load_data(select_load, uploaded_files)))
 
-                case LoadDataEnum.CONTEO_STOCK:
-                    st.image(f"{IMG_PATH}conteo.png", caption="Como se debe ver la tabla a insertar")
-                    buttons.load_data_bttn(lambda: ConteoStockVM().save_df(load_data(select_load, uploaded_files)))
+                    case LoadDataEnum.DIFERENCIA_MOVIMIENTOS_ENTRE_DEPOSITOS:
+                        st.image(f"{IMG_PATH}difer_entre_depo.png", caption="Como se debe ver la tabla a insertar")
+                        buttons.load_data_bttn(lambda: DiferenciaMovimientosEntreDepositosVM().save_df(
+                            load_data(select_load, uploaded_files)))
+
+                    case LoadDataEnum.PARQUE_MOVIL:
+                        st.image(f"{IMG_PATH}parque.png", caption="Como se debe ver la tabla a insertar")
+                        buttons.load_data_bttn(lambda: ParqueMovilVM().save_df(load_data(select_load, uploaded_files)))
+
+                    case LoadDataEnum.CONTEO_STOCK:
+                        st.image(f"{IMG_PATH}conteo.png", caption="Como se debe ver la tabla a insertar")
+                        buttons.load_data_bttn(lambda: ConteoStockVM().save_df(load_data(select_load, uploaded_files)))
 
 
 @execute_safely

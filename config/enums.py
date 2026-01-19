@@ -1,5 +1,6 @@
 from enum import auto
-from strenum import UppercaseStrEnum, StrEnum, PascalCaseStrEnum
+from strenum import UppercaseStrEnum, StrEnum, PascalCaseStrEnum, LowercaseStrEnum
+
 
 class TipoCargarEnum(PascalCaseStrEnum):
     UNICO = auto()
@@ -120,6 +121,7 @@ class LoadDataEnum(StrEnum):
     def _generate_next_value_(name, start, count, last_values):
         return name.replace("_", " ").capitalize()
 
+    USUARIO = auto()
     INDICES_DE_CONSUMO = auto()
     PREVISION_DE_CONSUMO = auto()
     HISTORIAL_CONSUMO = auto()
@@ -150,3 +152,7 @@ class DashEnum(StrEnum):
     solid = auto()
     dot = auto()
     dash = auto()
+
+class RoleEnum(LowercaseStrEnum):
+    ADMIN = auto()
+    USER = auto()

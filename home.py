@@ -1,4 +1,5 @@
 import streamlit as st
+import streamlit_authenticator as stauth
 
 from infrastructure import DBBase, db_engine
 from presentation.dota_licitaciones_page import dota_licitaciones_page
@@ -16,6 +17,8 @@ from presentation.maximos_minimos_page import maximos_minimos
 from presentation.duracion_repuestos_page import duracion_repuestos
 from presentation.parque_movil_page import parque_movil
 from presentation.sisssa_page import sissa_page
+from presentation.streamlit_components import OtherComponents
+from viewmodels.autenticacion.usuario_vm import UsuarioVM
 
 from config.constants_views import (PAG_PRINCIPAL, PAG_CARGAR_DATOS, PAG_INDICES, PAG_PREVISION,
                                     PAG_FALLA_GARANTIAS, PAG_MAXIMOS_MINIMOS, PAG_DURACION,
@@ -40,14 +43,16 @@ from infrastructure.db.models.maximos_minimos_model import MaximosMinimosModel
 from infrastructure.db.models.json_config_model import JSONConfigModel
 from infrastructure.db.models.parque_movil_model import ParqueMovilModel
 from infrastructure.db.models.conteo_stock_model import ConteoStockModel
+from infrastructure.db.models.usuario_model import UsuarioModel
 
 # -----------------------------------------------------------------------------------------------
+
 st.set_page_config(
-    page_title="Estadísticas Dota",
-    page_icon="📊",
-    layout="wide",
-    initial_sidebar_state="collapsed"
-    )
+        page_title="Estadísticas Dota",
+        page_icon="📊",
+        layout="wide",
+        initial_sidebar_state="collapsed"
+        )
 
 pages = {
     "Inicio":[
@@ -77,8 +82,74 @@ pages = {
 }
 
 
-nav = st.navigation(pages, position="top")
+
+
+if "authenticated" not in st.session_state:
+    st.session_state.authenticated = False
+    st.session_state.username = None
+    st.session_state.name = None
+
+if "credentials" not in st.session_state:
+    creds = UsuarioVM().get_credentials()
+    st.session_state["credentials"] = creds or {"usernames": {}}
+
+credentials = st.session_state["credentials"]
+
+authenticator = stauth.Authenticate(
+    credentials,
+    "app_cookie_v3",
+    "4rfVgy7#",
+    cookie_expiry_days=1
+)
+
+auth_status = st.session_state.get("authentication_status")  # estado de autenticación
+
+# # si no está logueado pide login.
+
+if auth_status is not True:
+    authenticator.login(location="main", clear_on_submit=True)
+
+    auth_status = st.session_state.get("authentication_status")
+    username = st.session_state.get("username")
+
+    if auth_status is False:
+        OtherComponents().flash_alert_error("Usuario o contraseña incorrectos.")
+
+    elif auth_status is None:
+        st.warning("Ingrese sus credenciales.")
+
+    st.stop()
+
+OtherComponents().flash_alert_success("Accedió correctamenente.")
+
+username = st.session_state["username"]
+
+if "roles" not in st.session_state or not st.session_state["roles"]:
+    user = UsuarioVM().repo.get_by_nombre(username)
+    st.session_state["roles"] = [user.Rol] if user and user.Rol else []
+
+roles = st.session_state["roles"]
+
+if "user" in roles:
+    pages.get("Inicio").pop(1)
+    pages.get("Inicio").pop(1)
+    pages.get("Inicio").pop(1)
+    pages.pop("Datos")
+
+
+if authenticator.logout("Cerrar sesión", "sidebar"):
+    for k in list(st.session_state.keys()):
+        del st.session_state[k]
+    st.rerun()
+
+# Barra superior de navegación
+nav = st.navigation(pages, position="sidebar")
 
 if __name__ == "__main__":
     DBBase.metadata.create_all(db_engine)
     nav.run()
+
+
+
+
+
