@@ -46,110 +46,158 @@ from infrastructure.db.models.conteo_stock_model import ConteoStockModel
 from infrastructure.db.models.usuario_model import UsuarioModel
 
 # -----------------------------------------------------------------------------------------------
+# CONFIG STREAMLIT
+# -----------------------------------------------------------------------------------------------
 
 st.set_page_config(
-        page_title="Estadísticas Dota",
-        page_icon="📊",
-        layout="wide",
-        initial_sidebar_state="collapsed"
-        )
+    page_title="Estadísticas Dota",
+    page_icon="📊",
+    layout="wide",
+    initial_sidebar_state="collapsed"
+)
+
+
+
+# -----------------------------------------------------------------------------------------------
+# SESSION STATE INIT
+# -----------------------------------------------------------------------------------------------
+
+st.session_state.setdefault("authenticated", False)
+st.session_state.setdefault("welcome_shown", False)
+st.session_state.setdefault("roles", [])
+st.session_state.setdefault("username", None)
+st.session_state.setdefault("name", None)
+
+if "credentials" not in st.session_state:
+    credentials = UsuarioVM().get_credentials() or {"usernames": {}}
+    st.session_state.credentials = credentials
+
+# -----------------------------------------------------------------------------------------------
+# AUTHENTICATOR
+# -----------------------------------------------------------------------------------------------
+
+authenticator = stauth.Authenticate(
+    st.session_state.credentials,
+    "app_cookie_v1",
+    "4rfVgy7#",
+    cookie_expiry_days=1,
+)
+
+# -----------------------------------------------------------------------------------------------
+# LOGIN (SOLO SI NO ESTÁ AUTENTICADO)
+# -----------------------------------------------------------------------------------------------
+aux, centro, aux2 = st.columns(3)
+
+if not st.session_state.authenticated:
+    with centro:
+        authenticator.login(location="main",
+                            clear_on_submit=True,
+                            fields={
+                                "Form name": "Iniciar sesión",
+                                "Username": "Usuario",
+                                "Password": "Contraseña",
+                                "Login": "Entrar"
+                            }
+                        )
+
+
+        auth_status = st.session_state.get("authentication_status")
+
+        if auth_status is True:
+            st.session_state.authenticated = True
+            st.session_state.username = st.session_state.get("username")
+            st.session_state.name = st.session_state.get("name")
+            st.rerun()
+
+        elif auth_status is False:
+            OtherComponents().flash_alert_error("Usuario o contraseña incorrectos.")
+            st.stop()
+
+        else:
+            st.warning("Ingrese sus credenciales.")
+            st.stop()
+
+
+# -----------------------------------------------------------------------------------------------
+# POST LOGIN (NO SE REEJECUTA)
+# -----------------------------------------------------------------------------------------------
+with centro:
+    if not st.session_state.welcome_shown:
+        OtherComponents().flash_alert_success("Accedió correctamente.")
+        st.session_state.welcome_shown = True
+
+
+# Cargar roles solo una vez
+if not st.session_state.roles and st.session_state.username:
+    user_entity = UsuarioVM().repo.get_by_nombre(st.session_state.username)
+    if user_entity and user_entity.Rol:
+        st.session_state.roles = [user_entity.Rol]
+    else:
+        st.session_state.roles = []
+
+roles = st.session_state.roles or []
+
+# -----------------------------------------------------------------------------------------------
+# PAGES
+# -----------------------------------------------------------------------------------------------
 
 pages = {
-    "Inicio":[
+    "Inicio": [
         st.Page(main, title=PAG_PRINCIPAL),
-        st.Page(sissa_page,title=PAG_SISSSA),
+        st.Page(sissa_page, title=PAG_SISSSA),
         st.Page(dota_licitaciones_page, title=PAG_DOTA_LICITACIONES),
         st.Page(cargar_datos, title=PAG_CARGAR_DATOS)
     ],
-    "Estadísticas de consumo":[
+    "Estadísticas de consumo": [
         st.Page(consumo_indice, title=PAG_INDICES),
         st.Page(consumo_prevision, title=PAG_PREVISION),
         st.Page(duracion_repuestos, title=PAG_DURACION),
         st.Page(consumo_historial, title=PAG_HISTORIAL),
         st.Page(consumo_obligatorio, title=PAG_CONSUMO_OBLIGATORIO),
     ],
-    "Estadísticas de garantías":[
+    "Estadísticas de garantías": [
         st.Page(garantias_falla_equipos, title=PAG_FALLA_GARANTIAS),
     ],
-    "Estadísticas de gomería":[
+    "Estadísticas de gomería": [
         st.Page(gomeria_transferencias_entre_depositos, title=PAG_TRANSFERENCIAS_ENTRE_DEPOSITOS)
     ],
-    "Datos":[
+    "Datos": [
         st.Page(maximos_minimos, title=PAG_MAXIMOS_MINIMOS),
         st.Page(coches_cabecera, title=PAG_COCHES_CABECERA),
         st.Page(parque_movil, title=PAG_PARQUE_MOVIL)
     ],
 }
 
-
-
-
-if "authenticated" not in st.session_state:
-    st.session_state.authenticated = False
-    st.session_state.username = None
-    st.session_state.name = None
-
-if "credentials" not in st.session_state:
-    creds = UsuarioVM().get_credentials()
-    st.session_state["credentials"] = creds or {"usernames": {}}
-
-credentials = st.session_state["credentials"]
-
-authenticator = stauth.Authenticate(
-    credentials,
-    "app_cookie_v3",
-    "4rfVgy7#",
-    cookie_expiry_days=1
-)
-
-auth_status = st.session_state.get("authentication_status")  # estado de autenticación
-
-# # si no está logueado pide login.
-
-if auth_status is not True:
-    authenticator.login(location="main", clear_on_submit=True)
-
-    auth_status = st.session_state.get("authentication_status")
-    username = st.session_state.get("username")
-
-    if auth_status is False:
-        OtherComponents().flash_alert_error("Usuario o contraseña incorrectos.")
-
-    elif auth_status is None:
-        st.warning("Ingrese sus credenciales.")
-
-    st.stop()
-
-OtherComponents().flash_alert_success("Accedió correctamenente.")
-
-username = st.session_state["username"]
-
-if "roles" not in st.session_state or not st.session_state["roles"]:
-    user = UsuarioVM().repo.get_by_nombre(username)
-    st.session_state["roles"] = [user.Rol] if user and user.Rol else []
-
-roles = st.session_state["roles"]
-
+# Restricciones por rol
 if "user" in roles:
-    pages.get("Inicio").pop(1)
-    pages.get("Inicio").pop(1)
-    pages.get("Inicio").pop(1)
-    pages.pop("Datos")
+    pages["Inicio"] = pages["Inicio"][:1]
+    pages.pop("Datos", None)
 
-
-if authenticator.logout("Cerrar sesión", "sidebar"):
-    for k in list(st.session_state.keys()):
-        del st.session_state[k]
-    st.rerun()
-
-# Barra superior de navegación
+# -----------------------------------------------------------------------------------------------
+# LOGOUT
+# -----------------------------------------------------------------------------------------------
 nav = st.navigation(pages, position="sidebar")
+
+
+if st.session_state.get("authentication_status") is True:
+    authenticator.logout("Cerrar sesión", "sidebar")
+
+    if st.session_state.get("authentication_status") is None:
+        st.session_state.clear()
+
+        # estado mínimo inicial
+        st.session_state["authenticated"] = False
+        st.session_state["welcome_shown"] = False
+        st.session_state["roles"] = []
+
+        nav = st.navigation({"Inicio": [st.Page(main, title=PAG_PRINCIPAL)]}, position="sidebar")
+        nav.run()
+        st.rerun()
+
+nav.run()
+# -----------------------------------------------------------------------------------------------
+# NAVIGATION
+# -----------------------------------------------------------------------------------------------
 
 if __name__ == "__main__":
     DBBase.metadata.create_all(db_engine)
-    nav.run()
-
-
-
-
-

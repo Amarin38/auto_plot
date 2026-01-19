@@ -43,7 +43,6 @@ def cargar_datos():
             contraseña: str = st.text_input("Contraseña")
             rol: RoleEnum = select.select_box_rol(st, "LOAD_DATA_ROL")
 
-            print(rol)
             if nombre and contraseña and rol:
                 buttons.load_data_bttn(lambda: UsuarioVM().save_user(nombre, contraseña, rol))
         else:

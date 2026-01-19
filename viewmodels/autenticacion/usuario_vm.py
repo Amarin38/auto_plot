@@ -17,7 +17,7 @@ class UsuarioVM:
         self.repo.insert_many(usuario)
 
 
-    def get_credentials_by_name(self, nombre: str) -> Optional[dict]:
+    def get_credentials_by_name(self, nombre: str) -> Optional[tuple[dict, str]]:
         user = self.repo.get_by_nombre(nombre)
         credentials = {
             "usernames": {
@@ -27,22 +27,19 @@ class UsuarioVM:
                 }
             }
         }
-
-        return credentials
+        return credentials, user.Rol
 
     def get_credentials(self) -> Optional[dict]:
         users = self.repo.get_all()
         credentials = {"usernames": {}}
 
         for user in users:
-            credentials = {
-                "usernames": {
+            credentials["usernames"].update({
                     user.Nombre: {
                         "name": user.Nombre,
                         "password": user.Contraseña
                     }
-                }
-            }
+                })
 
         return credentials
 
