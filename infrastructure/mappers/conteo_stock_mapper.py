@@ -1,7 +1,5 @@
 from domain.entities.conteo_stock import ConteoStock
-from domain.entities.distribucion_normal import DistribucionNormal
 from infrastructure.db.models.conteo_stock_model import ConteoStockModel
-from infrastructure.db.models.distribucion_normal_model import DistribucionNormalModel
 
 
 class ConteoStockMapper:

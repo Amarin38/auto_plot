@@ -1,12 +1,9 @@
-import numpy as np
 import plotly.graph_objects as go
 
 from typing import Union
 
 from plotly.subplots import make_subplots
-from pyarrow import int64
 
-from config.constants_colors import COLORS
 from config.constants_common import TITULOS_GOMERIA, ANCHO_COLS_GOMERIA, TICK_VALS_GOMERIA, TICK_TEXT_GOMERIA
 from utils.exception_utils import execute_safely
 from viewmodels.gomeria.diferencia_mov_dep_vm import DiferenciaMovimientosEntreDepositosVM

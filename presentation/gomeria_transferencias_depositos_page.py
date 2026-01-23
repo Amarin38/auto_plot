@@ -1,11 +1,7 @@
 import streamlit as st
-from babel.numbers import format_decimal
 
-from config.constants_views import PAG_TRANSFERENCIAS_ENTRE_DEPOSITOS, FULL_PLOT_BOX_TRANSFER_HEIGHT, SELECT_BOX_HEIGHT, \
-    PLACEHOLDER, GOMERIA_BOX_HEIGHT
-from config.enums import ColoresMatplotlibEnum
-from presentation.streamlit_components import SelectBoxComponents, OtherComponents
-from viewmodels.gomeria.diferencia_mov_dep_vm import DiferenciaMovimientosEntreDepositosVM
+from config.constants_views import PAG_TRANSFERENCIAS_ENTRE_DEPOSITOS, GOMERIA_BOX_HEIGHT
+from presentation.streamlit_components import SelectBoxComponents
 from viewmodels.gomeria.diferencias_mov_plotter import DiferenciaMovimientosEntreDepositosPlotter
 from viewmodels.gomeria.transferencias_dep_plotter import TransferenciasEntreDepositosPlotter
 

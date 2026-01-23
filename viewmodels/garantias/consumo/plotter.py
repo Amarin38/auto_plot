@@ -1,6 +1,5 @@
 from typing import Union
 
-import pandas as pd
 import plotly.graph_objects as go
 
 from config.constants_colors import CONSUMO_GARANTIAS_COLORS

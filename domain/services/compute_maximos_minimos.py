@@ -1,11 +1,9 @@
-from typing import List, Optional
+from typing import Optional
 
 import pandas as pd
 
-from config.enums import ScrapEnum
 from utils.exception_utils import execute_safely
 from viewmodels.maximos_minimos.vm import MaximosMinimosVM
-from viewmodels.processing.scrape.scrape_maximos_minimos import ScrapMaxMin
 
 """
 - Se descargan los consumos de x fecha hacia atrás de los productos que se queira evaluar el  maximos_minimos.
@@ -27,24 +25,4 @@ class MaxMin:
             df_final = df_final[["Familia", "Articulo", "Repuesto", "Minimo", "Maximo"]]
 
             MaximosMinimosVM().save_df(df_final)
-
-
-    @staticmethod
-    @execute_safely
-    def _create_code_list(date_since: str, scrap: ScrapEnum = ScrapEnum.WEB) -> Optional[List[tuple]]:
-        """
-        Genera automáticamente la lista de códigos a los que sacarles el máximo y mínimo.\n
-        Args:\n
-            with_excel (str):\n
-            ["con excel", "sin excel"]\n
-
-        Returns:\n
-            Optional[str]: None | lista de codigos de maximos_minimos\n
-        """
-        lista_codigos: List[str] = []
-        match scrap:
-            case ScrapEnum.WEB: lista_codigos = ScrapMaxMin(date_since).web()
-            case ScrapEnum.LOCAL: lista_codigos = ScrapMaxMin(date_since).local()
-
-        return [tuple(map(int, codigo.split("."))) for codigo in lista_codigos]
         

@@ -53,7 +53,7 @@ def main():
             components.custom_metric(col2, "Precio absoluto actual", precio_abs_actual, colors[4], colors[4])
 
             st.space(3)
-            aux, izq, der, aux2 = st.columns([1, 0.90, 0.90, 1])
+            aux, izq, der, aux2 = st.columns([0.8, 1, 1, 0.8])
             components.custom_metric(izq, "Porcentaje perdida stock", f"{porcentaje_perdida_stock}%", colors[0], colors[0])
             components.custom_metric(der, "Porcentaje de error", f"{porcentaje_error}%", colors[1], colors[1])
 

@@ -1,5 +1,4 @@
 import pandas as pd
-from babel.numbers import format_decimal
 
 from domain.entities.gomeria_diferencia_mov_dep import GomeriaDiferenciaMovEntreDep
 from infrastructure.repositories.gomeria_diferencia_mov_dep_repository import \

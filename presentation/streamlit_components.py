@@ -76,7 +76,7 @@ class SelectBoxComponents:
     @execute_safely
     def select_box_load_data(self, col, key: Union[int, str]):
         with col.container(height=SELECT_BOX_HEIGHT, vertical_alignment='center'):
-            return st.selectbox("Selecciona la estadística a cargar:", LoadDataEnum, index=None,
+            return st.selectbox("Selecciona el dato a cargar:", LoadDataEnum, index=None,
                                 placeholder=PLACEHOLDER, key=key)
 
     @execute_safely

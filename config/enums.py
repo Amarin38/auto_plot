@@ -12,11 +12,6 @@ class IndexTypeEnum(UppercaseStrEnum):
     MOTOR = auto()
 
 
-class ScrapEnum(UppercaseStrEnum):
-    WEB = auto()
-    LOCAL = auto()
-
-
 class MovimientoEnum(UppercaseStrEnum):
     SALIDAS = auto()
     ENTRADAS = auto()

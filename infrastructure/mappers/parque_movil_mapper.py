@@ -1,5 +1,3 @@
-from typing import Any
-
 from domain.entities.parque_movil import ParqueMovil
 from infrastructure.db.models.parque_movil_model import ParqueMovilModel
 from interfaces.mapper import Mapper

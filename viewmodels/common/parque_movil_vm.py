@@ -1,5 +1,5 @@
 from datetime import date
-from typing import List, Optional, Any
+from typing import Optional, Any
 
 import numpy as np
 import streamlit as st
@@ -67,7 +67,7 @@ class ParqueMovilVM(ViewModel):
 
     @staticmethod
     @st.cache_data
-    def get_by_args(fecha_desde: date, fecha_hasta: date, parque: ParqueMovilFiltro) -> Optional[pd.Series]:
+    def get_by_args(fecha_desde: date, fecha_hasta: date, parque: ParqueMovilFiltro) -> Optional[Any]:
         entities = ParqueMovilRepository().get_by_args(fecha_desde, fecha_hasta)
 
         if not entities:

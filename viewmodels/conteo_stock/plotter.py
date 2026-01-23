@@ -1,9 +1,8 @@
 from typing import Union
 
-from config.constants_colors import FALLAS_GARANTIAS_COLORS, RECUENTO_COLORS
+from config.constants_colors import RECUENTO_COLORS
 from config.constants_views import PIE_FONT_SIZE, PIE_PLOT_HEIGHT, PIE_PLOT_WIDTH
 import plotly.graph_objects as go
-import plotly.express as px
 
 from utils.exception_utils import execute_safely
 from viewmodels.conteo_stock.vm import ConteoStockVM

@@ -1,7 +1,6 @@
 from typing import Tuple, Union, List
 
 import numpy as np
-import pandas as pd
 import plotly.graph_objects as go
 
 from config.constants_colors import INDICE_MEDIA_COLOR, INDICE_COLORS

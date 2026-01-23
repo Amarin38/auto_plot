@@ -9,16 +9,16 @@ from viewmodels.autenticacion.usuario_vm import UsuarioVM
 from viewmodels.common.parque_movil_vm import ParqueMovilVM
 from viewmodels.conteo_stock.vm import ConteoStockVM
 from viewmodels.gomeria.diferencia_mov_dep_vm import DiferenciaMovimientosEntreDepositosVM
-from viewmodels.processing.compute.compute_consumo_obligatorio import compute_consumo_obligatorio
+from domain.services.compute_consumo_obligatorio import compute_consumo_obligatorio
 
-from viewmodels.processing.compute.compute_historial_consumo import compute_historial
-from viewmodels.processing.compute.compute_prevision import create_forecast
-from viewmodels.processing.compute.compute_garantias import compute_consumo_garantias, compute_fallas_garantias
-from viewmodels.processing.compute.compute_indices_consumo import Index
-from viewmodels.processing.compute.compute_maximos_minimos import MaxMin
-from viewmodels.processing.compute.compute_duracion_repuestos import DuracionRepuestos
+from domain.services.compute_historial_consumo import compute_historial
+from domain.services.compute_prevision import create_forecast
+from domain.services.compute_garantias import compute_consumo_garantias, compute_fallas_garantias
+from domain.services.compute_indices_consumo import Index
+from domain.services.compute_maximos_minimos import MaxMin
+from domain.services.compute_duracion_repuestos import DuracionRepuestos
 
-from viewmodels.processing.data_cleaning.listado_data_cleaner import InventoryDataCleaner
+from domain.services.data_cleaner_listado import InventoryDataCleaner
 
 from utils.common_utils import CommonUtils
 from utils.exception_utils import execute_safely
@@ -45,7 +45,8 @@ def cargar_datos():
 
             if nombre and contraseña and rol:
                 buttons.load_data_bttn(lambda: UsuarioVM().save_user(nombre, contraseña, rol))
-        else:
+
+        elif select_load and select_load != LoadDataEnum.USUARIO:
             tipo_cargar = st.radio("Selecciona el tipo de ingreso", [TipoCargarEnum.UNICO, TipoCargarEnum.MULTIPLE],
                                    captions=["Seleccion de archivos simple", "Seleccion de archivos por carpeta"])
 

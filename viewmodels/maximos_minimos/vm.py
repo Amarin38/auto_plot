@@ -2,9 +2,10 @@ import pandas as pd
 
 from domain.entities.maximos_minimos import MaximosMinimos
 from infrastructure.repositories.maximos_minimos_repository import MaximosMinimosRepository
+from interfaces.viewmodel import ViewModel
 
 
-class MaximosMinimosVM:
+class MaximosMinimosVM(ViewModel):
     def __init__(self) -> None:
         self.repo = MaximosMinimosRepository()
 

@@ -2,7 +2,7 @@ from datetime import date
 from typing import List
 
 import streamlit as st
-from sqlalchemy import select, and_
+from sqlalchemy import select
 
 from domain.entities.parque_movil import ParqueMovil
 from infrastructure import SessionDB, db_engine

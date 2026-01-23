@@ -56,8 +56,6 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-
-
 # -----------------------------------------------------------------------------------------------
 # SESSION STATE INIT
 # -----------------------------------------------------------------------------------------------
@@ -78,9 +76,9 @@ if "credentials" not in st.session_state:
 
 authenticator = stauth.Authenticate(
     st.session_state.credentials,
-    "app_cookie_v1",
+    "cookie",
     "4rfVgy7#",
-    cookie_expiry_days=1,
+    cookie_expiry_days=0,
 )
 
 # -----------------------------------------------------------------------------------------------
@@ -90,7 +88,8 @@ aux, centro, aux2 = st.columns(3)
 
 if not st.session_state.authenticated:
     with centro:
-        authenticator.login(location="main",
+        try:
+            authenticator.login(location="main",
                             clear_on_submit=True,
                             fields={
                                 "Form name": "Iniciar sesión",
@@ -98,8 +97,9 @@ if not st.session_state.authenticated:
                                 "Password": "Contraseña",
                                 "Login": "Entrar"
                             }
-                        )
-
+                            )
+        except Exception as e:
+            st.error(e)
 
         auth_status = st.session_state.get("authentication_status")
 
@@ -176,25 +176,23 @@ if "user" in roles:
 # -----------------------------------------------------------------------------------------------
 # LOGOUT
 # -----------------------------------------------------------------------------------------------
-nav = st.navigation(pages, position="sidebar")
-
-
-if st.session_state.get("authentication_status") is True:
+if st.session_state.get("authentication_status"):
+    nav = st.navigation(pages, position="sidebar")
     authenticator.logout("Cerrar sesión", "sidebar")
 
     if st.session_state.get("authentication_status") is None:
-        st.session_state.clear()
+        nav = st.navigation({"Inicio": [st.Page(main, title="Inicio")]}, position="sidebar")
 
-        # estado mínimo inicial
+        st.session_state.clear()
         st.session_state["authenticated"] = False
         st.session_state["welcome_shown"] = False
+        st.session_state["username"] = None
+        st.session_state["name"] = None
         st.session_state["roles"] = []
 
-        nav = st.navigation({"Inicio": [st.Page(main, title=PAG_PRINCIPAL)]}, position="sidebar")
-        nav.run()
         st.rerun()
+    nav.run()
 
-nav.run()
 # -----------------------------------------------------------------------------------------------
 # NAVIGATION
 # -----------------------------------------------------------------------------------------------

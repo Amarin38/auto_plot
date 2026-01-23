@@ -6,7 +6,6 @@ readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
     "babel>=2.17.0",
-    "bs4>=0.0.2",
     "matplotlib>=3.10.8",
     "multipledispatch>=1.0.0",
     "numpy>=2.4.1",
@@ -15,7 +14,6 @@ dependencies = [
     "plotly>=6.5.1",
     "pytest>=9.0.2",
     "scipy>=1.17.0",
-    "selenium>=4.39.0",
     "sqlalchemy>=2.0.45",
     "statsmodels>=0.14.6",
     "streamlit>=1.52.2",

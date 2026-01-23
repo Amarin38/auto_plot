@@ -7,10 +7,10 @@ from viewmodels.consumo.indice.plotter import  IndexPlotter
 
 from config.constants_colors import COLORS
 from config.constants_views import (PLOT_BOX_HEIGHT, DISTANCE_COLS_CENTER_TITLE, DISTANCE_COLS_SELECTBIGGER_PLOT,
-                                    PAG_INDICES, SELECT_BOX_HEIGHT, FULL_PLOT_BOX_HEIGHT, DESVIACION_BOX_HEIGHT)
+                                    PAG_INDICES, FULL_PLOT_BOX_HEIGHT, DESVIACION_BOX_HEIGHT)
 
 from viewmodels.consumo.indice.desviacion.plotter import DeviationPlotter
-from viewmodels.processing.compute.compute_desviacion_indices import DeviationTrend
+from domain.services.compute_desviacion_indices import DeviationTrend
 
 
 @execute_safely

@@ -1,4 +1,4 @@
-from typing import Optional, Any
+from typing import Optional
 
 from streamlit_authenticator.utilities.hasher import Hasher
 from config.enums import RoleEnum
