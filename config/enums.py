@@ -78,6 +78,9 @@ class RepuestoEnum(StrEnum):
     PASTILLAS_FRENO = auto()
     BANANAS = auto()
     PULMON_SUSPENSION = auto()
+    MOTOR_CONDENSADOR = auto()
+    BITURBO = auto()
+    FILTRO_AIRE_ACONDICIONADO = auto()
 
 
 class RepuestoReparadoEnum(StrEnum):

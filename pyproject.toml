@@ -19,4 +19,5 @@ dependencies = [
     "streamlit>=1.52.2",
     "streamlit-authenticator>=0.4.2",
     "strenum>=0.4.15",
+    "xlrd>=2.0.2",
 ]

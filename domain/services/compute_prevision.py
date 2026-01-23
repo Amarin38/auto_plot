@@ -17,6 +17,7 @@ def create_forecast(df: pd.DataFrame, tipo_repuesto: str):
 
         # Fechas
         df_rep["FechaCompleta"] = pd.to_datetime(df_rep["FechaCompleta"])
+        df_rep["Cantidad"]      = pd.to_numeric(df_rep["Cantidad"], errors="coerce")
         df_rep                  = df_rep.groupby(df_rep["FechaCompleta"].dt.to_period("M")).agg({"Cantidad":"sum"})
         df_rep.index            = pd.PeriodIndex(df_rep.index, freq='M').to_timestamp()
         df_rep                  = df_rep.asfreq("MS")
@@ -54,9 +55,10 @@ def create_forecast(df: pd.DataFrame, tipo_repuesto: str):
 
             PrevisionVM().save_df(prevision)
 
-        except ValueError:
+        except ValueError as e:
             print(f"""
          {T_RED}Error{RESET}: {T_YELLOW}No se puede calcular la previsión sin 2 años completos de datos.{RESET}
         {T_ORANGE} Faltan datos del repuesto:{RESET} {T_BLUE}{rep}{RESET}
+        {e.with_traceback(e.__traceback__)}
         """)
             pass
