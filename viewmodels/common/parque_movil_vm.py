@@ -66,7 +66,7 @@ class ParqueMovilVM(ViewModel):
         return pd.DataFrame(data)
 
     @staticmethod
-    @st.cache_data
+    # @st.cache_data
     def get_by_args(fecha_desde: date, fecha_hasta: date, parque: ParqueMovilFiltro) -> Optional[Any]:
         entities = ParqueMovilRepository().get_by_args(fecha_desde, fecha_hasta)
 

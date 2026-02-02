@@ -1,6 +1,8 @@
 import streamlit as st
+from sqlalchemy import True_
 
 from presentation.streamlit_components import SelectBoxComponents, OtherComponents
+from utils.common_utils import CommonUtils
 from utils.exception_utils import execute_safely
 
 from viewmodels.consumo.indice.plotter import  IndexPlotter
@@ -12,11 +14,20 @@ from config.constants_views import (PLOT_BOX_HEIGHT, DISTANCE_COLS_CENTER_TITLE,
 from viewmodels.consumo.indice.desviacion.plotter import DeviationPlotter
 from domain.services.compute_desviacion_indices import DeviationTrend
 
+@st.cache_data(ttl=200, show_spinner=False, show_time=True)
+def _generar_grafico_indice(tipo_indice, repuesto):
+    return IndexPlotter(tipo_indice, repuesto).create_plot()
+
+@st.cache_data(ttl=200, show_spinner=False, show_time=True)
+def _generar_grafico_desviacion(repuesto):
+    return DeviationPlotter(repuesto).create_plot()
+
 
 @execute_safely
 def consumo_indice() -> None:
     select = SelectBoxComponents()
     other = OtherComponents()
+    utils = CommonUtils()
 
     st.title(PAG_INDICES)
 
@@ -34,7 +45,10 @@ def consumo_indice() -> None:
         tipo_indice = select.select_box_tipo_indice(config_col, "INDEX_TIPO_INDICE")
 
         if repuesto and tipo_indice:
-            figs, titulo = IndexPlotter(tipo_indice, repuesto).create_plot()
+
+            with config_col:
+                with st.spinner(text="Cargando indices..."):
+                    figs, titulo = utils.run_in_threads(lambda: _generar_grafico_indice(tipo_indice, repuesto), max_workers=4)
 
             if figs and titulo:
                 other.centered_title(titulo_col, titulo)
@@ -52,7 +66,8 @@ def consumo_indice() -> None:
         aux, recargar, selectbox = st.columns([5.65,0.3, 2])
 
         if recargar.button(label="🔃", type="secondary", use_container_width=True):
-            DeviationTrend().calculate()
+            with st.spinner("Recalculando desviaciones..."):
+                utils.run_in_threads(lambda: DeviationTrend().calculate(), max_workers=4) # sin cache
 
         repuesto = select.select_box_tipo_repuesto(selectbox, "DESVIACION_TIPO_REP")
 
@@ -60,9 +75,12 @@ def consumo_indice() -> None:
 
         with grafico.container(height=FULL_PLOT_BOX_HEIGHT):
             if repuesto:
-                st.plotly_chart(DeviationPlotter(repuesto).create_plot())
+                with selectbox:
+                    with st.spinner("Cargando desviaciones..."):
+                        fig = utils.run_in_threads(lambda: _generar_grafico_desviacion(repuesto), max_workers=3)
+                st.plotly_chart(fig)
             else:
-                st.plotly_chart(DeviationPlotter(None).create_plot())
+                st.plotly_chart(_generar_grafico_desviacion(None))
 
         with explicacion.container(height=FULL_PLOT_BOX_HEIGHT):
             menor = f"<font color={COLORS[9]}>**menor**</font>"

@@ -1,13 +1,21 @@
+from datetime import date
+
 import streamlit as st
 
 from config.constants_common import MODELOS_CHASIS, NORMAL_DATE_YMD, MARCAS_CHASIS, MARCAS_MOTOR, MODELOS_MOTOR, \
     CARROCERIAS
 from config.constants_views import PAG_PARQUE_MOVIL, PLACEHOLDER, FLOTA_CONTAINER_HEIGHT
 from domain.entities.parque_movil import ParqueMovilFiltro
+from utils.common_utils import CommonUtils
 from viewmodels.common.parque_movil_vm import ParqueMovilVM
+
+@st.cache_data(ttl=300, show_spinner="Cargando parque movil...", show_time=True)
+def _obtener_parque_movil(fecha_desde: date, fecha_hasta: date, parque: ParqueMovilFiltro):
+    return ParqueMovilVM().get_by_args(fecha_desde, fecha_hasta, parque)
 
 
 def parque_movil():
+    utils = CommonUtils()
     st.title(PAG_PARQUE_MOVIL)
 
     aux, fecha_desde_col, fecha_hasta_col, aux2 = st.columns([1,1,1,1])
@@ -15,10 +23,8 @@ def parque_movil():
     with fecha_desde_col.container(height=FLOTA_CONTAINER_HEIGHT):
         fecha_desde = st.date_input('Fecha desde', format=NORMAL_DATE_YMD, min_value="2000-01-01")
 
-
     with fecha_hasta_col.container(height=FLOTA_CONTAINER_HEIGHT):
         fecha_hasta = st.date_input('Fecha hasta', format=NORMAL_DATE_YMD, min_value="2000-01-01")
-
 
 
     aux, linea_col, dominio_col, interno_col, aux2 = st.columns([1,0.65,0.70,0.65,1])
@@ -51,14 +57,15 @@ def parque_movil():
         carroceria = st.multiselect("Carroceria", CARROCERIAS)
 
 
-    if ((fecha_desde and fecha_hasta) or
-        linea or interno or dominio or modelo_chasis or
-        marca_chasis or modelo_motor or marca_motor or carroceria_col):
+    if ((fecha_desde and fecha_hasta) or linea or interno or
+        dominio or modelo_chasis or marca_chasis or modelo_motor or
+        marca_motor or carroceria_col):
 
-        parque = ParqueMovilFiltro(linea, interno, dominio, marca_chasis,
-                                   modelo_chasis, marca_motor, modelo_motor, carroceria)
+        parque = ParqueMovilFiltro(linea, interno, dominio, marca_chasis, modelo_chasis,
+                                   marca_motor, modelo_motor, carroceria)
 
-        datos_parque = ParqueMovilVM().get_by_args(fecha_desde, fecha_hasta, parque)
+        datos_parque = utils.run_in_threads(lambda: _obtener_parque_movil(fecha_desde, fecha_hasta, parque),
+                                            max_workers=6)
 
         if datos_parque is not None:
             st.data_editor(datos_parque,

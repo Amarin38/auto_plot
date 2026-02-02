@@ -1,12 +1,17 @@
 import math
 import re
 import io
+from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, date
 from zipfile import BadZipFile
 
 import pandas as pd
 
-from typing import List
+from typing import List, Optional, Any
+
+from statsmodels.graphics.tukeyplot import results
+from streamlit.runtime.scriptrunner_utils.script_run_context import get_script_run_ctx, add_script_run_ctx
+
 
 from config.constants_common import FILE_STRFTIME_DMY
 from utils.exception_utils import execute_safely
@@ -64,17 +69,27 @@ class CommonUtils:
 
 
     @execute_safely
-    def abreviar_es(self, n) -> str:
-        if n >= 1_000_000_000:
-            return f"{int(n / 1_000_000_000)} mil M"
+    def run_in_threads(self, functions, max_workers: Optional[int] = None) -> List[Any]:
+        ctx = get_script_run_ctx()
 
-        if n >= 1_000_000:
-            return f"{int(n / 1_000_000)} M"
+        def run_with_context(func):
+            def wrapper():
+                if ctx:
+                    add_script_run_ctx(thread=None, ctx=ctx)
+                return func()
+            return wrapper
 
-        if n >= 1_000:
-            return f"{int(n / 1_000)} mil"
+        if max_workers is None:
+            max_workers = len(functions)
 
-        return f"{int(n)}"
+        with ThreadPoolExecutor(max_workers=max_workers) as executor:
+            if isinstance(functions, list):
+                futures = [executor.submit(run_with_context(func)) for func in functions] # ejecuto las funciones en los threads
+                results = [future.result() for future in futures] # obtengo los resultados
+            else:
+                futures = executor.submit(run_with_context(functions))
+                results = futures.result()
+        return results
 
     # ------------------------------------------------------ DELETE ------------------------------------------------------
     @staticmethod
@@ -130,6 +145,7 @@ class CommonUtils:
         return df
 
 
+    # ------------------------------------------------------ PARSE ------------------------------------------------------
     @staticmethod
     def safe_int(value):
         if value is None:
@@ -193,3 +209,24 @@ class CommonUtils:
                 return None
 
         return None
+
+    @execute_safely
+    def num_parser(self, val) -> str:
+        return (f"{val:,.2f}"
+                .replace(",", "X")
+                .replace(".", ",")
+                .replace("X", ".")
+                )
+
+    @execute_safely
+    def abreviar_es(self, n) -> str:
+        if n >= 1_000_000_000:
+            return f"{int(n / 1_000_000_000)} mil M"
+
+        if n >= 1_000_000:
+            return f"{int(n / 1_000_000)} M"
+
+        if n >= 1_000:
+            return f"{int(n / 1_000)} mil"
+
+        return f"{int(n)}"
