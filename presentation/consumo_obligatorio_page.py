@@ -1,5 +1,3 @@
-import time
-
 import streamlit as st
 
 from config.constants_views import PAG_CONSUMO_OBLIGATORIO
