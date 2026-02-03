@@ -47,6 +47,11 @@ class CabecerasEnum(PascalCaseStrEnum):
     EL_PUENTE = auto()
 
 
+class TendenciaEnum(PascalCaseStrEnum):
+    LINEAL = auto()
+    CUADRATICA = "Cuadrática"
+    CUBICA = "Cúbica"
+
 class RepuestoEnum(StrEnum):
 
     @staticmethod

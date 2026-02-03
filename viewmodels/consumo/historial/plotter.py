@@ -3,8 +3,8 @@ import streamlit as st
 import plotly.graph_objects as go
 from plotly.graph_objs import Figure
 
-from config.constants_colors import COLORS
-from config.enums import RepuestoEnum
+from config.constants_colors import COLORS, CONSUMO_GARANTIAS_COLORS
+from config.enums import RepuestoEnum, TendenciaEnum
 from utils.exception_utils import execute_safely
 from viewmodels.plotly_components import DefaultUpdateLayoutComponents, DropDownComponents, \
     HoverComponents
@@ -12,7 +12,8 @@ from viewmodels.consumo.historial.vm import HistorialConsumoVM
 
 
 class HistorialPlotter:
-    def __init__(self, tipo_rep: RepuestoEnum) -> None:
+    def __init__(self, tipo_rep: RepuestoEnum, tendencia: TendenciaEnum) -> None:
+        self.tendencia = tendencia
         self.default = DefaultUpdateLayoutComponents()
         self.dropdown = DropDownComponents()
         self.hover = HoverComponents()
@@ -31,8 +32,6 @@ class HistorialPlotter:
 
             x_data = self.df["Año"].to_numpy()
             y_data = self.df["TotalConsumo"].to_numpy()
-
-            lineal_y = calcular_tendencia(x_data, y_data, 1)
 
             fig = go.Figure()
 
@@ -59,64 +58,35 @@ class HistorialPlotter:
 """
             ))
 
-
             fig.add_trace(go.Scatter(
                 x=x_data,
-                y=lineal_y,
+                y=self.calcular_tendencia(x_data, y_data, self.tendencia),
                 mode="lines",
-                name=f"Tendencia",
-                line=dict(color=COLORS[12], dash='dash'),
-                visible=True,
-                hoverinfo="skip",
-            ))
-
-            fig.add_trace(go.Scatter(
-                x=x_data,
-                y=calcular_tendencia(x_data, y_data, 2),
-                mode="lines",
-                name=f"Tendencia",
-                line=dict(color=COLORS[8], dash='dash'),
-                visible=False,
-                hoverinfo="skip",
-            ))
-
-            fig.add_trace(go.Scatter(
-                x=x_data,
-                y=calcular_tendencia(x_data, y_data, 3),
-                mode="lines",
-                name=f"Tendencia",
-                line=dict(color=COLORS[7], dash='dash'),
-                visible=False,
+                name=f"Tendencia {self.tendencia}",
+                line=dict(color=COLORS[6], dash='dash'),
                 hoverinfo="skip",
             ))
 
             fig.update_xaxes(tickmode="linear")
 
             self.default.update_layout(fig, f"{fecha_min} | {fecha_max}", "Año", "Historial de consumo")
-            self.dropdown.dropdown(fig, [
-                dict(
-                    label="Lineal",
-                    method="update",
-                    args=[{"visible": [True, True, False, False]}],
-                ),
-                dict(
-                    label="Cuadrática",
-                    method="update",
-                    args=[{"visible": [True, False, True, False]}],
-                ),
-                dict(
-                    label="Cúbica",
-                    method="update",
-                    args=[{"visible": [True, False, False, True]}],
-                )
-            ])
             self.hover.hover_junto(fig)
             self.hover.color_hover_bar_colored(fig, COLORS[15])
 
+            fig.update_layout(
+                margin={"r": 0, "t": 55, "l": 0, "b": 0},
+            )
             return fig, titulo
         return [None, None]
 
-@st.cache_data
-def calcular_tendencia(x_num: np.ndarray, y_data: np.ndarray, grado: int) -> np.ndarray:
-    coeficientes = np.polyfit(x_num, y_data, grado)
-    return np.polyval(coeficientes, x_num)
+    @staticmethod
+    @st.cache_data
+    def calcular_tendencia(x_num: np.ndarray, y_data: np.ndarray, tendencia: TendenciaEnum) -> np.ndarray:
+        coeficientes = None
+
+        match tendencia:
+            case TendenciaEnum.LINEAL: coeficientes = np.polyfit(x_num, y_data, 1)
+            case TendenciaEnum.CUADRATICA: coeficientes = np.polyfit(x_num, y_data, 2)
+            case TendenciaEnum.CUBICA: coeficientes = np.polyfit(x_num, y_data, 3)
+
+        return np.polyval(coeficientes, x_num)
