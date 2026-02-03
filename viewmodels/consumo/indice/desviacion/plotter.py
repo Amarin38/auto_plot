@@ -4,7 +4,7 @@ import pandas as pd
 import plotly.graph_objects as go
 
 from config.constants_common import FILE_STRFTIME_DMY
-from config.constants_colors import COLORS, FALLAS_GARANTIAS_COLORS
+from config.enums_colors import FallaGarantiasColorsEnum
 from config.enums import RepuestoEnum
 
 from utils.exception_utils import execute_safely
@@ -21,10 +21,10 @@ class DeviationPlotter:
         self.tipo_rep = tipo_rep
 
         if tipo_rep:
-            self.color = FALLAS_GARANTIAS_COLORS[3]
+            self.color = FallaGarantiasColorsEnum.ROJO
             self.df = DesviacionIndicesVM().get_df_by_tipo_rep(tipo_rep)
         else:
-            self.color = COLORS[9]
+            self.color = FallaGarantiasColorsEnum.VERDE
             self.df = DesviacionIndicesVM().get_df().drop_duplicates(subset=[
                 "Cabecera", "MediaCabecera", "MediaDeMedias",
                 "Diferencia", "Desviacion", "DesviacionPor", "FechaCompleta"

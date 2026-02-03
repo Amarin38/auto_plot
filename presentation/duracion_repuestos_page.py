@@ -1,7 +1,7 @@
 import streamlit as st
 
-from config.constants_colors import RECUENTO_COLORS
-from config.constants_views import PAG_DURACION, DURACION_TAB_BOX_HEIGHT, HTML_SIN_CAMBIOS, SELECT_BOX_HEIGHT
+from config.enums_colors import CustomMetricColorsEnum
+from config.constants_views import PAG_DURACION, DURACION_TAB_BOX_HEIGHT, SELECT_BOX_HEIGHT
 from utils.common_utils import CommonUtils
 from viewmodels.consumo.duracion_rep.plotter import DuracionRepuestosPlotter
 from utils.exception_utils import execute_safely
@@ -22,7 +22,6 @@ def duracion_repuestos():
     select = SelectBoxComponents()
     components = OtherComponents()
     utils = CommonUtils()
-    colors = RECUENTO_COLORS
 
     st.title(PAG_DURACION)
 
@@ -47,9 +46,15 @@ def duracion_repuestos():
                 )
 
             aux5, col_2015, col_2016, col_2017, aux6 = st.columns((1, 1, 1, 1, 1))
-            components.custom_metric(col_2015, "Sin cambios 2015", cambios_2015, colors[1], colors[1])
-            components.custom_metric(col_2016, "Sin cambios 2016", cambios_2016, colors[2], colors[2])
-            components.custom_metric(col_2017, "Sin cambios 2017", cambios_2017, colors[3], colors[3])
+
+            components.custom_metric(col_2015, "Sin cambios 2015", cambios_2015,
+                                     CustomMetricColorsEnum.ROJO, CustomMetricColorsEnum.ROJO)
+
+            components.custom_metric(col_2016, "Sin cambios 2016", cambios_2016,
+                                     CustomMetricColorsEnum.AZUL, CustomMetricColorsEnum.AZUL)
+
+            components.custom_metric(col_2017, "Sin cambios 2017", cambios_2017,
+                                     CustomMetricColorsEnum.AMARILLO, CustomMetricColorsEnum.AMARILLO)
 
             st.plotly_chart(duracion)
 

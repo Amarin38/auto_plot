@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 from statsmodels.tsa.holtwinters import ExponentialSmoothing
 
-from config.constants_colors import T_RED, RESET, T_YELLOW, T_ORANGE, T_BLUE
+from config.enums_colors import TextModsEnum, ForegroundColorsEnum
 from utils.exception_utils import execute_safely
 from viewmodels.consumo.prevision.data_vm import PrevisionDataVM
 from viewmodels.consumo.prevision.vm import PrevisionVM
@@ -57,8 +57,8 @@ def create_forecast(df: pd.DataFrame, tipo_repuesto: str):
 
         except ValueError as e:
             print(f"""
-         {T_RED}Error{RESET}: {T_YELLOW}No se puede calcular la previsión sin 2 años completos de datos.{RESET}
-        {T_ORANGE} Faltan datos del repuesto:{RESET} {T_BLUE}{rep}{RESET}
+         {ForegroundColorsEnum.T_RED}Error{TextModsEnum.RESET}: {ForegroundColorsEnum.T_YELLOW}No se puede calcular la previsión sin 2 años completos de datos.{TextModsEnum.RESET}
+        {ForegroundColorsEnum.T_ORANGE} Faltan datos del repuesto:{TextModsEnum.RESET} {ForegroundColorsEnum.T_BLUE}{rep}{TextModsEnum.RESET}
         {e.with_traceback(e.__traceback__)}
         """)
             pass

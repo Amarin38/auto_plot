@@ -1,6 +1,6 @@
 import plotly.graph_objects as go
 
-from config.constants_colors import COLORS
+from config.enums_colors import ConsumoObligatorioColorsEnum
 from config.constants_common import FILE_STRFTIME_YMD
 from config.enums import ConsumoObligatorioEnum
 from viewmodels.plotly_components import DefaultUpdateLayoutComponents, HoverComponents, PlotComponents
@@ -39,7 +39,7 @@ class ConsumoObligatorioPlotter:
             y=minimo_viejo,
             name="Minimo Anterior",
             orientation="v",
-            marker=dict(color=COLORS[1], opacity=1),
+            marker=dict(color=ConsumoObligatorioColorsEnum.NARANJA_OSCURO, opacity=1),
             legendgroup="A",
             hovertemplate="""
 <b>
@@ -53,7 +53,7 @@ class ConsumoObligatorioPlotter:
             x=cabeceras,
             y=y2023,
             name="2023",
-            marker=dict(color=COLORS[7], opacity=1),
+            marker=dict(color=ConsumoObligatorioColorsEnum.AMARILLO, opacity=1),
             legendgroup="A",
             hovertemplate="""
 <b>
@@ -67,7 +67,7 @@ class ConsumoObligatorioPlotter:
             x=cabeceras,
             y=y2024,
             name="2024",
-            marker = dict(color=COLORS[8], opacity=1),
+            marker = dict(color=ConsumoObligatorioColorsEnum.NARANJA, opacity=1),
             legendgroup="A",
             hovertemplate = """
 <b>
@@ -82,7 +82,7 @@ class ConsumoObligatorioPlotter:
             y=minimo_nuevo,
             name="Minimo Actual",
             orientation="v",
-            marker=dict(color=COLORS[14], opacity=1),
+            marker=dict(color=ConsumoObligatorioColorsEnum.AZUL, opacity=1),
             legendgroup="emoji",
             hovertemplate = """
 <b>
@@ -97,7 +97,7 @@ class ConsumoObligatorioPlotter:
             y=y2025,
             name="2025",
             orientation="v",
-            marker = dict(color=COLORS[9], opacity=1),
+            marker = dict(color=ConsumoObligatorioColorsEnum.VERDE, opacity=1),
             legendgroup="emoji",
             hovertemplate="""
 <b>

@@ -5,7 +5,7 @@ import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 from itertools import product
 
-from config.constants_colors import DURACION_REPUESTOS_COLORS
+from config.enums_colors import DuracionRepuestosColorsEnum
 from config.constants_common import FILE_STRFTIME_YMD
 from utils.exception_utils import execute_safely
 from viewmodels.plotly_components import DefaultUpdateLayoutComponents, HoverComponents
@@ -43,7 +43,7 @@ class DuracionRepuestosPlotter:
         df_distri_cambio = self.df_distribucion.groupby("Cambio")
         df_duracion_cambio = self.df_duracion.groupby("Cambio")
 
-        for (row, col), cambio, color_actual in zip(positions, cambios, DURACION_REPUESTOS_COLORS):
+        for (row, col), cambio, color_actual in zip(positions, cambios, DuracionRepuestosColorsEnum.as_list()):
                 df_distri = df_distri_cambio.get_group(cambio)
                 df_duracion = df_duracion_cambio.get_group(cambio)
 

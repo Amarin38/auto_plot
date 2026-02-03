@@ -52,6 +52,7 @@ class TendenciaEnum(PascalCaseStrEnum):
     CUADRATICA = "Cuadrática"
     CUBICA = "Cúbica"
 
+
 class RepuestoEnum(StrEnum):
 
     @staticmethod
@@ -147,14 +148,19 @@ class ColoresMatplotlibEnum(StrEnum):
     magma = auto()
     PuBuGn = auto()
 
-class SymbolEnum(StrEnum):
-    circle = auto()
-    square = auto()
 
-class DashEnum(StrEnum):
-    solid = auto()
-    dot = auto()
-    dash = auto()
+class SymbolEnum(LowercaseStrEnum):
+    X               = auto()
+    CIRCLE          = auto()
+    SQUARE          = auto()
+    LINE_EW_OPEN    = "line-ew-open"
+
+
+class DashEnum(LowercaseStrEnum):
+    SOLID   = auto()
+    DOT     = auto()
+    DASH    = auto()
+
 
 class RoleEnum(LowercaseStrEnum):
     ADMIN = auto()

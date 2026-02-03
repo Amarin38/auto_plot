@@ -1,9 +1,9 @@
-from typing import Tuple, Union, List
+from typing import Tuple, Union, List, Any
 
 import numpy as np
 import plotly.graph_objects as go
 
-from config.constants_colors import INDICE_MEDIA_COLOR, INDICE_COLORS
+from config.enums_colors import IndiceColorsEnum
 from config.enums import IndexTypeEnum
 
 from utils.exception_utils import execute_safely
@@ -23,7 +23,7 @@ class IndexPlotter:
         self.df = IndiceConsumoVM().get_df_tipo_repuesto_and_tipo_indice(tipo_rep, index_type)
 
     @execute_safely
-    def create_plot(self) -> Union[Tuple[list, str], List[None]]:
+    def create_plot(self) -> tuple[list[Any], str] | tuple[None, None]:
         if not self.df.empty:
             titulo = f"Indice {self.tipo_rep} ({self.common.devolver_fecha(self.df, "UltimaFecha")})" \
                       if self.tipo_rep else ""
@@ -33,7 +33,7 @@ class IndexPlotter:
             todos_repuestos = self.df["Repuesto"].unique()
             grouped_repuesto = self.df.groupby("Repuesto")
 
-            for repuesto, color in zip(todos_repuestos, INDICE_COLORS):
+            for repuesto, color in zip(todos_repuestos, IndiceColorsEnum.as_list()):
                 df_repuesto = grouped_repuesto.get_group(repuesto)
 
                 x_data = df_repuesto["Cabecera"]
@@ -81,10 +81,10 @@ class IndexPlotter:
                     mode="lines",
                     name=f"Media {avg}",
                     line=dict(
-                        color=INDICE_MEDIA_COLOR,
+                        color=IndiceColorsEnum.NARANJA_OSCURO,
                         dash='dash'
                     ),
-                    customdata=[INDICE_MEDIA_COLOR] * len(x_data),
+                    customdata=[IndiceColorsEnum.NARANJA_OSCURO] * len(x_data),
                     hovertemplate = """
 <b>
 <span style='color:%{customdata}'>Media:</span>
@@ -110,4 +110,4 @@ class IndexPlotter:
 
                 figuras.append(fig)
             return figuras, titulo
-        return [None, None]
+        return None, None

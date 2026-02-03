@@ -1,6 +1,6 @@
 from typing import Union
 
-from config.constants_colors import RECUENTO_COLORS
+from config.enums_colors import CustomMetricColorsEnum
 from config.constants_views import PIE_FONT_SIZE, PIE_PLOT_HEIGHT, PIE_PLOT_WIDTH
 import plotly.graph_objects as go
 
@@ -35,8 +35,8 @@ class ConteoStockPlotter:
                     name='Conteo',
                     insidetextorientation='horizontal',
                     textposition='auto',
-                    customdata=RECUENTO_COLORS,
-                    marker=dict(colors=RECUENTO_COLORS),
+                    customdata=CustomMetricColorsEnum.as_list(),
+                    marker=dict(colors=CustomMetricColorsEnum.as_list()),
                     hovertemplate="""
 <b>
 <span style='color:%{customdata}'>%{label}</span><br>

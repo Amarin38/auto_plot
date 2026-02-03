@@ -1,6 +1,6 @@
 import streamlit as st
 
-from config.constants_colors import *
+from config.enums_colors import CustomMetricColorsEnum
 from config.constants_views import PAG_PRINCIPAL, CONTEO_BOX_HEIGHT, CONTEO_STATS_HEIGHT
 from presentation.streamlit_components import OtherComponents
 from viewmodels.conteo_stock.plotter import ConteoStockPlotter
@@ -21,7 +21,6 @@ def main():
     roles = st.session_state.get("roles") or []
     components = OtherComponents()
     utils = CommonUtils()
-    colors = RECUENTO_COLORS
 
     st.title(PAG_PRINCIPAL)
 
@@ -57,17 +56,24 @@ def main():
 
             # Datos de conteo
             col1, col2 = st.columns([1, 1])
-            components.custom_metric(col1, "Precio faltante", precio_faltante, colors[1], colors[1])
-            components.custom_metric(col2, "Precio sobrante", precio_sobrante, colors[2], colors[2])
+            components.custom_metric(col1, "Precio faltante", precio_faltante,
+                                     CustomMetricColorsEnum.ROJO, CustomMetricColorsEnum.ROJO)
+            components.custom_metric(col2, "Precio sobrante", precio_sobrante,
+                                     CustomMetricColorsEnum.AZUL, CustomMetricColorsEnum.AZUL)
             col1.divider()
             col2.divider()
-            components.custom_metric(col1, "Precio absoluto anterior", precio_abs_anterior, colors[3], colors[3])
-            components.custom_metric(col2, "Precio absoluto actual", precio_abs_actual, colors[4], colors[4])
+            components.custom_metric(col1, "Precio absoluto anterior", precio_abs_anterior,
+                                     CustomMetricColorsEnum.AMARILLO, CustomMetricColorsEnum.AMARILLO)
+            components.custom_metric(col2, "Precio absoluto actual", precio_abs_actual,
+                                     CustomMetricColorsEnum.VIOLETA, CustomMetricColorsEnum.VIOLETA)
 
             st.space(3)
+
             aux, izq, der, aux2 = st.columns([0.8, 1, 1, 0.8])
-            components.custom_metric(izq, "Porcentaje perdida stock", f"{porcentaje_perdida_stock}%", colors[0],
-                                     colors[0])
-            components.custom_metric(der, "Porcentaje de error", f"{porcentaje_error}%", colors[1], colors[1])
+
+            components.custom_metric(izq, "Porcentaje perdida stock", f"{porcentaje_perdida_stock}%",
+                                     CustomMetricColorsEnum.VERDE, CustomMetricColorsEnum.VERDE)
+            components.custom_metric(der, "Porcentaje de error", f"{porcentaje_error}%",
+                                     CustomMetricColorsEnum.ROJO, CustomMetricColorsEnum.ROJO)
 
 

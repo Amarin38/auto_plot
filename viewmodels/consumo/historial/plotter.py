@@ -3,7 +3,7 @@ import streamlit as st
 import plotly.graph_objects as go
 from plotly.graph_objs import Figure
 
-from config.constants_colors import COLORS, CONSUMO_GARANTIAS_COLORS
+from config.enums_colors import HistorialColorsEnum
 from config.enums import RepuestoEnum, TendenciaEnum
 from utils.exception_utils import execute_safely
 from viewmodels.plotly_components import DefaultUpdateLayoutComponents, DropDownComponents, \
@@ -47,8 +47,8 @@ class HistorialPlotter:
                     family='Arial'
                 ),
 
-                marker=dict(color=COLORS[10]),
-                customdata=[COLORS[15]] * len(x_data),
+                marker=dict(color=HistorialColorsEnum.VIOLETA),
+                customdata=[HistorialColorsEnum.LILA] * len(x_data),
                 hovertemplate="""
 <b>
 <span style='color:%{customdata}; font-size:15px'>Consumo:</span>
@@ -63,7 +63,7 @@ class HistorialPlotter:
                 y=self.calcular_tendencia(x_data, y_data, self.tendencia),
                 mode="lines",
                 name=f"Tendencia {self.tendencia}",
-                line=dict(color=COLORS[6], dash='dash'),
+                line=dict(color=HistorialColorsEnum.VERDE, dash='dash'),
                 hoverinfo="skip",
             ))
 
@@ -71,7 +71,7 @@ class HistorialPlotter:
 
             self.default.update_layout(fig, f"{fecha_min} | {fecha_max}", "Año", "Historial de consumo")
             self.hover.hover_junto(fig)
-            self.hover.color_hover_bar_colored(fig, COLORS[15])
+            self.hover.color_hover_bar_colored(fig, HistorialColorsEnum.LILA)
 
             fig.update_layout(
                 margin={"r": 0, "t": 55, "l": 0, "b": 0},

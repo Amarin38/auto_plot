@@ -4,7 +4,7 @@ from babel.dates import format_date
 
 import plotly.graph_objects as go
 
-from config.constants_colors import COLORS, PREVISION_COLORS
+from config.enums_colors import PrevisionColorsEnum
 from config.constants_common import FILE_STRFTIME_YMD
 from config.enums import SymbolEnum, DashEnum
 
@@ -67,11 +67,13 @@ class PrevisionPlotter:
 
                 fig = go.Figure()
 
-                self.plots.scatter_prevision(fig, x_data, y_data, "Consumo", COLORS[15], PREVISION_COLORS[0],
-                                             SymbolEnum.circle, DashEnum.solid, ticks_text_data)
+                self.plots.scatter_prevision(fig, x_data, y_data, "Consumo",
+                                             PrevisionColorsEnum.LILA, PrevisionColorsEnum.VIOLETA,
+                                             SymbolEnum.CIRCLE, DashEnum.SOLID, ticks_text_data)
 
-                self.plots.scatter_prevision(fig, x_forecast, y_forecast, "Prevision", COLORS[1], PREVISION_COLORS[1],
-                                             SymbolEnum.square, DashEnum.dash, ticks_text_forecast)
+                self.plots.scatter_prevision(fig, x_forecast, y_forecast, "Prevision",
+                                             PrevisionColorsEnum.NARANJA_FUERTE, PrevisionColorsEnum.NARANJA,
+                                             SymbolEnum.SQUARE, DashEnum.DASH, ticks_text_forecast)
 
                 self.plots.empty(fig, f"Prevision total: {total_prevision}")
                 self.plots.empty(fig, f"Valor por mes: {valor_mensual}")

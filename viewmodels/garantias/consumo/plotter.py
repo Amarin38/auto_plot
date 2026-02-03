@@ -2,7 +2,7 @@ from typing import Union
 
 import plotly.graph_objects as go
 
-from config.constants_colors import CONSUMO_GARANTIAS_COLORS
+from config.enums_colors import ConsumoGarantiasColorsEnum
 from utils.exception_utils import execute_safely
 from viewmodels.plotly_components import DefaultUpdateLayoutComponents, HoverComponents, PlotComponents
 from viewmodels.garantias.consumo.vm import ConsumoGarantiasVM
@@ -27,8 +27,8 @@ class ConsumoGarantiasPlotter:
             diferencia_transfer = self.df_data["PorcentajeTransferencia"]
 
 
-            color_garantias = CONSUMO_GARANTIAS_COLORS[0]
-            color_transferencias = CONSUMO_GARANTIAS_COLORS[1]
+            color_garantias = ConsumoGarantiasColorsEnum.ROJO
+            color_transferencias = ConsumoGarantiasColorsEnum.VERDE
 
             len_data = len(x_data)
 

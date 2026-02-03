@@ -3,7 +3,7 @@ from typing import Union
 import plotly.graph_objects as go
 
 from config.constants_views import PIE_PLOT_HEIGHT, PIE_PLOT_WIDTH, PIE_FONT_SIZE
-from config.constants_colors import FALLAS_GARANTIAS_COLORS
+from config.enums_colors import FallaGarantiasColorsEnum
 
 from utils.exception_utils import execute_safely
 from viewmodels.plotly_components import DefaultUpdateLayoutComponents, HoverComponents
@@ -39,8 +39,8 @@ class FallaGarantiasPlotter:
                     name='Fallas',
                     insidetextorientation='horizontal',
                     textposition='auto',
-                    customdata=FALLAS_GARANTIAS_COLORS,
-                    marker=dict(colors=FALLAS_GARANTIAS_COLORS),
+                    customdata=FallaGarantiasColorsEnum.as_list(),
+                    marker=dict(colors=FallaGarantiasColorsEnum.as_list()),
                     hovertemplate="""
 <b>
 <span style='color:%{customdata}'>%{label}</span><br>

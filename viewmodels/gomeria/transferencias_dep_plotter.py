@@ -2,7 +2,7 @@ import plotly.graph_objects as go
 
 from typing import Union
 
-from config.constants_colors import COLORS, HOVER_BAR_TANSF_COLOR
+from config.enums_colors import HoverColorsEnum, TransferEntreDepoColorsEnum
 from config.enums import SymbolEnum, DashEnum
 from utils.exception_utils import execute_safely
 from viewmodels.gomeria.transferencias_dep_vm import TransferenciasEntreDepositosVM
@@ -30,8 +30,10 @@ class TransferenciasEntreDepositosPlotter:
 
             fig = go.Figure()
 
-            self.plots.scatter_gomeria(fig, x_2024, y_2024, "2024", COLORS[12], SymbolEnum.circle, DashEnum.solid)
-            self.plots.scatter_gomeria(fig, x_2025, y_2025, "2025", COLORS[2], SymbolEnum.circle, DashEnum.dot)
+            self.plots.scatter_gomeria(fig, x_2024, y_2024, "2024",
+                                       TransferEntreDepoColorsEnum.AZUL, SymbolEnum.CIRCLE, DashEnum.SOLID)
+            self.plots.scatter_gomeria(fig, x_2025, y_2025, "2025",
+                                       TransferEntreDepoColorsEnum.ROJO, SymbolEnum.CIRCLE, DashEnum.DOT)
 
             fig.update_xaxes(visible=False)
             fig.update_layout(
@@ -43,6 +45,6 @@ class TransferenciasEntreDepositosPlotter:
             )
 
             self.hover.hover_junto(fig)
-            self.hover.color_hover_bar_colored(fig, HOVER_BAR_TANSF_COLOR)
+            self.hover.color_hover_bar_colored(fig, HoverColorsEnum.VIOLETA)
             return fig
         return None

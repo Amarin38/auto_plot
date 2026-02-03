@@ -6,7 +6,7 @@ from multipledispatch import dispatch
 from plotly.graph_objs import Figure
 
 
-from config.constants_colors import COLORS, HOVER_COLOR
+from config.enums_colors import HoverColorsEnum, PlotlyComponentsColorsEnum
 from config.enums import SymbolEnum, DashEnum
 from utils.exception_utils import execute_safely
 from utils.common_utils import CommonUtils
@@ -21,8 +21,8 @@ class HoverComponents:
         fig.update_layout(
             hovermode="x unified",
             hoverlabel=dict(
-                bgcolor=HOVER_COLOR,
-                bordercolor="gray",
+                bgcolor=HoverColorsEnum.NEGRO,
+                bordercolor=PlotlyComponentsColorsEnum.GRIS,
                 font_size=14.5,
                 font_family="Arial",
                 namelength=-1
@@ -34,8 +34,8 @@ class HoverComponents:
         fig.update_layout(
             hovermode="x",
             hoverlabel=dict(
-                bgcolor=HOVER_COLOR,
-                bordercolor="gray",
+                bgcolor=HoverColorsEnum.NEGRO,
+                bordercolor=PlotlyComponentsColorsEnum.GRIS,
                 font_size=16,
                 font_family="Arial",
                 namelength=-1
@@ -45,11 +45,11 @@ class HoverComponents:
     @execute_safely
     def hover_y(self, fig):
         fig.update_layout(
-            hovermode="y",  # 🔹 muestra ambos hovers juntos
+            hovermode="y",
             hoverlabel=dict(
-                bgcolor="#0E1117",  # color de fondo
-                bordercolor="black",
-                font_size=14.5,  # 🔹 aumenta el tamaño del texto
+                bgcolor=HoverColorsEnum.NEGRO,
+                bordercolor=HoverColorsEnum.NEGRO,
+                font_size=14.5,
                 font_family="Arial",
                 namelength=-1
             ),
@@ -62,7 +62,7 @@ class HoverComponents:
                 fig.layout[axis].update(
                     showspikes=True,
                     spikemode="across+marker",
-                    spikecolor="rgba(255,255,255)",
+                    spikecolor=PlotlyComponentsColorsEnum.BLANCO_RGBA,
                     spikethickness=2,
                     spikedash="solid"
                 )
@@ -74,7 +74,7 @@ class HoverComponents:
             spikemode="across+marker",
             spikesnap="data",
             spikethickness=2,
-            spikecolor="rgba(255,255,255)",
+            spikecolor=PlotlyComponentsColorsEnum.BLANCO_RGBA,
             spikedash="solid",
         )
 
@@ -114,8 +114,8 @@ class LegendComponents:
                 xanchor='right',
                 x=1,
                 font=dict(size=13),
-                bgcolor=COLORS[-1],
-                bordercolor=COLORS[5],
+                bgcolor=PlotlyComponentsColorsEnum.GRIS_OSCURO,
+                bordercolor=PlotlyComponentsColorsEnum.VIOLETA,
             ),
         )
 
@@ -157,8 +157,8 @@ class SliderComponents:
                 ),
                 rangeslider=dict(
                     visible=True,
-                    bgcolor="white",
-                    bordercolor="#0e1117",
+                    bgcolor=PlotlyComponentsColorsEnum.BLANCO,
+                    bordercolor=HoverColorsEnum.NEGRO,
                     thickness=0.02,
                     borderwidth=2,
                 ),
@@ -182,9 +182,9 @@ class DropDownComponents:
                     y=1.15,
                     xanchor="center",
                     yanchor="top",
-                    font=dict(color="white", size=14),
+                    font=dict(color=PlotlyComponentsColorsEnum.BLANCO, size=14),
                     active=0,
-                    bgcolor=COLORS[-1],
+                    bgcolor=PlotlyComponentsColorsEnum.GRIS_OSCURO,
                     pad=dict(l=1, r=800, t=12, b=5),
                     showactive=True,
 
@@ -204,7 +204,7 @@ class PlotComponents:
             x=[None],  # nada visible
             y=[None],
             mode="markers",
-            marker=dict(color="rgba(0,0,0,0)"),  # transparente
+            marker=dict(color=PlotlyComponentsColorsEnum.TRANSPARENTE),  # transparente
             showlegend=True,
             name=nombre,
             legendgroup="ConsumoPrevision"
@@ -220,8 +220,8 @@ class PlotComponents:
             name=nombre,
             marker=dict(
                 size=10,
-                color="#C70039",
-                symbol="x",
+                color=PlotlyComponentsColorsEnum.ROJO,
+                symbol=SymbolEnum.X,
                 line=dict(width=0.5),
             ),
             legendgroup="emoji",
@@ -244,8 +244,8 @@ class PlotComponents:
             name=nombre,
             marker=dict(
                 size=10,
-                color="#C70039",
-                symbol="x",
+                color=PlotlyComponentsColorsEnum.ROJO,
+                symbol=SymbolEnum.X,
                 line=dict(width=0.5),
             ),
             legendgroup="emoji",
@@ -267,8 +267,8 @@ class PlotComponents:
             name=nombre,
             marker=dict(
                 size=11,
-                color="#3A7D44",
-                symbol="circle",
+                color=PlotlyComponentsColorsEnum.VERDE,
+                symbol=SymbolEnum.CIRCLE,
                 line=dict(width=0.5),
             ),
             text=["✔"] * 12,
@@ -292,8 +292,8 @@ class PlotComponents:
             name=nombre,
             marker=dict(
                 size=11,
-                color="#3A7D44",
-                symbol="circle",
+                color=PlotlyComponentsColorsEnum.VERDE,
+                symbol=SymbolEnum.CIRCLE,
                 line=dict(width=0.5),
             ),
             text=["✔"] * 12,
@@ -316,8 +316,8 @@ class PlotComponents:
             name=nombre,
             marker=dict(
                 size=11,
-                color="#F2C14E",
-                symbol="line-ew-open",
+                color=PlotlyComponentsColorsEnum.AMARILLO,
+                symbol=SymbolEnum.LINE_EW_OPEN,
                 line=dict(width=2),
             ),
             legendgroup="emoji",
@@ -424,7 +424,7 @@ class PlotComponents:
             textposition="none",
             textfont=dict(
                 size=15,
-                color='white',
+                color=PlotlyComponentsColorsEnum.BLANCO,
                 family='Arial'
             ),
 
@@ -438,6 +438,7 @@ class PlotComponents:
 <extra></extra>
 """,
         ))
+
 
 class DefaultUpdateLayoutComponents:
     def __init__(self):

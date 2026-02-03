@@ -2,9 +2,7 @@ import traceback
 import functools
 import logging
 
-from config.constants_colors import T_GRAY, T_WHITE, T_RED, T_MAGENTA, T_YELLOW, T_BLUE, T_GREEN
-from config.constants_colors import B_ORANGE, B_RED
-from config.constants_colors import UNDERLINE, ITALIC, RESET
+from config.enums_colors import TextModsEnum, BackgroundColorsEnum, ForegroundColorsEnum
 
 
 logging.basicConfig(
@@ -27,11 +25,11 @@ def execute_safely(func):
                     class_name = str(last).split("\\")[-1].split(".")[0]
                     args_kwargs = last.locals.popitem() # type:ignore
 
-                    logging.error(f"""{T_GRAY}--------------------------------------------------------------------------{RESET} [{T_RED}EXCEPTION{RESET}] {T_GRAY}--------------------------------------------------------------------------{RESET}
-                             Exception: {ITALIC}{T_WHITE}{B_RED}{type(e).__name__}{RESET}: {T_WHITE}{B_ORANGE}{e}{RESET} 
-                             On line {UNDERLINE}{T_RED}{last.lineno}{RESET}: {T_RED}{last.line}{RESET}
-                             Method: {T_GREEN}{class_name}{RESET}().{T_YELLOW}{last.name}{RESET}(Args: {T_BLUE}{args_kwargs}{RESET} | Kwargs: {T_MAGENTA}{kwargs}{RESET})
-                             File: {ITALIC}{last.filename}{RESET }
-                             {T_GRAY}-----------------------------------------------------------------------------------------------------------------------------------------------------------------{RESET}
+                    logging.error(f"""{ForegroundColorsEnum.T_GRAY}--------------------------------------------------------------------------{TextModsEnum.RESET} [{ForegroundColorsEnum.T_RED}EXCEPTION{TextModsEnum.RESET}] {ForegroundColorsEnum.T_GRAY}--------------------------------------------------------------------------{TextModsEnum.RESET}
+                             Exception: {TextModsEnum.ITALIC}{ForegroundColorsEnum.T_WHITE}{BackgroundColorsEnum.B_RED}{type(e).__name__}{TextModsEnum.RESET}: {ForegroundColorsEnum.T_WHITE}{BackgroundColorsEnum.B_ORANGE}{e}{TextModsEnum.RESET} 
+                             On line {TextModsEnum.UNDERLINE}{ForegroundColorsEnum.T_RED}{last.lineno}{TextModsEnum.RESET}: {ForegroundColorsEnum.T_RED}{last.line}{TextModsEnum.RESET}
+                             Method: {ForegroundColorsEnum.T_GREEN}{class_name}{TextModsEnum.RESET}().{ForegroundColorsEnum.T_YELLOW}{last.name}{TextModsEnum.RESET}(Args: {ForegroundColorsEnum.T_BLUE}{args_kwargs}{TextModsEnum.RESET} | Kwargs: {ForegroundColorsEnum.T_MAGENTA}{kwargs}{TextModsEnum.RESET})
+                             File: {TextModsEnum.ITALIC}{last.filename}{TextModsEnum.RESET}
+                             {ForegroundColorsEnum.T_GRAY}-----------------------------------------------------------------------------------------------------------------------------------------------------------------{TextModsEnum.RESET}
                                    """)
         return wrapper

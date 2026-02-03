@@ -1,5 +1,4 @@
 import streamlit as st
-from sqlalchemy import True_
 
 from presentation.streamlit_components import SelectBoxComponents, OtherComponents
 from utils.common_utils import CommonUtils
@@ -7,7 +6,7 @@ from utils.exception_utils import execute_safely
 
 from viewmodels.consumo.indice.plotter import  IndexPlotter
 
-from config.constants_colors import COLORS
+from config.enums_colors import IndiceColorsEnum
 from config.constants_views import (PLOT_BOX_HEIGHT, DISTANCE_COLS_CENTER_TITLE, DISTANCE_COLS_SELECTBIGGER_PLOT,
                                     PAG_INDICES, FULL_PLOT_BOX_HEIGHT, DESVIACION_BOX_HEIGHT)
 
@@ -31,8 +30,8 @@ def consumo_indice() -> None:
 
     st.title(PAG_INDICES)
 
-    other.bar_tabs("#B2B9B0", "#BAC1B8", "#828E82",
-             "#0C7C59", "#4D9078", "#0C7C59")
+    other.bar_tabs(IndiceColorsEnum.BLANCO_VERDOSO, IndiceColorsEnum.BLANCO_VERDOSO, IndiceColorsEnum.GRIS_VERDOSO,
+                   IndiceColorsEnum.VERDE_AGUA, IndiceColorsEnum.VERDE_AGUA_INTERMEDIO, IndiceColorsEnum.VERDE_AGUA)
 
     indice, desviacion = st.tabs(["📊 Indices", "📊↕️ Desviaciones de indices"])
 
@@ -83,9 +82,9 @@ def consumo_indice() -> None:
                 st.plotly_chart(_generar_grafico_desviacion(None))
 
         with explicacion.container(height=FULL_PLOT_BOX_HEIGHT):
-            menor = f"<font color={COLORS[9]}>**menor**</font>"
-            mayor = f"<font color={COLORS[2]}>**mayor**</font>"
-            cabecera = f"<font color={COLORS[0]}>**cabecera**</font>"
+            menor = f"<font color={IndiceColorsEnum.VERDE_AGUA_INTERMEDIO}>**menor**</font>"
+            mayor = f"<font color={IndiceColorsEnum.ROJO}>**mayor**</font>"
+            cabecera = f"<font color={IndiceColorsEnum.AMARILLO}>**cabecera**</font>"
 
             st.write(f"""
                 Este gráfico muestra, en %, cuánto se desvió cada 
