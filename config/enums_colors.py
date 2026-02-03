@@ -1,3 +1,4 @@
+from enum import auto
 from typing import List
 from strenum import StrEnum
 
@@ -120,6 +121,15 @@ class CustomMetricColorsEnum(StrEnum):
     @classmethod
     def as_list(cls) -> List[str]:
         return [color.value for color in cls]
+
+
+class ColoresMatplotlibEnum(StrEnum):
+    YlOrRd = auto()
+    YlGnBu = auto()
+    plasma = auto()
+    viridis = auto()
+    magma = auto()
+    PuBuGn = auto()
 
 
 # Texto

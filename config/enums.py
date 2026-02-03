@@ -140,15 +140,6 @@ class LoadDataEnum(StrEnum):
     CONTEO_STOCK = auto()
 
 
-class ColoresMatplotlibEnum(StrEnum):
-    YlOrRd = auto()
-    YlGnBu = auto()
-    plasma = auto()
-    viridis = auto()
-    magma = auto()
-    PuBuGn = auto()
-
-
 class SymbolEnum(LowercaseStrEnum):
     X               = auto()
     CIRCLE          = auto()
