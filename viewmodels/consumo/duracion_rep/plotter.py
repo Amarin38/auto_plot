@@ -14,7 +14,9 @@ from viewmodels.consumo.duracion_rep.duracion_vm import DuracionRepuestosVM
 
 
 class DuracionRepuestosPlotter:
-    def __init__(self, repuesto: str):
+    def __init__(self, repuesto: str, rows: int):
+        self.rows               = rows
+        self.cols               = 2
         self.hover              = HoverComponents()
         self.default            = DefaultUpdateLayoutComponents()
         self.df_duracion        = DuracionRepuestosVM().get_df_by_repuesto(repuesto)
@@ -28,25 +30,13 @@ class DuracionRepuestosPlotter:
         fecha_min   = self.df_duracion["FechaCambio"].min().strftime(FILE_STRFTIME_YMD)
         fecha_max   = self.df_duracion["FechaCambio"].max().strftime(FILE_STRFTIME_YMD)
         cambios     = self.df_distribucion["Cambio"].unique()
-        rows: int = 2
-        cols: int = 2
-        positions = list(product(
-            range(1, rows + 1), range(1, cols + 1)
-        ))
-        titles: Tuple[str, ...] = ()
-        specs: List[List[dict]] = []
+        positions = list(product(range(1, self.rows + 1), range(1, self.cols + 1)))
+        specs = [[{"secondary_y": True}, {"secondary_y": True}] for _ in range(self.rows)]
+        titles = ["Cambio de 0KM"]
+        titles.extend(f"Cambio {i}" for i in range(2, 2 * len(specs) + 1))
 
-        if rows == 2:
-            specs = [[{"secondary_y": True}, {"secondary_y": True}],
-                     [{"secondary_y": True}, {"secondary_y": True}]]
-            titles = ("Cambio de 0KM", "Cambio 2", "Cambio 3", "Cambio 4")
-        elif rows == 3:
-            specs = [[{"secondary_y": True}, {"secondary_y": True}],
-                     [{"secondary_y": True}, {"secondary_y": True}],
-                     [{"secondary_y": True}, {"secondary_y": True}]]
-            titles = ("Cambio de 0KM", "Cambio 2", "Cambio 3", "Cambio 4", "Cambio 5", "Cambio 6")
 
-        fig = make_subplots(rows=rows, cols=cols, x_title="Duración en años", y_title="Frecuencia relativa en %",
+        fig = make_subplots(rows=self.rows, cols=self.cols, x_title="Duración en años", y_title="Frecuencia relativa en %",
                             horizontal_spacing=0.1, specs=specs, subplot_titles=titles)
 
 
