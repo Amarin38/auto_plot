@@ -123,7 +123,7 @@ def parque_movil():
                 )
 
             # Actualizo el dataframe completo con los cambios
-            col1, col2, col3 = st.columns([6,6,1])
+            col1, col2, col3 = st.columns([5.5,4.5,1])
             with col1:
                 if st.button('← Anterior', disabled=st.session_state.page == 0):
                     st.session_state.page -= 1
@@ -133,7 +133,7 @@ def parque_movil():
                 st.write(f'Página {st.session_state.page + 1} de {total_paginas}')
 
             with col3:
-                if st.button('Siguiente →', disabled=st.session_state.page >= total_paginas - 1):
+                if st.button('Siguiente →', disabled=st.session_state.page >= total_paginas - 1, width=150):
                     st.session_state.page += 1
                     st.rerun()
 
