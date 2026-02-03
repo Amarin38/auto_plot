@@ -2,16 +2,17 @@ from typing import List
 from strenum import StrEnum
 
 class PlotlyComponentsColorsEnum(StrEnum):
-    TRANSPARENTE = "rgba(0,0,0,0)"
-    BLANCO = "white"
-    BLANCO_RGBA = "rgba(255,255,255)"
-    GRIS = "gray"
-    GRIS_OSCURO = "#3D4044"
-    NEGRO = "#0E1117"
-    ROJO = "#C70039"
-    VERDE = "#3A7D44"
-    AMARILLO = "#F2C14E"
-    VIOLETA = "#2C2C54"
+    TRANSPARENTE    = "rgba(0,0,0,0)"
+    BLANCO          = "white"
+    BLANCO_RGBA     = "rgba(255,255,255)"
+    GRIS            = "gray"
+    GRIS_OSCURO     = "#3D4044"
+    NEGRO           = "#0E1117"
+    ROJO            = "#C70039"
+    VERDE           = "#3A7D44"
+    AMARILLO        = "#F2C14E"
+    VIOLETA         = "#2C2C54"
+
 
 class TransferEntreDepoColorsEnum(StrEnum):
     ROJO = "#C70039"
