@@ -9,7 +9,6 @@ import pandas as pd
 
 from typing import List, Optional, Any
 
-from statsmodels.graphics.tukeyplot import results
 from streamlit.runtime.scriptrunner_utils.script_run_context import get_script_run_ctx, add_script_run_ctx
 
 

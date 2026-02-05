@@ -2,6 +2,7 @@ import streamlit as st
 import streamlit_authenticator as stauth
 
 from infrastructure import DBBase, db_engine
+from presentation.consumo_comparacion_page import consumo_comparacion
 from presentation.dota_licitaciones_page import dota_licitaciones_page
 
 from presentation.main_page import main
@@ -23,7 +24,8 @@ from viewmodels.autenticacion.usuario_vm import UsuarioVM
 from config.constants_views import (PAG_PRINCIPAL, PAG_CARGAR_DATOS, PAG_INDICES, PAG_PREVISION,
                                     PAG_FALLA_GARANTIAS, PAG_MAXIMOS_MINIMOS, PAG_DURACION,
                                     PAG_TRANSFERENCIAS_ENTRE_DEPOSITOS, PAG_HISTORIAL, PAG_CONSUMO_OBLIGATORIO,
-                                    PAG_COCHES_CABECERA, PAG_PARQUE_MOVIL, PAG_SISSSA, PAG_DOTA_LICITACIONES)
+                                    PAG_COCHES_CABECERA, PAG_PARQUE_MOVIL, PAG_SISSSA, PAG_DOTA_LICITACIONES,
+                                    PAG_COMPARACION_CONSUMO)
 
 from infrastructure.db.models.coches_cabecera_model import CochesCabeceraModel
 from infrastructure.db.models.garantias_consumo_model import GarantiasConsumoModel
@@ -44,6 +46,7 @@ from infrastructure.db.models.json_config_model import JSONConfigModel
 from infrastructure.db.models.parque_movil_model import ParqueMovilModel
 from infrastructure.db.models.conteo_stock_model import ConteoStockModel
 from infrastructure.db.models.usuario_model import UsuarioModel
+from infrastructure.db.models.consumo_comparacion_model import ConsumoComparacionModel
 
 # -----------------------------------------------------------------------------------------------
 # CONFIG STREAMLIT
@@ -154,6 +157,7 @@ pages = {
         st.Page(duracion_repuestos, title=PAG_DURACION),
         st.Page(consumo_historial, title=PAG_HISTORIAL),
         st.Page(consumo_obligatorio, title=PAG_CONSUMO_OBLIGATORIO),
+        st.Page(consumo_comparacion, title=PAG_COMPARACION_CONSUMO)
     ],
     "Estadísticas de garantías": [
         st.Page(garantias_falla_equipos, title=PAG_FALLA_GARANTIAS),

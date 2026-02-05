@@ -1,10 +1,12 @@
 import random
 
+import pandas as pd
 import streamlit as st
 
 from config.constants_common import IMG_PATH
 from config.constants_views import PAG_CARGAR_DATOS
-from config.enums import LoadDataEnum, TipoCargarEnum, RoleEnum
+from config.enums import LoadDataEnum, TipoCargarEnum, RoleEnum, MovimientoEnum
+from domain.services.compute_comparacion_consumo import compute_comparacion_consumo
 from viewmodels.autenticacion.usuario_vm import UsuarioVM
 from viewmodels.common.parque_movil_vm import ParqueMovilVM
 from viewmodels.conteo_stock.vm import ConteoStockVM
@@ -150,6 +152,15 @@ def cargar_datos():
                         st.image(f"{IMG_PATH}conteo.png", caption="Como se debe ver la tabla a insertar")
                         buttons.load_data_bttn(lambda: ConteoStockVM().save_df(load_data(select_load, uploaded_files)))
 
+                    case LoadDataEnum.COMPARACION_CONSUMO:
+                        select_repuesto = select.select_box_tipo_rep_comparacion(st, "LOAD_DATA_TIPO_COMPARACION")
+
+                        if select_repuesto:
+                            st.image(f"{IMG_PATH}historial_consumo.png", caption="Como se debe ver la tabla a insertar")
+
+                            buttons.load_data_bttn(lambda: compute_comparacion_consumo(load_data(select_load, uploaded_files),
+                                                                                       select_repuesto))
+
 
 @execute_safely
 def load_data(select_load: LoadDataEnum , uploaded_files):
@@ -161,5 +172,7 @@ def load_data(select_load: LoadDataEnum , uploaded_files):
             return CommonUtils().concat_dataframes(uploaded_files)
         case _:
             if uploaded_files and select_load:
-                return InventoryDataCleaner().run_all(uploaded_files)
-            return None
+                if LoadDataEnum.COMPARACION_CONSUMO:
+                    return InventoryDataCleaner().run_all(uploaded_files, MovimientoEnum.TRANSFERENCIAS)
+                return InventoryDataCleaner().run_all(uploaded_files, MovimientoEnum.SALIDAS)
+            return pd.DataFrame()

@@ -16,7 +16,7 @@ class MovimientoEnum(UppercaseStrEnum):
     SALIDAS = auto()
     ENTRADAS = auto()
     DEVOLUCIONES = auto()
-
+    TRANSFERENCIAS = auto()
 
 class CabecerasEnum(PascalCaseStrEnum):
     @staticmethod
@@ -120,24 +120,47 @@ class ConsumoObligatorioEnum(StrEnum):
     FILTRO_SECADOR_GOBERNADOR_APU_TB1394_16X = auto()
 
 
+class ConsumoComparacionRepuestoEnum(StrEnum):
+    @staticmethod
+    def _generate_next_value_(name, start, count, last_values):
+        return name.replace("_", " ").upper()
+
+    COMPRESOR   = auto()
+    GAS         = auto()
+
+
+class PeriodoComparacionEnum(StrEnum):
+    @staticmethod
+    def _generate_next_value_(name, start, count, last_values):
+        return name.replace("_", " ").upper()
+
+    DESDE_2020_A_2021 = auto()
+    DESDE_2021_A_2022 = auto()
+    DESDE_2022_A_2023 = auto()
+    DESDE_2023_A_2024 = auto()
+    DESDE_2024_A_2025 = auto()
+    DESDE_2025_A_2026 = auto()
+
+
 class LoadDataEnum(StrEnum):
     @staticmethod
     def _generate_next_value_(name, start, count, last_values):
         return name.replace("_", " ").capitalize()
 
-    USUARIO = auto()
-    INDICES_DE_CONSUMO = auto()
-    PREVISION_DE_CONSUMO = auto()
-    HISTORIAL_CONSUMO = auto()
-    CONSUMO_OBLIGATORIO = auto()
-    FALLA_GARANTIAS = auto()
-    CONSUMO_GARANTIAS = auto()
-    MAXIMOS_Y_MINIMOS = auto()
-    DURACION_REPUESTOS = auto()
-    TRANSFERENCIAS_ENTRE_DEPOSITOS = auto()
-    DIFERENCIA_MOVIMIENTOS_ENTRE_DEPOSITOS = auto()
-    PARQUE_MOVIL = auto()
-    CONTEO_STOCK = auto()
+    USUARIO                                 = auto()
+    INDICES_DE_CONSUMO                      = auto()
+    PREVISION_DE_CONSUMO                    = auto()
+    HISTORIAL_CONSUMO                       = auto()
+    CONSUMO_OBLIGATORIO                     = auto()
+    FALLA_GARANTIAS                         = auto()
+    CONSUMO_GARANTIAS                       = auto()
+    MAXIMOS_Y_MINIMOS                       = auto()
+    DURACION_REPUESTOS                      = auto()
+    TRANSFERENCIAS_ENTRE_DEPOSITOS          = auto()
+    DIFERENCIA_MOVIMIENTOS_ENTRE_DEPOSITOS  = auto()
+    PARQUE_MOVIL                            = auto()
+    CONTEO_STOCK                            = auto()
+    COMPARACION_CONSUMO                     = auto()
 
 
 class SymbolEnum(LowercaseStrEnum):

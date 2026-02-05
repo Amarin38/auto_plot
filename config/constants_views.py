@@ -18,6 +18,7 @@ PAG_CONSUMO_OBLIGATORIO = "Consumo Obligatorio 🚨"
 PAG_PREVISION = "Previsión de consumo 📈"
 PAG_DESVIACION_INDICES = "Desviaciones de índices 📊"
 PAG_DURACION = "Duracion de repuestos 🛠️"
+PAG_COMPARACION_CONSUMO = "Comparación de consumo 🧩"
 
 # Pags Garantias
 PAG_FALLA_GARANTIAS = "Falla equipos garantías ⛔"

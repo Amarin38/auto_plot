@@ -2,7 +2,9 @@ from typing import Union, List, Tuple
 
 import pandas as pd
 
-from config.constants_cleaner import INTERNOS_DEVOLUCION, MOV_SALIDAS, MOV_ENTRADAS, MOV_DEVOLUCIONES, DEL_COLUMNS
+from config.constants_cleaner import INTERNOS_DEVOLUCION, MOV_SALIDAS, MOV_ENTRADAS, MOV_DEVOLUCIONES, \
+    DEL_COLUMNS_MOVNOM, \
+    MOV_TRANSFERENCIAS, DEL_COLUMNS_FICMOV
 from config.enums import MovimientoEnum
 from utils.common_utils import CommonUtils
 from utils.exception_utils import execute_safely
@@ -13,7 +15,7 @@ class InventoryDataCleaner:
         self.common = CommonUtils()
 
 
-    def run_all(self, df_directory: list)-> pd.DataFrame:
+    def run_all(self, df_directory: list, tipo: MovimientoEnum)-> pd.DataFrame:
         """
         Arregla el listado de existencias de la siguiente forma:
         - Transforma todos los xls a xlsx.
@@ -22,32 +24,37 @@ class InventoryDataCleaner:
         - Filtra por salida.
         """
         df: pd.DataFrame = self.common.concat_dataframes(df_directory)
+
+
         if not df.empty:
             try:
                 df = self.common.delete_by_content(df, "ficfec", ["  -   -"])
             except (KeyError, IndexError):
                 df = self.common.delete_by_content(df, "FechaCompleta", ["  -   -"])
 
-            df = self._transform(df)
+            df = self._transform(df, tipo)
 
             df = self.common.delete_unnamed_cols(df)
 
-            return self.filter_mov(df, MovimientoEnum.SALIDAS)
+            return self.filter_mov(df, tipo)
         return pd.DataFrame()
 
 
     @execute_safely
-    def _transform(self, df: pd.DataFrame) -> pd.DataFrame:
+    def _transform(self, df: pd.DataFrame, tipo: MovimientoEnum) -> pd.DataFrame:
         # transformo las columnas para poder eliminarlas
         df.columns = df.columns.str.strip("'").str.strip()
         df.columns = [
             (col.decode('utf8', 'ignore')
             if isinstance(col, bytes) else col)
             for col in df.columns
-        ]
+        ] # paso a utf-8
 
-        df_updated = self.common.update_columns(df, "columns")
-        df_updated = df_updated.drop(columns=DEL_COLUMNS, axis=1, errors="ignore")
+        df_updated = self.common.update_columns(df, "columns") # renombro columnas
+
+        match tipo:
+            case MovimientoEnum.SALIDAS: df_updated = df_updated.drop(columns=DEL_COLUMNS_MOVNOM, axis=1, errors="ignore")
+            case MovimientoEnum.TRANSFERENCIAS: df_updated = df_updated.drop(columns=DEL_COLUMNS_FICMOV, axis=1, errors="ignore")
 
         df_updated = self.common.update_rows_by_dict(df_updated, "depositos", "Cabecera")
 
@@ -90,14 +97,14 @@ class InventoryDataCleaner:
 
     
     @execute_safely
-    def filter_mov(self, df: pd.DataFrame, mov: MovimientoEnum) -> pd.DataFrame:
+    def filter_mov(self, df: pd.DataFrame, tipo: MovimientoEnum) -> pd.DataFrame:
         df = self.common.delete_by_content(df, "Interno", INTERNOS_DEVOLUCION)
 
-        match mov:
-            case MovimientoEnum.SALIDAS: df = df.loc[df["Movimiento"].str.contains(MOV_SALIDAS, regex=True, na=False)]
-            case MovimientoEnum.ENTRADAS: df = df.loc[df["Movimiento"].str.contains(MOV_ENTRADAS, regex=True, na=False)]
-            case MovimientoEnum.DEVOLUCIONES: df = df.loc[df["Movimiento"].str.contains(MOV_DEVOLUCIONES, regex=True, na=False)]
-
+        match tipo:
+            case MovimientoEnum.SALIDAS         : df = df.loc[df["Movimiento"].str.contains(MOV_SALIDAS, regex=True, na=False)]
+            case MovimientoEnum.ENTRADAS        : df = df.loc[df["Movimiento"].str.contains(MOV_ENTRADAS, regex=True, na=False)]
+            case MovimientoEnum.DEVOLUCIONES    : df = df.loc[df["Movimiento"].str.contains(MOV_DEVOLUCIONES, regex=True, na=False)]
+            case MovimientoEnum.TRANSFERENCIAS  : df = df.loc[df["Movimiento"].str.contains(MOV_TRANSFERENCIAS, regex=True, na=False)]
         df = self.common.delete_unnamed_cols(df)
 
         return df
