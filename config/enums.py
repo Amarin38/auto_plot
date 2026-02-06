@@ -1,4 +1,6 @@
 from enum import auto
+from typing import List
+
 from strenum import UppercaseStrEnum, StrEnum, PascalCaseStrEnum, LowercaseStrEnum
 
 
@@ -134,12 +136,18 @@ class PeriodoComparacionEnum(StrEnum):
     def _generate_next_value_(name, start, count, last_values):
         return name.replace("_", " ").upper()
 
+    @classmethod
+    def as_list(cls) -> List[str]:
+        return [periodo.value for periodo in cls]
+
     DESDE_2020_A_2021 = auto()
     DESDE_2021_A_2022 = auto()
     DESDE_2022_A_2023 = auto()
     DESDE_2023_A_2024 = auto()
     DESDE_2024_A_2025 = auto()
     DESDE_2025_A_2026 = auto()
+
+
 
 
 class LoadDataEnum(StrEnum):

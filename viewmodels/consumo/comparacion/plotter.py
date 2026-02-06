@@ -9,7 +9,7 @@ from plotly.subplots import make_subplots
 from itertools import product
 
 from config.enums import PeriodoComparacionEnum, ConsumoComparacionRepuestoEnum, CabecerasEnum
-from config.enums_colors import DuracionRepuestosColorsEnum, IndiceColorsEnum
+from config.enums_colors import DuracionRepuestosColorsEnum, IndiceColorsEnum, DuracionRepuestosColorsEnum
 from config.constants_common import FILE_STRFTIME_YMD
 from utils.exception_utils import execute_safely
 from viewmodels.consumo.comparacion.vm import ConsumoComparacionVM
@@ -31,25 +31,20 @@ class ConsumoComparacionPlotter:
     @execute_safely
     def create_plot(self) -> Any | None:
         if not self.df.empty:
-            titulo = f"{self.cabecera} comparacion {self.tipo_repuesto} ({self.periodo})"
-
+            titulo = f"Comparación: {self.cabecera}"
             agrupado = self.df.groupby(["Cabecera", "TipoRepuesto", "PeriodoID"]).agg({"Consumo":"sum"}).reset_index()
-            print(agrupado)
 
             fig = go.Figure()
 
-            periodos_unicos = agrupado["PeriodoID"].unique()
+            periodos_unicos = sorted(agrupado["PeriodoID"].unique(), reverse=False)
 
-            for periodo, color in zip(periodos_unicos, IndiceColorsEnum.as_list()):
+            for periodo, color in zip(periodos_unicos, DuracionRepuestosColorsEnum.as_list()):
                 datos_periodo = agrupado[agrupado["PeriodoID"] == periodo]
 
                 x = datos_periodo["TipoRepuesto"]
                 y = datos_periodo["Consumo"]
 
-                cd = np.stack((
-                    y,
-                    [str(periodo)] * len(x)
-                ), axis=-1)
+                cd = np.stack((y, [str(periodo)] * len(x), [color] * len(x)), axis=-1)
 
                 fig.add_trace(go.Bar(
                      x=x,
@@ -65,7 +60,7 @@ class ConsumoComparacionPlotter:
                      marker=dict(color=color),
                      hovertemplate="""
 <b>
-<span style='color:%{marker.color}'>%{customdata[1]}:</span>
+<span style='color:%{customdata[2]}'>%{customdata[1]}:</span>
 </b>
 %{customdata[0]:.0f} (%{y:.0f}%)
 <extra></extra>
@@ -73,50 +68,24 @@ class ConsumoComparacionPlotter:
                                 ))
 
             fig.update_layout(
-                title=f"Comparativa: {self.cabecera}",
+                title=titulo,
                 xaxis_title="Tipo de Repuesto",
-                legend_title="Periodo",
+                xaxis={
+                    'categoryorder': 'array',
+                    'categoryarray': PeriodoComparacionEnum.as_list()
+                },
+                legend_title="Periodos",
                 barmode='group',
                 barnorm='percent',  # Esto estira ambos periodos al mismo techo (100%)
                 yaxis_title="Proporción del Consumo (%)",
-                height=500
+                height=564,
+                margin = {"r": 0, "t": 40, "l": 0, "b": 0},
+
             )
             self.hover.hover_junto(fig)
 
-            return agrupado, fig
-
-    #         for repuesto, color in zip(todos_repuestos, IndiceColorsEnum.as_list()):
-    #
-    #             x = df_repuesto["TipoRepuesto"]
-    #             y = df_repuesto["Consumo"]
-    #             # median = [round(y_data.replace(0, np.nan).mean(), 1)] * len(x_data)
-    #             # avg = median[0]
-    #
-    #             fig.add_trace(go.Bar(
-    #                 x=x,
-    #                 y=y.to_numpy(),
-    #                 name="Índice de consumo",
-    #                 textposition="auto",
-    #                 textfont=dict(
-    #                     size=11,
-    #                     color='white',
-    #                     family='Arial'
-    #                 ),
-    #                 customdata=[color] * len(x),
-    #                 marker=dict(color=color),
-    #                 hovertemplate="""
-    # <b>
-    # <span style='color:%{customdata}'>Índice:</span>
-    # </b>
-    # %{y}
-    # <extra></extra>
-    # """
-    #             ))
-    #
-    #         # self.default.update_layout(fig, repuesto, "Cabecera", "Indice de consumo")
-    #
-    #         return fig, titulo
-    #     return None, None
+            return fig if fig else None
+        return None
     #             fig.add_trace(go.Scatter(
     #                 x=x_data,
     #                 y=median,

@@ -75,6 +75,7 @@ PIE_PLOT_HEIGHT                 : int = 585
 DATAFRAME_HEIGHT                : int = 600
 LINK_BOX_HEIGHT                 : int = 72
 SELECT_BOX_HEIGHT               : int = 120
+MULTI_SELECT_BOX_HEIGHT         : int = 150
 CENTERED_TITLE_HEIGHT           : int = 78
 BARPLOT_BOX_HEIGHT              : int = 700
 PLOT_BOX_HEIGHT                 : int = 535

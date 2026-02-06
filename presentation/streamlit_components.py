@@ -6,7 +6,8 @@ from utils.exception_utils import execute_safely
 
 from typing import Union, Optional
 
-from config.constants_views import SELECT_BOX_HEIGHT, PLACEHOLDER, CENTERED_TITLE_HEIGHT, CENTERED_TITLE_WIDTH
+from config.constants_views import SELECT_BOX_HEIGHT, PLACEHOLDER, CENTERED_TITLE_HEIGHT, CENTERED_TITLE_WIDTH, \
+    MULTI_SELECT_BOX_HEIGHT
 from config.enums import RepuestoReparadoEnum, RepuestoEnum, CabecerasEnum, TipoDuracionEnum, IndexTypeEnum, \
     ConsumoObligatorioEnum, LoadDataEnum, RoleEnum, ConsumoComparacionRepuestoEnum, PeriodoComparacionEnum
 
@@ -93,14 +94,14 @@ class SelectBoxComponents:
 
     @execute_safely
     def multi_select_box_tipo_rep_comparacion(self, col, key: Union[int, str]):
-        with col.container(height=SELECT_BOX_HEIGHT, vertical_alignment='center'):
-            return st.multiselect("Selecciona el tipo de repuesto:", ConsumoComparacionRepuestoEnum,
+        with col.container(height=MULTI_SELECT_BOX_HEIGHT, vertical_alignment='center'):
+            return st.multiselect("Selecciona los tipos de repuestos:", ConsumoComparacionRepuestoEnum,
                                    placeholder=PLACEHOLDER, key=key)
 
     @execute_safely
     def multi_select_box_periodo(self, col, key: Union[int, str]):
-        with col.container(height=SELECT_BOX_HEIGHT, vertical_alignment='center'):
-            return st.multiselect("Selecciona el periodo:", PeriodoComparacionEnum,
+        with col.container(height=MULTI_SELECT_BOX_HEIGHT, vertical_alignment='center'):
+            return st.multiselect("Selecciona los períodos:", PeriodoComparacionEnum,
                                   placeholder=PLACEHOLDER, key=key)
 
 
