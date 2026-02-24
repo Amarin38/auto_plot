@@ -15,6 +15,7 @@ class ConsumoComparacionMapper:
             Consumo         = model.Consumo,
             Gasto           = model.Gasto,
             FechaCompleta   = model.FechaCompleta,
+            FechaTitulo     = model.FechaTitulo,
             PeriodoID       = model.PeriodoID,
         )
 
@@ -30,5 +31,6 @@ class ConsumoComparacionMapper:
             Consumo         = entity.Consumo,
             Gasto           = entity.Gasto,
             FechaCompleta   = entity.FechaCompleta,
+            FechaTitulo     = entity.FechaTitulo,
             PeriodoID       = entity.PeriodoID,
         )

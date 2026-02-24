@@ -16,4 +16,5 @@ class ConsumoComparacion:
     Consumo         : float
     Gasto           : float
     FechaCompleta   : date
+    FechaTitulo     : str
     PeriodoID       : str

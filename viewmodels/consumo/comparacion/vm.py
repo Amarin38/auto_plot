@@ -25,6 +25,7 @@ class ConsumoComparacionVM:
                 Consumo         = row["Consumo"],
                 Gasto           = row["Gasto"],
                 FechaCompleta   = row["FechaCompleta"],
+                FechaTitulo     = row["FechaTitulo"],
                 PeriodoID       = row["PeriodoID"],
             )
             entities.append(entity)
@@ -59,6 +60,7 @@ class ConsumoComparacionVM:
                 "Consumo"       : e.Consumo,
                 "Gasto"         : e.Gasto,
                 "FechaCompleta" : e.FechaCompleta,
+                "FechaTitulo"   : e.FechaTitulo,
                 "PeriodoID"     : e.PeriodoID,
             }
             for e in entities

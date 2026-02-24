@@ -103,6 +103,19 @@ class DuracionRepuestosColorsEnum(StrEnum):
         return [color.value for color in cls]
 
 
+class ConsumoComparacionOscuroColorsEnum(StrEnum):
+    NARANJA         = "#B35516"
+    AZUL            = "#146EA7"
+    VIOLETA         = "#6841B6"
+    VERDE_OSCURO    = "#249372"
+    VERDE_CLARO     = "#64A029"
+    AMARILLO        = "#D2A017"
+
+    @classmethod
+    def as_list(cls) -> List[str]:
+        return [color.value for color in cls]
+
+
 class PrevisionColorsEnum(StrEnum):
     LILA            = "#883677"
     VIOLETA         = "#485696"

@@ -19,4 +19,5 @@ class ConsumoComparacionModel(DBBase):
     Consumo         : Mapped[float]
     Gasto           : Mapped[float]
     FechaCompleta   : Mapped[date] = mapped_column(Date)
+    FechaTitulo     : Mapped[str]
     PeriodoID       : Mapped[str]
