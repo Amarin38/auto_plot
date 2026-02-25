@@ -28,35 +28,26 @@ class HistorialConsumoVM:
 
     def get_df(self) -> pd.DataFrame:
         entities = self.repo.get_all()
-
-        data = [
-            {
-                "id"            : e.id,
-                "TipoRepuesto"  : e.TipoRepuesto,
-                "Año"           : e.Año,
-                "TotalConsumo"  : e.TotalConsumo,
-                "FechaMin"      : e.FechaMin,
-                "FechaMax"      : e.FechaMax,
-            }
-            for e in entities
-        ]
-
-        return pd.DataFrame(data)
+        return self.get_data(entities)
 
 
     def get_df_tipo_repuesto(self, tipo_repuesto: RepuestoEnum) -> pd.DataFrame:
         entities = self.repo.get_by_tipo_rep(tipo_repuesto)
+        return self.get_data(entities)
 
-        data = [
-            {
-                "id"            : e.id,
-                "TipoRepuesto"  : e.TipoRepuesto,
-                "Año"           : e.Año,
-                "TotalConsumo"  : e.TotalConsumo,
-                "FechaMin"      : e.FechaMin,
-                "FechaMax"      : e.FechaMax,
-            }
-            for e in entities
-        ]
 
-        return pd.DataFrame(data)
+    @staticmethod
+    def get_data(entities) -> pd.DataFrame:
+        return pd.DataFrame(
+            [
+                {
+                    "id": e.id,
+                    "TipoRepuesto": e.TipoRepuesto,
+                    "Año": e.Año,
+                    "TotalConsumo": e.TotalConsumo,
+                    "FechaMin": e.FechaMin,
+                    "FechaMax": e.FechaMax,
+                }
+                for e in entities
+            ]
+        )

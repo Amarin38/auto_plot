@@ -16,6 +16,7 @@ from presentation.garantias_falla_equipos_page import garantias_falla_equipos
 from presentation.gomeria_transferencias_depositos_page import gomeria_transferencias_entre_depositos
 from presentation.maximos_minimos_page import maximos_minimos
 from presentation.duracion_repuestos_page import duracion_repuestos
+from presentation.nuevo_usuario_page import nuevo_usuario
 from presentation.parque_movil_page import parque_movil
 from presentation.sisssa_page import sissa_page
 from presentation.streamlit_components import OtherComponents
@@ -25,7 +26,7 @@ from config.constants_views import (PAG_PRINCIPAL, PAG_CARGAR_DATOS, PAG_INDICES
                                     PAG_FALLA_GARANTIAS, PAG_MAXIMOS_MINIMOS, PAG_DURACION,
                                     PAG_TRANSFERENCIAS_ENTRE_DEPOSITOS, PAG_HISTORIAL, PAG_CONSUMO_OBLIGATORIO,
                                     PAG_COCHES_CABECERA, PAG_PARQUE_MOVIL, PAG_SISSSA, PAG_DOTA_LICITACIONES,
-                                    PAG_COMPARACION_CONSUMO)
+                                    PAG_COMPARACION_CONSUMO, PAG_NUEVO_USUARIO)
 
 from infrastructure.db.models.coches_cabecera_model import CochesCabeceraModel
 from infrastructure.db.models.garantias_consumo_model import GarantiasConsumoModel
@@ -149,7 +150,8 @@ pages = {
         st.Page(main, title=PAG_PRINCIPAL),
         st.Page(sissa_page, title=PAG_SISSSA),
         st.Page(dota_licitaciones_page, title=PAG_DOTA_LICITACIONES),
-        st.Page(cargar_datos, title=PAG_CARGAR_DATOS)
+        st.Page(cargar_datos, title=PAG_CARGAR_DATOS),
+        st.Page(nuevo_usuario, title=PAG_NUEVO_USUARIO)
     ],
     "Estadísticas de consumo": [
         st.Page(consumo_indice, title=PAG_INDICES),

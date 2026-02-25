@@ -17,8 +17,9 @@ class ButtonComponents:
         ...
 
     @execute_safely
-    def load_data_bttn(self, func):
+    def load_data_bttn(self, func, key: Optional[str] = None):
         st.button(
+            key=key,
             label="Cargar datos",
             type="primary",
             use_container_width=True,

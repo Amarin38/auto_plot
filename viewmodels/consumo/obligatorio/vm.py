@@ -32,41 +32,29 @@ class ConsumoObligatorioVM(ViewModel):
 
     def get_df(self) -> pd.DataFrame:
         entities = self.repo.get_all()
-
-        data = [
-            {
-                "id"                    : e.id,
-                "Cabecera"              : e.Cabecera,
-                "Repuesto"              : e.Repuesto,
-                "Año2023"               : e.Año2023,
-                "Año2024"               : e.Año2024,
-                "Año2025"               : e.Año2025,
-                "MinimoAntiguo"         : e.MinimoAntiguo,
-                "MinimoObligatorio"     : e.MinimoObligatorio,
-                "UltimaFecha"           : e.UltimaFecha,
-            }
-            for e in entities
-        ]
-
-        return pd.DataFrame(data)
+        return self.get_data(entities)
 
 
     def get_df_repuesto(self, repuesto: ConsumoObligatorioEnum) -> pd.DataFrame:
         entity = self.repo.get_by_repuesto(repuesto)
+        return self.get_data(entity)
 
-        data = [
-            {
-                "id"                    : e.id,
-                "Cabecera"              : e.Cabecera,
-                "Repuesto"              : e.Repuesto,
-                "Año2023"               : e.Año2023,
-                "Año2024"               : e.Año2024,
-                "Año2025"               : e.Año2025,
-                "MinimoAntiguo"         : e.MinimoAntiguo,
-                "MinimoObligatorio"     : e.MinimoObligatorio,
-                "UltimaFecha"           : e.UltimaFecha,
-            }
-            for e in entity
-        ]
 
-        return pd.DataFrame(data)
+    @staticmethod
+    def get_data(entities) -> pd.DataFrame:
+        return pd.DataFrame(
+            [
+                {
+                    "id": e.id,
+                    "Cabecera": e.Cabecera,
+                    "Repuesto": e.Repuesto,
+                    "Año2023": e.Año2023,
+                    "Año2024": e.Año2024,
+                    "Año2025": e.Año2025,
+                    "MinimoAntiguo": e.MinimoAntiguo,
+                    "MinimoObligatorio": e.MinimoObligatorio,
+                    "UltimaFecha": e.UltimaFecha,
+                }
+                for e in entities
+            ]
+        )

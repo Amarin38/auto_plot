@@ -30,39 +30,28 @@ class IndiceConsumoVM:
 
     def get_df(self) -> pd.DataFrame:
         entities = self.repo.get_all()
-
-        data = [
-            {
-                "id"            : e.id,
-                "Cabecera"      : e.Cabecera,
-                "Repuesto"      : e.Repuesto,
-                "TipoRepuesto"  : e.TipoRepuesto,
-                "TotalConsumo"  : e.TotalConsumo,
-                "ConsumoIndice" : e.IndiceConsumo,
-                "UltimaFecha"   : e.UltimaFecha,
-                "TipoOperacion" : e.TipoOperacion,
-            }
-            for e in entities
-        ]
-
-        return pd.DataFrame(data)
+        return self.get_data(entities)
 
 
     def get_df_tipo_repuesto_and_tipo_indice(self, tipo_repuesto: str, tipo_indice: str) -> pd.DataFrame:
         entities = self.repo.get_by_tipo_rep_and_tipo_indice(tipo_repuesto, tipo_indice)
+        return self.get_data(entities)
 
-        data = [
-            {
-                "id"            : e.id,
-                "Cabecera"      : e.Cabecera,
-                "Repuesto"      : e.Repuesto,
-                "TipoRepuesto"  : e.TipoRepuesto,
-                "TotalConsumo"  : e.TotalConsumo,
-                "ConsumoIndice" : e.IndiceConsumo,
-                "UltimaFecha"   : e.UltimaFecha,
-                "TipoOperacion" : e.TipoOperacion,
-            }
-            for e in entities
-        ]
 
-        return pd.DataFrame(data)
+    @staticmethod
+    def get_data(entities) -> pd.DataFrame:
+        return pd.DataFrame(
+            [
+                {
+                    "id": e.id,
+                    "Cabecera": e.Cabecera,
+                    "Repuesto": e.Repuesto,
+                    "TipoRepuesto": e.TipoRepuesto,
+                    "TotalConsumo": e.TotalConsumo,
+                    "ConsumoIndice": e.IndiceConsumo,
+                    "UltimaFecha": e.UltimaFecha,
+                    "TipoOperacion": e.TipoOperacion,
+                }
+                for e in entities
+            ]
+        )

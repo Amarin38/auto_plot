@@ -36,44 +36,33 @@ class DesviacionIndicesVM:
 
     def get_df(self) -> pd.DataFrame:
         entities = self.repo.get_all()
-
-        data = [
-            {
-                "id"            : e.id,
-                "Cabecera"      : e.Cabecera,
-                "MediaCabecera" : e.MediaCabecera,
-                "MediaDeMedias" : e.MediaDeMediasCabecera,
-                "Diferencia"    : e.DiferenciaCabecera,
-                "Desviacion"    : e.DesviacionCabecera,
-                "DesviacionPor" : e.DesviacionCabeceraPor,
-                "FechaCompleta" : e.FechaCompleta
-            }
-            for e in entities
-        ]
-
-        return pd.DataFrame(data)
+        return self.get_data(entities)
 
 
     def get_df_by_tipo_rep(self, tipo_rep: RepuestoEnum) -> pd.DataFrame:
         entities = self.repo.get_by_tipo_rep(tipo_rep)
-
-        data = [
-            {
-                "id"            : e.id,
-                "Cabecera"      : e.Cabecera,
-                "TipoRepuesto"  : e.TipoRepuesto,
-                "MediaCabecera" : e.MediaRepuesto,
-                "MediaDeMedias" : e.MediaDeMediasRepuesto,
-                "Diferencia"    : e.DiferenciaRepuesto,
-                "Desviacion"    : e.DesviacionRepuesto,
-                "DesviacionPor" : e.DesviacionRepuestoPor,
-                "FechaCompleta" : e.FechaCompleta
-            }
-            for e in entities
-        ]
-
-        return pd.DataFrame(data)
+        return self.get_data(entities)
 
 
     def delete_all(self) -> None:
         self.repo.delete()
+
+
+    @staticmethod
+    def get_data(entities) -> pd.DataFrame:
+        return pd.DataFrame(
+            [
+                {
+                    "id": e.id,
+                    "Cabecera": e.Cabecera,
+                    "TipoRepuesto": e.TipoRepuesto,
+                    "MediaCabecera": e.MediaRepuesto,
+                    "MediaDeMedias": e.MediaDeMediasRepuesto,
+                    "Diferencia": e.DiferenciaRepuesto,
+                    "Desviacion": e.DesviacionRepuesto,
+                    "DesviacionPor": e.DesviacionRepuestoPor,
+                    "FechaCompleta": e.FechaCompleta
+                }
+                for e in entities
+            ]
+        )

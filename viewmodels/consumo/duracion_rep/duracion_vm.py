@@ -34,49 +34,33 @@ class DuracionRepuestosVM:
 
     def get_df(self) -> pd.DataFrame:
         entities = self.repo.get_all()
-
-        data = [
-            {
-                "id"                        : e.id,
-                "Patente"                   : e.Patente,
-                "FechaCambio"               : e.FechaCambio,
-                "Cambio"                    : e.Cambio,
-                "Cabecera"                  : e.Cabecera,
-                "Observaciones"             : e.Observaciones,
-                "Repuesto"                  : e.Repuesto,
-                "TipoRepuesto"              : e.TipoRepuesto,
-                "DuracionEnDias"            : e.DuracionEnDias,
-                "DuracionEnMeses"           : e.DuracionEnMeses,
-                "DuracionEnAños"            : e.DuracionEnAños,
-                "AñoPromedio"               : e.AñoPromedio,
-                "DesviacionEstandar"        : e.DesviacionEstandar
-            }
-            for e in entities
-        ]
-
-        return pd.DataFrame(data)
+        return self.get_data(entities)
 
 
     def get_df_by_repuesto(self, repuesto: str) -> pd.DataFrame:
         entities = self.repo.get_by_repuesto(repuesto)
+        return self.get_data(entities)
 
-        data = [
-            {
-                "id": e.id,
-                "Patente": e.Patente,
-                "FechaCambio": e.FechaCambio,
-                "Cambio": e.Cambio,
-                "Cabecera": e.Cabecera,
-                "Observaciones": e.Observaciones,
-                "Repuesto": e.Repuesto,
-                "TipoRepuesto": e.TipoRepuesto,
-                "DuracionEnDias": e.DuracionEnDias,
-                "DuracionEnMeses": e.DuracionEnMeses,
-                "DuracionEnAños": e.DuracionEnAños,
-                "AñoPromedio": e.AñoPromedio,
-                "DesviacionEstandar": e.DesviacionEstandar
-            }
-            for e in entities
-        ]
 
-        return pd.DataFrame(data)
+    @staticmethod
+    def get_data(entities) -> pd.DataFrame:
+        return pd.DataFrame(
+            [
+                {
+                    "id": e.id,
+                    "Patente": e.Patente,
+                    "FechaCambio": e.FechaCambio,
+                    "Cambio": e.Cambio,
+                    "Cabecera": e.Cabecera,
+                    "Observaciones": e.Observaciones,
+                    "Repuesto": e.Repuesto,
+                    "TipoRepuesto": e.TipoRepuesto,
+                    "DuracionEnDias": e.DuracionEnDias,
+                    "DuracionEnMeses": e.DuracionEnMeses,
+                    "DuracionEnAños": e.DuracionEnAños,
+                    "AñoPromedio": e.AñoPromedio,
+                    "DesviacionEstandar": e.DesviacionEstandar
+                }
+                for e in entities
+            ]
+        )

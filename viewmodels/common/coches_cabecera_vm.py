@@ -1,4 +1,5 @@
 import pandas as pd
+from pandas import DataFrame
 
 from domain.entities.coches_cabecera import CochesCabecera
 from infrastructure.repositories.coches_cabecera_repository import CochesCabeceraRepository
@@ -26,8 +27,12 @@ class CochesCabeceraVM(ViewModel):
 
     def get_df(self) -> pd.DataFrame:
         entities = self.repo.get_all()
+        return self.get_data(entities)
 
-        data = [
+
+    @staticmethod
+    def get_data(entities) -> DataFrame:
+        return pd.DataFrame([
             {
                 "id"                    : e.id,
                 "Cabecera"              : e.Cabecera,
@@ -36,6 +41,4 @@ class CochesCabeceraVM(ViewModel):
                 "CochesSinScania"       : e.CochesSinScania
             }
             for e in entities
-        ]
-
-        return pd.DataFrame(data)
+        ])

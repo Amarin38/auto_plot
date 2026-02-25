@@ -1,4 +1,5 @@
 import pandas as pd
+from pandas import DataFrame
 
 from domain.entities.conteo_stock import ConteoStock
 from infrastructure.repositories.conteo_stock_repository import ConteoStockRepository
@@ -48,47 +49,11 @@ class ConteoStockVM:
 
     def get_df(self) -> pd.DataFrame:
         entities = self.repo.get_all()
-
-        data = [
-            {
-                "id"              : e.id,
-                "Codigo"          : e.Codigo,
-                "Articulo"        : e.Articulo,
-                "Sistema"         : e.Sistema,
-                "Recuento"        : e.Recuento,
-                "Resultado"       : e.Resultado,
-                "Fecha"           : e.Fecha,
-                "Reconteos"       : e.Reconteos,
-                "Estanteria"      : e.Estanteria,
-                "Precio"          : e.Precio,
-                "DiferenciaStock" : e.DiferenciaStock,
-                "DiferenciaPrecio": e.DiferenciaPrecio,
-                "PrecioAnterior"  : e.PrecioAnterior,
-                "PrecioActual"    : e.PrecioActual,
-                "Alerta"          : e.Alerta,
-                "Deposito"        : e.Deposito,
-                "Ajuste"          : e.Ajuste,
-                "StockNuevo"      : e.StockNuevo,
-            }
-            for e in entities
-        ]
-
-        return pd.DataFrame(data)
+        return self.get_data(entities)
 
     def calcular_datos(self) -> tuple:
-        entities = self.repo.get_all()
+        df = self.get_df()[["Recuento", "DiferenciaPrecio", "PrecioAnterior", "PrecioActual"]]
 
-        data = [
-            {
-                "Recuento": e.Recuento,
-                "DiferenciaPrecio": e.DiferenciaPrecio,
-                "PrecioAnterior": e.PrecioAnterior,
-                "PrecioActual": e.PrecioActual,
-            }
-            for e in entities
-        ]
-
-        df = pd.DataFrame(data)
         df["DiferenciaPrecio"]  = df["DiferenciaPrecio"].to_numpy()
         df["PrecioAnterior"]    = df["PrecioAnterior"].to_numpy()
         df["PrecioActual"]      = df["PrecioActual"].to_numpy()
@@ -103,4 +68,28 @@ class ConteoStockVM:
         return precio_faltante, precio_sobrante, precio_anterior, precio_actual, porcentaje_dif, calcular_contados(df)
 
 
-
+    @staticmethod
+    def get_data(entities) -> DataFrame:
+        return pd.DataFrame([
+                 {
+                    "id": e.id,
+                    "Codigo": e.Codigo,
+                    "Articulo": e.Articulo,
+                    "Sistema": e.Sistema,
+                    "Recuento": e.Recuento,
+                    "Resultado": e.Resultado,
+                    "Fecha": e.Fecha,
+                    "Reconteos": e.Reconteos,
+                    "Estanteria": e.Estanteria,
+                    "Precio": e.Precio,
+                    "DiferenciaStock": e.DiferenciaStock,
+                    "DiferenciaPrecio": e.DiferenciaPrecio,
+                    "PrecioAnterior": e.PrecioAnterior,
+                    "PrecioActual": e.PrecioActual,
+                    "Alerta": e.Alerta,
+                    "Deposito": e.Deposito,
+                    "Ajuste": e.Ajuste,
+                    "StockNuevo": e.StockNuevo,
+                }
+                for e in entities
+            ])

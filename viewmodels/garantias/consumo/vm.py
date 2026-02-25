@@ -1,4 +1,5 @@
 import pandas as pd
+from pandas import DataFrame
 
 from domain.entities.garantias_consumo import GarantiasConsumo
 from infrastructure.repositories.garantias_consumo_repository import GarantiasConsumoRepository
@@ -30,41 +31,27 @@ class ConsumoGarantiasVM:
 
     def get_df(self) -> pd.DataFrame:
         entities = self.repo.get_all()
-
-        data = [
-            {
-                "id"                        : e.id,
-                "Cabecera"                  : e.Cabecera,
-                "Repuesto"                  : e.Repuesto,
-                "TipoRepuesto"              : e.TipoRepuesto,
-                "Garantia"                  : e.Garantia,
-                "Transferencia"             : e.Transferencia,
-                "Total"                     : e.Total,
-                "PorcentajeTransferencia"   : e.PorcentajeTransferencia,
-                "PorcentajeGarantia"        : e.PorcentajeGarantia
-            }
-            for e in entities
-        ]
-
-        return pd.DataFrame(data)
+        return self.get_data(entities)
 
 
     def get_df_by_tipo_rep_and_cabecera(self, tipo_repuesto: str, cabecera: str) -> pd.DataFrame:
         entities = self.repo.get_by_tipo_rep_and_cabecera(tipo_repuesto, cabecera)
+        return self.get_data(entities)
 
-        data = [
-            {
-                "id"                        : e.id,
-                "Cabecera"                  : e.Cabecera,
-                "Repuesto"                  : e.Repuesto,
-                "TipoRepuesto"              : e.TipoRepuesto,
-                "Garantia"                  : e.Garantia,
-                "Transferencia"             : e.Transferencia,
-                "Total"                     : e.Total,
-                "PorcentajeTransferencia"   : e.PorcentajeTransferencia,
-                "PorcentajeGarantia"        : e.PorcentajeGarantia
-            }
-            for e in entities
-        ]
 
-        return pd.DataFrame(data)
+    @staticmethod
+    def get_data(entities) -> DataFrame:
+        return pd.DataFrame([
+                {
+                    "id": e.id,
+                    "Cabecera": e.Cabecera,
+                    "Repuesto": e.Repuesto,
+                    "TipoRepuesto": e.TipoRepuesto,
+                    "Garantia": e.Garantia,
+                    "Transferencia": e.Transferencia,
+                    "Total": e.Total,
+                    "PorcentajeTransferencia": e.PorcentajeTransferencia,
+                    "PorcentajeGarantia": e.PorcentajeGarantia
+                }
+                for e in entities
+            ])

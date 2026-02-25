@@ -1,6 +1,7 @@
 from typing import List
 
 import pandas as pd
+from pandas import DataFrame
 
 from config.enums import RepuestoEnum, PeriodoComparacionEnum, CabecerasEnum, ConsumoComparacionRepuestoEnum
 from domain.entities.consumo_comparacion import ConsumoComparacion
@@ -35,21 +36,19 @@ class ConsumoComparacionVM:
 
     def get_df(self) -> pd.DataFrame:
         entities = self.repo.get_all()
-
-        return pd.DataFrame(self.get_data(entities))
+        return self.get_data(entities)
 
 
     def get_df_cabecera_and_tipo_rep_and_periodo(self, cabecera: CabecerasEnum,
                                                        tipo_repuesto: List[ConsumoComparacionRepuestoEnum],
                                                        periodo: List[PeriodoComparacionEnum]) -> pd.DataFrame:
         entities = self.repo.get_by_cabecera_and_tipo_rep_and_periodo(cabecera, tipo_repuesto, periodo)
-
-        return pd.DataFrame(self.get_data(entities))
+        return self.get_data(entities)
 
 
     @staticmethod
-    def get_data(entities) -> list[dict]:
-        return [
+    def get_data(entities) -> pd.DataFrame:
+        return pd.DataFrame([
             {
                 "id"            : e.id,
                 "Familia"       : e.Familia,
@@ -64,4 +63,4 @@ class ConsumoComparacionVM:
                 "PeriodoID"     : e.PeriodoID,
             }
             for e in entities
-        ]
+        ])

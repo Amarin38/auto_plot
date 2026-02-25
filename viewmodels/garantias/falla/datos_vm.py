@@ -37,28 +37,7 @@ class DatosGarantiasVM(ViewModel):
 
     def get_df(self) -> pd.DataFrame:
         entities = self.repo.get_all()
-
-        data = [
-            {
-                "id": e.id,
-                "Año": e.Año,
-                "Mes": e.Mes,
-                "FechaIngreso"      : e.FechaIngreso,
-                "FechaEnvio"        : e.FechaEnvio,
-                "Cabecera"          : e.Cabecera,
-                "Interno"           : e.Interno,
-                "Codigo"            : e.Codigo,
-                "Repuesto"          : e.Repuesto,
-                "Cantidad"          : e.Cantidad,
-                "FechaColocacion"   : e.FechaColocacion,
-                "Detalle"           : e.Detalle,
-                "Tipo"              : e.Tipo,
-                "DiasColocado"      : e.DiasColocado
-            }
-            for e in entities
-        ]
-
-        return pd.DataFrame(data)
+        return self.get_data(entities)
 
 
     def get_min_date(self) -> str:
@@ -68,3 +47,27 @@ class DatosGarantiasVM(ViewModel):
     def get_max_date(self) -> str:
         return self.repo.get_max_date().strftime(PAGE_STRFTIME_YMD)
 
+
+    @staticmethod
+    def get_data(entities) -> pd.DataFrame:
+        return pd.DataFrame(
+            [
+                {
+                    "id": e.id,
+                    "Año": e.Año,
+                    "Mes": e.Mes,
+                    "FechaIngreso": e.FechaIngreso,
+                    "FechaEnvio": e.FechaEnvio,
+                    "Cabecera": e.Cabecera,
+                    "Interno": e.Interno,
+                    "Codigo": e.Codigo,
+                    "Repuesto": e.Repuesto,
+                    "Cantidad": e.Cantidad,
+                    "FechaColocacion": e.FechaColocacion,
+                    "Detalle": e.Detalle,
+                    "Tipo": e.Tipo,
+                    "DiasColocado": e.DiasColocado
+                }
+                for e in entities
+            ]
+        )

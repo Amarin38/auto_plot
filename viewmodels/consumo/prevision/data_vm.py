@@ -26,33 +26,25 @@ class PrevisionDataVM:
 
     def get_df(self) -> pd.DataFrame:
         entities = self.repo.get_all()
-
-        data = [
-            {
-                "id"                : e.id,
-                "FechaCompleta"     : e.FechaCompleta,
-                "Consumo"           : e.Consumo,
-                "Repuesto"          : e.Repuesto,
-                "TipoRepuesto"      : e.TipoRepuesto,
-            }
-            for e in entities
-        ]
-
-        return pd.DataFrame(data)
+        return self.get_data(entities)
 
 
     def get_df_by_tipo_repuesto(self, tipo_rep: str) -> pd.DataFrame:
         entities = self.repo.get_by_tipo_repuesto(tipo_rep)
+        return self.get_data(entities)
 
-        data = [
-            {
-                "id"                : e.id,
-                "FechaCompleta"     : e.FechaCompleta,
-                "Consumo"           : e.Consumo,
-                "Repuesto"          : e.Repuesto,
-                "TipoRepuesto"      : e.TipoRepuesto,
-            }
-            for e in entities
-        ]
 
-        return pd.DataFrame(data)
+    @staticmethod
+    def get_data(entities) -> pd.DataFrame:
+        return pd.DataFrame(
+            [
+                {
+                    "id": e.id,
+                    "FechaCompleta": e.FechaCompleta,
+                    "Consumo": e.Consumo,
+                    "Repuesto": e.Repuesto,
+                    "TipoRepuesto": e.TipoRepuesto,
+                }
+                for e in entities
+            ]
+        )

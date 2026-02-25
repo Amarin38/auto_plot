@@ -4,6 +4,7 @@ from typing import Optional, Any
 import numpy as np
 import streamlit as st
 import pandas as pd
+from pandas import DataFrame
 
 from domain.entities.parque_movil import ParqueMovil, ParqueMovilFiltro
 from infrastructure.repositories.parque_movil_repository import ParqueMovilRepository
@@ -40,35 +41,14 @@ class ParqueMovilVM(ViewModel):
 
         self.repo.insert_many(entities)
 
+
     def get_df(self) -> pd.DataFrame:
         entities = self.repo.get_all()
+        return self.get_data(entities)
 
-        data = [
-            {
-                "id"                    : e.id,
-                "FechaParqueMovil"      : e.FechaParqueMovil,
-                "Linea"                 : e.Linea,
-                "Interno"               : e.Interno,
-                "Dominio"               : e.Dominio,
-                "Asientos"              : e.Asientos,
-                "Año"                   : e.Año,
-                "ChasisMarca"           : e.ChasisMarca,
-                "ChasisModelo"          : e.ChasisModelo,
-                "ChasisNum"             : e.ChasisNum,
-                "MotorMarca"            : e.MotorMarca,
-                "MotorModelo"           : e.MotorModelo,
-                "MotorNum"              : e.MotorNum,
-                "Carroceria"            : e.Carroceria,
-            }
-            for e in entities
-        ]
 
-        return pd.DataFrame(data)
-
-    @staticmethod
-    # @st.cache_data
-    def get_by_args(fecha_desde: date, fecha_hasta: date, parque: ParqueMovilFiltro) -> Optional[Any]:
-        entities = ParqueMovilRepository().get_by_args(fecha_desde, fecha_hasta)
+    def get_by_args(self, fecha_desde: date, fecha_hasta: date, parque: ParqueMovilFiltro) -> Optional[Any]:
+        entities = self.repo.get_by_args(fecha_desde, fecha_hasta)
 
         if not entities:
             return None
@@ -100,7 +80,8 @@ class ParqueMovilVM(ViewModel):
         df["MotorNum"] = df["MotorNum"].fillna("")
         df["Carroceria"] = df["Carroceria"].fillna("")
 
-        data_filtrado = df.astype({
+        data_filtrado = pd.DataFrame(
+            df.astype({
             "Linea":"category",
             "Interno":"uint16",
             "Dominio":"string[pyarrow]",
@@ -113,7 +94,8 @@ class ParqueMovilVM(ViewModel):
             "MotorModelo":"category",
             "MotorNum":"string[pyarrow]",
             "Carroceria":"category",
-        })
+            })
+        )
 
         mask = np.ones(len(df), dtype=bool)
 
@@ -142,3 +124,26 @@ class ParqueMovilVM(ViewModel):
             mask &= data_filtrado["Carroceria"].isin(parque.Carroceria)
 
         return data_filtrado[mask]
+
+
+    @staticmethod
+    def get_data(entities) -> DataFrame:
+        return pd.DataFrame([
+            {
+                "id"                    : e.id,
+                "FechaParqueMovil"      : e.FechaParqueMovil,
+                "Linea"                 : e.Linea,
+                "Interno"               : e.Interno,
+                "Dominio"               : e.Dominio,
+                "Asientos"              : e.Asientos,
+                "Año"                   : e.Año,
+                "ChasisMarca"           : e.ChasisMarca,
+                "ChasisModelo"          : e.ChasisModelo,
+                "ChasisNum"             : e.ChasisNum,
+                "MotorMarca"            : e.MotorMarca,
+                "MotorModelo"           : e.MotorModelo,
+                "MotorNum"              : e.MotorNum,
+                "Carroceria"            : e.Carroceria,
+            }
+            for e in entities
+        ])

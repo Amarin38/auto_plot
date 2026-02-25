@@ -31,41 +31,29 @@ class DistribucionNormalVM(ViewModel):
 
     def get_df(self) -> pd.DataFrame:
         entities = self.repo.get_all()
-
-        data = [
-            {
-                "id"                        : e.id,
-                "Años"                      : e.Años,
-                "Cambio"                    : e.Cambio,
-                "Cabecera"                  : e.Cabecera,
-                "Repuesto"                  : e.Repuesto,
-                "TipoRepuesto"              : e.TipoRepuesto,
-                "AñoPromedio"               : e.AñoPromedio,
-                "DesviacionEstandar"        : e.DesviacionEstandar,
-                "DistribucionNormal"        : e.DistribucionNormal
-            }
-            for e in entities
-        ]
-
-        return pd.DataFrame(data)
+        return self.get_data(entities)
 
 
     def get_df_by_repuesto(self, repuesto: str) -> pd.DataFrame:
         entities = self.repo.get_by_repuesto(repuesto)
+        return self.get_data(entities)
 
-        data = [
-            {
-                "id": e.id,
-                "Años": e.Años,
-                "Cambio": e.Cambio,
-                "Cabecera": e.Cabecera,
-                "Repuesto": e.Repuesto,
-                "TipoRepuesto": e.TipoRepuesto,
-                "AñoPromedio": e.AñoPromedio,
-                "DesviacionEstandar": e.DesviacionEstandar,
-                "DistribucionNormal": e.DistribucionNormal
-            }
-            for e in entities
-        ]
 
-        return pd.DataFrame(data)
+    @staticmethod
+    def get_data(entities) -> pd.DataFrame:
+        return pd.DataFrame(
+            [
+                {
+                    "id": e.id,
+                    "Años": e.Años,
+                    "Cambio": e.Cambio,
+                    "Cabecera": e.Cabecera,
+                    "Repuesto": e.Repuesto,
+                    "TipoRepuesto": e.TipoRepuesto,
+                    "AñoPromedio": e.AñoPromedio,
+                    "DesviacionEstandar": e.DesviacionEstandar,
+                    "DistribucionNormal": e.DistribucionNormal
+                }
+                for e in entities
+            ]
+        )

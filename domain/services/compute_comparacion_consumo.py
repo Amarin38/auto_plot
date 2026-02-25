@@ -16,7 +16,6 @@ def compute_comparacion_consumo(df: pd.DataFrame, tipo_rep: ConsumoComparacionRe
 
     df["Cabecera"] = df["Cabecera"].str[-2:].str.strip()
     df["Cabecera"] = df["Cabecera"].map(JSONConfigVM().get_df_by_id("transferencias"))
-    df["Cabecera"] = df["Cabecera"].astype(str)
 
     df["FechaCompleta"] = pd.to_datetime(df["FechaCompleta"], dayfirst=True, format='mixed')
 
@@ -41,14 +40,23 @@ def compute_comparacion_consumo(df: pd.DataFrame, tipo_rep: ConsumoComparacionRe
     df["FechaTitulo"]   = f"({fecha_min.date()} | {fecha_max.date()})"
     df["PeriodoID"]     = periodo
 
-    df["Familia"]       = df["Familia"].astype("int16")
-    df["Articulo"]      = df["Articulo"].astype("int32")
-    df["Repuesto"]      = df["Repuesto"].astype("category")
-    df["TipoRepuesto"]  = df["TipoRepuesto"].astype("category")
-    df["Consumo"]       = df["Consumo"].astype(str).str.replace(",",".").astype("float64").round(1)
-    df["Gasto"]         = df["Gasto"].astype(str).str.replace(",",".").astype("float64").round(1)
-    df["PeriodoID"]     = df["PeriodoID"].astype("category")
-    df["FechaTitulo"]   = df["FechaTitulo"].astype("category")
+    df = pd.DataFrame(
+        df.astype({
+            "Familia": "uint16",
+            "Articulo": "uint32",
+            "Repuesto": "category",
+            "TipoRepuesto": "category",
+            "Cabecera": str,
+            "Consumo": str,
+            "Gasto": str,
+            "PeriodoID": "category",
+            "FechaTitulo": "category"
+        })
+    )
 
-    ConsumoComparacionVM().save_df(df)
+    df["Consumo"]   = df["Consumo"].str.replace(",", ".").astype("float64").round(1)
+    df["Gasto"]     = df["Gasto"].str.replace(",", ".").astype("float64").round(1)
+
+    print(df)
+    # ConsumoComparacionVM().save_df(df)
     return None

@@ -148,14 +148,11 @@ class PeriodoComparacionEnum(StrEnum):
     DESDE_2025_A_2026 = auto()
 
 
-
-
 class LoadDataEnum(StrEnum):
     @staticmethod
     def _generate_next_value_(name, start, count, last_values):
         return name.replace("_", " ").capitalize()
 
-    USUARIO                                 = auto()
     INDICES_DE_CONSUMO                      = auto()
     PREVISION_DE_CONSUMO                    = auto()
     HISTORIAL_CONSUMO                       = auto()

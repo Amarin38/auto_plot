@@ -25,19 +25,24 @@ class MaximosMinimosVM(ViewModel):
 
         self.repo.insert_many(entities)
 
+
     def get_df(self) -> pd.DataFrame:
         entities = self.repo.get_all()
+        return self.get_data(entities)
 
-        data = [
-            {
-                "id"        : e.id,
-                "Familia"   : e.Familia,
-                "Articulo"  : e.Articulo,
-                "Repuesto"  : e.Repuesto,
-                "Minimo"    : e.Minimo,
-                "Maximo"    : e.Maximo
-            }
-            for e in entities
-        ]
 
-        return pd.DataFrame(data)
+    @staticmethod
+    def get_data(entities) -> pd.DataFrame:
+        return pd.DataFrame(
+            [
+                {
+                    "id": e.id,
+                    "Familia": e.Familia,
+                    "Articulo": e.Articulo,
+                    "Repuesto": e.Repuesto,
+                    "Minimo": e.Minimo,
+                    "Maximo": e.Maximo
+                }
+                for e in entities
+            ]
+        )

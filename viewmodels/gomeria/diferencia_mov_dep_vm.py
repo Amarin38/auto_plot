@@ -34,23 +34,30 @@ class DiferenciaMovimientosEntreDepositosVM(ViewModel):
     def get_df(self) -> pd.DataFrame:
         entities = self.repo.get_all()
 
-        data = [
-            {
-                "id"                    : e.id,
-                "Familia"               : e.Familia,
-                "Articulo"              : e.Articulo,
-                "Repuesto"              : e.Repuesto,
-                "Consumo2024"           : e.Cantidad2024,
-                "Costo2024"             : e.CostoTotal2024,
-                "Consumo2025"           : e.Cantidad2025,
-                "Costo2025"             : e.CostoTotal2025,
-                "Diferencia Consumos"   : e.DiferenciaAnual,
-                "Diferencia Costos"     : e.DiferenciaDeCostos
-            }
-            for e in entities
-        ]
-
-        df = pd.DataFrame(data)
+        df = self.get_data(entities)
         df["Diferencia Costos"] = df["Diferencia Costos"].fillna(0)
 
         return df
+
+
+    @staticmethod
+    def get_data(entities) -> pd.DataFrame:
+        return pd.DataFrame(
+            [
+                {
+                    "id": e.id,
+                    "Familia": e.Familia,
+                    "Articulo": e.Articulo,
+                    "Repuesto": e.Repuesto,
+                    "Consumo2024": e.Cantidad2024,
+                    "Costo2024": e.CostoTotal2024,
+                    "Consumo2025": e.Cantidad2025,
+                    "Costo2025": e.CostoTotal2025,
+                    "Diferencia Consumos": e.DiferenciaAnual,
+                    "Diferencia Costos": e.DiferenciaDeCostos
+                }
+                for e in entities
+            ]
+        )
+
+

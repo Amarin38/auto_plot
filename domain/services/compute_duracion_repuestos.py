@@ -26,7 +26,7 @@ class DuracionRepuestos:
 
         grouped_patente = df.groupby("Patente")
 
-        for patente in self.patentes: # TODO: queda cambiarlo a groupby
+        for patente in self.patentes:
             df_pat = grouped_patente.get_group(patente)
             df_separado_pat = df["Patente"] == patente
 

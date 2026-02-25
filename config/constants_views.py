@@ -10,6 +10,7 @@ PAG_PRINCIPAL = "Página principal 🏠"
 PAG_SISSSA = "SISSSA FLOTA"
 PAG_DOTA_LICITACIONES = "DOTA LICITACIONES"
 PAG_CARGAR_DATOS = "Cargar datos 🔄️"
+PAG_NUEVO_USUARIO = "Nuevo usuario 👤"
 
 # Pags Consumo
 PAG_INDICES = "Índices de consumo 📊"
@@ -95,6 +96,11 @@ FALLA_GARANTIAS_BOX_HEIGHT      : int = 700
 FLOTA_CONTAINER_HEIGHT          : int = 100
 GOMERIA_DIFERENCIA_BOX_HEIGHT   : int = 737
 GOMERIA_TRANSFER_BOX_HEIGHT     : int = 601
+CARGAR_DATOS_BASIC_HEIGHT       : int = 335
+CARGAR_DATOS_MULTI_HEIGHT       : int = 470
+INPUT_HEIGHT                    : int = 100
+NUEVO_USUARIO_RADIO_HEIGHT      : int = 170
+
 
 # WIDTH
 PIE_PLOT_WIDTH          : int = 585

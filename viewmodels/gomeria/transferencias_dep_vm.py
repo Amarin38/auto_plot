@@ -28,32 +28,24 @@ class TransferenciasEntreDepositosVM(ViewModel):
 
     def get_df(self) -> pd.DataFrame:
         entities = self.repo.get_all()
-
-        data = [
-            {
-                "id"        : e.id,
-                "Repuesto"  : e.Repuesto,
-                "Año"       : e.Año,
-                "Cantidad"  : e.Cantidad,
-                "Cabecera"  : e.Cabecera
-            }
-            for e in entities
-        ]
-
-        return pd.DataFrame(data)
+        return self.get_data(entities)
 
     def get_df_by_cabecera(self, cabecera: str) -> pd.DataFrame:
         entities = self.repo.get_by_cabecera(cabecera)
+        return self.get_data(entities)
 
-        data = [
-            {
-                "id"        : e.id,
-                "Repuesto"  : e.Repuesto,
-                "Año"       : e.Año,
-                "Cantidad"  : e.Cantidad,
-                "Cabecera"  : e.Cabecera
-            }
-            for e in entities
-        ]
 
-        return pd.DataFrame(data)
+    @staticmethod
+    def get_data(entities) -> pd.DataFrame:
+        return pd.DataFrame(
+            [
+                {
+                    "id": e.id,
+                    "Repuesto": e.Repuesto,
+                    "Año": e.Año,
+                    "Cantidad": e.Cantidad,
+                    "Cabecera": e.Cabecera
+                }
+                for e in entities
+            ]
+        )
