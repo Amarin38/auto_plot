@@ -57,6 +57,5 @@ def compute_comparacion_consumo(df: pd.DataFrame, tipo_rep: ConsumoComparacionRe
     df["Consumo"]   = df["Consumo"].str.replace(",", ".").astype("float64").round(1)
     df["Gasto"]     = df["Gasto"].str.replace(",", ".").astype("float64").round(1)
 
-    print(df)
-    # ConsumoComparacionVM().save_df(df)
+    ConsumoComparacionVM().save_df(df)
     return None
