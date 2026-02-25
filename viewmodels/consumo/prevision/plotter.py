@@ -1,4 +1,3 @@
-import streamlit as st
 import pandas as pd
 from babel.dates import format_date
 
@@ -17,6 +16,15 @@ from viewmodels.consumo.prevision.data_vm import PrevisionDataVM
 from viewmodels.consumo.prevision.vm import PrevisionVM
 
 
+def _generar_columna_ticks(serie_fechas):
+    fechas_unicas = serie_fechas.unique()
+
+    mapa_fechas = {
+        fecha: f"{format_date(fecha, 'MMM', locale='es').capitalize()}, {fecha.year}"
+        for fecha in fechas_unicas
+    }
+    return serie_fechas.map(mapa_fechas)
+
 
 class PrevisionPlotter:
     def __init__(self, tipo_rep: str):
@@ -29,7 +37,14 @@ class PrevisionPlotter:
         self.tipo_rep = tipo_rep
         self.df_data = PrevisionDataVM().get_df_by_tipo_repuesto(self.tipo_rep)
         self.df_forecast = PrevisionVM().get_df_by_tipo_repuesto(self.tipo_rep)
-        self.fecha = self.common.devolver_fecha(self.df_data, "FechaCompleta")
+
+        if not self.df_data.empty:
+            self.df_data['FechaCompleta'] = pd.to_datetime(self.df_data['FechaCompleta'], format=FILE_STRFTIME_YMD)
+            self.fecha = self.common.devolver_fecha(self.df_data, "FechaCompleta")
+
+        if not self.df_forecast.empty:
+            self.df_forecast['FechaCompleta'] = pd.to_datetime(self.df_forecast['FechaCompleta'], format=FILE_STRFTIME_YMD)
+
 
     @execute_safely
     def create_plot(self):
@@ -37,10 +52,7 @@ class PrevisionPlotter:
             figuras = []
             todos_repuestos = self.df_data['Repuesto'].unique()
 
-            self.df_data['FechaCompleta'] = pd.to_datetime(self.df_data['FechaCompleta'], format=FILE_STRFTIME_YMD)
-            self.df_forecast['FechaCompleta'] = pd.to_datetime(self.df_forecast['FechaCompleta'], format=FILE_STRFTIME_YMD)
-
-            titulo = f'ConsumoPrevision de {self.tipo_rep} ({self.fecha})' if self.tipo_rep else ""
+            titulo = f'Prevision de {self.tipo_rep} ({self.fecha})' if self.tipo_rep else ""
 
             grupos_data = self.df_data.groupby('Repuesto')
             grupos_forecast = self.df_forecast.groupby('Repuesto')
@@ -59,8 +71,8 @@ class PrevisionPlotter:
                 valor_mensual = int(y_forecast.mean())
 
                 # Ticks
-                ticks_text_data = calcular_ticks(x_data)
-                ticks_text_forecast = calcular_ticks(x_forecast)
+                ticks_text_data = _generar_columna_ticks(x_data)
+                ticks_text_forecast = _generar_columna_ticks(x_forecast)
 
                 tickvals = pd.concat([x_data, x_forecast]).reset_index(drop=True) # type: ignore
                 ticktext = pd.concat([ticks_text_data, ticks_text_forecast]).reset_index(drop=True)
@@ -97,10 +109,3 @@ class PrevisionPlotter:
             return figuras, titulo
         return [None, None]
 
-@st.cache_data
-def calcular_ticks(x):
-    año = x.apply(
-        lambda d: format_date(d, "MMM", locale="es").capitalize()
-    )
-    mes = x.dt.strftime("%Y")
-    return año + ", " + mes

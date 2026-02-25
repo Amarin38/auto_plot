@@ -1,5 +1,3 @@
-import time
-
 import streamlit as st
 
 from presentation.streamlit_components import SelectBoxComponents, OtherComponents
@@ -28,10 +26,12 @@ def consumo_prevision():
 
     tipo_repuesto = select.select_box_tipo_repuesto(config_col, "FORECAST_REPUESTO")
 
+    # FIXME: tarda demasiado en cargar
     if tipo_repuesto:
         with config_col:
             with st.spinner("Cargando previsiones..."):
-                figs, titulo = utils.run_in_threads(lambda: _generar_grafico_prevision(tipo_repuesto), max_workers=4)
+                # figs, titulo = utils.run_in_threads(lambda: _generar_grafico_prevision(tipo_repuesto), max_workers=4)
+                figs, titulo = _generar_grafico_prevision(tipo_repuesto)
 
         if figs and titulo:
             other.centered_title(titulo_col, titulo)
