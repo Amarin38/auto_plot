@@ -10,7 +10,7 @@ from infrastructure import DBBase
 from infrastructure.db.models.base_model_mixin import BaseModelMixin
 
 
-class GarantiasDatosModel(DBBase, BaseModelMixin):
+class GarantiasDatosModel(BaseModelMixin, DBBase):
     __tablename__ = "GARANTIAS_DATOS"
 
     Año:                Mapped[int] = mapped_column(Integer, nullable=True)

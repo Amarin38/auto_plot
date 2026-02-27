@@ -7,7 +7,7 @@ from infrastructure import DBBase
 from infrastructure.db.models.base_model_mixin import BaseModelMixin
 
 
-class ConsumoHistorialModel(DBBase, BaseModelMixin):
+class ConsumoHistorialModel(BaseModelMixin, DBBase):
     __tablename__ = "CONSUMO_HISTORIAL"
 
     TipoRepuesto:   Mapped[str]

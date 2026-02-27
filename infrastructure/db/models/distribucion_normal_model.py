@@ -4,7 +4,7 @@ from infrastructure import DBBase
 from infrastructure.db.models.base_model_mixin import BaseModelMixin
 
 
-class DistribucionNormalModel(DBBase, BaseModelMixin):
+class DistribucionNormalModel(BaseModelMixin, DBBase):
     __tablename__ = "DISTRIBUCION_NORMAL"
 
     Años:               Mapped[int]

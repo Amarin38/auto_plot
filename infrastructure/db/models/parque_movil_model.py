@@ -7,7 +7,7 @@ from infrastructure import DBBase
 from infrastructure.db.models.base_model_mixin import BaseModelMixin
 
 
-class ParqueMovilModel(DBBase, BaseModelMixin):
+class ParqueMovilModel(BaseModelMixin, DBBase):
     __tablename__ = "PARQUE_MOVIL"
 
     FechaParqueMovil:       Mapped[date] = mapped_column(Date, nullable=True)

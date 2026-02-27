@@ -6,8 +6,9 @@ from infrastructure import DBBase
 from infrastructure.db.models.base_model_mixin import BaseModelMixin
 
 
-class ConteoStockModel(DBBase, BaseModelMixin):
+class ConteoStockModel(BaseModelMixin, DBBase):
     __tablename__ = "CONTEO_STOCK"
+
     Codigo:             Mapped[str] = mapped_column(String(15))
     Articulo:           Mapped[str]
     Sistema:            Mapped[int]

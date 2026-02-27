@@ -3,7 +3,7 @@ from infrastructure import DBBase
 from infrastructure.db.models.base_model_mixin import BaseModelMixin
 
 
-class GomeriaTransferenciasEntreDepModel(DBBase, BaseModelMixin):
+class GomeriaTransferenciasEntreDepModel(BaseModelMixin, DBBase):
     __tablename__ = "GOMERIA_TRANSFERENCIAS_DEP"
 
     Repuesto: Mapped[str]

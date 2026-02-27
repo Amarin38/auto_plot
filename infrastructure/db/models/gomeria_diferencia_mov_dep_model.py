@@ -4,7 +4,7 @@ from infrastructure import DBBase
 from infrastructure.db.models.base_model_mixin import BaseModelMixin
 
 
-class GomeriaDiferenciaMovEntreDepModel(DBBase, BaseModelMixin):
+class GomeriaDiferenciaMovEntreDepModel(BaseModelMixin, DBBase):
     __tablename__ = "GOMERIA_DIFERENCIA_MOV_DEP"
 
     Familia: Mapped[int]

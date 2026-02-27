@@ -3,7 +3,7 @@ from infrastructure import DBBase
 from infrastructure.db.models.base_model_mixin import BaseModelMixin
 
 
-class MaximosMinimosModel(DBBase, BaseModelMixin):
+class MaximosMinimosModel(BaseModelMixin, DBBase):
     __tablename__ = "MAXIMOS_MINIMOS"
     
     Familia:    Mapped[int]

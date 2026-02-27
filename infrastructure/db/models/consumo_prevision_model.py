@@ -6,7 +6,7 @@ from infrastructure import DBBase
 from infrastructure.db.models.base_model_mixin import BaseModelMixin
 
 
-class ConsumoPrevisionModel(DBBase, BaseModelMixin):
+class ConsumoPrevisionModel(BaseModelMixin, DBBase):
     __tablename__ = "CONSUMO_PREVISION"
 
     FechaCompleta:      Mapped[date] = mapped_column(Date)

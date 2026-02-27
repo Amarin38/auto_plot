@@ -6,7 +6,7 @@ from infrastructure import DBBase
 from infrastructure.db.models.base_model_mixin import BaseModelMixin
 
 
-class DuracionRepuestosModel(DBBase, BaseModelMixin):
+class DuracionRepuestosModel(BaseModelMixin, DBBase):
     __tablename__ = "DURACION_REPUESTOS"
 
     Patente:            Mapped[str] = mapped_column(String(8))

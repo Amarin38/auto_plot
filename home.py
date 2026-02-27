@@ -1,7 +1,6 @@
 import streamlit as st
 import streamlit_authenticator as stauth
 
-from infrastructure import DBBase, db_engine
 from presentation.consumo_comparacion_page import consumo_comparacion
 from presentation.dota_licitaciones_page import dota_licitaciones_page
 

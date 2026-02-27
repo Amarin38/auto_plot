@@ -6,7 +6,7 @@ from infrastructure import DBBase
 from infrastructure.db.models.base_model_mixin import BaseModelMixin
 
 
-class JSONConfigModel(DBBase, BaseModelMixin):
+class JSONConfigModel(BaseModelMixin, DBBase):
     __tablename__ = "JSON_CONFIG"
     
     nombre:     Mapped[str]

@@ -3,13 +3,12 @@ from sqlalchemy import Date
 from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column
 from infrastructure import DBBase
-from infrastructure.db.models.base_model_mixin import BaseModelMixin
+from infrastructure.db.models.base_model_mixin import BaseModelMixin, BaseCabecera
 
 
-class ConsumoDesviacionIndicesModel(DBBase, BaseModelMixin):
+class ConsumoDesviacionIndicesModel(BaseModelMixin, BaseCabecera, DBBase):
     __tablename__ = "CONSUMO_DESVIACION_INDICES"
     
-    Cabecera                : Mapped[str]
     TipoRepuesto            : Mapped[str]
     MediaRepuesto           : Mapped[float]
     MediaDeMediasRepuesto   : Mapped[float]

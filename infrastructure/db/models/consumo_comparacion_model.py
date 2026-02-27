@@ -7,7 +7,7 @@ from infrastructure import DBBase
 from infrastructure.db.models.base_model_mixin import BaseModelMixin
 
 
-class ConsumoComparacionModel(DBBase, BaseModelMixin):
+class ConsumoComparacionModel(BaseModelMixin, DBBase):
     __tablename__ = "CONSUMO_COMPARACION"
 
     Familia         : Mapped[int]
