@@ -28,6 +28,11 @@ TODAY_DATE_FILE_DMY = Timestamp.today().strftime(FILE_STRFTIME_DMY)
 TODAY_DATE_FILE_YMD = Timestamp.today().strftime(FILE_STRFTIME_YMD)
 TODAY_FOR_DELTA = Timestamp.today().strftime(DELTA_STRFTIME_YM)
 
+MESES_ESPAÑOL = {
+    1: 'Ene', 2: 'Feb', 3: 'Mar', 4: 'Abr', 5: 'May', 6: 'Jun',
+    7: 'Jul', 8: 'Ago', 9: 'Sep', 10: 'Oct', 11: 'Nov', 12: 'Dic'
+}
+
 # Plots
 TITULOS_GOMERIA = ("Consumos", "", "Costos", "", "Diferencias consumos", "", "Diferencias costos")
 ANCHO_COLS_GOMERIA = (0.30, 0.15, 0.30, 0.20, 0.20, 0.15, 0.20)

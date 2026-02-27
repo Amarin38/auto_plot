@@ -39,7 +39,10 @@ class DuracionRepuestosVM:
 
     def get_df_by_repuesto(self, repuesto: str) -> pd.DataFrame:
         entities = self.repo.get_by_repuesto(repuesto)
-        return self.get_data(entities)
+        df = self.get_data(entities)
+
+        df["FechaCambio"] = pd.to_datetime(df["FechaCambio"], errors="coerce")
+        return df
 
 
     @staticmethod

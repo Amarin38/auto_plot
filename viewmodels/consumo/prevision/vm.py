@@ -1,5 +1,6 @@
 import pandas as pd
 
+from config.constants_common import FILE_STRFTIME_YMD
 from domain.entities.consumo_prevision import ConsumoPrevision
 from infrastructure.repositories.consumo_prevision_repository import ConsumoPrevisionRepository
 
@@ -31,7 +32,10 @@ class PrevisionVM:
 
     def get_df_by_tipo_repuesto(self, tipo_rep: str) -> pd.DataFrame:
         entities = self.repo.get_by_tipo_repuesto(tipo_rep)
-        return self.get_data(entities)
+        df = self.get_data(entities)
+
+        df['FechaCompleta'] = pd.to_datetime(df['FechaCompleta'], format=FILE_STRFTIME_YMD)
+        return df
 
 
     @staticmethod

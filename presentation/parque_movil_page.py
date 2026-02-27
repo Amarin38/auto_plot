@@ -67,7 +67,6 @@ def parque_movil():
             st.session_state.filtros_previos = filtros_actuales
 
         if st.session_state.df_completo is None:
-            # resultado = _obtener_parque_movil(fecha_desde, fecha_hasta, parque)
             resultado = ParqueMovilVM().get_by_args(fecha_desde, fecha_hasta, parque)
             st.session_state.df_completo = resultado
 

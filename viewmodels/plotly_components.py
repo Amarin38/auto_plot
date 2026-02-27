@@ -5,12 +5,24 @@ import pandas as pd
 from multipledispatch import dispatch
 from plotly.graph_objs import Figure
 
-
+from config.constants_common import MESES_ESPAÑOL
 from config.enums_colors import HoverColorsEnum, PlotlyComponentsColorsEnum
 from config.enums import SymbolEnum, DashEnum
 from utils.exception_utils import execute_safely
 from utils.common_utils import CommonUtils
 import plotly.graph_objects as go
+
+def _generar_columna_ticks_español(serie_fechas):
+    serie_fechas = pd.to_datetime(serie_fechas)
+
+    fechas_unicas = serie_fechas.unique()
+
+    mapa_fechas = {
+        fecha: f"{MESES_ESPAÑOL[fecha.month]}, {fecha.year}"
+        for fecha in fechas_unicas
+    }
+
+    return serie_fechas.map(mapa_fechas)
 
 class HoverComponents:
     def __init__(self):

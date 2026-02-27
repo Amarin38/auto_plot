@@ -1,26 +1,14 @@
 import pandas as pd
-from babel.dates import format_date
 
 import plotly.graph_objects as go
 
 from config.enums_colors import PrevisionColorsEnum
-from config.constants_common import FILE_STRFTIME_YMD
 from config.enums import SymbolEnum, DashEnum
 
 from utils.exception_utils import execute_safely
 from utils.common_utils import CommonUtils
 from viewmodels.plotly_components import DefaultUpdateLayoutComponents, HoverComponents, SliderComponents, \
-    PlotComponents
-
-
-def _generar_columna_ticks(serie_fechas):
-    fechas_unicas = serie_fechas.unique()
-
-    mapa_fechas = {
-        fecha: f"{format_date(fecha, 'MMM', locale='es').capitalize()}, {fecha.year}"
-        for fecha in fechas_unicas
-    }
-    return serie_fechas.map(mapa_fechas)
+    PlotComponents, _generar_columna_ticks_español
 
 
 class PrevisionPlotter:
@@ -36,11 +24,7 @@ class PrevisionPlotter:
         self.df_forecast = df_forecast
 
         if not self.df_data.empty:
-            self.df_data['FechaCompleta'] = pd.to_datetime(self.df_data['FechaCompleta'], format=FILE_STRFTIME_YMD)
             self.fecha = self.common.devolver_fecha(self.df_data, "FechaCompleta")
-
-        if not self.df_forecast.empty:
-            self.df_forecast['FechaCompleta'] = pd.to_datetime(self.df_forecast['FechaCompleta'], format=FILE_STRFTIME_YMD)
 
 
     @execute_safely
@@ -68,8 +52,8 @@ class PrevisionPlotter:
                 valor_mensual = int(y_forecast.mean())
 
                 # Ticks
-                ticks_text_data = _generar_columna_ticks(x_data)
-                ticks_text_forecast = _generar_columna_ticks(x_forecast)
+                ticks_text_data = _generar_columna_ticks_español(x_data)
+                ticks_text_forecast = _generar_columna_ticks_español(x_forecast)
 
                 tickvals = pd.concat([x_data, x_forecast]).reset_index(drop=True) # type: ignore
                 ticktext = pd.concat([ticks_text_data, ticks_text_forecast]).reset_index(drop=True)

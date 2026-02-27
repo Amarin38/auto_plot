@@ -29,18 +29,18 @@ def _fetch_base_dataframe(fecha_desde: date, fecha_hasta: date):
 
     df = pd.DataFrame.from_records(rows, columns=cols)
 
-    df["Linea"] = df["Linea"].fillna(0)
-    df["Interno"] = df["Interno"].fillna(0)
-    df["Dominio"] = df["Dominio"].fillna("")
-    df["Asientos"] = df["Asientos"].fillna(0)
-    df["Año"] = df["Año"].fillna(0)
-    df["ChasisMarca"] = df["ChasisMarca"].fillna("")
-    df["ChasisModelo"] = df["ChasisModelo"].fillna("")
-    df["ChasisNum"] = df["ChasisNum"].fillna("")
-    df["MotorMarca"] = df["MotorMarca"].fillna("")
-    df["MotorModelo"] = df["MotorModelo"].fillna("")
-    df["MotorNum"] = df["MotorNum"].fillna("")
-    df["Carroceria"] = df["Carroceria"].fillna("")
+    df["Linea"]         = df["Linea"].fillna(0)
+    df["Interno"]       = df["Interno"].fillna(0)
+    df["Dominio"]       = df["Dominio"].fillna("")
+    df["Asientos"]      = df["Asientos"].fillna(0)
+    df["Año"]           = df["Año"].fillna(0)
+    df["ChasisMarca"]   = df["ChasisMarca"].fillna("")
+    df["ChasisModelo"]  = df["ChasisModelo"].fillna("")
+    df["ChasisNum"]     = df["ChasisNum"].fillna("")
+    df["MotorMarca"]    = df["MotorMarca"].fillna("")
+    df["MotorModelo"]   = df["MotorModelo"].fillna("")
+    df["MotorNum"]      = df["MotorNum"].fillna("")
+    df["Carroceria"]    = df["Carroceria"].fillna("")
 
     return pd.DataFrame(df.astype({
             "Linea": "category",

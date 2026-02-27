@@ -17,9 +17,7 @@ class DuracionRepuestosPlotter:
         self.df_duracion        = df_duracion
         self.df_distribucion    = df_distribucion
 
-        self.df_duracion["FechaCambio"] = pd.to_datetime(
-            self.df_duracion["FechaCambio"], errors="coerce"
-        )
+
 
     def create_plot(self):
         fecha_min   = self.df_duracion["FechaCambio"].min().strftime(FILE_STRFTIME_YMD)
