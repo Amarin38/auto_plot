@@ -4,11 +4,12 @@ from sqlalchemy import Date, String
 from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column
 from infrastructure import DBBase
+from infrastructure.db.models.base_model_mixin import BaseModelMixin
 
-class ParqueMovilModel(DBBase):
+
+class ParqueMovilModel(DBBase, BaseModelMixin):
     __tablename__ = "PARQUE_MOVIL"
 
-    id:                     Mapped[int] = mapped_column(primary_key=True)
     FechaParqueMovil:       Mapped[date] = mapped_column(Date, nullable=True)
     Linea:                  Mapped[int] = mapped_column(nullable=True)
     Interno:                Mapped[int] = mapped_column(nullable=True)

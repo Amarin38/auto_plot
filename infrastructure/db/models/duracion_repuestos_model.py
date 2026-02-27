@@ -3,12 +3,12 @@ from sqlalchemy import Date, String
 from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column
 from infrastructure import DBBase
+from infrastructure.db.models.base_model_mixin import BaseModelMixin
 
 
-class DuracionRepuestosModel(DBBase):
+class DuracionRepuestosModel(DBBase, BaseModelMixin):
     __tablename__ = "DURACION_REPUESTOS"
 
-    id:                 Mapped[int] = mapped_column(primary_key=True)
     Patente:            Mapped[str] = mapped_column(String(8))
     FechaCambio:        Mapped[date] = mapped_column(Date)
     Cambio:             Mapped[int]

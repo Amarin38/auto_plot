@@ -5,12 +5,12 @@ from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column
 
 from infrastructure import DBBase
+from infrastructure.db.models.base_model_mixin import BaseModelMixin
 
 
-class ConsumoObligatorioModel(DBBase):
+class ConsumoObligatorioModel(DBBase, BaseModelMixin):
     __tablename__ = "CONSUMO_OBLIGATORIO"
 
-    id:                 Mapped[int] = mapped_column(primary_key=True)
     Cabecera:           Mapped[str]
     Repuesto:           Mapped[str]
     Año2023:            Mapped[int]

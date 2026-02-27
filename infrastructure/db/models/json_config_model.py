@@ -3,12 +3,12 @@ from sqlalchemy import JSON
 from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column
 from infrastructure import DBBase
+from infrastructure.db.models.base_model_mixin import BaseModelMixin
 
 
-class JSONConfigModel(DBBase):
+class JSONConfigModel(DBBase, BaseModelMixin):
     __tablename__ = "JSON_CONFIG"
     
-    id:         Mapped[int] = mapped_column(primary_key=True)
     nombre:     Mapped[str]
     data:       Mapped[Dict[str, Any]] = mapped_column(JSON)
 

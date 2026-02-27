@@ -1,12 +1,12 @@
 from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column
 from infrastructure import DBBase
+from infrastructure.db.models.base_model_mixin import BaseModelMixin
 
 
-class GomeriaDiferenciaMovEntreDepModel(DBBase):
+class GomeriaDiferenciaMovEntreDepModel(DBBase, BaseModelMixin):
     __tablename__ = "GOMERIA_DIFERENCIA_MOV_DEP"
 
-    id: Mapped[int] = mapped_column(primary_key=True)
     Familia: Mapped[int]
     Articulo: Mapped[int]
     Repuesto: Mapped[str]

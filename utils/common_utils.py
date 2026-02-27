@@ -6,6 +6,7 @@ from datetime import datetime, date
 from zipfile import BadZipFile
 
 import pandas as pd
+import streamlit as st
 
 from typing import List, Optional, Any
 
@@ -67,6 +68,7 @@ class CommonUtils:
         return pd.to_datetime(df[columna].unique()).strftime(FILE_STRFTIME_DMY)[0]
 
 
+    #TODO: ver si eliminarla
     @execute_safely
     def run_in_threads(self, functions, max_workers: Optional[int] = None) -> List[Any]:
         ctx = get_script_run_ctx()
@@ -209,6 +211,7 @@ class CommonUtils:
 
         return None
 
+    @st.cache_data(ttl=100)
     @execute_safely
     def num_parser(self, val) -> str:
         return (f"{val:,.2f}"
@@ -217,6 +220,7 @@ class CommonUtils:
                 .replace("X", ".")
                 )
 
+    @st.cache_data(ttl=100)
     @execute_safely
     def abreviar_es(self, n) -> str:
         if n >= 1_000_000_000:

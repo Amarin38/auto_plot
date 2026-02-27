@@ -1,16 +1,15 @@
 from datetime import date
-from sqlalchemy import Date, Integer
+from sqlalchemy import Date
 from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column
 
-from config.enums import PeriodoComparacionEnum, CabecerasEnum, ConsumoComparacionRepuestoEnum
 from infrastructure import DBBase
+from infrastructure.db.models.base_model_mixin import BaseModelMixin
 
 
-class ConsumoComparacionModel(DBBase):
+class ConsumoComparacionModel(DBBase, BaseModelMixin):
     __tablename__ = "CONSUMO_COMPARACION"
 
-    id              : Mapped[int] = mapped_column(primary_key=True)
     Familia         : Mapped[int]
     Articulo        : Mapped[int]
     Repuesto        : Mapped[str]

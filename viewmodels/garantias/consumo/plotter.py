@@ -20,10 +20,10 @@ class ConsumoGarantiasPlotter:
     @execute_safely
     def create_plot(self) -> Union[go.Figure, None]:
         if not self.df_data.empty:
-            x_data = self.df_data["Repuesto"]
-            y_garantias = self.df_data["Garantia"].to_numpy()
-            y_transfer = self.df_data["Transferencia"].to_numpy()
-            diferencia_gar = self.df_data["PorcentajeGarantia"]
+            x_data              = self.df_data["Repuesto"]
+            y_garantias         = self.df_data["Garantia"].to_numpy()
+            y_transfer          = self.df_data["Transferencia"].to_numpy()
+            diferencia_gar      = self.df_data["PorcentajeGarantia"]
             diferencia_transfer = self.df_data["PorcentajeTransferencia"]
 
 

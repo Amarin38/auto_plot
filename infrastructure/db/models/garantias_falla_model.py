@@ -1,12 +1,12 @@
 from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column
 from infrastructure import DBBase
+from infrastructure.db.models.base_model_mixin import BaseModelMixin
 
 
-class GarantiasFallaModel(DBBase):
+class GarantiasFallaModel(DBBase, BaseModelMixin):
     __tablename__ = "GARANTIAS_FALLA"
 
-    id:                     Mapped[int] = mapped_column(primary_key=True)
     Cabecera:               Mapped[str]
     Repuesto:               Mapped[str]
     TipoRepuesto:           Mapped[str] = mapped_column(nullable=True)

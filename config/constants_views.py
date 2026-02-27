@@ -6,19 +6,19 @@ MAIN_TABS: Tuple[str, ...] = (" 🏠 Página principal", " 📊 Índices de cons
 
 
 # Pags Inicio
-PAG_PRINCIPAL = "Página principal 🏠"
-PAG_SISSSA = "SISSSA FLOTA"
-PAG_DOTA_LICITACIONES = "DOTA LICITACIONES"
-PAG_CARGAR_DATOS = "Cargar datos 🔄️"
-PAG_NUEVO_USUARIO = "Nuevo usuario 👤"
+PAG_PRINCIPAL           = "Página principal 🏠"
+PAG_SISSSA              = "SISSSA FLOTA"
+PAG_DOTA_LICITACIONES   = "DOTA LICITACIONES"
+PAG_CARGAR_DATOS        = "Cargar datos 🔄️"
+PAG_NUEVO_USUARIO       = "Nuevo usuario 👤"
 
 # Pags Consumo
-PAG_INDICES = "Índices de consumo 📊"
-PAG_HISTORIAL = "Historial de consumos 💽"
+PAG_INDICES             = "Índices de consumo 📊"
+PAG_HISTORIAL           = "Historial de consumos 💽"
 PAG_CONSUMO_OBLIGATORIO = "Consumo Obligatorio 🚨"
-PAG_PREVISION = "Previsión de consumo 📈"
-PAG_DESVIACION_INDICES = "Desviaciones de índices 📊"
-PAG_DURACION = "Duracion de repuestos 🛠️"
+PAG_PREVISION           = "Previsión de consumo 📈"
+PAG_DESVIACION_INDICES  = "Desviaciones de índices 📊"
+PAG_DURACION            = "Duracion de repuestos 🛠️"
 PAG_COMPARACION_CONSUMO = "Comparación de consumo 🧩"
 
 # Pags Garantias
@@ -27,14 +27,14 @@ PAG_FALLA_GARANTIAS = "Falla equipos garantías ⛔"
 # Pags info.
 PAG_MAXIMOS_MINIMOS = "Máximos y Mínimos ⬆️⬇️"
 PAG_COCHES_CABECERA = "Coches por cabecera 🚌"
-PAG_PARQUE_MOVIL = "Parque Móvil 🚌🚏"
+PAG_PARQUE_MOVIL    = "Parque Móvil 🚌🚏"
 
 # Pags Gomeria
 PAG_TRANSFERENCIAS_ENTRE_DEPOSITOS = "Transferencias entre depósitos 🔃"
 
 # Tabs
-TABS_FALLAS = ("🚫 Falla Equipos Garantías", "📊 Consumos Garantias y Transferencias")
-TABS_DURACION = ("🛠️ General", "🔧 Por repuesto")
+TABS_FALLAS     = ("🚫 Falla Equipos Garantías", "📊 Consumos Garantias y Transferencias")
+TABS_DURACION   = ("🛠️ General", "🔧 Por repuesto")
 
 # Selectboxes
 PLACEHOLDER = "------"

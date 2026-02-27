@@ -3,11 +3,11 @@ from sqlalchemy import Date, String
 from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column
 from infrastructure import DBBase
+from infrastructure.db.models.base_model_mixin import BaseModelMixin
 
 
-class ConteoStockModel(DBBase):
+class ConteoStockModel(DBBase, BaseModelMixin):
     __tablename__ = "CONTEO_STOCK"
-    id:                 Mapped[int] = mapped_column(primary_key=True)
     Codigo:             Mapped[str] = mapped_column(String(15))
     Articulo:           Mapped[str]
     Sistema:            Mapped[int]

@@ -61,7 +61,7 @@ class IndiceColorsEnum(StrEnum):
 
 
 class HoverColorsEnum(StrEnum):
-    NEGRO = "#0E1117"
+    NEGRO   = "#0E1117"
     VIOLETA = "#833E73"
 
 
@@ -137,12 +137,12 @@ class CustomMetricColorsEnum(StrEnum):
 
 
 class ColoresMatplotlibEnum(StrEnum):
-    YlOrRd = auto()
-    YlGnBu = auto()
-    plasma = auto()
+    YlOrRd  = auto()
+    YlGnBu  = auto()
+    plasma  = auto()
     viridis = auto()
-    magma = auto()
-    PuBuGn = auto()
+    magma   = auto()
+    PuBuGn  = auto()
 
 
 # Texto

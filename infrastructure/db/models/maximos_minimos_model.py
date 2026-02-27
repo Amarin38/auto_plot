@@ -1,12 +1,11 @@
 from sqlalchemy.orm import Mapped
-from sqlalchemy.orm import mapped_column
 from infrastructure import DBBase
+from infrastructure.db.models.base_model_mixin import BaseModelMixin
 
 
-class MaximosMinimosModel(DBBase):
+class MaximosMinimosModel(DBBase, BaseModelMixin):
     __tablename__ = "MAXIMOS_MINIMOS"
     
-    id:         Mapped[int] = mapped_column(primary_key=True)
     Familia:    Mapped[int]
     Articulo:   Mapped[int]
     Repuesto:   Mapped[str]

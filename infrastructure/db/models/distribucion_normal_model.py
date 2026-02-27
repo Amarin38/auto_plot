@@ -1,12 +1,12 @@
 from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column
 from infrastructure import DBBase
+from infrastructure.db.models.base_model_mixin import BaseModelMixin
 
 
-class DistribucionNormalModel(DBBase):
+class DistribucionNormalModel(DBBase, BaseModelMixin):
     __tablename__ = "DISTRIBUCION_NORMAL"
 
-    id:                 Mapped[int] = mapped_column(primary_key=True)
     Años:               Mapped[int]
     Cambio:             Mapped[int]
     Cabecera:           Mapped[str] = mapped_column(nullable=True)

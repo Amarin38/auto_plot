@@ -3,41 +3,42 @@ from pandas import Timestamp
 
 # PATHS
 MAIN_PATH = Path().cwd()
-RESOURCES_PATH = "resources/"
-IMG_PATH = f"{RESOURCES_PATH}images/"
-JSON_PATH: str = f"{MAIN_PATH}/data/json_data"
-COMMON_DB_PATH: str = f"{MAIN_PATH}/infrastructure/db/common_data.db"
-SERV_DB_PATH: str = f"{MAIN_PATH}/infrastructure/db/services_data.db"
-DB_PATH: str = f"sqlite:///{MAIN_PATH}/infrastructure/db/data.db"
+RESOURCES_PATH  : str = "resources/"
+IMG_PATH        : str = f"{RESOURCES_PATH}images/"
+JSON_PATH       : str = f"{MAIN_PATH}/data/json_data"
+COMMON_DB_PATH  : str = f"{MAIN_PATH}/infrastructure/db/common_data.db"
+SERV_DB_PATH    : str = f"{MAIN_PATH}/infrastructure/db/services_data.db"
+DB_PATH         : str = f"sqlite:///{MAIN_PATH}/infrastructure/db/data.db"
 
 # PAGINAS
-FLOTA_URL = "https://sistemasanantonio.com.ar/san_antonio/mod_flota/Grilla_ParqueMovil.aspx"
-LICITACIONES_URL = "https://dota.sistemasanantonio.com.ar/licitaciones/login.aspx"
+FLOTA_URL           = "https://sistemasanantonio.com.ar/san_antonio/mod_flota/Grilla_ParqueMovil.aspx"
+LICITACIONES_URL    = "https://dota.sistemasanantonio.com.ar/licitaciones/login.aspx"
 
 # DATES
-PAGE_STRFTIME_DMY = "%d/%m/%Y"
-PAGE_STRFTIME_YMD = "%Y/%m/%d"
-FILE_STRFTIME_DMY = "%d-%m-%Y"
-FILE_STRFTIME_YMD = "%Y-%m-%d"
-DELTA_STRFTIME_YM = "%Y-%m"
-DELTA_STRFTIME_MY = "%m-%Y"
-NORMAL_DATE_YMD = "YYYY-MM-DD"
+PAGE_STRFTIME_DMY   = "%d/%m/%Y"
+PAGE_STRFTIME_YMD   = "%Y/%m/%d"
+FILE_STRFTIME_DMY   = "%d-%m-%Y"
+FILE_STRFTIME_YMD   = "%Y-%m-%d"
+DELTA_STRFTIME_YM   = "%Y-%m"
+DELTA_STRFTIME_MY   = "%m-%Y"
+NORMAL_DATE_YMD     = "YYYY-MM-DD"
 
-TODAY_DATE_PAGE = Timestamp.today().strftime(PAGE_STRFTIME_DMY)
+TODAY_DATE_PAGE     = Timestamp.today().strftime(PAGE_STRFTIME_DMY)
 TODAY_DATE_FILE_DMY = Timestamp.today().strftime(FILE_STRFTIME_DMY)
 TODAY_DATE_FILE_YMD = Timestamp.today().strftime(FILE_STRFTIME_YMD)
-TODAY_FOR_DELTA = Timestamp.today().strftime(DELTA_STRFTIME_YM)
+TODAY_FOR_DELTA     = Timestamp.today().strftime(DELTA_STRFTIME_YM)
 
-MESES_ESPAÑOL = {
-    1: 'Ene', 2: 'Feb', 3: 'Mar', 4: 'Abr', 5: 'May', 6: 'Jun',
-    7: 'Jul', 8: 'Ago', 9: 'Sep', 10: 'Oct', 11: 'Nov', 12: 'Dic'
-}
+MESES_ESPAÑOL = {1: 'Ene', 2: 'Feb', 3: 'Mar',
+                 4: 'Abr', 5: 'May', 6: 'Jun',
+                 7: 'Jul', 8: 'Ago', 9: 'Sep',
+                 10: 'Oct', 11: 'Nov', 12: 'Dic'
+                 }
 
 # Plots
-TITULOS_GOMERIA = ("Consumos", "", "Costos", "", "Diferencias consumos", "", "Diferencias costos")
-ANCHO_COLS_GOMERIA = (0.30, 0.15, 0.30, 0.20, 0.20, 0.15, 0.20)
-TICK_VALS_GOMERIA = ("2024", "2025", "DiferenciaConsumos", "DiferenciaCostos")
-TICK_TEXT_GOMERIA = ("Año 2024", "Año 2025", "Diferencia Consumos", "Diferencia Costos")
+TITULOS_GOMERIA     = ("Consumos", "", "Costos", "", "Diferencias consumos", "", "Diferencias costos")
+ANCHO_COLS_GOMERIA  = (0.30, 0.15, 0.30, 0.20, 0.20, 0.15, 0.20)
+TICK_VALS_GOMERIA   = ("2024", "2025", "DiferenciaConsumos", "DiferenciaCostos")
+TICK_TEXT_GOMERIA   = ("Año 2024", "Año 2025", "Diferencia Consumos", "Diferencia Costos")
 
 
 MODELOS_CHASIS = ("MT 12","MT 13","MT 15","MT 17","MT 17 BOOGIE","MT 27"

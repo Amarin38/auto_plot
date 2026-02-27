@@ -5,54 +5,54 @@ from strenum import UppercaseStrEnum, StrEnum, PascalCaseStrEnum, LowercaseStrEn
 
 
 class TipoCargarEnum(PascalCaseStrEnum):
-    UNICO = auto()
-    MULTIPLE = auto()
+    UNICO       = auto()
+    MULTIPLE    = auto()
 
 
 class IndexTypeEnum(UppercaseStrEnum):
-    VEHICULO = auto()
-    MOTOR = auto()
+    VEHICULO    = auto()
+    MOTOR       = auto()
 
 
 class MovimientoEnum(UppercaseStrEnum):
-    SALIDAS = auto()
-    ENTRADAS = auto()
-    DEVOLUCIONES = auto()
-    TRANSFERENCIAS = auto()
+    SALIDAS         = auto()
+    ENTRADAS        = auto()
+    DEVOLUCIONES    = auto()
+    TRANSFERENCIAS  = auto()
 
 class CabecerasEnum(PascalCaseStrEnum):
     @staticmethod
     def _generate_next_value_(name, start, count, last_values):
         return name.replace("_", " ")
 
-    POMPEYA = auto()
-    LA_NORIA = auto()
-    BONZI = auto()
-    EVA_PERON = auto()
-    MEDINA = auto()
-    CUSA = auto()
-    ETAPSA = auto()
-    ESISA = auto()
-    LUJAN = auto()
-    MASCHWITZ = auto()
-    BARRACAS = auto()
-    PILAR = auto()
-    CONSTITUYENTES = auto()
-    SAN_VICENTE = auto()
-    LONGCHAMPS = auto()
-    TG_LANUS = auto()
-    TG_CALZADA = auto()
-    TG_CIUDADELA = auto()
-    TARSA_LANUS = auto()
-    TARSA_134 = auto()
-    MEGABUS_EJERCITO = auto()
-    EL_PUENTE = auto()
+    POMPEYA             = auto()
+    LA_NORIA            = auto()
+    BONZI               = auto()
+    EVA_PERON           = auto()
+    MEDINA              = auto()
+    CUSA                = auto()
+    ETAPSA              = auto()
+    ESISA               = auto()
+    LUJAN               = auto()
+    MASCHWITZ           = auto()
+    BARRACAS            = auto()
+    PILAR               = auto()
+    CONSTITUYENTES      = auto()
+    SAN_VICENTE         = auto()
+    LONGCHAMPS          = auto()
+    TG_LANUS            = auto()
+    TG_CALZADA          = auto()
+    TG_CIUDADELA        = auto()
+    TARSA_LANUS         = auto()
+    TARSA_134           = auto()
+    MEGABUS_EJERCITO    = auto()
+    EL_PUENTE           = auto()
 
 
 class TendenciaEnum(PascalCaseStrEnum):
-    LINEAL = auto()
-    CUADRATICA = "Cuadrática"
-    CUBICA = "Cúbica"
+    LINEAL      = auto()
+    CUADRATICA  = "Cuadrática"
+    CUBICA      = "Cúbica"
 
 
 class RepuestoEnum(StrEnum):
@@ -61,34 +61,34 @@ class RepuestoEnum(StrEnum):
     def _generate_next_value_(name, start, count, last_values):
         return name.replace("_", " ").upper()
 
-    INYECTOR = auto()
-    BURRO = auto()
-    ALTERNADOR = auto()
-    BOMBA_UREA = auto()
-    CALIPER = auto()
-    ELECTROVALVULA = auto()
-    FLOTANTE_GASOIL = auto()
-    RETEN = auto()
-    SENSOR = auto()
-    TALADRO = auto()
-    BOMBA_INYECTORA = auto()
-    CAMARA = auto()
-    DVR = auto()
-    HERRAMIENTA = auto()
-    UREA = auto()
-    REFRIGERANTE = auto()
-    ACEITE_DE_MOTOR = auto()
-    ACEITE_DE_CAJA = auto()
-    ACEITE_DE_DIFERENCIAL = auto()
-    GRASA_DE_DIFERENCIAL = auto()
-    CINTAS_FRENO_1 = auto()
-    CINTAS_FRENO_2 = auto()
-    PASTILLAS_FRENO = auto()
-    BANANAS = auto()
-    PULMON_SUSPENSION = auto()
-    MOTOR_CONDENSADOR = auto()
-    BITURBO = auto()
-    FILTRO_AIRE_ACONDICIONADO = auto()
+    INYECTOR                    = auto()
+    BURRO                       = auto()
+    ALTERNADOR                  = auto()
+    BOMBA_UREA                  = auto()
+    CALIPER                     = auto()
+    ELECTROVALVULA              = auto()
+    FLOTANTE_GASOIL             = auto()
+    RETEN                       = auto()
+    SENSOR                      = auto()
+    TALADRO                     = auto()
+    BOMBA_INYECTORA             = auto()
+    CAMARA                      = auto()
+    DVR                         = auto()
+    HERRAMIENTA                 = auto()
+    UREA                        = auto()
+    REFRIGERANTE                = auto()
+    ACEITE_DE_MOTOR             = auto()
+    ACEITE_DE_CAJA              = auto()
+    ACEITE_DE_DIFERENCIAL       = auto()
+    GRASA_DE_DIFERENCIAL        = auto()
+    CINTAS_FRENO_1              = auto()
+    CINTAS_FRENO_2              = auto()
+    PASTILLAS_FRENO             = auto()
+    BANANAS                     = auto()
+    PULMON_SUSPENSION           = auto()
+    MOTOR_CONDENSADOR           = auto()
+    BITURBO                     = auto()
+    FILTRO_AIRE_ACONDICIONADO   = auto()
 
 
 class RepuestoReparadoEnum(StrEnum):
@@ -96,11 +96,11 @@ class RepuestoReparadoEnum(StrEnum):
     def _generate_next_value_(name, start, count, last_values):
         return name.replace("_", " ").upper()
 
-    CAJA_AUTOMATICA_REP_T270 = auto()
-    RETEN_RUEDA_EJE_CENTRAL_MT27_EXTERIOR = auto()
-    RETEN_RUEDA_EJE_CENTRAL_MT27_INTERIOR = auto()
-    RULEMAN_RUEDA_EJE_CENTRAL_MT27 = auto()
-    MAZA_RUEDA_EJE_CENTRAL_MT27 = auto()
+    CAJA_AUTOMATICA_REP_T270                = auto()
+    RETEN_RUEDA_EJE_CENTRAL_MT27_EXTERIOR   = auto()
+    RETEN_RUEDA_EJE_CENTRAL_MT27_INTERIOR   = auto()
+    RULEMAN_RUEDA_EJE_CENTRAL_MT27          = auto()
+    MAZA_RUEDA_EJE_CENTRAL_MT27             = auto()
 
 
 class TipoDuracionEnum(StrEnum):
@@ -109,9 +109,9 @@ class TipoDuracionEnum(StrEnum):
         return name.replace("_", " ").upper()
 
     CAJAS_REPARADAS = auto()
-    RETEN = auto()
-    RULEMAN = auto()
-    MAZA = auto()
+    RETEN           = auto()
+    RULEMAN         = auto()
+    MAZA            = auto()
 
 
 class ConsumoObligatorioEnum(StrEnum):
@@ -182,5 +182,5 @@ class DashEnum(LowercaseStrEnum):
 
 
 class RoleEnum(LowercaseStrEnum):
-    ADMIN = auto()
-    USER = auto()
+    ADMIN   = auto()
+    USER    = auto()

@@ -25,7 +25,7 @@ FORECAST_DATA_COLUMNS: List[str] = ["Repuesto", "TipoRepuesto", "FechaCompleta",
 FILTRO_OBS = "0KM|TRANSMISIÓN|CAMBIO"
 
 # MOVS
-MOV_SALIDAS: str = "TRD|DES"
-MOV_ENTRADAS: str = "COM|TRA"
-MOV_DEVOLUCIONES: str = "DEU|DEC"
-MOV_TRANSFERENCIAS: str = "TRD"
+MOV_SALIDAS         : str = "TRD|DES"
+MOV_ENTRADAS        : str = "COM|TRA"
+MOV_DEVOLUCIONES    : str = "DEU|DEC"
+MOV_TRANSFERENCIAS  : str = "TRD"

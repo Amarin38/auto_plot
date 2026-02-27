@@ -28,27 +28,6 @@ from config.constants_views import (PAG_PRINCIPAL, PAG_CARGAR_DATOS, PAG_INDICES
                                     PAG_COCHES_CABECERA, PAG_PARQUE_MOVIL, PAG_SISSSA, PAG_DOTA_LICITACIONES,
                                     PAG_COMPARACION_CONSUMO, PAG_NUEVO_USUARIO)
 
-from infrastructure.db.models.coches_cabecera_model import CochesCabeceraModel
-from infrastructure.db.models.garantias_consumo_model import GarantiasConsumoModel
-from infrastructure.db.models.garantias_datos_model import GarantiasDatosModel
-from infrastructure.db.models.garantias_falla_model import GarantiasFallaModel
-from infrastructure.db.models.consumo_indice_model import ConsumoIndiceModel
-from infrastructure.db.models.consumo_historial_model import ConsumoHistorialModel
-from infrastructure.db.models.consumo_obligatorio_model import ConsumoObligatorioModel
-from infrastructure.db.models.consumo_prevision_data_model import ConsumoPrevisionDataModel
-from infrastructure.db.models.consumo_prevision_model import ConsumoPrevisionModel
-from infrastructure.db.models.consumo_desviacion_indices_model import ConsumoDesviacionIndicesModel
-from infrastructure.db.models.gomeria_diferencia_mov_dep_model import GomeriaDiferenciaMovEntreDepModel
-from infrastructure.db.models.gomeria_transferencias_dep_model import GomeriaTransferenciasEntreDepModel
-from infrastructure.db.models.distribucion_normal_model import DistribucionNormalModel
-from infrastructure.db.models.duracion_repuestos_model import DuracionRepuestosModel
-from infrastructure.db.models.maximos_minimos_model import MaximosMinimosModel
-from infrastructure.db.models.json_config_model import JSONConfigModel
-from infrastructure.db.models.parque_movil_model import ParqueMovilModel
-from infrastructure.db.models.conteo_stock_model import ConteoStockModel
-from infrastructure.db.models.usuario_model import UsuarioModel
-from infrastructure.db.models.consumo_comparacion_model import ConsumoComparacionModel
-
 # -----------------------------------------------------------------------------------------------
 # CONFIG STREAMLIT
 # -----------------------------------------------------------------------------------------------
@@ -199,9 +178,3 @@ if st.session_state.get("authentication_status"):
         st.rerun()
     nav.run()
 
-# -----------------------------------------------------------------------------------------------
-# NAVIGATION
-# -----------------------------------------------------------------------------------------------
-
-if __name__ == "__main__":
-    DBBase.metadata.create_all(db_engine)

@@ -8,8 +8,6 @@ from config.enums_colors import FallaGarantiasColorsEnum
 
 from utils.exception_utils import execute_safely
 from viewmodels.plotly_components import DefaultUpdateLayoutComponents, HoverComponents
-from viewmodels.garantias.falla.datos_vm import DatosGarantiasVM
-from viewmodels.garantias.falla.vm import FallaGarantiasVM
 
 
 class FallaGarantiasPlotter:
