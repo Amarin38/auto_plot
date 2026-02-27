@@ -1,20 +1,20 @@
 from typing import Union
 
+import pandas as pd
 import plotly.graph_objects as go
 
 from config.enums_colors import ConsumoGarantiasColorsEnum
 from utils.exception_utils import execute_safely
 from viewmodels.plotly_components import DefaultUpdateLayoutComponents, HoverComponents, PlotComponents
-from viewmodels.garantias.consumo.vm import ConsumoGarantiasVM
 
 
 class ConsumoGarantiasPlotter:
-    def __init__(self, tipo_repuesto, cabecera):
+    def __init__(self, df: pd.DataFrame):
         self.default = DefaultUpdateLayoutComponents()
         self.hover = HoverComponents()
         self.plots = PlotComponents()
 
-        self.df_data = ConsumoGarantiasVM().get_df_by_tipo_rep_and_cabecera(tipo_repuesto, cabecera)
+        self.df_data = df
 
 
     @execute_safely

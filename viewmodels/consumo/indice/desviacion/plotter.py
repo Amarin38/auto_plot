@@ -9,11 +9,10 @@ from config.enums import RepuestoEnum
 
 from utils.exception_utils import execute_safely
 from viewmodels.plotly_components import DefaultUpdateLayoutComponents, LegendComponents, HoverComponents
-from viewmodels.consumo.indice.desviacion.vm import DesviacionIndicesVM
 
 
 class DeviationPlotter:
-    def __init__(self, tipo_rep: Optional[RepuestoEnum]) -> None:
+    def __init__(self, df: pd.DataFrame, tipo_rep: Optional[RepuestoEnum]) -> None:
         self.default    = DefaultUpdateLayoutComponents()
         self.legend     = LegendComponents()
         self.hover      = HoverComponents()
@@ -22,22 +21,23 @@ class DeviationPlotter:
 
         if tipo_rep:
             self.color = FallaGarantiasColorsEnum.ROJO
-            self.df = DesviacionIndicesVM().get_df_by_tipo_rep(tipo_rep)
         else:
             self.color = FallaGarantiasColorsEnum.VERDE
-            self.df = DesviacionIndicesVM().get_df().drop_duplicates(subset=[
-                "Cabecera", "MediaCabecera", "MediaDeMedias",
-                "Diferencia", "Desviacion", "DesviacionPor", "FechaCompleta"
-            ])
-            self.tipo_rep = " "
+        self.df = df
 
 
     @execute_safely
     def create_plot(self) -> go.Figure:
-        x_data = self.df["Cabecera"] 
-        y_data = self.df["Desviacion"]
+        if self.tipo_rep:
+            x_data = self.df["Cabecera"]
+            y_data = self.df["Desviacion"]
+        else:
+            agrupado = self.df.groupby("Cabecera").agg({"Desviacion": "mean"}).reset_index()
 
-        y_porcentual = self.df["Desviacion"].astype(str) + "%"
+            x_data = agrupado["Cabecera"]
+            y_data = agrupado["Desviacion"].round(1)
+
+        y_porcentual = y_data.astype(str) + "%"
 
         fecha = pd.to_datetime(self.df["FechaCompleta"].iloc[0]).strftime(FILE_STRFTIME_DMY)
 
@@ -47,13 +47,13 @@ class DeviationPlotter:
             x=x_data,
             y=y_data,
             name=f"Desviación de índices",
-            
+
             text=y_porcentual,
             textposition="outside",
             textfont=dict(
                 size=11,
-                color='white', 
-                family='Arial'  
+                color='white',
+                family='Arial'
             ),
             marker=dict(color=self.color),
             hovertemplate="""
@@ -87,8 +87,8 @@ class DeviationPlotter:
             y1 = y_data.max() + 50
 
             fig.add_shape(type="line",
-                x0=cab, y0=y0, x1=cab, y1=y1,
-                line=dict(color=self.color, width=1), opacity=0.6)
+                          x0=cab, y0=y0, x1=cab, y1=y1,
+                          line=dict(color=self.color, width=1), opacity=0.6)
 
 
 

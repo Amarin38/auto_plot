@@ -1,5 +1,3 @@
-from typing import Any, Tuple, List
-
 import pandas as pd
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
@@ -7,20 +5,17 @@ from itertools import product
 
 from config.enums_colors import DuracionRepuestosColorsEnum
 from config.constants_common import FILE_STRFTIME_YMD
-from utils.exception_utils import execute_safely
 from viewmodels.plotly_components import DefaultUpdateLayoutComponents, HoverComponents
-from viewmodels.consumo.duracion_rep.distri_normal_vm import DistribucionNormalVM
-from viewmodels.consumo.duracion_rep.duracion_vm import DuracionRepuestosVM
 
 
 class DuracionRepuestosPlotter:
-    def __init__(self, repuesto: str, rows: int):
+    def __init__(self, df_duracion: pd.DataFrame, df_distribucion: pd.DataFrame, rows: int):
         self.rows               = rows
         self.cols               = 2
         self.hover              = HoverComponents()
         self.default            = DefaultUpdateLayoutComponents()
-        self.df_duracion        = DuracionRepuestosVM().get_df_by_repuesto(repuesto)
-        self.df_distribucion    = DistribucionNormalVM().get_df_by_repuesto(repuesto)
+        self.df_duracion        = df_duracion
+        self.df_distribucion    = df_distribucion
 
         self.df_duracion["FechaCambio"] = pd.to_datetime(
             self.df_duracion["FechaCambio"], errors="coerce"
@@ -30,15 +25,15 @@ class DuracionRepuestosPlotter:
         fecha_min   = self.df_duracion["FechaCambio"].min().strftime(FILE_STRFTIME_YMD)
         fecha_max   = self.df_duracion["FechaCambio"].max().strftime(FILE_STRFTIME_YMD)
         cambios     = self.df_distribucion["Cambio"].unique()
-        positions = list(product(range(1, self.rows + 1), range(1, self.cols + 1)))
-        specs = [[{"secondary_y": True}, {"secondary_y": True}] for _ in range(self.rows)]
-        titles = ["Cambio de 0KM"]
+        positions   = list(product(range(1, self.rows + 1), range(1, self.cols + 1)))
+        specs       = [[{"secondary_y": True}, {"secondary_y": True}] for _ in range(self.rows)]
+        titles      = ["Cambio de 0KM"]
         titles.extend(f"Cambio {i}" for i in range(2, 2 * len(specs) + 1))
 
 
-        fig = make_subplots(rows=self.rows, cols=self.cols, x_title="Duración en años", y_title="Frecuencia relativa en %",
+        fig = make_subplots(rows=self.rows, cols=self.cols,
+                            x_title="Duración en años", y_title="Frecuencia relativa en %",
                             horizontal_spacing=0.1, specs=specs, subplot_titles=titles)
-
 
         df_distri_cambio = self.df_distribucion.groupby("Cambio")
         df_duracion_cambio = self.df_duracion.groupby("Cambio")
@@ -98,25 +93,3 @@ class DuracionRepuestosPlotter:
         self.hover.color_hover_bar_subplot(fig)
 
         return fig
-
-
-    @execute_safely
-    def calcular_sin_cambios(self, year_str: str) -> Any:
-        year = pd.to_datetime(year_str, errors="coerce")
-
-        df_year = self.df_duracion.loc[
-                (self.df_duracion["FechaCambio"].dt.year == year.year) &
-                (self.df_duracion["Cambio"] == 0),
-                ["Patente"]
-        ]
-
-        df_sin_cambios = (
-             self.df_duracion
-            .merge(df_year, on="Patente", how="inner")
-            .loc[
-                (self.df_duracion["Cambio"] == 1) &
-                (self.df_duracion["FechaCambio"] == pd.Timestamp("2025-10-28"))
-            ]
-        )
-
-        return df_sin_cambios.count().iat[0]

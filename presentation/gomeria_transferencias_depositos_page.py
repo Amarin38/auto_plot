@@ -4,16 +4,20 @@ from config.constants_views import PAG_TRANSFERENCIAS_ENTRE_DEPOSITOS, \
     GOMERIA_DIFERENCIA_BOX_HEIGHT, GOMERIA_TRANSFER_BOX_HEIGHT
 from presentation.streamlit_components import SelectBoxComponents
 from utils.common_utils import CommonUtils
+from viewmodels.gomeria.diferencia_mov_dep_vm import DiferenciaMovimientosEntreDepositosVM
 from viewmodels.gomeria.diferencias_mov_plotter import DiferenciaMovimientosEntreDepositosPlotter
 from viewmodels.gomeria.transferencias_dep_plotter import TransferenciasEntreDepositosPlotter
+from viewmodels.gomeria.transferencias_dep_vm import TransferenciasEntreDepositosVM
+
 
 @st.cache_data(ttl=200, show_spinner=False)
-def _generar_grafico_transferencias(cabecera):
-    return TransferenciasEntreDepositosPlotter(cabecera).create_plot()
+def _cargar_datos_transferencias(cabecera):
+    return TransferenciasEntreDepositosVM().get_df_by_cabecera(cabecera)
+
 
 @st.cache_data(ttl=200, show_spinner=False)
-def _generar_grafico_diferencias():
-    return DiferenciaMovimientosEntreDepositosPlotter().create_plot()
+def _cargar_datos_diferencias():
+    return DiferenciaMovimientosEntreDepositosVM().get_df()
 
 
 def gomeria_transferencias_entre_depositos() -> None:
@@ -33,19 +37,21 @@ def gomeria_transferencias_entre_depositos() -> None:
             with st.container(height=GOMERIA_TRANSFER_BOX_HEIGHT):
                 if cabecera:
                     with st.spinner("Cargando transferencias..."):
-                        fig_transfer = utils.run_in_threads(lambda: _generar_grafico_transferencias(cabecera),
-                                                            max_workers=2)
+                        df_transfer = _cargar_datos_transferencias(cabecera)
 
-                if fig_transfer is not None:
-                    st.plotly_chart(fig_transfer)
-                else:
-                    st.write("Selecciona una cabecera que contenga información.")
+                    if not df_transfer.empty:
+                        fig_transfer = TransferenciasEntreDepositosPlotter(df_transfer).create_plot()
+                        st.plotly_chart(fig_transfer)
+                    else:
+                        st.write("Selecciona una cabecera que contenga información.")
+
 
         with diferencia.container(height=GOMERIA_DIFERENCIA_BOX_HEIGHT):
             with st.spinner("Cargando diferencias..."):
-                fig_diferencia = utils.run_in_threads(_generar_grafico_diferencias, max_workers=2)
+                df_difer = _cargar_datos_diferencias()
 
-            if fig_diferencia is not None:
+            if not df_difer.empty:
+                fig_diferencia = DiferenciaMovimientosEntreDepositosPlotter(df_difer).create_plot()
                 st.plotly_chart(fig_diferencia)
             else:
                 st.write("No existen datos de diferencia.")

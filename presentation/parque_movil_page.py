@@ -6,7 +6,6 @@ from config.constants_common import MODELOS_CHASIS, NORMAL_DATE_YMD, MARCAS_CHAS
     CARROCERIAS
 from config.constants_views import PAG_PARQUE_MOVIL, PLACEHOLDER, FLOTA_CONTAINER_HEIGHT
 from domain.entities.parque_movil import ParqueMovilFiltro
-from utils.common_utils import CommonUtils
 from viewmodels.common.parque_movil_vm import ParqueMovilVM
 
 @st.cache_data(ttl=300, show_spinner="Cargando parque movil...", show_time=True)
@@ -15,7 +14,6 @@ def _obtener_parque_movil(fecha_desde: date, fecha_hasta: date, parque: ParqueMo
 
 
 def parque_movil():
-    utils = CommonUtils()
     st.title(PAG_PARQUE_MOVIL)
 
     aux, fecha_desde_col, fecha_hasta_col, aux2 = st.columns([1,1,1,1])
@@ -75,8 +73,7 @@ def parque_movil():
             st.session_state.filtros_previos = filtros_actuales
 
         if st.session_state.df_completo is None:
-            resultado = utils.run_in_threads(lambda: _obtener_parque_movil(fecha_desde, fecha_hasta, parque),
-                                             max_workers=6)
+            resultado = _obtener_parque_movil(fecha_desde, fecha_hasta, parque)
             st.session_state.df_completo = resultado
 
         if st.session_state.df_completo is not None:
@@ -102,23 +99,23 @@ def parque_movil():
                 # num_rows="dynamic",
                 key=f"editor_page_{st.session_state.page}",
                 column_order=["FechaParqueMovil", "Linea", "Interno", "Dominio",
-                                         "Asientos", "Año", "ChasisMarca", "ChasisModelo", "ChasisNum",
-                                         "MotorMarca", "MotorModelo", "MotorNum", "Carroceria"],
+                              "Asientos", "Año", "ChasisMarca", "ChasisModelo", "ChasisNum",
+                              "MotorMarca", "MotorModelo", "MotorNum", "Carroceria"],
                 column_config={
-                        "FechaParqueMovil": st.column_config.DateColumn("Fecha Parque Movil",
-                                                                        format="localized", width=80),
-                        "Linea": st.column_config.NumberColumn("Línea", width=30),
-                        "Interno": st.column_config.NumberColumn("Interno", width=30),
-                        "Dominio": st.column_config.TextColumn("Dominio", width=70),
-                        "Asientos": st.column_config.NumberColumn("Asientos", width=30),
-                        "Año": st.column_config.NumberColumn("Año", width=30),
-                        "ChasisMarca": st.column_config.TextColumn("Marca Chasis", width=60),
-                        "ChasisModelo": st.column_config.TextColumn("Modelo Chasis", width=60),
-                        "ChasisNum": st.column_config.TextColumn("Número Chasis", width=85),
-                        "MotorMarca": st.column_config.TextColumn("Marca Motor", width=60),
-                        "MotorModelo": st.column_config.TextColumn("Modelo Motor", width=60),
-                        "MotorNum": st.column_config.TextColumn("Número Motor", width=60),
-                        "Carroceria": st.column_config.TextColumn("Carrocería", width=60),
+                        "FechaParqueMovil"  : st.column_config.DateColumn("Fecha Parque Movil",
+                                                                          format="localized", width=80),
+                        "Linea"             : st.column_config.NumberColumn("Línea", width=30),
+                        "Interno"           : st.column_config.NumberColumn("Interno", width=30),
+                        "Dominio"           : st.column_config.TextColumn("Dominio", width=70),
+                        "Asientos"          : st.column_config.NumberColumn("Asientos", width=30),
+                        "Año"               : st.column_config.NumberColumn("Año", width=30),
+                        "ChasisMarca"       : st.column_config.TextColumn("Marca Chasis", width=60),
+                        "ChasisModelo"      : st.column_config.TextColumn("Modelo Chasis", width=60),
+                        "ChasisNum"         : st.column_config.TextColumn("Número Chasis", width=85),
+                        "MotorMarca"        : st.column_config.TextColumn("Marca Motor", width=60),
+                        "MotorModelo"       : st.column_config.TextColumn("Modelo Motor", width=60),
+                        "MotorNum"          : st.column_config.TextColumn("Número Motor", width=60),
+                        "Carroceria"        : st.column_config.TextColumn("Carrocería", width=60),
                     }
                 )
 

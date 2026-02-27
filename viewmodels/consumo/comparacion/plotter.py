@@ -19,15 +19,14 @@ from viewmodels.plotly_components import DefaultUpdateLayoutComponents, HoverCom
 
 
 class ConsumoComparacionPlotter:
-    def __init__(self, cabecera: CabecerasEnum, tipo_repuesto: List[ConsumoComparacionRepuestoEnum], periodo: List[PeriodoComparacionEnum]):
+    def __init__(self, df: pd.DataFrame, cabecera: CabecerasEnum,
+                 tipo_repuesto: List[ConsumoComparacionRepuestoEnum], periodo: List[PeriodoComparacionEnum]):
         self.cabecera = cabecera
         self.tipo_repuesto = tipo_repuesto
         self.periodo = periodo
         self.hover              = HoverComponents()
         self.default            = DefaultUpdateLayoutComponents()
-        self.df                 = ConsumoComparacionVM().get_df_cabecera_and_tipo_rep_and_periodo(self.cabecera,
-                                                                                                  self.tipo_repuesto,
-                                                                                                  self.periodo)
+        self.df                 = df
 
     @execute_safely
     def create_plot(self) -> Any | None:
@@ -45,6 +44,7 @@ class ConsumoComparacionPlotter:
             for periodo, color, color_fecha in zip(periodos_unicos,
                                                    DuracionRepuestosColorsEnum.as_list(),
                                                    ConsumoComparacionOscuroColorsEnum.as_list()):
+
                 datos_periodo = agrupado[agrupado["PeriodoID"] == periodo]
 
                 x = datos_periodo["TipoRepuesto"]

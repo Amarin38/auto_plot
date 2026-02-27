@@ -9,12 +9,12 @@ from utils.common_utils import CommonUtils
 
 
 @st.cache_data(ttl=300, show_spinner=False)
-def _generar_datos():
+def _cargar_datos():
     return ConteoStockVM().calcular_datos()
 
-@st.cache_data(ttl=300, show_spinner="Cargando información...", show_time=True)
-def _generar_grafico():
-    return ConteoStockPlotter().create_plot()
+@st.cache_data(ttl=300, show_time=True)
+def _cargar_df():
+    return ConteoStockVM().get_df()
 
 
 def main():
@@ -25,25 +25,29 @@ def main():
     st.title(PAG_PRINCIPAL)
 
     if "admin" in roles:
-        datos, fig = utils.run_in_threads([_generar_datos, _generar_grafico], max_workers=2) # multithreading
+        with st.spinner("Cargando gráfico..."):
+            df = _cargar_df()
+            datos = _cargar_datos()
 
         st.subheader("Conteo Stock 2025")
 
         pie, stats = st.columns([0.8, 1])
 
         with pie.container(height=CONTEO_BOX_HEIGHT):
-            st.plotly_chart(fig)
+            if not df.empty:
+                fig = ConteoStockPlotter(df).create_plot()
+                st.plotly_chart(fig)
 
         with stats.container(height=CONTEO_BOX_HEIGHT):
-            rep_totales = 5894
-            rep_contados = datos[5]
-            porcentaje = calcular_porcentaje(rep_totales, rep_contados)
-            precio_faltante = utils.num_parser(datos[0])
-            precio_sobrante = utils.num_parser(datos[1])
-            precio_abs_anterior = utils.num_parser(datos[2])
-            precio_abs_actual = utils.num_parser(datos[3])
-            porcentaje_perdida_stock = datos[4]
-            porcentaje_error = round(((-datos[0] - datos[1]) * 100) / datos[3], 2)
+            rep_totales                 = 5894
+            rep_contados                = datos[5]
+            porcentaje                  = calcular_porcentaje(rep_totales, rep_contados)
+            precio_faltante             = utils.num_parser(datos[0])
+            precio_sobrante             = utils.num_parser(datos[1])
+            precio_abs_anterior         = utils.num_parser(datos[2])
+            precio_abs_actual           = utils.num_parser(datos[3])
+            porcentaje_perdida_stock    = datos[4]
+            porcentaje_error            = round(((-datos[0] - datos[1]) * 100) / datos[3], 2)
 
             aux, medio, aux2 = st.columns([1, 2, 1])
 

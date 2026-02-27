@@ -1,3 +1,4 @@
+import pandas as pd
 import plotly.graph_objects as go
 
 from typing import Union
@@ -6,14 +7,13 @@ from plotly.subplots import make_subplots
 
 from config.constants_common import TITULOS_GOMERIA, ANCHO_COLS_GOMERIA, TICK_VALS_GOMERIA, TICK_TEXT_GOMERIA
 from utils.exception_utils import execute_safely
-from viewmodels.gomeria.diferencia_mov_dep_vm import DiferenciaMovimientosEntreDepositosVM
 from viewmodels.plotly_components import HoverComponents, PlotComponents
 
 
 class DiferenciaMovimientosEntreDepositosPlotter:
-    def __init__(self) -> None:
-        self.df = DiferenciaMovimientosEntreDepositosVM().get_df()
+    def __init__(self, df: pd.DataFrame) -> None:
         self.plots = PlotComponents()
+        self.df = df
 
     @execute_safely
     def create_plot(self) -> Union[go.Figure, None]:

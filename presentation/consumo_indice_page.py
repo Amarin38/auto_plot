@@ -3,6 +3,7 @@ import streamlit as st
 from presentation.streamlit_components import SelectBoxComponents, OtherComponents
 from utils.common_utils import CommonUtils
 from utils.exception_utils import execute_safely
+from viewmodels.consumo.indice.desviacion.vm import DesviacionIndicesVM
 
 from viewmodels.consumo.indice.plotter import  IndexPlotter
 
@@ -12,21 +13,30 @@ from config.constants_views import (PLOT_BOX_HEIGHT, DISTANCE_COLS_CENTER_TITLE,
 
 from viewmodels.consumo.indice.desviacion.plotter import DeviationPlotter
 from domain.services.compute_desviacion_indices import DeviationTrend
+from viewmodels.consumo.indice.vm import IndiceConsumoVM
+
 
 @st.cache_data(ttl=200, show_spinner=False, show_time=True)
-def _generar_grafico_indice(tipo_indice, repuesto):
-    return IndexPlotter(tipo_indice, repuesto).create_plot()
+def _cargar_datos_indice(tipo_indice, repuesto):
+    return IndiceConsumoVM().get_df_tipo_repuesto_and_tipo_indice(repuesto, tipo_indice)
+
 
 @st.cache_data(ttl=200, show_spinner=False, show_time=True)
-def _generar_grafico_desviacion(repuesto):
-    return DeviationPlotter(repuesto).create_plot()
+def _cargar_datos_desviacion(repuesto):
+
+    if repuesto:
+        return DesviacionIndicesVM().get_df_by_tipo_rep(repuesto)
+    else:
+        return DesviacionIndicesVM().get_df().drop_duplicates(subset=[
+            "Cabecera", "MediaCabecera", "MediaDeMedias",
+            "Diferencia", "Desviacion", "DesviacionPor", "FechaCompleta"
+        ])
 
 
 @execute_safely
 def consumo_indice() -> None:
     select = SelectBoxComponents()
     other = OtherComponents()
-    utils = CommonUtils()
 
     st.title(PAG_INDICES)
 
@@ -44,42 +54,42 @@ def consumo_indice() -> None:
         tipo_indice = select.select_box_tipo_indice(config_col, "INDEX_TIPO_INDICE")
 
         if repuesto and tipo_indice:
-
             with config_col:
                 with st.spinner(text="Cargando indices..."):
-                    figs, titulo = utils.run_in_threads(lambda: _generar_grafico_indice(tipo_indice, repuesto), max_workers=4)
+                    df_indice = _cargar_datos_indice(tipo_indice, repuesto)
 
-            if figs and titulo:
-                other.centered_title(titulo_col, titulo)
+                if not df_indice.empty:
+                    figs, titulo = IndexPlotter(df_indice, repuesto).create_plot()
+                    other.centered_title(titulo_col, titulo)
 
-                with graficos_col:
-                    for fig in figs if figs is not None else figs:
-                        with st.container(height=PLOT_BOX_HEIGHT):
-                            st.plotly_chart(fig)
+                    with graficos_col:
+                        for fig in figs if figs is not None else figs:
+                            with st.container(height=PLOT_BOX_HEIGHT):
+                                st.plotly_chart(fig)
 
-            else:
-                other.mensaje_falta_rep(graficos_col)
+                else:
+                    other.mensaje_falta_rep(graficos_col)
 
 
-    with desviacion.container(height=DESVIACION_BOX_HEIGHT):
+    with (desviacion.container(height=DESVIACION_BOX_HEIGHT)):
         aux, recargar, selectbox = st.columns([5.65,0.3, 2])
 
-        if recargar.button(label="🔃", type="secondary", use_container_width=True):
-            with st.spinner("Recalculando desviaciones..."):
-                utils.run_in_threads(lambda: DeviationTrend().calculate(), max_workers=4) # sin cache
+        with recargar:
+            calcular = lambda: DeviationTrend().calculate()
+            st.button(label="🔃", type="secondary", use_container_width=True, on_click=calcular)
 
         repuesto = select.select_box_tipo_repuesto(selectbox, "DESVIACION_TIPO_REP")
 
         grafico, explicacion = st.columns([3, 1])
 
         with grafico.container(height=FULL_PLOT_BOX_HEIGHT):
-            if repuesto:
-                with selectbox:
-                    with st.spinner("Cargando desviaciones..."):
-                        fig = utils.run_in_threads(lambda: _generar_grafico_desviacion(repuesto), max_workers=3)
+            with selectbox:
+                with st.spinner("Cargando desviaciones..."):
+                    df_desviacion = _cargar_datos_desviacion(repuesto)
+
+            if not df_desviacion.empty:
+                fig = DeviationPlotter(df_desviacion, repuesto).create_plot()
                 st.plotly_chart(fig)
-            else:
-                st.plotly_chart(_generar_grafico_desviacion(None))
 
         with explicacion.container(height=FULL_PLOT_BOX_HEIGHT):
             menor = f"<font color={IndiceColorsEnum.VERDE_AGUA_INTERMEDIO}>**menor**</font>"

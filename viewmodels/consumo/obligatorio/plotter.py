@@ -1,19 +1,18 @@
+import pandas as pd
 import plotly.graph_objects as go
 
 from config.enums_colors import ConsumoObligatorioColorsEnum
 from config.constants_common import FILE_STRFTIME_YMD
-from config.enums import ConsumoObligatorioEnum
 from viewmodels.plotly_components import DefaultUpdateLayoutComponents, HoverComponents, PlotComponents
-from viewmodels.consumo.obligatorio.vm import ConsumoObligatorioVM
 
 
 class ConsumoObligatorioPlotter:
-    def __init__(self, tipo_rep: ConsumoObligatorioEnum) -> None:
+    def __init__(self, df: pd.DataFrame) -> None:
         self.default = DefaultUpdateLayoutComponents()
         self.hover = HoverComponents()
         self.scatter = PlotComponents()
 
-        self.df = ConsumoObligatorioVM().get_df_repuesto(tipo_rep)
+        self.df = df
 
     def create(self) -> go.Figure:
         fig = go.Figure()

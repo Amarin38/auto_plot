@@ -1,19 +1,20 @@
 from typing import Union
 
+import pandas as pd
+
 from config.enums_colors import CustomMetricColorsEnum
 from config.constants_views import PIE_FONT_SIZE, PIE_PLOT_HEIGHT, PIE_PLOT_WIDTH
 import plotly.graph_objects as go
 
 from utils.exception_utils import execute_safely
-from viewmodels.conteo_stock.vm import ConteoStockVM
 from viewmodels.plotly_components import HoverComponents, DefaultUpdateLayoutComponents
 
 
 class ConteoStockPlotter:
-    def __init__(self) -> None:
+    def __init__(self, df: pd.DataFrame) -> None:
         self.default = DefaultUpdateLayoutComponents()
         self.hover = HoverComponents()
-        self.df = ConteoStockVM().get_df()
+        self.df = df
 
 
     @execute_safely

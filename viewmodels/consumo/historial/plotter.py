@@ -1,4 +1,5 @@
 import numpy as np
+import pandas as pd
 import streamlit as st
 import plotly.graph_objects as go
 from plotly.graph_objs import Figure
@@ -12,14 +13,14 @@ from viewmodels.consumo.historial.vm import HistorialConsumoVM
 
 
 class HistorialPlotter:
-    def __init__(self, tipo_rep: RepuestoEnum, tendencia: TendenciaEnum) -> None:
+    def __init__(self, df: pd.DataFrame, tipo_rep: RepuestoEnum, tendencia: TendenciaEnum) -> None:
         self.tendencia = tendencia
         self.default = DefaultUpdateLayoutComponents()
         self.dropdown = DropDownComponents()
         self.hover = HoverComponents()
 
         self.tipo_rep = tipo_rep
-        self.df = HistorialConsumoVM().get_df_tipo_repuesto(tipo_rep)
+        self.df = df
 
 
     @execute_safely

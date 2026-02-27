@@ -12,9 +12,6 @@ from utils.common_utils import CommonUtils
 from viewmodels.plotly_components import DefaultUpdateLayoutComponents, HoverComponents, SliderComponents, \
     PlotComponents
 
-from viewmodels.consumo.prevision.data_vm import PrevisionDataVM
-from viewmodels.consumo.prevision.vm import PrevisionVM
-
 
 def _generar_columna_ticks(serie_fechas):
     fechas_unicas = serie_fechas.unique()
@@ -27,7 +24,7 @@ def _generar_columna_ticks(serie_fechas):
 
 
 class PrevisionPlotter:
-    def __init__(self, tipo_rep: str):
+    def __init__(self, df_data: pd.DataFrame, df_forecast: pd.DataFrame, tipo_rep: str):
         self.common = CommonUtils()
         self.default = DefaultUpdateLayoutComponents()
         self.hover = HoverComponents()
@@ -35,8 +32,8 @@ class PrevisionPlotter:
         self.plots = PlotComponents()
 
         self.tipo_rep = tipo_rep
-        self.df_data = PrevisionDataVM().get_df_by_tipo_repuesto(self.tipo_rep)
-        self.df_forecast = PrevisionVM().get_df_by_tipo_repuesto(self.tipo_rep)
+        self.df_data = df_data
+        self.df_forecast = df_forecast
 
         if not self.df_data.empty:
             self.df_data['FechaCompleta'] = pd.to_datetime(self.df_data['FechaCompleta'], format=FILE_STRFTIME_YMD)

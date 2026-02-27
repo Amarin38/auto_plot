@@ -1,6 +1,7 @@
 from typing import Tuple, Union, List, Any
 
 import numpy as np
+import pandas as pd
 import plotly.graph_objects as go
 
 from config.enums_colors import IndiceColorsEnum
@@ -10,17 +11,16 @@ from utils.exception_utils import execute_safely
 from utils.common_utils import CommonUtils
 
 from viewmodels.plotly_components import DefaultUpdateLayoutComponents, HoverComponents, PlotComponents
-from viewmodels.consumo.indice.vm import IndiceConsumoVM
 
 class IndexPlotter:
-    def __init__(self, index_type: IndexTypeEnum, tipo_rep: str) -> None:
+    def __init__(self, df: pd.DataFrame, tipo_rep: str) -> None:
         self.common = CommonUtils()
         self.default = DefaultUpdateLayoutComponents()
         self.hover = HoverComponents()
         self.scatter = PlotComponents()
 
         self.tipo_rep = tipo_rep
-        self.df = IndiceConsumoVM().get_df_tipo_repuesto_and_tipo_indice(tipo_rep, index_type)
+        self.df = df
 
     @execute_safely
     def create_plot(self) -> tuple[list[Any], str] | tuple[None, None]:

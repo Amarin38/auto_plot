@@ -1,3 +1,4 @@
+import pandas as pd
 import plotly.graph_objects as go
 
 from typing import Union
@@ -5,16 +6,14 @@ from typing import Union
 from config.enums_colors import HoverColorsEnum, TransferEntreDepoColorsEnum
 from config.enums import SymbolEnum, DashEnum
 from utils.exception_utils import execute_safely
-from viewmodels.gomeria.transferencias_dep_vm import TransferenciasEntreDepositosVM
 from viewmodels.plotly_components import HoverComponents, PlotComponents
 
 
 class TransferenciasEntreDepositosPlotter:
-    def __init__(self, cabecera: str) -> None:
-        self.cabecera = cabecera
-        self.df_transfer = TransferenciasEntreDepositosVM().get_df_by_cabecera(cabecera)
+    def __init__(self, df: pd.DataFrame) -> None:
         self.hover = HoverComponents()
         self.plots = PlotComponents()
+        self.df_transfer = df
 
     @execute_safely
     def create_plot(self) -> Union[go.Figure, None]:
