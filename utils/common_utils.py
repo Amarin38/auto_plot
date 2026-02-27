@@ -211,7 +211,6 @@ class CommonUtils:
 
         return None
 
-    @st.cache_data(ttl=100)
     @execute_safely
     def num_parser(self, val) -> str:
         return (f"{val:,.2f}"
@@ -220,7 +219,6 @@ class CommonUtils:
                 .replace("X", ".")
                 )
 
-    @st.cache_data(ttl=100)
     @execute_safely
     def abreviar_es(self, n) -> str:
         if n >= 1_000_000_000:
