@@ -1,5 +1,3 @@
-from datetime import date
-
 import streamlit as st
 
 from config.constants_common import MODELOS_CHASIS, NORMAL_DATE_YMD, MARCAS_CHASIS, MARCAS_MOTOR, MODELOS_MOTOR, \
@@ -7,10 +5,6 @@ from config.constants_common import MODELOS_CHASIS, NORMAL_DATE_YMD, MARCAS_CHAS
 from config.constants_views import PAG_PARQUE_MOVIL, PLACEHOLDER, FLOTA_CONTAINER_HEIGHT
 from domain.entities.parque_movil import ParqueMovilFiltro
 from viewmodels.common.parque_movil_vm import ParqueMovilVM
-
-@st.cache_data(ttl=300, show_spinner="Cargando parque movil...", show_time=True)
-def _obtener_parque_movil(fecha_desde: date, fecha_hasta: date, parque: ParqueMovilFiltro):
-    return ParqueMovilVM().get_by_args(fecha_desde, fecha_hasta, parque)
 
 
 def parque_movil():
@@ -73,7 +67,8 @@ def parque_movil():
             st.session_state.filtros_previos = filtros_actuales
 
         if st.session_state.df_completo is None:
-            resultado = _obtener_parque_movil(fecha_desde, fecha_hasta, parque)
+            # resultado = _obtener_parque_movil(fecha_desde, fecha_hasta, parque)
+            resultado = ParqueMovilVM().get_by_args(fecha_desde, fecha_hasta, parque)
             st.session_state.df_completo = resultado
 
         if st.session_state.df_completo is not None:
