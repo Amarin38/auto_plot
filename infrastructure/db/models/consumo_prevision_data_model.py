@@ -1,5 +1,5 @@
 from datetime import date
-from sqlalchemy import Date
+from sqlalchemy import Date, String
 from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column
 from infrastructure import DBBase
@@ -11,5 +11,5 @@ class ConsumoPrevisionDataModel(BaseModelMixin, DBBase):
     
     FechaCompleta:      Mapped[date] = mapped_column(Date)
     Consumo:            Mapped[int]
-    Repuesto:           Mapped[str]
+    Repuesto:           Mapped[str] = mapped_column(String(150), index=True)
     TipoRepuesto:       Mapped[str]

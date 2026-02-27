@@ -1,5 +1,5 @@
 from datetime import date
-from sqlalchemy import Date
+from sqlalchemy import Date, String
 from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column
 
@@ -12,9 +12,9 @@ class ConsumoComparacionModel(BaseModelMixin, DBBase):
 
     Familia         : Mapped[int]
     Articulo        : Mapped[int]
-    Repuesto        : Mapped[str]
+    Repuesto        : Mapped[str] = mapped_column(String(150), index=True)
     TipoRepuesto    : Mapped[str]
-    Cabecera        : Mapped[str]
+    Cabecera        : Mapped[str] = mapped_column(String(40), index=True)
     Consumo         : Mapped[float]
     Gasto           : Mapped[float]
     FechaCompleta   : Mapped[date] = mapped_column(Date)

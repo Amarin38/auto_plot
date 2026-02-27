@@ -1,3 +1,4 @@
+from sqlalchemy import String
 from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column
 from infrastructure import DBBase
@@ -9,8 +10,8 @@ class DistribucionNormalModel(BaseModelMixin, DBBase):
 
     Años:               Mapped[int]
     Cambio:             Mapped[int]
-    Cabecera:           Mapped[str] = mapped_column(nullable=True)
-    Repuesto:           Mapped[str]
+    Cabecera:           Mapped[str] = mapped_column(String(40), index=True, nullable=True)
+    Repuesto:           Mapped[str] = mapped_column(String(150), index=True)
     TipoRepuesto:       Mapped[str]
     AñoPromedio:        Mapped[float]
     DesviacionEstandar: Mapped[float]

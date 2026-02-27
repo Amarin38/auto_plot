@@ -12,9 +12,9 @@ class DuracionRepuestosModel(BaseModelMixin, DBBase):
     Patente:            Mapped[str] = mapped_column(String(8))
     FechaCambio:        Mapped[date] = mapped_column(Date)
     Cambio:             Mapped[int]
-    Cabecera:           Mapped[str] = mapped_column(nullable=True)
+    Cabecera:           Mapped[str] = mapped_column(String(40), index=True, nullable=True)
     Observaciones:      Mapped[str] = mapped_column(nullable=True)
-    Repuesto:           Mapped[str]
+    Repuesto:           Mapped[str] = mapped_column(String(150), index=True)
     TipoRepuesto:       Mapped[str]
     DuracionEnDias:     Mapped[int] = mapped_column(nullable=True)
     DuracionEnMeses:    Mapped[int] = mapped_column(nullable=True)

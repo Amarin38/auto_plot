@@ -17,10 +17,10 @@ class GarantiasDatosModel(BaseModelMixin, DBBase):
     Mes:                Mapped[str] = mapped_column(String, nullable=True)
     FechaIngreso:       Mapped[datetime] = mapped_column(DateTime, nullable=True)
     FechaEnvio:         Mapped[datetime] = mapped_column(DateTime, nullable=True)
-    Cabecera:           Mapped[str]
+    Cabecera:           Mapped[str] = mapped_column(String(40), index=True)
     Interno:            Mapped[int] = mapped_column(nullable=True)
     Codigo:             Mapped[str]
-    Repuesto:           Mapped[str]
+    Repuesto:           Mapped[str] = mapped_column(String(150), index=True)
     Cantidad:           Mapped[int] = mapped_column(nullable=True)
     FechaColocacion:    Mapped[datetime] = mapped_column(DateTime, nullable=True)
     Detalle:            Mapped[str] = mapped_column(String, nullable=True)

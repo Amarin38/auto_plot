@@ -1,3 +1,4 @@
+from sqlalchemy import String
 from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column
 from infrastructure import DBBase
@@ -9,7 +10,7 @@ class GomeriaDiferenciaMovEntreDepModel(BaseModelMixin, DBBase):
 
     Familia: Mapped[int]
     Articulo: Mapped[int]
-    Repuesto: Mapped[str]
+    Repuesto: Mapped[str] = mapped_column(String(150), index=True)
     Cantidad2024: Mapped[int]
     CostoTotal2024: Mapped[int]
     Cantidad2025: Mapped[int]

@@ -1,12 +1,12 @@
-from sqlalchemy.orm import Mapped
+from sqlalchemy import String
+from sqlalchemy.orm import Mapped, mapped_column
 from infrastructure import DBBase
-from infrastructure.db.models.base_model_mixin import BaseModelMixin
+from infrastructure.db.models.base_model_mixin import BaseModelMixin, BaseRepuesto
 
 
-class GomeriaTransferenciasEntreDepModel(BaseModelMixin, DBBase):
+class GomeriaTransferenciasEntreDepModel(BaseModelMixin, BaseRepuesto, DBBase):
     __tablename__ = "GOMERIA_TRANSFERENCIAS_DEP"
 
-    Repuesto: Mapped[str]
     Año: Mapped[int]
     Cantidad: Mapped[int]
-    Cabecera: Mapped[str]
+    Cabecera: Mapped[str] = mapped_column(String(40), index=True)
