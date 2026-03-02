@@ -6,13 +6,6 @@ from infrastructure.repositories.conteo_stock_repository import ConteoStockRepos
 from utils.common_utils import CommonUtils
 
 
-def calcular_contados(df: pd.DataFrame) -> int:
-    return df["Recuento"].notnull().sum()
-
-
-def calcular_porcentaje(total: float, parte: float) -> float:
-    return round((parte * 100) / total,2)
-
 class ConteoStockVM:
     def __init__(self) -> None:
         self.repo = ConteoStockRepository()
@@ -63,10 +56,21 @@ class ConteoStockVM:
         precio_sobrante = df.loc[df["DiferenciaPrecio"] > 0, "DiferenciaPrecio"].sum().round(1)
         precio_anterior = df["PrecioAnterior"].sum().round(1)
         precio_actual   = df["PrecioActual"].sum().round(1)
-        porcentaje_dif  = round(calcular_porcentaje(precio_actual, precio_anterior) - 100, 2)
+        porcentaje_dif  = round(self.calcular_porcentaje(precio_actual, precio_anterior) - 100, 2)
 
-        return precio_faltante, precio_sobrante, precio_anterior, precio_actual, porcentaje_dif, calcular_contados(df)
+        return precio_faltante, precio_sobrante, precio_anterior, precio_actual, porcentaje_dif, self.calcular_contados(df)
 
+    @staticmethod
+    def calcular_contados(df: pd.DataFrame) -> int:
+        return df["Recuento"].notnull().sum()
+
+    @staticmethod
+    def calcular_porcentaje(total: float, parte: float) -> float:
+        return round((parte * 100) / total, 2)
+
+    @staticmethod
+    def calcular_porcentaje_error(a, b, c) -> float:
+        return round(((-a - b) * 100) / c, 2) if c != 0 else 0
 
     @staticmethod
     def get_data(entities) -> DataFrame:
@@ -93,3 +97,4 @@ class ConteoStockVM:
                 }
                 for e in entities
             ])
+

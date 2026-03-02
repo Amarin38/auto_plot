@@ -24,27 +24,16 @@ class DuracionRepuestos:
              self.df["Observaciones"].str.contains(FILTRO_OBS, na=False)
         ].copy()
 
-        grouped_patente = df.groupby("Patente")
+        # Vectorización de la duración y el número de cambio
+        df = df.sort_values(by=["Patente", "FechaCambio"]).reset_index(drop=True)
+        df["Cambio"] = df.groupby("Patente").cumcount()
+        df["DuracionEnDias"] = df.groupby("Patente")["FechaCambio"].diff().dt.days.fillna(0).astype(int)
+        
+        df["Repuesto"] = self.repuesto
+        df["TipoRepuesto"] = self.tipo_rep
 
-        for patente in self.patentes:
-            df_pat = grouped_patente.get_group(patente)
-            df_separado_pat = df["Patente"] == patente
-
-            # Separo por cada patende y traigo la columna Cambio, y a esa columna en ese espacio
-            # Le aplico el rango del tamaño de ese sub-dataframe
-            df.loc[df_separado_pat, "Cambio"] = range( # type: ignore
-                len(df.loc[df_separado_pat])
-            )
-            df["Repuesto"]      = self.repuesto
-            df["TipoRepuesto"]  = self.tipo_rep
-
-            # Resto las fechas para saber cuanto duraron
-            df.loc[df_separado_pat, "DuracionEnDias"] = df["FechaCambio"] - df["FechaCambio"].shift(1)
-
-        df["Cambio"] = df["Cambio"].astype(int)
-
-        df["DuracionEnDias"] = df["DuracionEnDias"].dt.days.fillna(0).astype(int) # limpio de valores nulos
-        df.loc[df["DuracionEnDias"] < 0, "DuracionEnDias"] = 0 # limpio de valores negativos
+        # Limpieza de valores
+        df.loc[df["DuracionEnDias"] < 0, "DuracionEnDias"] = 0
 
         df["DuracionEnMeses"]   = round(df["DuracionEnDias"] / 30, 1)
         df["DuracionEnAños"]    = round(df["DuracionEnDias"] / 365, 1)
@@ -94,14 +83,12 @@ class DuracionRepuestos:
 
     @execute_safely
     def calcular_media_y_std(self, df: pd.DataFrame, cambios) -> pd.DataFrame:
-        for cambio in cambios:
-            df_cambio = df["Cambio"] == cambio
+        # Vectorización del cálculo de media y std
+        df["AñoPromedio"] = df.groupby("Cambio")["DuracionEnAños"].transform("mean").round(1)
+        df["desviacion_indicestandar"] = df.groupby("Cambio")["DuracionEnAños"].transform("std").round(1)
 
-            df.loc[df_cambio, "AñoPromedio"] = df.loc[df_cambio, "DuracionEnAños"].mean()
-            df.loc[df_cambio, "desviacion_indicestandar"] = df.loc[df_cambio, "DuracionEnAños"].std(ddof=1) #std de muestreo
-
-        df["AñoPromedio"] = df["AñoPromedio"].fillna(0).round(1)
-        df["desviacion_indicestandar"] = df["desviacion_indicestandar"].fillna(0).round(1)
+        df["AñoPromedio"] = df["AñoPromedio"].fillna(0)
+        df["desviacion_indicestandar"] = df["desviacion_indicestandar"].fillna(0)
 
         return df
 
@@ -111,18 +98,13 @@ class DuracionRepuestos:
         df_list = []
 
         for cambio in cambios:
-            df_cambio: pd.Series[bool] = df["Cambio"] == cambio
             for cab in self.cabeceras:
                 df_aux = pd.DataFrame()
-                df_cabeceras: pd.Series[bool] = df["Cabecera"] == cab
-
+                mask = (df["Cambio"] == cambio) & (df["Cabecera"] == cab)
+                
                 # Gauss
-                try:
-                    mu      = df.loc[df_cambio & df_cabeceras, "AñoPromedio"].iloc[0]
-                    sigma   = df.loc[df_cambio & df_cabeceras, "desviacion_indicestandar"].iloc[0]
-                except IndexError:
-                    mu      = 0
-                    sigma   = 0
+                mu = df.loc[mask, "AñoPromedio"].iloc[0] if not df.loc[mask].empty else 0
+                sigma = df.loc[mask, "desviacion_indicestandar"].iloc[0] if not df.loc[mask].empty else 0
 
                 x = np.arange(1, 16)
 
@@ -148,16 +130,11 @@ class DuracionRepuestos:
 
     @execute_safely
     def calcular_media_y_std_cabecera(self, df: pd.DataFrame, cambios) -> pd.DataFrame:
-        for cambio in cambios:
-            df_cambio = df["Cambio"] == cambio
+        # Vectorización del cálculo de media y std por cabecera
+        df["AñoPromedio"] = df.groupby(["Cambio", "Cabecera"])["DuracionEnAños"].transform("mean").round(1)
+        df["desviacion_indicestandar"] = df.groupby(["Cambio", "Cabecera"])["DuracionEnAños"].transform("std").round(1)
 
-            for cab in self.cabeceras:
-                df_cabeceras = df["Cabecera"] == cab
-
-                df.loc[df_cambio & df_cabeceras, "AñoPromedio"] = df.loc[df_cambio & df_cabeceras, "DuracionEnAños"].mean()
-                df.loc[df_cambio & df_cabeceras, "desviacion_indicestandar"] = df.loc[df_cambio & df_cabeceras, "DuracionEnAños"].std(ddof=1) #std de muestreo
-
-        df["AñoPromedio"] = df["AñoPromedio"].fillna(0).round(1)
-        df["desviacion_indicestandar"] = df["desviacion_indicestandar"].fillna(0).round(1)
+        df["AñoPromedio"] = df["AñoPromedio"].fillna(0)
+        df["desviacion_indicestandar"] = df["desviacion_indicestandar"].fillna(0)
 
         return df

@@ -88,9 +88,9 @@ class InventoryDataCleaner:
         Filters the code list by 'Familia' 
         and 'Articulo' respectively
         """
-        filtered_df = pd.concat([df.loc[(df["Familia"] == fam) & 
-                                        (df["Articulo"] == art)] for fam, art in filter_args])
-            
+        multi_index = pd.MultiIndex.from_tuples(filter_args, names=['Familia', 'Articulo'])
+        filtered_df = df[df.set_index(['Familia', 'Articulo']).index.isin(multi_index)]
+
         filtered_df = self.common.delete_unnamed_cols(filtered_df)
     
         return filtered_df
@@ -108,4 +108,3 @@ class InventoryDataCleaner:
         df = self.common.delete_unnamed_cols(df)
 
         return df
-

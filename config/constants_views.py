@@ -115,6 +115,7 @@ PIE_PLOT_BOX_WIDTH      : int = 1550
 # FONT
 PIE_FONT_SIZE: int = 24
 
+REP_TOTALES_CONTEO: int  = 5894
 
 # DISTANCE
 DISTANCE_COLS_SELECT_PLOT   : Tuple[int, int] = (1, 5)
