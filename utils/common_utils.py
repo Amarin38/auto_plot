@@ -68,30 +68,6 @@ class CommonUtils:
         return pd.to_datetime(df[columna].unique()).strftime(FILE_STRFTIME_DMY)[0]
 
 
-    #TODO: ver si eliminarla
-    @execute_safely
-    def run_in_threads(self, functions, max_workers: Optional[int] = None) -> List[Any]:
-        ctx = get_script_run_ctx()
-
-        def run_with_context(func):
-            def wrapper():
-                if ctx:
-                    add_script_run_ctx(thread=None, ctx=ctx)
-                return func()
-            return wrapper
-
-        if max_workers is None:
-            max_workers = len(functions)
-
-        with ThreadPoolExecutor(max_workers=max_workers) as executor:
-            if isinstance(functions, list):
-                futures = [executor.submit(run_with_context(func)) for func in functions] # ejecuto las funciones en los threads
-                results = [future.result() for future in futures] # obtengo los resultados
-            else:
-                futures = executor.submit(run_with_context(functions))
-                results = futures.result()
-        return results
-
     # ------------------------------------------------------ DELETE ------------------------------------------------------
     @staticmethod
     @execute_safely
