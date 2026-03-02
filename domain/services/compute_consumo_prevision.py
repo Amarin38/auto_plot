@@ -2,14 +2,15 @@ import numpy as np
 import pandas as pd
 from statsmodels.tsa.holtwinters import ExponentialSmoothing
 
+from config.enums import RepuestoEnum
 from config.enums_colors import TextModsEnum, ForegroundColorsEnum
 from utils.exception_utils import execute_safely
 from viewmodels.consumo.prevision.data_vm import PrevisionDataVM
 from viewmodels.consumo.prevision.vm import PrevisionVM
 
 
-@execute_safely
-def create_forecast(df: pd.DataFrame, tipo_repuesto: str):
+# @execute_safely
+def create_forecast(df: pd.DataFrame, tipo_repuesto: RepuestoEnum):
     repuesto = df["Repuesto"].unique()
 
     for rep in repuesto:
@@ -39,6 +40,7 @@ def create_forecast(df: pd.DataFrame, tipo_repuesto: str):
             data: pd.DataFrame      = series.to_frame("Consumo").reset_index()
             data.columns            = ["FechaCompleta", "Consumo"]
             data["Consumo"]         = data["Consumo"].round(0)
+            data["Consumo"]         = data["Consumo"].astype("float16")
             data["Repuesto"]        = rep
             data["TipoRepuesto"]    = tipo_repuesto
             data["FechaCompleta"]   = data["FechaCompleta"].dt.date
@@ -49,6 +51,7 @@ def create_forecast(df: pd.DataFrame, tipo_repuesto: str):
             prevision.columns               = ["FechaCompleta", "ConsumoPrevision"]
             prevision["ConsumoPrevision"]   = prevision["ConsumoPrevision"].round(0)
             prevision["ConsumoPrevision"]   = prevision["ConsumoPrevision"].clip(lower=0)
+            prevision["ConsumoPrevision"]   = prevision["ConsumoPrevision"].astype("float64")
             prevision["Repuesto"]           = rep
             prevision["TipoRepuesto"]       = tipo_repuesto
             prevision["FechaCompleta"]      = prevision["FechaCompleta"].dt.date

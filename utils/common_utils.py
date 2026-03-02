@@ -1,17 +1,13 @@
 import math
 import re
 import io
-from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, date
 from zipfile import BadZipFile
 
+import numpy as np
 import pandas as pd
-import streamlit as st
 
-from typing import List, Optional, Any
-
-from streamlit.runtime.scriptrunner_utils.script_run_context import get_script_run_ctx, add_script_run_ctx
-
+from typing import List, Optional
 
 from config.constants_common import FILE_STRFTIME_DMY
 from utils.exception_utils import execute_safely
@@ -73,9 +69,9 @@ class CommonUtils:
     @execute_safely
     def delete_unnamed_cols(df: pd.DataFrame) -> pd.DataFrame:
         """ Deletes all the 'Unnamed' columns. """
-        if df.columns.str.contains("Unnamed").any():
-            df = df.loc[:, ~df.columns.str.contains("Unnamed")] 
-            df = df.loc[:, ~df.columns.str.contains("Columna")]
+        # if df.columns.str.contains("Unnamed").any():
+        df = df.loc[:, ~df.columns.str.contains("Unnamed")]
+        df = df.loc[:, ~df.columns.str.contains("Columna")]
 
         return df
 
@@ -146,10 +142,21 @@ class CommonUtils:
         if value is None:
             return None
 
+        if value is np.nan:
+            return None
+
         if isinstance(value, int) and math.isnan(value):
             return None
 
-        return float(value)
+        if isinstance(value, str):
+            value = value.strip()
+            if value == "":
+                return None
+
+        try:
+            return float(value)
+        except (ValueError, TypeError):
+            return None
 
     @staticmethod
     def safe_date(value):
@@ -184,16 +191,29 @@ class CommonUtils:
                 return pd.to_datetime(value).date()
             except Exception:
                 return None
-
         return None
 
+
     @execute_safely
-    def num_parser(self, val) -> str:
-        return (f"{val:,.2f}"
+    def num_parser(self, val) -> Optional[str]:
+        if val is None:
+            return None
+
+        if pd.isna(val):
+            return None
+
+        if isinstance(val, str):
+            val = val.strip()
+            if val == "":
+                return None
+
+        return (f"{float(val):,.2f}"
                 .replace(",", "X")
                 .replace(".", ",")
                 .replace("X", ".")
+                .replace("_",".")
                 )
+
 
     @execute_safely
     def abreviar_es(self, n) -> str:

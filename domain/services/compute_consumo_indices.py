@@ -3,7 +3,7 @@ from typing import Optional
 import numpy as np
 import pandas as pd
 
-from config.enums import IndexTypeEnum
+from config.enums import IndexTypeEnum, RepuestoEnum
 from utils.exception_utils import execute_safely
 from viewmodels.common.coches_cabecera_vm import CochesCabeceraVM
 from viewmodels.consumo.indice.vm import IndiceConsumoVM
@@ -14,11 +14,11 @@ class Index:
     def __init__(self, ) -> None:
         self.cleaner = InventoryDataCleaner()
 
-    @execute_safely
-    def calculate(self, df: pd.DataFrame, tipo_rep: str, tipo_op: IndexTypeEnum, filtro: Optional[str] = None) -> None:
+    # @execute_safely
+    def calculate(self, df: pd.DataFrame, tipo_rep: RepuestoEnum, tipo_op: IndexTypeEnum, filtro: Optional[str] = None) -> None:
         if not df.empty:
             df_mod = pd.DataFrame()
-            df['FechaCompleta'] = pd.to_datetime(df['FechaCompleta'])
+            df['FechaCompleta'] = pd.to_datetime(df['FechaCompleta'], format="mixed")
 
             fecha_max = df['FechaCompleta'].max()
 

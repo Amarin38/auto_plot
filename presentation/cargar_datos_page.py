@@ -10,10 +10,10 @@ from viewmodels.conteo_stock.vm import ConteoStockVM
 from viewmodels.gomeria.diferencia_mov_dep_vm import DiferenciaMovimientosEntreDepositosVM
 from domain.services.compute_consumo_obligatorio import compute_consumo_obligatorio
 
-from domain.services.compute_historial_consumo import compute_historial
-from domain.services.compute_prevision import create_forecast
+from domain.services.compute_consumo_historial import compute_historial
+from domain.services.compute_consumo_prevision import create_forecast
 from domain.services.compute_garantias import compute_consumo_garantias, compute_fallas_garantias
-from domain.services.compute_indices_consumo import Index
+from domain.services.compute_consumo_indices import Index
 from domain.services.compute_maximos_minimos import MaxMin
 from domain.services.compute_duracion_repuestos import DuracionRepuestos
 
@@ -175,7 +175,7 @@ def cargar_datos():
 
 
 @execute_safely
-def load_data(self, select_load: LoadDataEnum, uploaded_files):
+def load_data(select_load: LoadDataEnum, uploaded_files):
     match select_load:
         case   LoadDataEnum.PARQUE_MOVIL                    | LoadDataEnum.FALLA_GARANTIAS \
              | LoadDataEnum.CONSUMO_GARANTIAS               | LoadDataEnum.DURACION_REPUESTOS \

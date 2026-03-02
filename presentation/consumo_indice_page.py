@@ -1,7 +1,6 @@
 import streamlit as st
 
 from presentation.streamlit_components import SelectBoxComponents, OtherComponents
-from utils.common_utils import CommonUtils
 from utils.exception_utils import execute_safely
 from viewmodels.consumo.indice.desviacion.vm import DesviacionIndicesVM
 
