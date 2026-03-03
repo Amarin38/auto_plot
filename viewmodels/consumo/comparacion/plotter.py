@@ -1,20 +1,12 @@
-from typing import Any, Tuple, List
+from typing import Any, List
 
 import numpy as np
 import pandas as pd
 import plotly.graph_objects as go
-import streamlit
-from pandas import Series
-from plotly.graph_objs import Figure
-from plotly.subplots import make_subplots
-from itertools import product
 
 from config.enums import PeriodoComparacionEnum, ConsumoComparacionRepuestoEnum, CabecerasEnum
-from config.enums_colors import DuracionRepuestosColorsEnum, IndiceColorsEnum, DuracionRepuestosColorsEnum, \
-    ConsumoComparacionOscuroColorsEnum
-from config.constants_common import FILE_STRFTIME_YMD
+from config.enums_colors import DuracionRepuestosColorsEnum, ConsumoComparacionOscuroColorsEnum
 from utils.exception_utils import execute_safely
-from viewmodels.consumo.comparacion.vm import ConsumoComparacionVM
 from viewmodels.plotly_components import DefaultUpdateLayoutComponents, HoverComponents
 
 

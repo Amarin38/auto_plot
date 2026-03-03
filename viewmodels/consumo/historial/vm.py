@@ -2,38 +2,39 @@ import pandas as pd
 
 from config.enums import RepuestoEnum
 from domain.entities.consumo_historial import ConsumoHistorial
-from infrastructure.repositories.consumo_historial_repository import ConsumoHistorialRepository
+from infrastructure.unit_of_work import SQLAlchemyUnitOfWork
 
 
 class HistorialConsumoVM:
-    def __init__(self) -> None:
-        self.repo = ConsumoHistorialRepository()
+    def __init__(self, uow: SQLAlchemyUnitOfWork = SQLAlchemyUnitOfWork()) -> None:
+        self.uow = uow
 
     def save_df(self, df) -> None:
-        entities = []
+        entities = [
+            ConsumoHistorial(
+                id           = None,
+                TipoRepuesto = row['TipoRepuesto'],
+                Año          = row['Año'],
+                TotalConsumo = row['TotalConsumo'],
+                FechaMin     = row['FechaMin'],
+                FechaMax     = row['FechaMax'],
+            ) for index, row in df.iterrows()
+        ]
 
-        for _, row in df.iterrows():
-            entity = ConsumoHistorial(
-                id              = None,
-                TipoRepuesto    = row['TipoRepuesto'],
-                Año             = row['Año'],
-                TotalConsumo    = row['TotalConsumo'],
-                FechaMin        = row['FechaMin'],
-                FechaMax        = row['FechaMax'],
-            )
-            entities.append(entity)
-
-        self.repo.insert_many(entities)
+        with self.uow as uow:
+            uow.consumo_historial.insert_many(entities)
 
 
     def get_df(self) -> pd.DataFrame:
-        entities = self.repo.get_all()
-        return self.get_data(entities)
+        with self.uow as uow:
+            entities = uow.consumo_historial.get_all()
+            return self.get_data(entities) if entities else pd.DataFrame()
 
 
     def get_df_tipo_repuesto(self, tipo_repuesto: RepuestoEnum) -> pd.DataFrame:
-        entities = self.repo.get_by_tipo_rep(tipo_repuesto)
-        return self.get_data(entities)
+        with self.uow as uow:
+            entities = uow.consumo_historial.get_by_tipo_rep(tipo_repuesto)
+            return self.get_data(entities) if entities else pd.DataFrame()
 
 
     @staticmethod

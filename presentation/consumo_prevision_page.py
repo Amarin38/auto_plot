@@ -1,5 +1,6 @@
 import streamlit as st
 
+from infrastructure.unit_of_work import SQLAlchemyUnitOfWork
 from presentation.streamlit_components import SelectBoxComponents, OtherComponents
 from utils.exception_utils import execute_safely
 from viewmodels.consumo.prevision.data_vm import PrevisionDataVM
@@ -13,7 +14,8 @@ from viewmodels.consumo.prevision.vm import PrevisionVM
 
 @st.cache_data(ttl=200, show_spinner=False, show_time=True)
 def _cargar_datos(tipo_repuesto):
-    return PrevisionDataVM().get_df_by_tipo_repuesto(tipo_repuesto), PrevisionVM().get_df_by_tipo_repuesto(tipo_repuesto)
+    uow = SQLAlchemyUnitOfWork()
+    return PrevisionDataVM(uow=uow).get_df_by_tipo_repuesto(tipo_repuesto), PrevisionVM(uow=uow).get_df_by_tipo_repuesto(tipo_repuesto)
 
 
 @execute_safely

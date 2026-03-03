@@ -2,8 +2,6 @@ from datetime import date
 from dataclasses import dataclass
 from typing import Optional
 
-from config.enums import PeriodoComparacionEnum, CabecerasEnum, ConsumoComparacionRepuestoEnum
-
 
 @dataclass
 class ConsumoComparacion:

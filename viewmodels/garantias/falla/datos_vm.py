@@ -2,19 +2,17 @@ import pandas as pd
 
 from config.constants_common import PAGE_STRFTIME_YMD
 from domain.entities.garantias_datos import GarantiasDatos
-from infrastructure.repositories.garantias_datos_repository import GarantiasDatosRepository
+from infrastructure.unit_of_work import SQLAlchemyUnitOfWork
 from interfaces.viewmodel import ViewModel
 
 
 class DatosGarantiasVM(ViewModel):
-    def __init__(self) -> None:
-        self.repo = GarantiasDatosRepository()
+    def __init__(self, uow: SQLAlchemyUnitOfWork = SQLAlchemyUnitOfWork()) -> None:
+        self.uow = uow
 
     def save_df(self, df) -> None:
-        entities = []
-
-        for _, row in df.iterrows():
-            entity = GarantiasDatos(
+        entities = [
+            GarantiasDatos(
                 id              = None,
                 Año             = row['Año'],
                 Mes             = row['Mes'],
@@ -29,23 +27,27 @@ class DatosGarantiasVM(ViewModel):
                 Detalle         = row['Detalle'],
                 Tipo            = row['Tipo'],
                 DiasColocado    = row['DiasColocado'],
-            )
-            entities.append(entity)
+            ) for index, row in df.iterrows()
+        ]
 
-        self.repo.insert_many(entities)
+        with self.uow as uow:
+            uow.garantias_datos.insert_many(entities)
 
 
     def get_df(self) -> pd.DataFrame:
-        entities = self.repo.get_all()
-        return self.get_data(entities)
+        with self.uow as uow:
+            entities = uow.garantias_datos.get_all()
+            return self.get_data(entities) if entities else pd.DataFrame()
 
 
     def get_min_date(self) -> str:
-        return self.repo.get_min_date().strftime(PAGE_STRFTIME_YMD)
+        with self.uow as uow:
+            return uow.garantias_datos.get_min_date().strftime(PAGE_STRFTIME_YMD)
 
 
     def get_max_date(self) -> str:
-        return self.repo.get_max_date().strftime(PAGE_STRFTIME_YMD)
+        with self.uow as uow:
+            return uow.garantias_datos.get_max_date().strftime(PAGE_STRFTIME_YMD)
 
 
     @staticmethod

@@ -2,19 +2,17 @@ import pandas as pd
 
 from config.enums import ConsumoObligatorioEnum
 from domain.entities.consumo_obligatorio import ConsumoObligatorio
-from infrastructure.repositories.consumo_obligatorio_repository import ConsumoObligatorioRepository
+from infrastructure.unit_of_work import SQLAlchemyUnitOfWork
 from interfaces.viewmodel import ViewModel
 
 
 class ConsumoObligatorioVM(ViewModel):
-    def __init__(self) -> None:
-        self.repo = ConsumoObligatorioRepository()
+    def __init__(self, uow: SQLAlchemyUnitOfWork = SQLAlchemyUnitOfWork()) -> None:
+        self.uow = uow
 
     def save_df(self, df) -> None:
-        entities = []
-
-        for _, row in df.iterrows():
-            entity = ConsumoObligatorio(
+        entities = [
+            ConsumoObligatorio(
                 id                  = None,
                 Cabecera            = row['Cabecera'],
                 Repuesto            = row['Repuesto'],
@@ -24,20 +22,23 @@ class ConsumoObligatorioVM(ViewModel):
                 MinimoAntiguo       = row['MinimoAntiguo'],
                 MinimoObligatorio   = row['MinimoObligatorio'],
                 UltimaFecha         = row['UltimaFecha'],
-            )
-            entities.append(entity)
+            ) for index, row in df.iterrows()
+        ]
 
-        self.repo.insert_many(entities)
+        with self.uow as uow:
+            uow.consumo_obligatorio.insert_many(entities)
 
 
     def get_df(self) -> pd.DataFrame:
-        entities = self.repo.get_all()
-        return self.get_data(entities)
+        with self.uow as uow:
+            entities = uow.consumo_obligatorio.get_all()
+            return self.get_data(entities) if entities else pd.DataFrame()
 
 
     def get_df_repuesto(self, repuesto: ConsumoObligatorioEnum) -> pd.DataFrame:
-        entity = self.repo.get_by_repuesto(repuesto)
-        return self.get_data(entity)
+        with self.uow as uow:
+            entities = uow.consumo_obligatorio.get_by_repuesto(repuesto)
+            return self.get_data(entities) if entities else pd.DataFrame()
 
 
     @staticmethod

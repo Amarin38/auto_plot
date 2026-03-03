@@ -1,20 +1,17 @@
 import pandas as pd
 
 from domain.entities.gomeria_diferencia_mov_dep import GomeriaDiferenciaMovEntreDep
-from infrastructure.repositories.gomeria_diferencia_mov_dep_repository import \
-    GomeriaDiferenciaMovEntreDepRepository
+from infrastructure.unit_of_work import SQLAlchemyUnitOfWork
 from interfaces.viewmodel import ViewModel
 
 
 class DiferenciaMovimientosEntreDepositosVM(ViewModel):
-    def __init__(self) -> None:
-        self.repo = GomeriaDiferenciaMovEntreDepRepository()
+    def __init__(self, uow: SQLAlchemyUnitOfWork = SQLAlchemyUnitOfWork()) -> None:
+        self.uow = uow
 
     def save_df(self, df) -> None:
-        entities = []
-
-        for _, row in df.iterrows():
-            entity = GomeriaDiferenciaMovEntreDep(
+        entities = [
+            GomeriaDiferenciaMovEntreDep(
                 id                  = None,
                 Familia             = row["Familia"],
                 Articulo            = row["Articulo"],
@@ -25,19 +22,21 @@ class DiferenciaMovimientosEntreDepositosVM(ViewModel):
                 CostoTotal2025      = row["CostoTotal2025"],
                 DiferenciaAnual     = row["DiferenciaAnual"],
                 DiferenciaDeCostos  = row["DiferenciaDeCostos"]
-            )
-            entities.append(entity)
+            ) for index, row in df.iterrows()
+        ]
 
-        self.repo.insert_many(entities)
+        with self.uow as uow:
+            uow.gomeria_diferencia_mov.insert_many(entities)
 
 
     def get_df(self) -> pd.DataFrame:
-        entities = self.repo.get_all()
+        with self.uow as uow:
+            entities = uow.gomeria_diferencia_mov.get_all()
 
-        df = self.get_data(entities)
-        df["Diferencia Costos"] = df["Diferencia Costos"].fillna(0)
+            df = self.get_data(entities) if entities else pd.DataFrame()
+            df["Diferencia Costos"] = df["Diferencia Costos"].fillna(0)
 
-        return df
+            return df
 
 
     @staticmethod

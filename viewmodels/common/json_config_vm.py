@@ -6,49 +6,46 @@ import pandas as pd
 from pandas import DataFrame
 
 from domain.entities.json_config import JSONConfig
-from infrastructure.repositories.json_config_repository import JSONConfigRepository
+from infrastructure.unit_of_work import SQLAlchemyUnitOfWork
 from interfaces.viewmodel import ViewModel
 
 
 class JSONConfigVM(ViewModel):
-    def __init__(self) -> None:
-        self.repo = JSONConfigRepository()
+    def __init__(self, uow: SQLAlchemyUnitOfWork = SQLAlchemyUnitOfWork()) -> None:
+        self.uow = uow
+
 
     def save_df(self, df) -> None:
-        entities = []
-
-        for _, row in df.iterrows():
-            entity = JSONConfig(
+        entities = [
+            JSONConfig(
                 id      = None,
                 nombre  = row['nombre'],
                 data    = row['data'],
-            )
-            entities.append(entity)
+            ) for index, row in df.iterrows()
+        ]
 
-        self.repo.insert_many(entities)
+        with self.uow as uow:
+            uow.json_config.insert_many(entities)
 
 
     def get_df(self) -> pd.DataFrame:
-        entities = self.repo.get_all()
-        return self.get_data(entities)
+        with self.uow as uow:
+            entities = uow.json_config.get_all()
+            return self.get_data(entities) if entities else pd.DataFrame()
 
 
     @dispatch(int)
     def get_df_by_id(self, _id: int) -> Dict[Any, Any]:
-        entity = self.repo.get_by_id(_id)
-
-        if entity is not None:
-            return entity.data
-        return {}
+        with self.uow as uow:
+            entity = uow.json_config.get_by_id(_id)
+            return entity.data if entity else {}
 
 
     @dispatch(str)
     def get_df_by_id(self, nombre: str) -> Dict[Any, Any]:
-        entity = self.repo.get_by_id(nombre)
-
-        if entity is not None:
-            return entity.data
-        return {}
+        with self.uow as uow:
+            entity = uow.json_config.get_by_id(nombre)
+            return entity.data if entity else {}
 
 
     @staticmethod

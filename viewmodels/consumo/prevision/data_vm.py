@@ -2,41 +2,42 @@ import pandas as pd
 
 from config.constants_common import FILE_STRFTIME_YMD
 from domain.entities.consumo_prevision_data import ConsumoPrevisionData
-from infrastructure.repositories.consumo_prevision_data_repository import ConsumoPrevisionDataRepository
+from infrastructure.unit_of_work import SQLAlchemyUnitOfWork
 
 
 class PrevisionDataVM:
-    def __init__(self) -> None:
-        self.repo = ConsumoPrevisionDataRepository()
+    def __init__(self, uow: SQLAlchemyUnitOfWork = SQLAlchemyUnitOfWork()) -> None:
+        self.uow = uow
 
     def save_df(self, df) -> None:
-        entities = []
+        entities = [
+            ConsumoPrevisionData(
+                id              = None,
+                FechaCompleta   = row['FechaCompleta'],
+                Consumo         = row['Consumo'],
+                Repuesto        = row['Repuesto'],
+                TipoRepuesto    = row['TipoRepuesto'],
+            ) for index, row in df.iterrows()
+        ]
 
-        for _, row in df.iterrows():
-            entity = ConsumoPrevisionData(
-                id                  = None,
-                FechaCompleta       = row['FechaCompleta'],
-                Consumo             = row['Consumo'],
-                Repuesto            = row['Repuesto'],
-                TipoRepuesto        = row['TipoRepuesto'],
-            )
-            entities.append(entity)
-
-        self.repo.insert_many(entities)
+        with self.uow as uow:
+            uow.consumo_prevision_data.insert_many(entities)
 
 
     def get_df(self) -> pd.DataFrame:
-        entities = self.repo.get_all()
-        return self.get_data(entities)
+        with self.uow as uow:
+            entities = uow.consumo_prevision_data.get_all()
+            return self.get_data(entities) if entities else pd.DataFrame()
 
 
     def get_df_by_tipo_repuesto(self, tipo_rep: str) -> pd.DataFrame:
-        entities = self.repo.get_by_tipo_repuesto(tipo_rep)
-        df = self.get_data(entities)
+        with self.uow as uow:
+            entities = uow.consumo_prevision_data.get_by_tipo_repuesto(tipo_rep)
+            df = self.get_data(entities) if entities else pd.DataFrame()
 
-        df['FechaCompleta'] = pd.to_datetime(df['FechaCompleta'], format=FILE_STRFTIME_YMD)
+            df['FechaCompleta'] = pd.to_datetime(df['FechaCompleta'], format=FILE_STRFTIME_YMD)
 
-        return df
+            return df
 
 
     @staticmethod

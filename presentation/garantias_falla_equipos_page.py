@@ -4,6 +4,7 @@ import pandas as pd
 import streamlit as st
 from pandas import DataFrame
 
+from infrastructure.unit_of_work import SQLAlchemyUnitOfWork
 from utils.exception_utils import execute_safely
 from presentation.streamlit_components import SelectBoxComponents
 
@@ -15,17 +16,20 @@ from viewmodels.garantias.falla.plotter import FallaGarantiasPlotter
 from viewmodels.garantias.consumo.plotter import ConsumoGarantiasPlotter
 from viewmodels.garantias.falla.vm import FallaGarantiasVM
 
+uow = SQLAlchemyUnitOfWork()
 
 @st.cache_data(ttl=200, show_spinner=False)
 def _cargar_datos_pie(tipo_repuesto, cabecera) -> Tuple[DataFrame, str, str]:
-    return (FallaGarantiasVM().get_df_by_tipo_rep_and_cabecera(tipo_repuesto, cabecera),
-            DatosGarantiasVM().get_min_date(),
-            DatosGarantiasVM().get_max_date())
+    datos_vm = DatosGarantiasVM(uow=uow)
+
+    return (FallaGarantiasVM(uow=uow).get_df_by_tipo_rep_and_cabecera(tipo_repuesto, cabecera),
+            datos_vm.get_min_date(),
+            datos_vm.get_max_date())
 
 
 @st.cache_data(ttl=200, show_spinner=False)
 def _cargar_datos_bar(tipo_repuesto, cabecera) -> pd.DataFrame:
-    return ConsumoGarantiasVM().get_df_by_tipo_rep_and_cabecera(tipo_repuesto, cabecera)
+    return ConsumoGarantiasVM(uow=uow).get_df_by_tipo_rep_and_cabecera(tipo_repuesto, cabecera)
 
 
 @execute_safely

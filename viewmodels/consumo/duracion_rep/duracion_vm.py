@@ -1,48 +1,49 @@
 import pandas as pd
 
 from domain.entities.duracion_repuestos import DuracionRepuestos
-from infrastructure.repositories.duracion_repuestos_repository import DuracionRepuestosRepository
+from infrastructure.unit_of_work import SQLAlchemyUnitOfWork
 
 
 class DuracionRepuestosVM:
-    def __init__(self) -> None:
-        self.repo = DuracionRepuestosRepository()
+    def __init__(self, uow: SQLAlchemyUnitOfWork = SQLAlchemyUnitOfWork()) -> None:
+        self.uow = uow
 
     def save_df(self, df) -> None:
-        entities = []
+        entities = [
+            DuracionRepuestos(
+                id                  = None,
+                Patente             = row['Patente'],
+                FechaCambio         = row['FechaCambio'],
+                Cambio              = row['Cambio'],
+                Cabecera            = row['Cabecera'],
+                Observaciones       = row['Observaciones'],
+                Repuesto            = row['Repuesto'],
+                TipoRepuesto        = row['TipoRepuesto'],
+                DuracionEnDias      = row['DuracionEnDias'],
+                DuracionEnMeses     = row['DuracionEnMeses'],
+                DuracionEnAños      = row['DuracionEnAños'],
+                AñoPromedio         = row['AñoPromedio'],
+                DesviacionEstandar  = row['DesviacionEstandar'],
+            ) for index, row in df.iterrows()
+        ]
 
-        for _, row in df.iterrows():
-            entity = DuracionRepuestos(
-                id                          = None,
-                Patente                     = row['Patente'],
-                FechaCambio                 = row['FechaCambio'],
-                Cambio                      = row['Cambio'],
-                Cabecera                    = row['Cabecera'],
-                Observaciones               = row['Observaciones'],
-                Repuesto                    = row['Repuesto'],
-                TipoRepuesto                = row['TipoRepuesto'],
-                DuracionEnDias              = row['DuracionEnDias'],
-                DuracionEnMeses             = row['DuracionEnMeses'],
-                DuracionEnAños              = row['DuracionEnAños'],
-                AñoPromedio                 = row['AñoPromedio'],
-                DesviacionEstandar          = row['DesviacionEstandar'],
-            )
-            entities.append(entity)
-
-        self.repo.insert_many(entities)
+        with self.uow as uow:
+            uow.duracion_repuestos.insert_many(entities)
 
 
     def get_df(self) -> pd.DataFrame:
-        entities = self.repo.get_all()
-        return self.get_data(entities)
+        with self.uow as uow:
+            entities = uow.duracion_repuestos.get_all()
+            return self.get_data(entities) if entities else pd.DataFrame()
 
 
     def get_df_by_repuesto(self, repuesto: str) -> pd.DataFrame:
-        entities = self.repo.get_by_repuesto(repuesto)
-        df = self.get_data(entities)
+        with self.uow as uow:
+            entities = uow.duracion_repuestos.get_by_repuesto(repuesto)
+            df = self.get_data(entities) if entities else pd.DataFrame()
 
-        df["FechaCambio"] = pd.to_datetime(df["FechaCambio"], errors="coerce")
-        return df
+            df["FechaCambio"] = pd.to_datetime(df["FechaCambio"], errors="coerce")
+            return df
 
 
     @staticmethod

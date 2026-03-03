@@ -2,7 +2,6 @@ import streamlit as st
 
 from config.constants_views import PAG_CONSUMO_OBLIGATORIO
 from presentation.streamlit_components import SelectBoxComponents
-from utils.common_utils import CommonUtils
 from viewmodels.consumo.obligatorio.plotter import ConsumoObligatorioPlotter
 from viewmodels.consumo.obligatorio.vm import ConsumoObligatorioVM
 

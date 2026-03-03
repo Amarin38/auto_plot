@@ -1,22 +1,19 @@
 from typing import List
 
 import pandas as pd
-from pandas import DataFrame
 
-from config.enums import RepuestoEnum, PeriodoComparacionEnum, CabecerasEnum, ConsumoComparacionRepuestoEnum
+from config.enums import PeriodoComparacionEnum, CabecerasEnum, ConsumoComparacionRepuestoEnum
 from domain.entities.consumo_comparacion import ConsumoComparacion
-from infrastructure.repositories.consumo_comparacion_repository import ConsumoComparacionRepository
+from infrastructure.unit_of_work import SQLAlchemyUnitOfWork
 
 
 class ConsumoComparacionVM:
-    def __init__(self) -> None:
-        self.repo = ConsumoComparacionRepository()
+    def __init__(self, uow: SQLAlchemyUnitOfWork = SQLAlchemyUnitOfWork()) -> None:
+        self.uow = uow
 
     def save_df(self, df) -> None:
-        entities = []
-
-        for _, row in df.iterrows():
-            entity = ConsumoComparacion(
+        entities = [
+            ConsumoComparacion(
                 id              = None,
                 Familia         = row["Familia"],
                 Articulo        = row["Articulo"],
@@ -28,22 +25,25 @@ class ConsumoComparacionVM:
                 FechaCompleta   = row["FechaCompleta"],
                 FechaTitulo     = row["FechaTitulo"],
                 PeriodoID       = row["PeriodoID"],
-            )
-            entities.append(entity)
+            ) for _, row in df.iterrows()
+        ]
 
-        self.repo.insert_many(entities)
+        with self.uow as uow:
+            uow.consumo_comparacion.insert_many(entities)
 
 
     def get_df(self) -> pd.DataFrame:
-        entities = self.repo.get_all()
-        return self.get_data(entities)
+        with self.uow as uow:
+            entities = uow.consumo_comparacion.get_all()
+            return self.get_data(entities) if entities else pd.DataFrame()
 
 
     def get_df_cabecera_and_tipo_rep_and_periodo(self, cabecera: CabecerasEnum,
                                                        tipo_repuesto: List[ConsumoComparacionRepuestoEnum],
                                                        periodo: List[PeriodoComparacionEnum]) -> pd.DataFrame:
-        entities = self.repo.get_by_cabecera_and_tipo_rep_and_periodo(cabecera, tipo_repuesto, periodo)
-        return self.get_data(entities)
+        with self.uow as uow:
+            entities = uow.consumo_comparacion.get_by_cabecera_and_tipo_rep_and_periodo(cabecera, tipo_repuesto, periodo)
+            return self.get_data(entities) if entities else pd.DataFrame()
 
 
     @staticmethod

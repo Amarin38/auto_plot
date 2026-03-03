@@ -7,21 +7,21 @@ from viewmodels.conteo_stock.plotter import ConteoStockPlotter
 from viewmodels.conteo_stock.vm import ConteoStockVM
 from utils.common_utils import CommonUtils
 
+vm = ConteoStockVM()
 
 @st.cache_data(ttl=300, show_spinner=True)
 def _cargar_datos():
-    return ConteoStockVM().calcular_datos()
+    return vm.calcular_datos()
 
 @st.cache_data(ttl=300, show_time=True)
 def _cargar_df():
-    return ConteoStockVM().get_df()
+    return vm.get_df()
 
 
 def main():
     roles = st.session_state.get("roles") or []
     components = OtherComponents()
     utils = CommonUtils()
-    vm = ConteoStockVM()
 
     st.title(PAG_PRINCIPAL)
 

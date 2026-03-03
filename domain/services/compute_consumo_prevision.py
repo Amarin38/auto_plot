@@ -4,7 +4,6 @@ from statsmodels.tsa.holtwinters import ExponentialSmoothing
 
 from config.enums import RepuestoEnum
 from config.enums_colors import TextModsEnum, ForegroundColorsEnum
-from utils.exception_utils import execute_safely
 from viewmodels.consumo.prevision.data_vm import PrevisionDataVM
 from viewmodels.consumo.prevision.vm import PrevisionVM
 

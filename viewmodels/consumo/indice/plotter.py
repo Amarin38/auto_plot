@@ -1,12 +1,10 @@
-from typing import Tuple, Union, List, Any
+from typing import Any
 
 import numpy as np
 import pandas as pd
 import plotly.graph_objects as go
 
 from config.enums_colors import IndiceColorsEnum
-from config.enums import IndexTypeEnum
-
 from utils.exception_utils import execute_safely
 from utils.common_utils import CommonUtils
 

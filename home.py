@@ -27,9 +27,11 @@ from config.constants_views import (PAG_PRINCIPAL, PAG_CARGAR_DATOS, PAG_INDICES
                                     PAG_COCHES_CABECERA, PAG_PARQUE_MOVIL, PAG_SISSSA, PAG_DOTA_LICITACIONES,
                                     PAG_COMPARACION_CONSUMO, PAG_NUEVO_USUARIO)
 
+
 # -----------------------------------------------------------------------------------------------
 # CONFIG STREAMLIT
 # -----------------------------------------------------------------------------------------------
+vm = UsuarioVM()
 
 st.set_page_config(
     page_title="Estadísticas Dota",
@@ -49,7 +51,7 @@ st.session_state.setdefault("username", None)
 st.session_state.setdefault("name", None)
 
 if "credentials" not in st.session_state:
-    credentials = UsuarioVM().get_credentials() or {"usernames": {}}
+    credentials = vm.get_credentials() or {"usernames": {}}
     st.session_state.credentials = credentials
 
 # -----------------------------------------------------------------------------------------------
@@ -111,7 +113,7 @@ with centro:
 
 # Cargar roles solo una vez
 if not st.session_state.roles and st.session_state.username:
-    user_entity = UsuarioVM().repo.get_by_nombre(st.session_state.username)
+    user_entity = vm.get_by_name(st.session_state.username)
     if user_entity and user_entity.Rol:
         st.session_state.roles = [user_entity.Rol]
     else:

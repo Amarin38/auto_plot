@@ -9,7 +9,6 @@ from config.enums import RepuestoEnum, TendenciaEnum
 from utils.exception_utils import execute_safely
 from viewmodels.plotly_components import DefaultUpdateLayoutComponents, DropDownComponents, \
     HoverComponents
-from viewmodels.consumo.historial.vm import HistorialConsumoVM
 
 
 class HistorialPlotter:

@@ -7,13 +7,12 @@ import pandas as pd
 from pandas import DataFrame
 
 from domain.entities.parque_movil import ParqueMovil, ParqueMovilFiltro
-from infrastructure.repositories.parque_movil_repository import ParqueMovilRepository
+from infrastructure.unit_of_work import SQLAlchemyUnitOfWork
 from interfaces.viewmodel import ViewModel
 
 @st.cache_data(ttl=3600, show_spinner="Consultando a la base de datos...", show_time=True)
-def _fetch_base_dataframe(fecha_desde: date, fecha_hasta: date):
-    repo = ParqueMovilRepository()
-    entities = repo.get_by_args(fecha_desde, fecha_hasta)
+def _fetch_base_dataframe(fecha_desde: date, fecha_hasta: date, _uow: SQLAlchemyUnitOfWork):
+    entities = _uow.parque_movil.get_by_args(fecha_desde, fecha_hasta)
 
     if not entities:
         return pd.DataFrame()
@@ -60,44 +59,46 @@ def _fetch_base_dataframe(fecha_desde: date, fecha_hasta: date):
 
 
 class ParqueMovilVM(ViewModel):
-    def __init__(self) -> None:
-        self.repo = ParqueMovilRepository()
+    def __init__(self, uow: SQLAlchemyUnitOfWork = SQLAlchemyUnitOfWork()) -> None:
+        self.uow = uow
+
 
     def save_df(self, df) -> None:
-        entities = []
-
         df["FechaParqueMovil"] = pd.to_datetime(df["FechaParqueMovil"])
 
-        for _, row in df.iterrows():
-            entity = ParqueMovil(
-                id                  = None,
-                FechaParqueMovil    = row['FechaParqueMovil'],
-                Linea               = row['Linea'],
-                Interno             = row['Interno'],
-                Dominio             = row['Dominio'],
-                Asientos            = row['Asientos'],
-                Año                 = row['Año'],
-                ChasisMarca         = row['ChasisMarca'],
-                ChasisModelo        = row['ChasisModelo'],
-                ChasisNum           = row['ChasisNum'],
-                MotorMarca          = row['MotorMarca'],
-                MotorModelo         = row['MotorModelo'],
-                MotorNum            = row['MotorNum'],
-                Carroceria          = row['Carroceria'],
-            )
-            entities.append(entity)
+        entities = [
+            ParqueMovil(
+                id               = None,
+                FechaParqueMovil = row['FechaParqueMovil'],
+                Linea            = row['Linea'],
+                Interno          = row['Interno'],
+                Dominio          = row['Dominio'],
+                Asientos         = row['Asientos'],
+                Año              = row['Año'],
+                ChasisMarca      = row['ChasisMarca'],
+                ChasisModelo     = row['ChasisModelo'],
+                ChasisNum        = row['ChasisNum'],
+                MotorMarca       = row['MotorMarca'],
+                MotorModelo      = row['MotorModelo'],
+                MotorNum         = row['MotorNum'],
+                Carroceria       = row['Carroceria'],
+            ) for index, row in df.iterrows()
+        ]
 
-        self.repo.insert_many(entities)
-        _fetch_base_dataframe.clear()
+        with self.uow as uow:
+            uow.parque_movil.insert_many(entities)
+            _fetch_base_dataframe.clear()
 
 
     def get_df(self) -> pd.DataFrame:
-        entities = self.repo.get_all()
-        return self.get_data(entities)
+        with self.uow as uow:
+            entities = uow.parque_movil.get_all()
+            return self.get_data(entities) if entities else pd.DataFrame()
 
-    @staticmethod
-    def get_by_args(fecha_desde: date, fecha_hasta: date, parque: ParqueMovilFiltro) -> Optional[Any]:
-        df_base = _fetch_base_dataframe(fecha_desde, fecha_hasta)
+
+    def get_by_args(self, fecha_desde: date, fecha_hasta: date, parque: ParqueMovilFiltro) -> Optional[Any]:
+        with self.uow as uow:
+            df_base = _fetch_base_dataframe(fecha_desde, fecha_hasta, uow)
 
         if df_base.empty:
             return pd.DataFrame()

@@ -1,42 +1,43 @@
 import pandas as pd
 
 from domain.entities.distribucion_normal import DistribucionNormal
-from infrastructure.repositories.distribucion_normal_repository import DistribucionNormalRepository
+from infrastructure.unit_of_work import SQLAlchemyUnitOfWork
 from interfaces.viewmodel import ViewModel
 
 
 class DistribucionNormalVM(ViewModel):
-    def __init__(self) -> None:
-        self.repo = DistribucionNormalRepository()
+    def __init__(self, uow: SQLAlchemyUnitOfWork = SQLAlchemyUnitOfWork()) -> None:
+        self.uow = uow
 
     def save_df(self, df) -> None:
-        entities = []
+        entities = [
+            DistribucionNormal(
+                id                  = None,
+                Años                = row['Años'],
+                Cambio              = row['Cambio'],
+                Cabecera            = row['Cabecera'],
+                Repuesto            = row['Repuesto'],
+                TipoRepuesto        = row['TipoRepuesto'],
+                AñoPromedio         = row['AñoPromedio'],
+                DesviacionEstandar  = row['DesviacionEstandar'],
+                DistribucionNormal  = row['DistribucionNormal'],
+            ) for index, row in df.iterrows()
+        ]
 
-        for _, row in df.iterrows():
-            entity = DistribucionNormal(
-                id                          = None,
-                Años                        = row['Años'],
-                Cambio                      = row['Cambio'],
-                Cabecera                    = row['Cabecera'],
-                Repuesto                    = row['Repuesto'],
-                TipoRepuesto                = row['TipoRepuesto'],
-                AñoPromedio                 = row['AñoPromedio'],
-                DesviacionEstandar          = row['DesviacionEstandar'],
-                DistribucionNormal          = row['DistribucionNormal'],
-            )
-            entities.append(entity)
-
-        self.repo.insert_many(entities)
+        with self.uow as uow:
+            uow.distribucion_normal.insert_many(entities)
 
 
     def get_df(self) -> pd.DataFrame:
-        entities = self.repo.get_all()
-        return self.get_data(entities)
+        with self.uow as uow:
+            entities = uow.distribucion_normal.get_all()
+            return self.get_data(entities) if entities else pd.DataFrame()
 
 
     def get_df_by_repuesto(self, repuesto: str) -> pd.DataFrame:
-        entities = self.repo.get_by_repuesto(repuesto)
-        return self.get_data(entities)
+        with self.uow as uow:
+            entities = uow.distribucion_normal.get_by_repuesto(repuesto)
+            return self.get_data(entities) if entities else pd.DataFrame()
 
 
     @staticmethod

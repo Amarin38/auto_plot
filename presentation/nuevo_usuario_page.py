@@ -5,12 +5,11 @@ from random import randint
 from config.enums import RoleEnum
 from config.constants_views import PAG_NUEVO_USUARIO, INPUT_HEIGHT, NUEVO_USUARIO_RADIO_HEIGHT
 from viewmodels.autenticacion.usuario_vm import UsuarioVM
-from presentation.streamlit_components import ButtonComponents, SelectBoxComponents
+from presentation.streamlit_components import ButtonComponents
 
 
 def nuevo_usuario():
     buttons = ButtonComponents()
-    select = SelectBoxComponents()
 
     aux1, centro, aux2 = st.columns([3,3,3])
     centro.title(PAG_NUEVO_USUARIO)

@@ -4,24 +4,25 @@ import streamlit as st
 from config.constants_common import IMG_PATH
 from config.constants_views import PAG_CARGAR_DATOS, CARGAR_DATOS_BASIC_HEIGHT, CARGAR_DATOS_MULTI_HEIGHT, INPUT_HEIGHT
 from config.enums import LoadDataEnum, TipoCargarEnum, MovimientoEnum
+
+from domain.services.compute_garantias import compute_consumo_garantias, compute_fallas_garantias
 from domain.services.compute_comparacion_consumo import compute_comparacion_consumo
-from viewmodels.common.parque_movil_vm import ParqueMovilVM
-from viewmodels.conteo_stock.vm import ConteoStockVM
-from viewmodels.gomeria.diferencia_mov_dep_vm import DiferenciaMovimientosEntreDepositosVM
 from domain.services.compute_consumo_obligatorio import compute_consumo_obligatorio
+
+from viewmodels.conteo_stock.vm import ConteoStockVM
+from viewmodels.common.parque_movil_vm import ParqueMovilVM
+from viewmodels.gomeria.diferencia_mov_dep_vm import DiferenciaMovimientosEntreDepositosVM
+from viewmodels.gomeria.transferencias_dep_vm import TransferenciasEntreDepositosVM
 
 from domain.services.compute_consumo_historial import compute_historial
 from domain.services.compute_consumo_prevision import create_forecast
-from domain.services.compute_garantias import compute_consumo_garantias, compute_fallas_garantias
 from domain.services.compute_consumo_indices import Index
 from domain.services.compute_maximos_minimos import MaxMin
 from domain.services.compute_duracion_repuestos import DuracionRepuestos
-
 from domain.services.data_cleaner_listado import InventoryDataCleaner
 
 from utils.common_utils import CommonUtils
 from utils.exception_utils import execute_safely
-from viewmodels.gomeria.transferencias_dep_vm import TransferenciasEntreDepositosVM
 from presentation.streamlit_components import ButtonComponents, SelectBoxComponents, DialogComponents
 
 

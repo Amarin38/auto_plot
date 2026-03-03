@@ -2,20 +2,18 @@ import pandas as pd
 from pandas import DataFrame
 
 from domain.entities.conteo_stock import ConteoStock
-from infrastructure.repositories.conteo_stock_repository import ConteoStockRepository
+from infrastructure.unit_of_work import SQLAlchemyUnitOfWork
 from utils.common_utils import CommonUtils
 
 
 class ConteoStockVM:
-    def __init__(self) -> None:
-        self.repo = ConteoStockRepository()
+    def __init__(self, uow: SQLAlchemyUnitOfWork = SQLAlchemyUnitOfWork()) -> None:
+        self.uow = uow
         self.common = CommonUtils()
 
     def save_df(self, df) -> None:
-        entities = []
-
-        for _, row in df.iterrows():
-            entity = ConteoStock(
+        entities = [
+            ConteoStock(
                 id                  = None,
                 Codigo              = row["Codigo"],
                 Articulo            = row["Articulo"],
@@ -34,16 +32,47 @@ class ConteoStockVM:
                 Deposito            = row["Deposito"],
                 Ajuste              = self.common.safe_float(row["Ajuste"]),
                 StockNuevo          = self.common.safe_float(row["StockNuevo"]),
-            )
-            entities.append(entity)
+            ) for index, row in df.iterrows()
+        ]
 
-        self.repo.insert_many(entities)
+        with self.uow as uow:
+            uow.conteo_stock.insert_many(entities)
 
 
     def get_df(self) -> pd.DataFrame:
-        entities = self.repo.get_all()
-        return self.get_data(entities)
+        with self.uow as uow:
+            entities = uow.conteo_stock.get_all()
+            return self.get_data(entities) if entities else pd.DataFrame()
 
+
+    @staticmethod
+    def get_data(entities) -> DataFrame:
+        return pd.DataFrame([
+            {
+                "id": e.id,
+                "Codigo": e.Codigo,
+                "Articulo": e.Articulo,
+                "Sistema": e.Sistema,
+                "Recuento": e.Recuento,
+                "Resultado": e.Resultado,
+                "Fecha": e.Fecha,
+                "Reconteos": e.Reconteos,
+                "Estanteria": e.Estanteria,
+                "Precio": e.Precio,
+                "DiferenciaStock": e.DiferenciaStock,
+                "DiferenciaPrecio": e.DiferenciaPrecio,
+                "PrecioAnterior": e.PrecioAnterior,
+                "PrecioActual": e.PrecioActual,
+                "Alerta": e.Alerta,
+                "Deposito": e.Deposito,
+                "Ajuste": e.Ajuste,
+                "StockNuevo": e.StockNuevo,
+            }
+            for e in entities
+        ])
+
+
+    # Cálculos
     def calcular_datos(self) -> tuple:
         df = self.get_df()[["Recuento", "DiferenciaPrecio", "PrecioAnterior", "PrecioActual"]]
 
@@ -71,30 +100,4 @@ class ConteoStockVM:
     @staticmethod
     def calcular_porcentaje_error(a, b, c) -> float:
         return round(((-a - b) * 100) / c, 2) if c != 0 else 0
-
-    @staticmethod
-    def get_data(entities) -> DataFrame:
-        return pd.DataFrame([
-                 {
-                    "id": e.id,
-                    "Codigo": e.Codigo,
-                    "Articulo": e.Articulo,
-                    "Sistema": e.Sistema,
-                    "Recuento": e.Recuento,
-                    "Resultado": e.Resultado,
-                    "Fecha": e.Fecha,
-                    "Reconteos": e.Reconteos,
-                    "Estanteria": e.Estanteria,
-                    "Precio": e.Precio,
-                    "DiferenciaStock": e.DiferenciaStock,
-                    "DiferenciaPrecio": e.DiferenciaPrecio,
-                    "PrecioAnterior": e.PrecioAnterior,
-                    "PrecioActual": e.PrecioActual,
-                    "Alerta": e.Alerta,
-                    "Deposito": e.Deposito,
-                    "Ajuste": e.Ajuste,
-                    "StockNuevo": e.StockNuevo,
-                }
-                for e in entities
-            ])
 

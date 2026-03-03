@@ -1,51 +1,42 @@
 from typing import List
 
 from sqlalchemy import select
+from sqlalchemy.orm import Session
 
 from domain.entities.conteo_stock import ConteoStock
-from infrastructure import SessionDB, db_engine
 from infrastructure.db.models.conteo_stock_model import ConteoStockModel
 from infrastructure.mappers.conteo_stock_mapper import ConteoStockMapper
 
 
 class ConteoStockRepository:
-    def __init__(self) -> None:
-        self.session = SessionDB()
-        self.engine = db_engine
+    def __init__(self, session: Session) -> None:
+        self.session = session
 
     # Create -------------------------------------------
     def insert_many(self, entities: List[ConteoStock]) -> None:
-        with self.session as session:
-            for e in entities:
-                model = ConteoStockMapper.to_model(e)
-                session.add(model)
-                session.commit()
+        models = [ConteoStockMapper.to_model(e) for e in entities]
+        self.session.add_all(models)
 
 
     # Read -------------------------------------------
     def get_all(self) -> List[ConteoStock]:
-        with self.session as session:
-            models = session.scalars(
-                select(ConteoStockModel)
-            ).all()
+        models = self.session.scalars(
+            select(ConteoStockModel)
+        ).all()
 
-            return [ConteoStockMapper.to_entity(m) for m in models]
+        return [ConteoStockMapper.to_entity(m) for m in models]
 
 
     def get_by_id(self, _id: int) -> ConteoStock:
-        with self.session as session:
-            model = session.scalars(
-                select(ConteoStockModel)
-            ).filter(
-                ConteoStockModel.id == _id
-            ).first()
+        model = self.session.scalars(
+            select(ConteoStockModel).where(ConteoStockModel.id == _id)
+        ).first()
 
-            return ConteoStockMapper.to_entity(model)
+        return ConteoStockMapper.to_entity(model)
+
 
     # Delete -------------------------------------------
     def delete_by_id(self, _id: int) -> None:
-        with self.session as session:
-            with session.begin():
-                row = session.get(ConteoStockModel, _id)
-                if row:
-                    session.delete(row)
+        row = self.session.get(ConteoStockModel, _id)
+        if row:
+            self.session.delete(row)

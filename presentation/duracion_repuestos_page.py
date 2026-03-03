@@ -5,7 +5,7 @@ import streamlit as st
 
 from config.enums_colors import CustomMetricColorsEnum
 from config.constants_views import PAG_DURACION, DURACION_TAB_BOX_HEIGHT, SELECT_BOX_HEIGHT
-from utils.common_utils import CommonUtils
+from infrastructure.unit_of_work import SQLAlchemyUnitOfWork
 from viewmodels.consumo.duracion_rep.distri_normal_vm import DistribucionNormalVM
 from viewmodels.consumo.duracion_rep.duracion_vm import DuracionRepuestosVM
 from viewmodels.consumo.duracion_rep.plotter import DuracionRepuestosPlotter
@@ -15,8 +15,10 @@ from presentation.streamlit_components import SelectBoxComponents, OtherComponen
 
 @st.cache_data(ttl=200, show_spinner=False)
 def _cargar_datos(repuesto):
-    duracion = DuracionRepuestosVM().get_df_by_repuesto(repuesto)
-    distribucion = DistribucionNormalVM().get_df_by_repuesto(repuesto)
+    uow = SQLAlchemyUnitOfWork()
+
+    duracion = DuracionRepuestosVM(uow=uow).get_df_by_repuesto(repuesto)
+    distribucion = DistribucionNormalVM(uow=uow).get_df_by_repuesto(repuesto)
 
     return (duracion, distribucion,
             calcular_sin_cambios(duracion, "2015"),

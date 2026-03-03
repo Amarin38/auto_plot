@@ -1,18 +1,16 @@
 import pandas as pd
 
 from domain.entities.consumo_indice import ConsumoIndice
-from infrastructure.repositories.consumo_indice_repository import ConsumoIndiceRepository
-
+from infrastructure.unit_of_work import SQLAlchemyUnitOfWork
 
 class IndiceConsumoVM:
-    def __init__(self) -> None:
-        self.repo = ConsumoIndiceRepository()
+    def __init__(self, uow: SQLAlchemyUnitOfWork = SQLAlchemyUnitOfWork()) -> None:
+        self.uow = uow
+
 
     def save_df(self, df) -> None:
-        entities = []
-
-        for _, row in df.iterrows():
-            entity = ConsumoIndice(
+        entities = [
+            ConsumoIndice(
                 id              = None,
                 Cabecera        = row['Cabecera'],
                 Repuesto        = row['Repuesto'],
@@ -22,20 +20,23 @@ class IndiceConsumoVM:
                 IndiceConsumo   = row['ConsumoIndice'],
                 UltimaFecha     = row['UltimaFecha'],
                 TipoOperacion   = row['TipoOperacion'],
-            )
-            entities.append(entity)
+            ) for index, row in df.iterrows()
+        ]
 
-        self.repo.insert_many(entities)
+        with self.uow as uow:
+            uow.consumo_indice.insert_many(entities)
 
 
     def get_df(self) -> pd.DataFrame:
-        entities = self.repo.get_all()
-        return self.get_data(entities)
+        with self.uow as uow:
+            entities = uow.consumo_indice.get_all()
+            return self.get_data(entities) if entities else pd.DataFrame()
 
 
     def get_df_tipo_repuesto_and_tipo_indice(self, tipo_repuesto: str, tipo_indice: str) -> pd.DataFrame:
-        entities = self.repo.get_by_tipo_rep_and_tipo_indice(tipo_repuesto, tipo_indice)
-        return self.get_data(entities)
+        with self.uow as uow:
+            entities = uow.consumo_indice.get_by_tipo_rep_and_tipo_indice(tipo_repuesto, tipo_indice)
+            return self.get_data(entities) if entities else pd.DataFrame()
 
 
     @staticmethod
