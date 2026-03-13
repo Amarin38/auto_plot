@@ -25,9 +25,10 @@ PAG_COMPARACION_CONSUMO = "Comparación de consumo 🧩"
 PAG_FALLA_GARANTIAS = "Falla equipos garantías ⛔"
 
 # Pags info.
-PAG_MAXIMOS_MINIMOS = "Máximos y Mínimos ⬆️⬇️"
-PAG_COCHES_CABECERA = "Coches por cabecera 🚌"
-PAG_PARQUE_MOVIL    = "Parque Móvil 🚌🚏"
+PAG_MAXIMOS_MINIMOS     = "Máximos y Mínimos ⬆️⬇️"
+PAG_USUARIOS_CODIGOS    = "Códigos de usuario 🪪"
+PAG_COCHES_CABECERA     = "Coches por cabecera 🚌"
+PAG_PARQUE_MOVIL        = "Parque Móvil 🚌🚏"
 
 # Pags Gomeria
 PAG_TRANSFERENCIAS_ENTRE_DEPOSITOS = "Transferencias entre depósitos 🔃"

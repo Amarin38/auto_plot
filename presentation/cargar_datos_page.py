@@ -8,6 +8,7 @@ from config.enums import LoadDataEnum, TipoCargarEnum, MovimientoEnum
 from domain.services.compute_garantias import compute_consumo_garantias, compute_fallas_garantias
 from domain.services.compute_comparacion_consumo import compute_comparacion_consumo
 from domain.services.compute_consumo_obligatorio import compute_consumo_obligatorio
+from viewmodels.common.usuarios_codigos_vm import UsuariosCodigosVM
 
 from viewmodels.conteo_stock.vm import ConteoStockVM
 from viewmodels.common.parque_movil_vm import ParqueMovilVM
@@ -37,19 +38,19 @@ def cargar_datos():
 
     st.title(PAG_CARGAR_DATOS)
 
-    aux1, aux2 = st.columns([1, 4])
+    select_cargar, datos = st.columns([1, 4])
 
-    with aux1:
+    with select_cargar:
         select_load = select.select_box_load_data(st, "LOAD_DATA_LOAD_CENTRO")
         if select_load:
             with st.expander("Ejemplo de excel a insertar"):
                 st.image(f"{IMG_PATH}{str(select_load).lower()}.png", caption="Como se debe ver la tabla a insertar")
 
-    with aux2:
-        izq, der = st.columns([2, 2])
+    with datos:
+        tipo, cargar = st.columns([2, 2])
         datos = None
 
-        with izq.container(height=st.session_state.height_izq):
+        with tipo.container(height=st.session_state.height_izq):
             tipo_cargar = st.radio("Selecciona el tipo de ingreso:", [TipoCargarEnum.UNICO, TipoCargarEnum.MULTIPLE],
                                    captions=["Seleccion de archivos simple", "Seleccion de archivos por carpeta"])
 
@@ -72,7 +73,7 @@ def cargar_datos():
                     uploaded_files = None
 
 
-        with der:
+        with cargar:
             if select_load and uploaded_files is not None:
                 match select_load:
                         case LoadDataEnum.INDICES_DE_CONSUMO:
@@ -170,7 +171,10 @@ def cargar_datos():
                                 datos = lambda: compute_comparacion_consumo(load_data(select_load, uploaded_files),
                                                                             select_repuesto)
 
-    with aux1:
+                        case LoadDataEnum.USUARIOS_CODIGOS:
+                            datos = lambda: UsuariosCodigosVM().save_df(load_data(select_load, uploaded_files))
+
+    with tipo:
         if datos is not None and uploaded_files not in ([None], []):
             buttons.load_data_bttn(datos)
 
@@ -181,7 +185,8 @@ def load_data(select_load: LoadDataEnum, uploaded_files):
         case   LoadDataEnum.PARQUE_MOVIL                    | LoadDataEnum.FALLA_GARANTIAS \
              | LoadDataEnum.CONSUMO_GARANTIAS               | LoadDataEnum.DURACION_REPUESTOS \
              | LoadDataEnum.TRANSFERENCIAS_ENTRE_DEPOSITOS  | LoadDataEnum.DIFERENCIA_MOVIMIENTOS_ENTRE_DEPOSITOS \
-             | LoadDataEnum.CONSUMO_OBLIGATORIO             | LoadDataEnum.CONTEO_STOCK:
+             | LoadDataEnum.CONSUMO_OBLIGATORIO             | LoadDataEnum.CONTEO_STOCK \
+             | LoadDataEnum.USUARIOS_CODIGOS:
             return CommonUtils().concat_dataframes(uploaded_files)
         case _:
             if uploaded_files and select_load:

@@ -19,13 +19,14 @@ from presentation.nuevo_usuario_page import nuevo_usuario
 from presentation.parque_movil_page import parque_movil
 from presentation.sisssa_page import sissa_page
 from presentation.streamlit_components import OtherComponents
+from presentation.usuarios_codigos_page import usuarios_codigos
 from viewmodels.autenticacion.usuario_vm import UsuarioVM
 
 from config.constants_views import (PAG_PRINCIPAL, PAG_CARGAR_DATOS, PAG_INDICES, PAG_PREVISION,
                                     PAG_FALLA_GARANTIAS, PAG_MAXIMOS_MINIMOS, PAG_DURACION,
                                     PAG_TRANSFERENCIAS_ENTRE_DEPOSITOS, PAG_HISTORIAL, PAG_CONSUMO_OBLIGATORIO,
                                     PAG_COCHES_CABECERA, PAG_PARQUE_MOVIL, PAG_SISSSA, PAG_DOTA_LICITACIONES,
-                                    PAG_COMPARACION_CONSUMO, PAG_NUEVO_USUARIO)
+                                    PAG_COMPARACION_CONSUMO, PAG_NUEVO_USUARIO, PAG_USUARIOS_CODIGOS)
 
 
 # -----------------------------------------------------------------------------------------------
@@ -149,6 +150,7 @@ pages = {
     ],
     "Datos": [
         st.Page(maximos_minimos, title=PAG_MAXIMOS_MINIMOS),
+        st.Page(usuarios_codigos, title=PAG_USUARIOS_CODIGOS),
         st.Page(coches_cabecera, title=PAG_COCHES_CABECERA),
         st.Page(parque_movil, title=PAG_PARQUE_MOVIL)
     ],

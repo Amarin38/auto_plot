@@ -3,7 +3,7 @@ from typing import Optional
 import pandas as pd
 
 from utils.exception_utils import execute_safely
-from viewmodels.maximos_minimos.vm import MaximosMinimosVM
+from viewmodels.common.maximos_minimos_vm import MaximosMinimosVM
 
 """
 - Se descargan los consumos de x fecha hacia atrás de los productos que se queira evaluar el  maximos_minimos.

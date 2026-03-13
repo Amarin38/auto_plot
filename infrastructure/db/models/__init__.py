@@ -18,3 +18,4 @@ from .parque_movil_model import ParqueMovilModel
 from .conteo_stock_model import ConteoStockModel
 from .usuario_model import UsuarioModel
 from .consumo_comparacion_model import ConsumoComparacionModel
+from .usuarios_codigos_model import UsuariosCodigosModel

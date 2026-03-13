@@ -166,6 +166,7 @@ class LoadDataEnum(StrEnum):
     PARQUE_MOVIL                            = auto()
     CONTEO_STOCK                            = auto()
     COMPARACION_CONSUMO                     = auto()
+    USUARIOS_CODIGOS                        = auto()
 
 
 class SymbolEnum(LowercaseStrEnum):

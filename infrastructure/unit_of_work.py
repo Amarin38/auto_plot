@@ -22,6 +22,7 @@ from infrastructure.repositories.consumo_prevision_data_repository import Consum
 from infrastructure.repositories.consumo_desviacion_indices_repository import ConsumoDesviacionIndicesRepository
 from infrastructure.repositories.gomeria_diferencia_mov_dep_repository import GomeriaDiferenciaMovEntreDepRepository
 from infrastructure.repositories.gomeria_transferencias_dep_repository import GomeriaTransferenciasEntreDepRepository
+from infrastructure.repositories.usuarios_codigos_repository import UsuariosCodigosRepository
 
 
 class AbstractUnitOfWork:
@@ -117,6 +118,10 @@ class AbstractUnitOfWork:
     def gomeria_transferencias(self) -> GomeriaTransferenciasEntreDepRepository:
         raise NotImplementedError
 
+    @property
+    def usuarios_codigos(self) -> UsuariosCodigosRepository:
+        raise NotImplementedError
+
 
 class SQLAlchemyUnitOfWork(AbstractUnitOfWork):
     def __init__(self, session_factory: Type[Session] = SessionDB):
@@ -130,8 +135,9 @@ class SQLAlchemyUnitOfWork(AbstractUnitOfWork):
         self._consumo_indice: Optional[ConsumoIndiceRepository]                         = None
         self._coches_cabecera: Optional[CochesCabeceraRepository]                       = None
         self._garantias_datos: Optional[GarantiasDatosRepository]                       = None
-        self._garantias_fallas: Optional[GarantiasFallaRepository]                      = None
         self._maximos_minimos: Optional[MaximosMinimosRepository]                       = None
+        self._garantias_fallas: Optional[GarantiasFallaRepository]                      = None
+        self._usuarios_codigos: Optional[UsuariosCodigosRepository]                     = None
         self._consumo_historial: Optional[ConsumoHistorialRepository]                   = None
         self._consumo_prevision: Optional[ConsumoPrevisionRepository]                   = None
         self._garantias_consumo: Optional[GarantiasConsumoRepository]                   = None
@@ -147,24 +153,25 @@ class SQLAlchemyUnitOfWork(AbstractUnitOfWork):
     def __enter__(self) -> 'SQLAlchemyUnitOfWork':
         self._session: Session = self.session_factory()
 
-        self._usuario                   : Optional[UsuarioRepository] = UsuarioRepository(self._session)
-        self._json_config               : Optional[JSONConfigRepository] = JSONConfigRepository(self._session)
-        self._conteo_stock              : Optional[ConteoStockRepository] = ConteoStockRepository(self._session)
-        self._parque_movil              : Optional[ParqueMovilRepository] = ParqueMovilRepository(self._session)
-        self._consumo_indice            : Optional[ConsumoIndiceRepository]= ConsumoIndiceRepository(self._session)
-        self._coches_cabecera           : Optional[CochesCabeceraRepository] = CochesCabeceraRepository(self._session)
-        self._garantias_datos           : Optional[GarantiasDatosRepository] = GarantiasDatosRepository(self._session)
-        self._garantias_fallas          : Optional[GarantiasFallaRepository] = GarantiasFallaRepository(self._session)
-        self._maximos_minimos           : Optional[MaximosMinimosRepository] = MaximosMinimosRepository(self._session)
-        self._consumo_historial         : Optional[ConsumoHistorialRepository] = ConsumoHistorialRepository(self._session)
-        self._consumo_prevision         : Optional[ConsumoPrevisionRepository] = ConsumoPrevisionRepository(self._session)
-        self._garantias_consumo         : Optional[GarantiasConsumoRepository] = GarantiasConsumoRepository(self._session)
-        self._duracion_repuestos        : Optional[DuracionRepuestosRepository] = DuracionRepuestosRepository(self._session)
-        self._consumo_comparacion       : Optional[ConsumoComparacionRepository] = ConsumoComparacionRepository(self._session)
-        self._consumo_obligatorio       : Optional[ConsumoObligatorioRepository] = ConsumoObligatorioRepository(self._session)
-        self._distribucion_normal       : Optional[DistribucionNormalRepository] = DistribucionNormalRepository(self._session)
-        self._consumo_prevision_data    : Optional[ConsumoPrevisionDataRepository] = ConsumoPrevisionDataRepository(self._session)
-        self._consumo_desviacion_indices: Optional[ConsumoDesviacionIndicesRepository]  = ConsumoDesviacionIndicesRepository(self._session)
+        self._usuario                   : Optional[UsuarioRepository]                       = UsuarioRepository(self._session)
+        self._json_config               : Optional[JSONConfigRepository]                    = JSONConfigRepository(self._session)
+        self._conteo_stock              : Optional[ConteoStockRepository]                   = ConteoStockRepository(self._session)
+        self._parque_movil              : Optional[ParqueMovilRepository]                   = ParqueMovilRepository(self._session)
+        self._consumo_indice            : Optional[ConsumoIndiceRepository]                 = ConsumoIndiceRepository(self._session)
+        self._coches_cabecera           : Optional[CochesCabeceraRepository]                = CochesCabeceraRepository(self._session)
+        self._garantias_datos           : Optional[GarantiasDatosRepository]                = GarantiasDatosRepository(self._session)
+        self._garantias_fallas          : Optional[GarantiasFallaRepository]                = GarantiasFallaRepository(self._session)
+        self._maximos_minimos           : Optional[MaximosMinimosRepository]                = MaximosMinimosRepository(self._session)
+        self._usuarios_codigos          : Optional[UsuariosCodigosRepository]               = UsuariosCodigosRepository(self._session)
+        self._consumo_historial         : Optional[ConsumoHistorialRepository]              = ConsumoHistorialRepository(self._session)
+        self._consumo_prevision         : Optional[ConsumoPrevisionRepository]              = ConsumoPrevisionRepository(self._session)
+        self._garantias_consumo         : Optional[GarantiasConsumoRepository]              = GarantiasConsumoRepository(self._session)
+        self._duracion_repuestos        : Optional[DuracionRepuestosRepository]             = DuracionRepuestosRepository(self._session)
+        self._consumo_comparacion       : Optional[ConsumoComparacionRepository]            = ConsumoComparacionRepository(self._session)
+        self._consumo_obligatorio       : Optional[ConsumoObligatorioRepository]            = ConsumoObligatorioRepository(self._session)
+        self._distribucion_normal       : Optional[DistribucionNormalRepository]            = DistribucionNormalRepository(self._session)
+        self._consumo_prevision_data    : Optional[ConsumoPrevisionDataRepository]          = ConsumoPrevisionDataRepository(self._session)
+        self._consumo_desviacion_indices: Optional[ConsumoDesviacionIndicesRepository]      = ConsumoDesviacionIndicesRepository(self._session)
         self._gomeria_diferencia_mov    : Optional[GomeriaDiferenciaMovEntreDepRepository]  = GomeriaDiferenciaMovEntreDepRepository(self._session)
         self._gomeria_transferencias    : Optional[GomeriaTransferenciasEntreDepRepository] = GomeriaTransferenciasEntreDepRepository(self._session)
 
@@ -280,3 +287,7 @@ class SQLAlchemyUnitOfWork(AbstractUnitOfWork):
     @property
     def gomeria_transferencias(self) -> GomeriaTransferenciasEntreDepRepository:
         return self._gomeria_transferencias
+
+    @property
+    def usuarios_codigos(self) -> UsuariosCodigosRepository:
+        return self._usuarios_codigos

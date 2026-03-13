@@ -6,7 +6,7 @@ from config.constants_common import TODAY_DATE_FILE_DMY
 from utils.exception_utils import execute_safely
 from utils.common_utils import CommonUtils
 from presentation.streamlit_components import ButtonComponents
-from viewmodels.maximos_minimos.vm import MaximosMinimosVM
+from viewmodels.common.maximos_minimos_vm import MaximosMinimosVM
 
 
 @execute_safely
