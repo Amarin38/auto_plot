@@ -6,7 +6,7 @@ from sqlalchemy.orm import sessionmaker
 from config.constants_common import DB_PATH
 
 
-@st.cache_resource
+# @st.cache_resource
 def get_declarative_base():
     return declarative_base()
 

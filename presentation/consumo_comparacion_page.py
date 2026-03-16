@@ -1,6 +1,7 @@
 import streamlit as st
 
-from config.constants_views import PAG_COMPARACION_CONSUMO
+from config.constants_views import PAG_COMPARACION_CONSUMO, PLACEHOLDER, MULTI_SELECT_BOX_HEIGHT
+from config.enums import CabecerasEnum
 from presentation.streamlit_components import SelectBoxComponents
 from viewmodels.consumo.comparacion.plotter import ConsumoComparacionPlotter
 from viewmodels.consumo.comparacion.vm import ConsumoComparacionVM
@@ -17,7 +18,10 @@ def consumo_comparacion():
 
     a, b, c = st.columns([1.5,2.6,3])
 
-    cabecera = select.select_box_cabecera(a, "CABECERA_COMPARACION")
+    with a.container(height=MULTI_SELECT_BOX_HEIGHT, vertical_alignment='center'):
+            cabecera = st.selectbox("Selecciona la cabecera:", CabecerasEnum, index=None,
+                                     placeholder=PLACEHOLDER, key="CABECERA_COMPARACION")
+
     tipo_rep = select.multi_select_box_tipo_rep_comparacion(b, "REP_COMPARACION")
     periodo = select.multi_select_box_periodo(c, "PERIODO")
 

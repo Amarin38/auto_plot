@@ -4,10 +4,13 @@ from config.constants_common import MODELOS_CHASIS, NORMAL_DATE_YMD, MARCAS_CHAS
     CARROCERIAS
 from config.constants_views import PAG_PARQUE_MOVIL, PLACEHOLDER, FLOTA_CONTAINER_HEIGHT
 from domain.entities.parque_movil import ParqueMovilFiltro
+from presentation.streamlit_components import OtherComponents
 from viewmodels.common.parque_movil_vm import ParqueMovilVM
 
 
 def parque_movil():
+    other = OtherComponents()
+
     st.title(PAG_PARQUE_MOVIL)
 
     aux, fecha_desde_col, fecha_hasta_col, aux2 = st.columns([1,1,1,1])
@@ -61,74 +64,41 @@ def parque_movil():
                             tuple(modelo_chasis), tuple(marca_chasis),
                             tuple(marca_motor), tuple(modelo_motor), tuple(carroceria))
 
-        if "filtros_previos" not in st.session_state or st.session_state.filtros_previos != filtros_actuales:
-            st.session_state.df_completo = None
-            st.session_state.page = 0
-            st.session_state.filtros_previos = filtros_actuales
+        df = ParqueMovilVM().get_by_args(fecha_desde, fecha_hasta, parque)
+        df_key = "df_completo"
+        prev_filter_key = "filtros_previos"
 
-        if st.session_state.df_completo is None:
-            resultado = ParqueMovilVM().get_by_args(fecha_desde, fecha_hasta, parque)
-            st.session_state.df_completo = resultado
+        df_paginado, paginas = other.paginate(df, 15, key=df_key)
 
-        if st.session_state.df_completo is not None:
-            if "page" not in st.session_state:
-                st.session_state.page = 0
+        if prev_filter_key not in st.session_state or st.session_state[prev_filter_key] != filtros_actuales:
+            st.session_state[df_key+"_page"] = 0
+            st.session_state[prev_filter_key] = filtros_actuales
 
-            df = st.session_state.df_completo
+        st.data_editor(
+            df_paginado,
+            disabled=True,
+            hide_index=True,
+            height=600,
+            column_order=["FechaParqueMovil", "Linea", "Interno", "Dominio",
+                          "Asientos", "Año", "ChasisMarca", "ChasisModelo", "ChasisNum",
+                          "MotorMarca", "MotorModelo", "MotorNum", "Carroceria"],
+            column_config={
+                    "FechaParqueMovil"  : st.column_config.DateColumn("Fecha Parque Movil",
+                                                                      format="localized", width=80),
+                    "Linea"             : st.column_config.NumberColumn("Línea", width=30),
+                    "Interno"           : st.column_config.NumberColumn("Interno", width=30),
+                    "Dominio"           : st.column_config.TextColumn("Dominio", width=70),
+                    "Asientos"          : st.column_config.NumberColumn("Asientos", width=30),
+                    "Año"               : st.column_config.NumberColumn("Año", width=30),
+                    "ChasisMarca"       : st.column_config.TextColumn("Marca Chasis", width=60),
+                    "ChasisModelo"      : st.column_config.TextColumn("Modelo Chasis", width=60),
+                    "ChasisNum"         : st.column_config.TextColumn("Número Chasis", width=85),
+                    "MotorMarca"        : st.column_config.TextColumn("Marca Motor", width=60),
+                    "MotorModelo"       : st.column_config.TextColumn("Modelo Motor", width=60),
+                    "MotorNum"          : st.column_config.TextColumn("Número Motor", width=60),
+                    "Carroceria"        : st.column_config.TextColumn("Carrocería", width=60),
+                }
+            )
 
-            # Config de la paginacion:
-            items_por_pagina = 15
-            total_items = len(df)
-            total_paginas = max(1, (total_items + items_por_pagina - 1) // items_por_pagina)
+        other.paginate_buttons(paginas, key=df_key)
 
-            # Calcular indices
-            inicio = st.session_state.page * items_por_pagina
-            fin = min(inicio + items_por_pagina, total_items)
-
-            st.data_editor(
-                df.iloc[inicio:fin],
-                disabled=True,
-                hide_index=True,
-                height=600,
-                # num_rows="dynamic",
-                key=f"editor_page_{st.session_state.page}",
-                column_order=["FechaParqueMovil", "Linea", "Interno", "Dominio",
-                              "Asientos", "Año", "ChasisMarca", "ChasisModelo", "ChasisNum",
-                              "MotorMarca", "MotorModelo", "MotorNum", "Carroceria"],
-                column_config={
-                        "FechaParqueMovil"  : st.column_config.DateColumn("Fecha Parque Movil",
-                                                                          format="localized", width=80),
-                        "Linea"             : st.column_config.NumberColumn("Línea", width=30),
-                        "Interno"           : st.column_config.NumberColumn("Interno", width=30),
-                        "Dominio"           : st.column_config.TextColumn("Dominio", width=70),
-                        "Asientos"          : st.column_config.NumberColumn("Asientos", width=30),
-                        "Año"               : st.column_config.NumberColumn("Año", width=30),
-                        "ChasisMarca"       : st.column_config.TextColumn("Marca Chasis", width=60),
-                        "ChasisModelo"      : st.column_config.TextColumn("Modelo Chasis", width=60),
-                        "ChasisNum"         : st.column_config.TextColumn("Número Chasis", width=85),
-                        "MotorMarca"        : st.column_config.TextColumn("Marca Motor", width=60),
-                        "MotorModelo"       : st.column_config.TextColumn("Modelo Motor", width=60),
-                        "MotorNum"          : st.column_config.TextColumn("Número Motor", width=60),
-                        "Carroceria"        : st.column_config.TextColumn("Carrocería", width=60),
-                    }
-                )
-
-            # Actualizo el dataframe completo con los cambios
-            col1, col2, col3 = st.columns([5.5,4.5,1])
-            with col1:
-                if st.button('← Anterior', disabled=st.session_state.page == 0):
-                    st.session_state.page -= 1
-                    st.rerun()
-
-            with col2:
-                st.write(f'Página {st.session_state.page + 1} de {total_paginas}')
-
-            with col3:
-                if st.button('Siguiente →', disabled=st.session_state.page >= total_paginas - 1, width=150):
-                    st.session_state.page += 1
-                    st.rerun()
-
-            if st.button('Ver datos completos'):
-                st.dataframe(st.session_state.df_completo)
-        else:
-            st.dataframe()

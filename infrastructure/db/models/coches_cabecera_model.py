@@ -6,7 +6,7 @@ from infrastructure.db.models.base_model_mixin import BaseModelMixin, BaseCabece
 
 class CochesCabeceraModel(BaseModelMixin, BaseCabecera, DBBase):
     __tablename__ = "COCHES_CABECERA"
-    
+
     CochesDuermen:      Mapped[int] = mapped_column(nullable=True)
     CochesDuermenNuevo: Mapped[int] = mapped_column(nullable=True)
     CochesSinScania:    Mapped[int] = mapped_column(nullable=True)

@@ -1,10 +1,5 @@
 from typing import Tuple
 
-MAIN_TABS: Tuple[str, ...] = (" 🏠 Página principal", " 📊 Índices de consumo",
-                              " 📈 Previsión de consumo", " 📊 Desviación de índices",
-                              " 🚫 Falla Garantías", " ↕️ Máximos y Mínimos")
-
-
 # Pags Inicio
 PAG_PRINCIPAL           = "Página principal 🏠"
 PAG_SISSSA              = "SISSSA FLOTA"

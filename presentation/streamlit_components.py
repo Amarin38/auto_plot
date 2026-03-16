@@ -1,8 +1,11 @@
 import time
 
+import pandas as pd
 import streamlit as st
 
-from typing import Union, Optional
+from typing import Union, Optional, Any
+
+from pandas import DataFrame, Series
 
 from config.constants_views import SELECT_BOX_HEIGHT, PLACEHOLDER, CENTERED_TITLE_HEIGHT, CENTERED_TITLE_WIDTH, \
     MULTI_SELECT_BOX_HEIGHT
@@ -164,15 +167,18 @@ class OtherComponents:
 
         st.markdown(texto, unsafe_allow_html=True)
 
+
     @staticmethod
     def centered_title(col, title: str):
         with col.container(height=CENTERED_TITLE_HEIGHT, width=CENTERED_TITLE_WIDTH+250):
             st.markdown(f"<p style='text-align: center; font-size: 28px;'>{title}</p>", unsafe_allow_html=True)
 
+
     @staticmethod
     def mensaje_falta_rep(col):
         with col.container(height=SELECT_BOX_HEIGHT):
             st.text("No hay datos de este repuesto.")
+
 
     @staticmethod
     def custom_metric(col, label: str, value: Union[str, int, float], border_color: str, val_color: str,
@@ -201,6 +207,7 @@ class OtherComponents:
         </div>
         """, unsafe_allow_html=True)
 
+
     @staticmethod
     def flash_alert_success(mensaje: str) -> None:
         placeholder = st.empty()
@@ -208,9 +215,112 @@ class OtherComponents:
         time.sleep(2)
         placeholder.empty()
 
+
     @staticmethod
     def flash_alert_error(mensaje: str) -> None:
         placeholder = st.empty()
         placeholder.error(mensaje)
         time.sleep(2)
         placeholder.empty()
+
+
+    @staticmethod
+    def paginate(df: pd.DataFrame, filas_por_pagina: int, key: str) -> tuple[DataFrame, int] | tuple[Any, int] | None:
+        """Pagina un dataframe y devuelve el df paginado y el total de páginas."""
+        df_key = f"{key}_df"
+        page_key = f"{key}_page"
+        mostrar_completo_toggle_key = f"{key}_ver_completos"
+
+        mostrar_completo = st.toggle('Ver datos completos', key=mostrar_completo_toggle_key)
+
+        if mostrar_completo:
+            return df, 1
+
+        if df_key not in st.session_state:
+            st.session_state[df_key] = df
+
+        if page_key not in st.session_state:
+            st.session_state[page_key] = 0
+
+        if st.session_state[df_key] is not None:
+            # Config de la paginacion:
+            total_items = len(df)
+            total_paginas = max(1, (total_items + filas_por_pagina - 1) // filas_por_pagina)
+
+            # Calcular indices
+            inicio = st.session_state[page_key] * filas_por_pagina
+            fin = min(inicio + filas_por_pagina, total_items)
+
+            return df[inicio:fin], total_paginas
+        return None
+
+
+    @staticmethod
+    def paginate_buttons(total_paginas: int, key: str):
+        """Botones útiles para la paginación de dataframes"""
+
+        if total_paginas <= 1:
+            return
+
+        page_key = f"{key}_page"
+        anterior_bttn_key = f"{key}_bttn_ant"
+        siguiente_bttn_key = f"{key}_bttn_sig"
+        inicio_bttn_key = f"{key}_bttn_inicio"
+        fin_bttn_key = f"{key}_bttn_fin"
+        input_page_key = f"{key}_input_pag"
+        
+        disabled_ant_bttn = st.session_state[page_key] == 0
+        diabled_sig_bttn = st.session_state[page_key] >= total_paginas - 1
+
+        # Callbacks
+        def ant_page():
+            st.session_state[page_key] -= 1
+            st.session_state[input_page_key] = st.session_state[page_key] + 1
+
+        def sig_page():
+            st.session_state[page_key] += 1
+            st.session_state[input_page_key] = st.session_state[page_key] + 1
+
+        def inicio_page():
+            st.session_state[page_key] = 0
+            st.session_state[input_page_key] = 1
+
+        def fin_page():
+            st.session_state[page_key] = total_paginas - 1
+            st.session_state[input_page_key] = total_paginas
+
+        def ir_a_pagina():
+            st.session_state[page_key] = st.session_state[input_page_key] - 1
+
+
+        ant_bttn, inicio_bttn, num_input, label, fin_bttn, siguiente_bttn = st.columns([0.25, 1.30, 0.25, 1, 0.155, 0.3],
+                                                                                       vertical_alignment="bottom",
+                                                                                       )
+
+        with ant_bttn:
+            st.button('← Anterior', disabled=disabled_ant_bttn, key=anterior_bttn_key, on_click=ant_page)
+
+        with inicio_bttn:
+            st.button('Inicio', key=inicio_bttn_key, on_click=inicio_page)
+
+        with num_input:
+            st.number_input("",
+                min_value=0,
+                max_value=total_paginas,
+                value=st.session_state[page_key] + 1,
+                step=1,
+                key=input_page_key,
+                on_change=ir_a_pagina
+            )
+
+        with label:
+            st.write(f'de {total_paginas}')
+
+        with fin_bttn:
+            st.button('Fin', key=fin_bttn_key, on_click=fin_page)
+
+        with siguiente_bttn:
+            st.button('Siguiente →', disabled=diabled_sig_bttn, key=siguiente_bttn_key, width=150, on_click=sig_page)
+
+
+
