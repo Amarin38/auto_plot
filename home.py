@@ -2,24 +2,24 @@ import streamlit as st
 import streamlit_authenticator as stauth
 
 from presentation.consumo_comparacion_page import consumo_comparacion
-from presentation.dota_licitaciones_page import dota_licitaciones_page
+from presentation.inicio_dota_licitaciones_page import dota_licitaciones_page
 
-from presentation.main_page import main
-from presentation.cargar_datos_page import cargar_datos
-from presentation.coches_cabecera_page import coches_cabecera
+from presentation.inicio_dashboard_page import main
+from presentation.inicio_cargar_datos_page import cargar_datos
+from presentation.datos_coches_cabecera_page import coches_cabecera
 from presentation.consumo_obligatorio_page import consumo_obligatorio
 from presentation.consumo_prevision_page import consumo_prevision
 from presentation.consumo_indice_page import consumo_indice
 from presentation.consumo_historial_page import consumo_historial
 from presentation.garantias_falla_equipos_page import garantias_falla_equipos
 from presentation.gomeria_transferencias_depositos_page import gomeria_transferencias_entre_depositos
-from presentation.maximos_minimos_page import maximos_minimos
-from presentation.duracion_repuestos_page import duracion_repuestos
-from presentation.nuevo_usuario_page import nuevo_usuario
-from presentation.parque_movil_page import parque_movil
-from presentation.sisssa_page import sissa_page
+from presentation.datos_maximos_minimos_page import maximos_minimos
+from presentation.consumo_duracion_repuestos_page import duracion_repuestos
+from presentation.inicio_nuevo_usuario_page import nuevo_usuario
+from presentation.datos_parque_movil_page import parque_movil
+from presentation.inicio_sisssa_page import sissa_page
 from presentation.streamlit_components import OtherComponents
-from presentation.usuarios_codigos_page import usuarios_codigos
+from presentation.datos_usuarios_codigos_page import usuarios_codigos
 from viewmodels.autenticacion.usuario_vm import UsuarioVM
 
 from config.constants_views import (PAG_PRINCIPAL, PAG_CARGAR_DATOS, PAG_INDICES, PAG_PREVISION,

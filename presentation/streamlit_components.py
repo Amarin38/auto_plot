@@ -340,12 +340,13 @@ class OtherComponents:
             st.button('Inicio', key=inicio_bttn_key, on_click=inicio_page)
 
         with num_input:
-            st.number_input("",
+            st.number_input("Número de página",
                 min_value=1,
                 max_value=total_paginas,
                 step=1,
                 key=input_page_key,
-                on_change=ir_a_pagina
+                on_change=ir_a_pagina,
+                label_visibility="collapsed"
             )
 
         with label:
