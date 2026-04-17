@@ -1,27 +1,22 @@
 import streamlit as st
 
-from config.constants_views import DATAFRAME_HEIGHT, PAG_MAXIMOS_MINIMOS
-from config.constants_common import TODAY_DATE_FILE_DMY
+from config.constants_views import PAG_MAXIMOS_MINIMOS
 
 from utils.exception_utils import execute_safely
-from utils.common_utils import CommonUtils
-from presentation.streamlit_components import ButtonComponents, OtherComponents
+from presentation.streamlit_components import OtherComponents
 from viewmodels.common.maximos_minimos_vm import MaximosMinimosVM
 
 
 @execute_safely
 def maximos_minimos():
-    common = CommonUtils()
-    buttons = ButtonComponents()
     other = OtherComponents()
 
     st.title(PAG_MAXIMOS_MINIMOS)
     df = MaximosMinimosVM().get_df()
-    buttons.download_df(common.to_excel(df), f"maximos y minimos {TODAY_DATE_FILE_DMY}.xlsx")
 
     key="maximos_minimos"
 
-    df_paginado, paginas = other.paginate(df, 15, key=key)
+    df_paginado, paginas = other.paginate(df, 15, key, "maximos y minimos")
 
     st.data_editor(
         df_paginado,

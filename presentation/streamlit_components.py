@@ -1,3 +1,5 @@
+import base64
+import io
 import time
 
 import pandas as pd
@@ -6,11 +8,14 @@ import streamlit as st
 from typing import Union, Optional, Any
 
 from pandas import DataFrame, Series
+from streamlit.components.v1 import components
 
+from config.constants_common import TODAY_DATE_FILE_DMY
 from config.constants_views import SELECT_BOX_HEIGHT, PLACEHOLDER, CENTERED_TITLE_HEIGHT, CENTERED_TITLE_WIDTH, \
     MULTI_SELECT_BOX_HEIGHT
 from config.enums import RepuestoReparadoEnum, RepuestoEnum, CabecerasEnum, TipoDuracionEnum, IndexTypeEnum, \
     ConsumoObligatorioEnum, LoadDataEnum, RoleEnum, ConsumoComparacionRepuestoEnum, PeriodoComparacionEnum
+from utils.common_utils import CommonUtils
 
 
 class ButtonComponents:
@@ -28,13 +33,36 @@ class ButtonComponents:
         )
 
     @staticmethod
-    def download_df(df, file_name: str):
-        st.download_button(
-            label="Descargar 💾",
-            data=df,
-            file_name=file_name,
-            mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-        )
+    @st.cache_data(show_spinner=False, show_time=False)
+    def _convert_to_excel(df):
+        # Esta función solo corre cuando el usuario pulsa el botón
+        output = io.BytesIO()
+        with pd.ExcelWriter(output, engine='openpyxl') as writer:
+            df.to_excel(writer, index=False)
+        return output.getvalue()
+
+
+    @st.fragment
+    def download_df(self, df, file_name: str, col = None):
+        boton = st.button("Descargar Excel 💾", type="primary", use_container_width=True)
+
+        if boton:
+            with st.spinner("Descargando archivo..."):
+                excel_data = self._convert_to_excel(df)
+                b64 = base64.b64encode(excel_data).decode()
+
+                js = f"""
+                    <a id="download_link" href="data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,{b64}" download="{file_name}"></a>
+                    <script>
+                        setTimeout(function() {{
+                            var link = document.getElementById('download_link');
+                            link.click();
+                            link.remove();
+                        }}, 100);
+                    </script>
+                    """
+                st.components.v1.html(js, height=0)
+            st.toast("Descarga enviada al navegador", icon="📥")
 
 
 class SelectBoxComponents:
@@ -225,8 +253,13 @@ class OtherComponents:
 
 
     @staticmethod
-    def paginate(df: pd.DataFrame, filas_por_pagina: int, key: str) -> tuple[DataFrame, int] | tuple[Any, int] | None:
+    def paginate(df: pd.DataFrame, filas_por_pagina: int, key: str, nombre_archivo: str) -> tuple[DataFrame, int] | tuple[Any, int] | None:
         """Pagina un dataframe y devuelve el df paginado y el total de páginas."""
+        boton_descargar, aux1, aux2 = st.columns([1, 2, 2])
+
+        with boton_descargar:
+            ButtonComponents().download_df(df, f"{nombre_archivo} {TODAY_DATE_FILE_DMY}.xlsx")
+
         df_key = f"{key}_df"
         page_key = f"{key}_page"
         mostrar_completo_toggle_key = f"{key}_ver_completos"
@@ -272,6 +305,9 @@ class OtherComponents:
         disabled_ant_bttn = st.session_state[page_key] == 0
         diabled_sig_bttn = st.session_state[page_key] >= total_paginas - 1
 
+        if input_page_key not in st.session_state:
+            st.session_state[input_page_key] = st.session_state[page_key] + 1
+
         # Callbacks
         def ant_page():
             st.session_state[page_key] -= 1
@@ -305,9 +341,8 @@ class OtherComponents:
 
         with num_input:
             st.number_input("",
-                min_value=0,
+                min_value=1,
                 max_value=total_paginas,
-                value=st.session_state[page_key] + 1,
                 step=1,
                 key=input_page_key,
                 on_change=ir_a_pagina

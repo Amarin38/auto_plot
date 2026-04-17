@@ -1,11 +1,9 @@
 import streamlit as st
 
 from config.constants_views import PAG_USUARIOS_CODIGOS
-from config.constants_common import TODAY_DATE_FILE_DMY
 
 from utils.exception_utils import execute_safely
-from utils.common_utils import CommonUtils
-from presentation.streamlit_components import ButtonComponents, OtherComponents
+from presentation.streamlit_components import OtherComponents
 from viewmodels.common.usuarios_codigos_vm import UsuariosCodigosVM
 
 
@@ -15,10 +13,9 @@ def usuarios_codigos() -> None:
 
     st.title(PAG_USUARIOS_CODIGOS)
     df = UsuariosCodigosVM().get_df()
-    ButtonComponents().download_df(CommonUtils().to_excel(df), f"codigos de usuarios {TODAY_DATE_FILE_DMY}.xlsx")
-
     key="usuarios_codigos"
-    df_paginado, paginas = other.paginate(df, 15, key=key)
+
+    df_paginado, paginas = other.paginate(df, 15, key, "codigos de usuarios")
 
     st.data_editor(
         df_paginado,

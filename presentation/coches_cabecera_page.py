@@ -1,9 +1,7 @@
 import streamlit as st
 
-from config.constants_common import TODAY_DATE_FILE_DMY
 from config.constants_views import PAG_COCHES_CABECERA
-from presentation.streamlit_components import ButtonComponents, OtherComponents
-from utils.common_utils import CommonUtils
+from presentation.streamlit_components import OtherComponents
 from viewmodels.common.coches_cabecera_vm import CochesCabeceraVM
 
 
@@ -12,11 +10,9 @@ def coches_cabecera():
     st.title(PAG_COCHES_CABECERA)
 
     df = CochesCabeceraVM().get_df()
-    ButtonComponents().download_df(CommonUtils().to_excel(df), f"coches por cabecera {TODAY_DATE_FILE_DMY}.xlsx")
-
     key = "coches_cabecera"
 
-    df_paginado, paginas = other.paginate(df, 15, key=key)
+    df_paginado, paginas = other.paginate(df, 15, key, "coches por cabecera")
 
     st.data_editor(
         df_paginado,

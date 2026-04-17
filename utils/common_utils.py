@@ -3,7 +3,7 @@ import re
 import io
 from datetime import datetime, date
 from zipfile import BadZipFile
-
+import streamlit as st
 import numpy as np
 import pandas as pd
 
@@ -47,14 +47,6 @@ class CommonUtils:
 
             return df
         return pd.DataFrame()
-
-
-    @execute_safely
-    def to_excel(self, df: pd.DataFrame) -> bytes:
-        output = io.BytesIO()
-        with pd.ExcelWriter(output, engine="openpyxl") as writer:  # type: ignore
-            df.to_excel(writer, index=False, sheet_name="Datos")
-        return output.getvalue()
 
 
     @execute_safely
