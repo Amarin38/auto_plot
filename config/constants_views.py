@@ -24,6 +24,8 @@ PAG_MAXIMOS_MINIMOS     = "Máximos y Mínimos ⬆️⬇️"
 PAG_USUARIOS_CODIGOS    = "Códigos de usuario 🪪"
 PAG_COCHES_CABECERA     = "Coches por cabecera 🚌"
 PAG_PARQUE_MOVIL        = "Parque Móvil 🚌🚏"
+PAG_REP_CODIGOS         = "Códigos de repuestos 🛠️"
+PAG_PROVEEDORES         = "Datos de proveedores 👤"
 
 # Pags Gomeria
 PAG_TRANSFERENCIAS_ENTRE_DEPOSITOS = "Transferencias entre depósitos 🔃"

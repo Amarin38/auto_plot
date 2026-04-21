@@ -1,6 +1,6 @@
 import pandas as pd
 
-from domain.entities.duracion_repuestos import DuracionRepuestos
+from domain.entities.consumo_duracion_repuestos import DuracionRepuestos
 from infrastructure.unit_of_work import SQLAlchemyUnitOfWork
 
 

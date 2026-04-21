@@ -1,6 +1,6 @@
 import pandas as pd
 
-from domain.entities.distribucion_normal import DistribucionNormal
+from domain.entities.consumo_distribucion_normal import DistribucionNormal
 from infrastructure.unit_of_work import SQLAlchemyUnitOfWork
 from interfaces.viewmodel import ViewModel
 

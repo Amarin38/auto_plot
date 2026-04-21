@@ -5,7 +5,7 @@ import pandas as pd
 
 from config.enums import IndexTypeEnum, RepuestoEnum
 from utils.exception_utils import execute_safely
-from viewmodels.common.coches_cabecera_vm import CochesCabeceraVM
+from viewmodels.datos.coches_cabecera_vm import CochesCabeceraVM
 from viewmodels.consumo.indice.vm import IndiceConsumoVM
 from domain.services.data_cleaner_listado import InventoryDataCleaner
 

@@ -167,6 +167,8 @@ class LoadDataEnum(StrEnum):
     CONTEO_STOCK                            = auto()
     COMPARACION_CONSUMO                     = auto()
     USUARIOS_CODIGOS                        = auto()
+    REPUESTOS_CODIGOS                       = auto()
+    PROVEEDORES                             = auto()
 
 
 class SymbolEnum(LowercaseStrEnum):

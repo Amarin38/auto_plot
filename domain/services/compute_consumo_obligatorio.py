@@ -3,7 +3,7 @@ from datetime import date
 import pandas as pd
 
 from config.enums import ConsumoObligatorioEnum
-from viewmodels.common.coches_cabecera_vm import CochesCabeceraVM
+from viewmodels.datos.coches_cabecera_vm import CochesCabeceraVM
 from viewmodels.consumo.obligatorio.vm import ConsumoObligatorioVM
 
 

@@ -2,6 +2,8 @@ import streamlit as st
 import streamlit_authenticator as stauth
 
 from presentation.consumo_comparacion_page import consumo_comparacion
+from presentation.datos_proveedores_page import proveedores
+from presentation.datos_repuestos_codigos_page import repuestos_codigos
 from presentation.inicio_dota_licitaciones_page import dota_licitaciones_page
 
 from presentation.inicio_dashboard_page import main
@@ -26,7 +28,8 @@ from config.constants_views import (PAG_PRINCIPAL, PAG_CARGAR_DATOS, PAG_INDICES
                                     PAG_FALLA_GARANTIAS, PAG_MAXIMOS_MINIMOS, PAG_DURACION,
                                     PAG_TRANSFERENCIAS_ENTRE_DEPOSITOS, PAG_HISTORIAL, PAG_CONSUMO_OBLIGATORIO,
                                     PAG_COCHES_CABECERA, PAG_PARQUE_MOVIL, PAG_SISSSA, PAG_DOTA_LICITACIONES,
-                                    PAG_COMPARACION_CONSUMO, PAG_NUEVO_USUARIO, PAG_USUARIOS_CODIGOS)
+                                    PAG_COMPARACION_CONSUMO, PAG_NUEVO_USUARIO, PAG_USUARIOS_CODIGOS, PAG_REP_CODIGOS,
+                                    PAG_PROVEEDORES)
 
 
 # -----------------------------------------------------------------------------------------------
@@ -151,6 +154,8 @@ pages = {
     "Datos": [
         st.Page(maximos_minimos, title=PAG_MAXIMOS_MINIMOS),
         st.Page(usuarios_codigos, title=PAG_USUARIOS_CODIGOS),
+        st.Page(repuestos_codigos, title=PAG_REP_CODIGOS),
+        st.Page(proveedores, title=PAG_PROVEEDORES),
         st.Page(coches_cabecera, title=PAG_COCHES_CABECERA),
         st.Page(parque_movil, title=PAG_PARQUE_MOVIL)
     ],

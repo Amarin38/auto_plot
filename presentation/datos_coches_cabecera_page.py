@@ -2,7 +2,7 @@ import streamlit as st
 
 from config.constants_views import PAG_COCHES_CABECERA
 from presentation.streamlit_components import OtherComponents
-from viewmodels.common.coches_cabecera_vm import CochesCabeceraVM
+from viewmodels.datos.coches_cabecera_vm import CochesCabeceraVM
 
 
 def coches_cabecera():
@@ -12,7 +12,7 @@ def coches_cabecera():
     df = CochesCabeceraVM().get_df()
     key = "coches_cabecera"
 
-    df_paginado, paginas = other.paginate(df, 15, key, "coches por cabecera")
+    df_paginado, paginas = other.paginate(df, 15, key)
 
     st.data_editor(
         df_paginado,

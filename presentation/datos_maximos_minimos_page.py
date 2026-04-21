@@ -4,7 +4,7 @@ from config.constants_views import PAG_MAXIMOS_MINIMOS
 
 from utils.exception_utils import execute_safely
 from presentation.streamlit_components import OtherComponents
-from viewmodels.common.maximos_minimos_vm import MaximosMinimosVM
+from viewmodels.datos.maximos_minimos_vm import MaximosMinimosVM
 
 
 @execute_safely
@@ -16,7 +16,7 @@ def maximos_minimos():
 
     key="maximos_minimos"
 
-    df_paginado, paginas = other.paginate(df, 15, key, "maximos y minimos")
+    df_paginado, paginas = other.paginate(df, 15, key)
 
     st.data_editor(
         df_paginado,

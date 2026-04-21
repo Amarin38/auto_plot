@@ -27,9 +27,9 @@ class CommonUtils:
                     _xlsx_files.append(file)
                 else:
                     try:
-                        df = pd.read_excel(file, engine="openpyxl") # leo el xlsx
+                        df = pd.read_excel(file, engine="openpyxl", dtype={"Codigo": str, "Telefono": str}) # leo el xlsx
                     except BadZipFile:
-                        df = pd.read_excel(file, engine="xlrd") # leo el xls
+                        df = pd.read_excel(file, engine="xlrd", dtype={"Codigo": str, "Telefono": str}) # leo el xls
                     df = self.delete_unnamed_cols(df)
 
                     for col in df.columns:

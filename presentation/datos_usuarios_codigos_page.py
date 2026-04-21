@@ -4,7 +4,7 @@ from config.constants_views import PAG_USUARIOS_CODIGOS
 
 from utils.exception_utils import execute_safely
 from presentation.streamlit_components import OtherComponents
-from viewmodels.common.usuarios_codigos_vm import UsuariosCodigosVM
+from viewmodels.datos.usuarios_codigos_vm import UsuariosCodigosVM
 
 
 @execute_safely
@@ -13,9 +13,9 @@ def usuarios_codigos() -> None:
 
     st.title(PAG_USUARIOS_CODIGOS)
     df = UsuariosCodigosVM().get_df()
-    key="usuarios_codigos"
+    key="codigos_usuarios"
 
-    df_paginado, paginas = other.paginate(df, 15, key, "codigos de usuarios")
+    df_paginado, paginas = other.paginate(df, 15, key)
 
     st.data_editor(
         df_paginado,

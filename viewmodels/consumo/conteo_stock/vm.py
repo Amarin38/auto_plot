@@ -1,0 +1,103 @@
+import pandas as pd
+from pandas import DataFrame
+
+from domain.entities.inicio_conteo_stock import ConteoStock
+from infrastructure.unit_of_work import SQLAlchemyUnitOfWork
+from utils.common_utils import CommonUtils
+
+
+class ConteoStockVM:
+    def __init__(self, uow: SQLAlchemyUnitOfWork = SQLAlchemyUnitOfWork()) -> None:
+        self.uow = uow
+        self.common = CommonUtils()
+
+    def save_df(self, df) -> None:
+        entities = [
+            ConteoStock(
+                id                  = None,
+                Codigo              = row["Codigo"],
+                Articulo            = row["Articulo"],
+                Sistema             = self.common.safe_int(row["Sistema"]),
+                Recuento            = self.common.safe_int(row["Recuento"]),
+                Resultado           = row["Resultado"],
+                Fecha               = self.common.safe_date(row["Fecha"]),
+                Reconteos           = self.common.safe_float(row["Reconteos"]),
+                Estanteria          = row["Estanteria"],
+                Precio              = self.common.safe_float(row["Precio"]),
+                DiferenciaStock     = self.common.safe_float(row["DiferenciaStock"]),
+                DiferenciaPrecio    = self.common.safe_float(row["DiferenciaPrecio"]),
+                PrecioAnterior      = self.common.safe_float(row["PrecioAnterior"]),
+                PrecioActual        = self.common.safe_float(row["PrecioActual"]),
+                Alerta              = row["Alerta"],
+                Deposito            = row["Deposito"],
+                Ajuste              = self.common.safe_float(row["Ajuste"]),
+                StockNuevo          = self.common.safe_float(row["StockNuevo"]),
+            ) for index, row in df.iterrows()
+        ]
+
+        with self.uow as uow:
+            uow.conteo_stock.insert_many(entities)
+
+
+    def get_df(self) -> pd.DataFrame:
+        with self.uow as uow:
+            entities = uow.conteo_stock.get_all()
+            return self.get_data(entities) if entities else pd.DataFrame()
+
+
+    @staticmethod
+    def get_data(entities) -> DataFrame:
+        return pd.DataFrame([
+            {
+                "id": e.id,
+                "Codigo": e.Codigo,
+                "Articulo": e.Articulo,
+                "Sistema": e.Sistema,
+                "Recuento": e.Recuento,
+                "Resultado": e.Resultado,
+                "Fecha": e.Fecha,
+                "Reconteos": e.Reconteos,
+                "Estanteria": e.Estanteria,
+                "Precio": e.Precio,
+                "DiferenciaStock": e.DiferenciaStock,
+                "DiferenciaPrecio": e.DiferenciaPrecio,
+                "PrecioAnterior": e.PrecioAnterior,
+                "PrecioActual": e.PrecioActual,
+                "Alerta": e.Alerta,
+                "Deposito": e.Deposito,
+                "Ajuste": e.Ajuste,
+                "StockNuevo": e.StockNuevo,
+            }
+            for e in entities
+        ])
+
+
+    # Cálculos
+    def calcular_datos(self) -> tuple:
+        df = self.get_df()[["Recuento", "DiferenciaPrecio", "PrecioAnterior", "PrecioActual"]]
+
+        df["DiferenciaPrecio"]  = df["DiferenciaPrecio"].to_numpy()
+        df["PrecioAnterior"]    = df["PrecioAnterior"].to_numpy()
+        df["PrecioActual"]      = df["PrecioActual"].to_numpy()
+
+
+        precio_faltante = df.loc[df["DiferenciaPrecio"] < 0, "DiferenciaPrecio"].sum().round(1)
+        precio_sobrante = df.loc[df["DiferenciaPrecio"] > 0, "DiferenciaPrecio"].sum().round(1)
+        precio_anterior = df["PrecioAnterior"].sum().round(1)
+        precio_actual   = df["PrecioActual"].sum().round(1)
+        porcentaje_dif  = round(self.calcular_porcentaje(precio_actual, precio_anterior) - 100, 2)
+
+        return precio_faltante, precio_sobrante, precio_anterior, precio_actual, porcentaje_dif, self.calcular_contados(df)
+
+    @staticmethod
+    def calcular_contados(df: pd.DataFrame) -> int:
+        return df["Recuento"].notnull().sum()
+
+    @staticmethod
+    def calcular_porcentaje(total: float, parte: float) -> float:
+        return round((parte * 100) / total, 2)
+
+    @staticmethod
+    def calcular_porcentaje_error(a, b, c) -> float:
+        return round(((-a - b) * 100) / c, 2) if c != 0 else 0
+

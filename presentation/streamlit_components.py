@@ -253,12 +253,12 @@ class OtherComponents:
 
 
     @staticmethod
-    def paginate(df: pd.DataFrame, filas_por_pagina: int, key: str, nombre_archivo: str) -> tuple[DataFrame, int] | tuple[Any, int] | None:
+    def paginate(df: pd.DataFrame, filas_por_pagina: int, key: str) -> tuple[DataFrame, int] | tuple[Any, int] | None:
         """Pagina un dataframe y devuelve el df paginado y el total de páginas."""
         boton_descargar, aux1, aux2 = st.columns([1, 2, 2])
 
         with boton_descargar:
-            ButtonComponents().download_df(df, f"{nombre_archivo} {TODAY_DATE_FILE_DMY}.xlsx")
+            ButtonComponents().download_df(df, f"{key.replace("_", " ")} {TODAY_DATE_FILE_DMY}.xlsx")
 
         df_key = f"{key}_df"
         page_key = f"{key}_page"
@@ -359,4 +359,10 @@ class OtherComponents:
             st.button('Siguiente →', disabled=diabled_sig_bttn, key=siguiente_bttn_key, width=150, on_click=sig_page)
 
 
+    @staticmethod
+    def filter_df(df_key: str, filtros_actuales: Any):
+        prev_filter_key = f"filtros_previos_{df_key}"
 
+        if prev_filter_key not in st.session_state or st.session_state[prev_filter_key] != filtros_actuales:
+            st.session_state[f"{df_key}_page"] = 0
+            st.session_state[prev_filter_key] = filtros_actuales

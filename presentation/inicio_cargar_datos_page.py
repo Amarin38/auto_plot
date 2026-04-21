@@ -6,20 +6,22 @@ from config.constants_views import PAG_CARGAR_DATOS, CARGAR_DATOS_BASIC_HEIGHT, 
 from config.enums import LoadDataEnum, TipoCargarEnum, MovimientoEnum
 
 from domain.services.compute_garantias import compute_consumo_garantias, compute_fallas_garantias
-from domain.services.compute_comparacion_consumo import compute_comparacion_consumo
+from domain.services.compute_consumo_comparacion import compute_comparacion_consumo
 from domain.services.compute_consumo_obligatorio import compute_consumo_obligatorio
-from viewmodels.common.usuarios_codigos_vm import UsuariosCodigosVM
+from viewmodels.datos.proveedores_vm import ProveedoresVM
+from viewmodels.datos.repuestos_codigos_vm import RepuestosCodigosVM
+from viewmodels.datos.usuarios_codigos_vm import UsuariosCodigosVM
 
-from viewmodels.conteo_stock.vm import ConteoStockVM
-from viewmodels.common.parque_movil_vm import ParqueMovilVM
+from viewmodels.consumo.conteo_stock.vm import ConteoStockVM
+from viewmodels.datos.parque_movil_vm import ParqueMovilVM
 from viewmodels.gomeria.diferencia_mov_dep_vm import DiferenciaMovimientosEntreDepositosVM
 from viewmodels.gomeria.transferencias_dep_vm import TransferenciasEntreDepositosVM
 
 from domain.services.compute_consumo_historial import compute_historial
 from domain.services.compute_consumo_prevision import create_forecast
 from domain.services.compute_consumo_indices import Index
-from domain.services.compute_maximos_minimos import MaxMin
-from domain.services.compute_duracion_repuestos import DuracionRepuestos
+from domain.services.compute_datos_maximos_minimos import MaxMin
+from domain.services.compute_consumo_duracion_repuestos import DuracionRepuestos
 from domain.services.data_cleaner_listado import InventoryDataCleaner
 
 from utils.common_utils import CommonUtils
@@ -134,7 +136,6 @@ def cargar_datos():
                             else:
                                 dialog.error_dialog("No se puede multiplicar por 0, por 1 o por None")
 
-
                         case LoadDataEnum.DURACION_REPUESTOS:
                             select_repuesto = select.select_box_repuesto(st, "LOAD_DATA_REPUESTO_DURACION")
                             select_tipo = select.select_box_tipo_duracion(st, "LOAD_DATA_TIPO_DURACION")
@@ -145,24 +146,19 @@ def cargar_datos():
                                                                   select_tipo
                                                                   ).calcular_duracion()
 
-
                         case LoadDataEnum.TRANSFERENCIAS_ENTRE_DEPOSITOS:
                             datos = lambda: TransferenciasEntreDepositosVM().save_df(
                                             load_data(select_load, uploaded_files))
-
 
                         case LoadDataEnum.DIFERENCIA_MOVIMIENTOS_ENTRE_DEPOSITOS:
                             datos = lambda: DiferenciaMovimientosEntreDepositosVM().save_df(
                                             load_data(select_load, uploaded_files))
 
-
                         case LoadDataEnum.PARQUE_MOVIL:
                             datos = lambda: ParqueMovilVM().save_df(load_data(select_load, uploaded_files))
 
-
                         case LoadDataEnum.CONTEO_STOCK:
                             datos = lambda: ConteoStockVM().save_df(load_data(select_load, uploaded_files))
-
 
                         case LoadDataEnum.COMPARACION_CONSUMO:
                             select_repuesto = select.select_box_tipo_rep_comparacion(st, "LOAD_DATA_TIPO_COMPARACION")
@@ -174,6 +170,11 @@ def cargar_datos():
                         case LoadDataEnum.USUARIOS_CODIGOS:
                             datos = lambda: UsuariosCodigosVM().save_df(load_data(select_load, uploaded_files))
 
+                        case LoadDataEnum.REPUESTOS_CODIGOS:
+                            datos = lambda: RepuestosCodigosVM().save_df(load_data(select_load, uploaded_files))
+
+                        case LoadDataEnum.PROVEEDORES:
+                            datos = lambda: ProveedoresVM().save_df(load_data(select_load, uploaded_files))
     with tipo:
         if datos is not None and uploaded_files not in ([None], []):
             buttons.load_data_bttn(datos)
@@ -186,7 +187,8 @@ def load_data(select_load: LoadDataEnum, uploaded_files):
              | LoadDataEnum.CONSUMO_GARANTIAS               | LoadDataEnum.DURACION_REPUESTOS \
              | LoadDataEnum.TRANSFERENCIAS_ENTRE_DEPOSITOS  | LoadDataEnum.DIFERENCIA_MOVIMIENTOS_ENTRE_DEPOSITOS \
              | LoadDataEnum.CONSUMO_OBLIGATORIO             | LoadDataEnum.CONTEO_STOCK \
-             | LoadDataEnum.USUARIOS_CODIGOS:
+             | LoadDataEnum.USUARIOS_CODIGOS                | LoadDataEnum.REPUESTOS_CODIGOS \
+             | LoadDataEnum.PROVEEDORES:
             return CommonUtils().concat_dataframes(uploaded_files)
         case _:
             if uploaded_files and select_load:

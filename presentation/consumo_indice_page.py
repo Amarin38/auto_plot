@@ -4,7 +4,7 @@ from infrastructure.unit_of_work import SQLAlchemyUnitOfWork
 from presentation.streamlit_components import SelectBoxComponents, OtherComponents
 from utils.exception_utils import execute_safely
 
-from domain.services.compute_desviacion_indices import DeviationTrend
+from domain.services.compute_consumo_desviacion_indices import DeviationTrend
 from viewmodels.consumo.indice.desviacion.vm import DesviacionIndicesVM
 from viewmodels.consumo.indice.vm import IndiceConsumoVM
 

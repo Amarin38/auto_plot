@@ -1,12 +1,11 @@
 import streamlit as st
 
 from config.constants_common import MODELOS_CHASIS, NORMAL_DATE_YMD, MARCAS_CHASIS, MARCAS_MOTOR, MODELOS_MOTOR, \
-    CARROCERIAS, TODAY_DATE_FILE_DMY
+    CARROCERIAS
 from config.constants_views import PAG_PARQUE_MOVIL, PLACEHOLDER, FLOTA_CONTAINER_HEIGHT
-from domain.entities.parque_movil import ParqueMovilFiltro
-from presentation.streamlit_components import OtherComponents, ButtonComponents
-from utils.common_utils import CommonUtils
-from viewmodels.common.parque_movil_vm import ParqueMovilVM
+from domain.entities.datos_parque_movil import ParqueMovilFiltro
+from presentation.streamlit_components import OtherComponents
+from viewmodels.datos.parque_movil_vm import ParqueMovilVM
 
 
 def parque_movil():
@@ -65,18 +64,12 @@ def parque_movil():
                             tuple(modelo_chasis), tuple(marca_chasis),
                             tuple(marca_motor), tuple(modelo_motor), tuple(carroceria))
 
+
         df = ParqueMovilVM().get_by_args(fecha_desde, fecha_hasta, parque)
-        df_key = "df_completo"
-        prev_filter_key = "filtros_previos"
+        df_key = "parque_movil"
 
-        df_paginado, paginas = other.paginate(df, 15, df_key, "parque movil")
-
-        if prev_filter_key not in st.session_state or st.session_state[prev_filter_key] != filtros_actuales:
-            st.session_state[df_key+"_page"] = 0
-            st.session_state[prev_filter_key] = filtros_actuales
-
-
-
+        other.filter_df(df_key, filtros_actuales)
+        df_paginado, paginas = other.paginate(df, 15, df_key)
 
         st.data_editor(
             df_paginado,
