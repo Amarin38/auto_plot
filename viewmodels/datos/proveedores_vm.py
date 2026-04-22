@@ -48,22 +48,22 @@ class ProveedoresVM(ViewModel):
 
         if proveedores_filtros.NroProv:
             df_base["NroProv"] = df_base["NroProv"].astype(str)
-            mask &= df_base["NroProv"].str.startswith(proveedores_filtros.NroProv)
+            mask &= df_base["NroProv"].str.startswith(proveedores_filtros.NroProv.strip())
 
         if proveedores_filtros.RazonSocial:
-            mask &= df_base["RazonSocial"].str.contains(proveedores_filtros.RazonSocial)
+            mask &= df_base["RazonSocial"].str.contains(proveedores_filtros.RazonSocial.upper().strip())
 
         if proveedores_filtros.CUIT:
-            mask &= df_base["CUIT"].str.contains(proveedores_filtros.CUIT)
+            mask &= df_base["CUIT"].str.contains(proveedores_filtros.CUIT.strip())
 
         if proveedores_filtros.Localidad:
-            mask &= df_base["Localidad"].str.isin(proveedores_filtros.Localidad)
+            mask &= df_base["Localidad"].isin(proveedores_filtros.Localidad)
 
         if proveedores_filtros.Mail:
-            mask &= df_base["Mail"].str.contains(proveedores_filtros.Mail)
+            mask &= df_base["Mail"].str.contains(proveedores_filtros.Mail.strip())
 
         if proveedores_filtros.Telefono:
-            mask &= df_base["Telefono"].str.contains(proveedores_filtros.Telefono)
+            mask &= df_base["Telefono"].str.contains(proveedores_filtros.Telefono.strip())
 
         return df_base[mask]
 

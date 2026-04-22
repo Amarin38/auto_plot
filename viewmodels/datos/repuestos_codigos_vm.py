@@ -59,13 +59,13 @@ class RepuestosCodigosVM(ViewModel):
         mask = np.ones(len(df_base), dtype=bool)
 
         if rep_cod_filtros.Descripcion:
-            mask &= df_base["Descripcion"].str.contains(rep_cod_filtros.Descripcion)
+            mask &= df_base["Descripcion"].str.contains(rep_cod_filtros.Descripcion.upper().strip())
 
         if rep_cod_filtros.Deposito:
             mask &= df_base["Deposito"].isin(rep_cod_filtros.Deposito)
 
         if rep_cod_filtros.CodigosConCero:
-            mask &= df_base["CodigosConCero"].str.startswith(rep_cod_filtros.CodigosConCero)
+            mask &= df_base["CodigosConCero"].str.contains(rep_cod_filtros.CodigosConCero.strip())
 
         return df_base[mask]
 

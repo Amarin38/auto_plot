@@ -1,6 +1,7 @@
 import pandas as pd
 import streamlit as st
 
+from config.constants_common import DEPOSITOS
 from config.constants_views import PAG_REP_CODIGOS, FLOTA_CONTAINER_HEIGHT, PLACEHOLDER
 from domain.entities.datos_repuestos_codigos import RepuestosCodigosFiltro
 
@@ -18,13 +19,13 @@ def repuestos_codigos() -> None:
     aux, descrip_col, deposito_col, codigos_col, aux2 = st.columns([1, 0.65, 0.70, 0.65, 1])
 
     with descrip_col.container(height=FLOTA_CONTAINER_HEIGHT):
-        descripcion = st.text_input("Descripción", placeholder=PLACEHOLDER, icon="🚌")
+        descripcion = st.text_input("Descripción", placeholder=PLACEHOLDER, icon="📑")
 
     with deposito_col.container(height=FLOTA_CONTAINER_HEIGHT):
-        deposito = st.multiselect("Depósito", ["OFICINA", "FLAVIO"])
+        deposito = st.multiselect("Depósito", DEPOSITOS)
 
     with codigos_col.container(height=FLOTA_CONTAINER_HEIGHT):
-        codigos = st.text_input("Códigos", placeholder=PLACEHOLDER, icon="🚌")
+        codigos = st.text_input("Códigos", placeholder=PLACEHOLDER, icon="📦")
 
     df = RepuestosCodigosVM().get_df()
     df_key = "codigos_repuestos"
@@ -45,9 +46,9 @@ def repuestos_codigos() -> None:
         height=600,
         column_order=["Descripcion", "Deposito", "CodigosConCero"],
         column_config={
-            "Descripcion": st.column_config.TextColumn("Descripción", width=80),
-            "Deposito": st.column_config.TextColumn("Depósito", width=30),
-            "CodigosConCero": st.column_config.TextColumn("Códigos", width=30),
+            "Descripcion": st.column_config.TextColumn("Descripción", width=450),
+            "Deposito": st.column_config.TextColumn("Depósito", width=1),
+            "CodigosConCero": st.column_config.TextColumn("Códigos", width=1),
         }
     )
 
