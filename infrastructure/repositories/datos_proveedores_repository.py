@@ -35,6 +35,23 @@ class ProveedoresRepository(Repository):
 
         return ProveedoresMapper.to_entity(model)
 
+    # Update -------------------------------------------
+    def update(self, entity: Proveedores) -> None:
+        model = self.session.get(ProveedoresModel, entity.NroProv)
+
+        if model:
+            model.RazonSocial = entity.RazonSocial
+            model.CUIT        = entity.CUIT
+            model.Localidad   = entity.Localidad
+            model.Mail        = entity.Mail
+            model.Telefono    = entity.Telefono
+
+
+    def insert_one(self, entity: Proveedores) -> None:
+        model = ProveedoresMapper.to_model(entity)
+        self.session.add(model)
+
+
     # Delete -------------------------------------------
     def delete_by_id(self, nro_prov: int) -> None:
         row = self.session.get(ProveedoresModel, nro_prov)

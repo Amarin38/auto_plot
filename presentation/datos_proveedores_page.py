@@ -12,6 +12,7 @@ from viewmodels.datos.proveedores_vm import ProveedoresVM
 @execute_safely
 def proveedores() -> None:
     other = OtherComponents()
+    vm = ProveedoresVM()
     st.title(PAG_PROVEEDORES)
 
     aux, izq_col, centro_col, der_col, aux2 = st.columns([1, 0.65, 0.70, 0.65, 1])
@@ -35,23 +36,29 @@ def proveedores() -> None:
         telefono = st.text_input("Telefono", placeholder=PLACEHOLDER, icon="📞")
 
 
-    df = ProveedoresVM().get_df()
+    if "df_proveedores" not in st.session_state:
+        st.session_state.df_proveedores = vm.get_df()
+
     df_key = "datos_proveedores"
 
     if nro_prov or razon_social or cuit or localidad or mail or telefono:
         repuestos_filtro = Proveedores(nro_prov, razon_social, cuit, localidad, mail, telefono)
         filtros_actuales = (nro_prov, razon_social, cuit, tuple(localidad), mail, telefono)
 
-        df = ProveedoresVM().get_by_args(repuestos_filtro)
-        other.filter_df(df_key, filtros_actuales)
+        st.session_state.df_proveedores = vm.get_by_args(repuestos_filtro)
 
-    df_paginado, paginas = other.paginate(df, 15, df_key)
+        other.filter_df(df_key, filtros_actuales)
+    else:
+        st.session_state.df_proveedores = vm.get_df()
+
+    df_paginado, paginas = other.paginate(st.session_state.df_proveedores, 15, df_key)
 
     st.data_editor(
         df_paginado,
-        disabled=True,
+        disabled=False,
         hide_index=True,
         height=600,
+        key="editor_proveedores",
         column_order=["NroProv", "RazonSocial", "CUIT", "Localidad", "Mail", "Telefono"],
         column_config={
             "NroProv": st.column_config.NumberColumn("Num. Proveedor", width=1),
@@ -62,5 +69,15 @@ def proveedores() -> None:
             "Telefono": st.column_config.TextColumn("Telefono", width=10),
         }
     )
+
+    if st.button("💾 Guardar cambios"):
+        changes = st.session_state.get("editor_proveedores", {})
+        vm.save_changes(st.session_state.df_proveedores, changes)
+
+        # Refrescar
+        del st.session_state["df_proveedores"]
+        st.cache_data.clear()
+        st.success("Cambios guardados!")
+        st.rerun()
 
     other.paginate_buttons(paginas, key=df_key)

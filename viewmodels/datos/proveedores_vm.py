@@ -67,6 +67,46 @@ class ProveedoresVM(ViewModel):
 
         return df_base[mask]
 
+    def save_changes(self, df_original: pd.DataFrame, changes: dict) -> None:
+        """
+        changes viene de st.session_state["key_del_editor"]
+        {
+            "edited_rows":  {0: {"RazonSocial": "Nuevo nombre"}, ...},
+            "added_rows":   [{"NroProv": 99, "RazonSocial": "...", ...}],
+            "deleted_rows": [2, 5]
+        }
+        """
+        with self.uow as uow:
+            # Ediciones
+            for idx, cols in changes.get("edited_rows", {}).items():
+                row = df_original.iloc[idx].to_dict()
+                row.update(cols)  # aplicar los cambios encima de la fila original
+                entity = Proveedores(
+                    NroProv     = int(row["NroProv"]),
+                    RazonSocial = row.get("RazonSocial")    or None,
+                    CUIT        = row.get("CUIT")           or None,
+                    Localidad   = row.get("Localidad")      or None,
+                    Mail        = row.get("Mail")           or None,
+                    Telefono    = row.get("Telefono")       or None,
+                )
+                uow.proveedor.update(entity)
+
+            # Nuevas filas
+            for row in changes.get("added_rows", []):
+                entity = Proveedores(
+                    NroProv     = int(row.get("NroProv", 0)),
+                    RazonSocial = row.get("RazonSocial"),
+                    CUIT        = row.get("CUIT"),
+                    Localidad   = row.get("Localidad"),
+                    Mail        = row.get("Mail"),
+                    Telefono    = row.get("Telefono"),
+                )
+                uow.proveedor.insert_one(entity)
+
+            # Eliminaciones
+            for idx in changes.get("deleted_rows", []):
+                nro_prov = int(df_original.iloc[idx]["NroProv"])
+                uow.proveedor.delete_by_id(nro_prov)
 
     @staticmethod
     def get_data(entities) -> pd.DataFrame:
