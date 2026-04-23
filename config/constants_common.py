@@ -13,7 +13,7 @@ DB_PATH         : str = f"sqlite:///{MAIN_PATH}/infrastructure/db/data.db"
 # PAGINAS
 FLOTA_URL               = "https://sistemasanantonio.com.ar/san_antonio/mod_flota/Grilla_ParqueMovil.aspx"
 LICITACIONES_URL        = "https://dota.sistemasanantonio.com.ar/licitaciones/login.aspx"
-PROVEEDORES_SHEET_URL   = "https://docs.google.com/spreadsheets/d/17mJc4DVUqxUHD-3saffT_vgxYHFgkO_vjldXvFNyv80/edit?gid=414215206#gid=414215206"
+
 
 # DATES
 PAGE_STRFTIME_DMY   = "%d/%m/%Y"
@@ -102,6 +102,7 @@ LOC_PROVEEDORES = ("CAP. FED.", "BANFIELD", "VILLA LYNCH", "LANUS", "DOCK SUD", 
                    "CORONEL DORREGO", "SAN ANDRES", "ZARATE")
 
 
-# Columnas
+# Google Sheets
+PROVEEDORES_SHEET_URL   = "https://docs.google.com/spreadsheets/d/17mJc4DVUqxUHD-3saffT_vgxYHFgkO_vjldXvFNyv80/edit?gid=414215206#gid=414215206"
 PROVEEDORES_COLS = ["NroProv", "RazonSocial", "CUIT", "Localidad", "Mail", "Telefono"]
-
+PROVEEDORES_WS = "Proveedores"

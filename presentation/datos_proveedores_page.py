@@ -1,7 +1,7 @@
 import pandas as pd
 import streamlit as st
 
-from config.constants_common import LOC_PROVEEDORES, PROVEEDORES_SHEET_URL, PROVEEDORES_COLS
+from config.constants_common import LOC_PROVEEDORES, PROVEEDORES_SHEET_URL, PROVEEDORES_COLS, PROVEEDORES_WS
 from config.constants_views import PAG_PROVEEDORES, FLOTA_CONTAINER_HEIGHT, PLACEHOLDER
 from domain.entities.datos_proveedores import Proveedores
 from utils.common_utils import CommonUtils
@@ -37,8 +37,15 @@ def proveedores() -> None:
     with der_col.container(height=FLOTA_CONTAINER_HEIGHT):
         telefono = st.text_input("Telefono", placeholder=PLACEHOLDER, icon="📞")
 
-    df_sheet = other.google_sheet_conn(PROVEEDORES_SHEET_URL, "Proveedores", PROVEEDORES_COLS)
+    df_sheet = other.google_sheet_conn(
+        sheet_url=PROVEEDORES_SHEET_URL,
+        worksheet=PROVEEDORES_WS,
+        cols=PROVEEDORES_COLS
+    )
     df_sheet = CommonUtils().delete_unnamed_cols(df_sheet)
+
+    if "_index" in df_sheet.columns:
+        df_sheet = df_sheet.drop(columns=["_index"])
 
     if "df_proveedores" not in st.session_state:
         st.session_state.df_proveedores = df_sheet
@@ -63,10 +70,11 @@ def proveedores() -> None:
 
     df_paginado, paginas = other.paginate(st.session_state.df_proveedores, 15, df_key)
 
-
+    df_visual = df_paginado.reset_index(drop=True)
     st.data_editor(
-        df_paginado,
+        df_visual,
         disabled=False,
+        num_rows="dynamic",
         hide_index=True,
         height=600,
         key="editor_proveedores",
@@ -82,7 +90,6 @@ def proveedores() -> None:
     )
 
     if st.button("💾 Guardar cambios"):
-        # 1. Recuperamos el diccionario con los cambios de la pantalla
         cambios = st.session_state.get("editor_proveedores", {})
 
         if cambios.get("edited_rows") or cambios.get("added_rows") or cambios.get("deleted_rows"):
@@ -93,29 +100,45 @@ def proveedores() -> None:
                 for columna, nuevo_valor in modificaciones.items():
                     st.session_state.df_proveedores.loc[idx_real, columna] = nuevo_valor
 
-            for fila_nueva in cambios.get("added_rows", []):
-                df_nueva = pd.DataFrame([fila_nueva])
-                st.session_state.df_proveedores = pd.concat([st.session_state.df_proveedores, df_nueva],
-                                                            ignore_index=True)
+
+            if cambios.get("added_rows"):
+                # try:
+                #     ultimo_id = int(pd.to_numeric(st.session_state.df_proveedores["NroProv"]).max())
+                # except:
+                #     ultimo_id = 0
+
+                for fila_nueva in cambios.get("added_rows", []):
+                    # ultimo_id += 1
+                    # fila_nueva["NroProv"] = ultimo_id
+
+                    df_nueva = pd.DataFrame([fila_nueva])
+                    st.session_state.df_proveedores = pd.concat([st.session_state.df_proveedores, df_nueva],
+                                                                ignore_index=True)
 
             if cambios.get("deleted_rows"):
                 indices_a_borrar = [df_paginado.index[int(i)] for i in cambios["deleted_rows"]]
                 st.session_state.df_proveedores = st.session_state.df_proveedores.drop(indices_a_borrar)
 
             # --- 3. ENVIAR A GOOGLE SHEETS ---
-            try:
-                other.update_google_sheet(PROVEEDORES_SHEET_URL, "Proveedores",
-                                          st.session_state.df_proveedores)
+            st.session_state.df_proveedores = st.session_state.df_proveedores[
+                [col for col in PROVEEDORES_COLS if col in st.session_state.df_proveedores.columns]
+            ]
 
-                st.success("¡Cambios guardados en Google Sheets!")
+            try:
+                other.update_google_sheet(
+                    sheet_url=PROVEEDORES_SHEET_URL,
+                    worksheet=PROVEEDORES_WS,
+                    data=st.session_state.df_proveedores
+                )
+
+                st.toast("¡Cambios guardados en Google Sheets!", icon="💾")
                 del st.session_state["df_proveedores"]
                 st.cache_data.clear()
                 st.rerun()
 
             except Exception as e:
-                st.error(f"Error al escribir en Google Sheets: {e}")
-
+                st.toast(f"Error al escribir en Google Sheets: {e}", icon="❌")
         else:
-            st.warning("No hay cambios para guardar (Asegúrate de presionar ENTER tras editar una celda).")
+            st.toast("No hay cambios para guardar (Asegúrate de presionar ENTER tras editar una celda).", icon="⚠️")
 
     other.paginate_buttons(paginas, key=df_key)

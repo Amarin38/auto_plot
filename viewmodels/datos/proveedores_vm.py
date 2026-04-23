@@ -67,14 +67,21 @@ class ProveedoresVM(ViewModel):
 
         return df_base[mask]
 
-
     def backup_google_sheet(self, df_viejo: pd.DataFrame, df_nuevo: pd.DataFrame) -> None:
-        """ Compara los cambios entre el DF de la google sheet y la guardada en la base de datos y hace una copia."""
+        # --- 1. LIMPIEZA CLAVE: Forzamos a que solo se comparen las columnas reales ---
+        columnas_base = ["NroProv", "RazonSocial", "CUIT", "Localidad", "Mail", "Telefono"]
+
+        # Ignoramos cualquier columna extra (como _index) que Streamlit haya inyectado
+        df_viejo = df_viejo[[col for col in columnas_base if col in df_viejo.columns]]
+        df_nuevo = df_nuevo[[col for col in columnas_base if col in df_nuevo.columns]]
+        # -----------------------------------------------------------------------------
+
         idx_comunes = df_viejo.index.intersection(df_nuevo.index)
 
         df_viejo_comun = df_viejo.loc[idx_comunes].astype(str).replace("nan", "")
         df_nuevo_comun = df_nuevo.loc[idx_comunes].astype(str).replace("nan", "")
 
+        # Ahora esto no fallará porque ambas tablas son idénticas en estructura
         mascara_cambios = (df_viejo_comun != df_nuevo_comun).any(axis=1)
         idx_editados = idx_comunes[mascara_cambios]
         idx_nuevos = df_nuevo.index.difference(df_viejo.index)
@@ -83,24 +90,24 @@ class ProveedoresVM(ViewModel):
             for idx in idx_editados:
                 row = df_nuevo.loc[idx]
                 entity = Proveedores(
-                    NroProv     = int(row["NroProv"]),
-                    RazonSocial = row.get("RazonSocial")    if pd.notna(row.get("RazonSocial")) else None,
-                    CUIT        = row.get("CUIT")           if pd.notna(row.get("CUIT")) else None,
-                    Localidad   = row.get("Localidad")      if pd.notna(row.get("Localidad")) else None,
-                    Mail        = row.get("Mail")           if pd.notna(row.get("Mail")) else None,
-                    Telefono    = row.get("Telefono")       if pd.notna(row.get("Telefono")) else None
+                    NroProv=int(row["NroProv"]),
+                    RazonSocial=row.get("RazonSocial") if pd.notna(row.get("RazonSocial")) else None,
+                    CUIT=row.get("CUIT") if pd.notna(row.get("CUIT")) else None,
+                    Localidad=row.get("Localidad") if pd.notna(row.get("Localidad")) else None,
+                    Mail=row.get("Mail") if pd.notna(row.get("Mail")) else None,
+                    Telefono=row.get("Telefono") if pd.notna(row.get("Telefono")) else None
                 )
                 uow.proveedor.update(entity)
 
             for idx in idx_nuevos:
                 row = df_nuevo.loc[idx]
                 entity = Proveedores(
-                    NroProv     = int(row.get("NroProv", 0)),
-                    RazonSocial = row.get("RazonSocial")    if pd.notna(row.get("RazonSocial")) else None,
-                    CUIT        = row.get("CUIT")           if pd.notna(row.get("CUIT")) else None,
-                    Localidad   = row.get("Localidad")      if pd.notna(row.get("Localidad")) else None,
-                    Mail        = row.get("Mail")           if pd.notna(row.get("Mail")) else None,
-                    Telefono    = row.get("Telefono")       if pd.notna(row.get("Telefono")) else None
+                    NroProv=int(row.get("NroProv", 0)),
+                    RazonSocial=row.get("RazonSocial") if pd.notna(row.get("RazonSocial")) else None,
+                    CUIT=row.get("CUIT") if pd.notna(row.get("CUIT")) else None,
+                    Localidad=row.get("Localidad") if pd.notna(row.get("Localidad")) else None,
+                    Mail=row.get("Mail") if pd.notna(row.get("Mail")) else None,
+                    Telefono=row.get("Telefono") if pd.notna(row.get("Telefono")) else None
                 )
                 uow.proveedor.insert_one(entity)
 

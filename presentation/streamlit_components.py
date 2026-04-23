@@ -384,6 +384,6 @@ class OtherComponents:
         return df_sheet
 
     @staticmethod
-    def update_google_sheet(sheet_url: str, worksheet: str, data: pd.DataFrame):
+    def update_google_sheet(sheet_url: str, worksheet: str, data: pd.DataFrame) -> None:
         conn = st.connection("gsheets", type=GSheetsConnection)
         conn.update(spreadsheet=sheet_url, worksheet=worksheet, data=data)
