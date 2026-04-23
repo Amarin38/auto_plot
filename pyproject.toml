@@ -15,6 +15,7 @@ dependencies = [
     "pytest>=9.0.2",
     "scipy>=1.17.0",
     "sqlalchemy>=2.0.45",
+    "st-gsheets-connection>=0.1.0",
     "statsmodels>=0.14.6",
     "streamlit>=1.52.2",
     "streamlit-authenticator>=0.4.2",

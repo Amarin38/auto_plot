@@ -1,8 +1,10 @@
+import pandas as pd
 import streamlit as st
 
-from config.constants_common import LOC_PROVEEDORES
+from config.constants_common import LOC_PROVEEDORES, PROVEEDORES_SHEET_URL, PROVEEDORES_COLS
 from config.constants_views import PAG_PROVEEDORES, FLOTA_CONTAINER_HEIGHT, PLACEHOLDER
 from domain.entities.datos_proveedores import Proveedores
+from utils.common_utils import CommonUtils
 
 from utils.exception_utils import execute_safely
 from presentation.streamlit_components import OtherComponents
@@ -35,9 +37,18 @@ def proveedores() -> None:
     with der_col.container(height=FLOTA_CONTAINER_HEIGHT):
         telefono = st.text_input("Telefono", placeholder=PLACEHOLDER, icon="📞")
 
+    df_sheet = other.google_sheet_conn(PROVEEDORES_SHEET_URL, "Proveedores", PROVEEDORES_COLS)
+    df_sheet = CommonUtils().delete_unnamed_cols(df_sheet)
 
     if "df_proveedores" not in st.session_state:
-        st.session_state.df_proveedores = vm.get_df()
+        st.session_state.df_proveedores = df_sheet
+
+        vm.backup_google_sheet(
+            df_viejo=vm.get_df(),
+            df_nuevo=st.session_state.df_proveedores
+        )
+        st.toast("Backup sincronizado correctamente.", icon="🔄")
+        st.rerun()
 
     df_key = "datos_proveedores"
 
@@ -46,12 +57,12 @@ def proveedores() -> None:
         filtros_actuales = (nro_prov, razon_social, cuit, tuple(localidad), mail, telefono)
 
         st.session_state.df_proveedores = vm.get_by_args(repuestos_filtro)
-
         other.filter_df(df_key, filtros_actuales)
     else:
-        st.session_state.df_proveedores = vm.get_df()
+        st.session_state.df_proveedores = df_sheet
 
     df_paginado, paginas = other.paginate(st.session_state.df_proveedores, 15, df_key)
+
 
     st.data_editor(
         df_paginado,
@@ -59,7 +70,7 @@ def proveedores() -> None:
         hide_index=True,
         height=600,
         key="editor_proveedores",
-        column_order=["NroProv", "RazonSocial", "CUIT", "Localidad", "Mail", "Telefono"],
+        column_order=PROVEEDORES_COLS,
         column_config={
             "NroProv": st.column_config.NumberColumn("Num. Proveedor", width=1),
             "RazonSocial": st.column_config.TextColumn("R. Social", width=150),
@@ -71,13 +82,40 @@ def proveedores() -> None:
     )
 
     if st.button("💾 Guardar cambios"):
-        changes = st.session_state.get("editor_proveedores", {})
-        vm.save_changes(st.session_state.df_proveedores, changes)
+        # 1. Recuperamos el diccionario con los cambios de la pantalla
+        cambios = st.session_state.get("editor_proveedores", {})
 
-        # Refrescar
-        del st.session_state["df_proveedores"]
-        st.cache_data.clear()
-        st.success("Cambios guardados!")
-        st.rerun()
+        if cambios.get("edited_rows") or cambios.get("added_rows") or cambios.get("deleted_rows"):
+            # --- 2. FUSIONAR CAMBIOS CON EL DATAFRAME MAESTRO ---
+            for idx_pantalla, modificaciones in cambios.get("edited_rows", {}).items():
+                idx_real = df_paginado.index[int(idx_pantalla)]
+
+                for columna, nuevo_valor in modificaciones.items():
+                    st.session_state.df_proveedores.loc[idx_real, columna] = nuevo_valor
+
+            for fila_nueva in cambios.get("added_rows", []):
+                df_nueva = pd.DataFrame([fila_nueva])
+                st.session_state.df_proveedores = pd.concat([st.session_state.df_proveedores, df_nueva],
+                                                            ignore_index=True)
+
+            if cambios.get("deleted_rows"):
+                indices_a_borrar = [df_paginado.index[int(i)] for i in cambios["deleted_rows"]]
+                st.session_state.df_proveedores = st.session_state.df_proveedores.drop(indices_a_borrar)
+
+            # --- 3. ENVIAR A GOOGLE SHEETS ---
+            try:
+                other.update_google_sheet(PROVEEDORES_SHEET_URL, "Proveedores",
+                                          st.session_state.df_proveedores)
+
+                st.success("¡Cambios guardados en Google Sheets!")
+                del st.session_state["df_proveedores"]
+                st.cache_data.clear()
+                st.rerun()
+
+            except Exception as e:
+                st.error(f"Error al escribir en Google Sheets: {e}")
+
+        else:
+            st.warning("No hay cambios para guardar (Asegúrate de presionar ENTER tras editar una celda).")
 
     other.paginate_buttons(paginas, key=df_key)

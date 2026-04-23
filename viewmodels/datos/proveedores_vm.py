@@ -67,46 +67,43 @@ class ProveedoresVM(ViewModel):
 
         return df_base[mask]
 
-    def save_changes(self, df_original: pd.DataFrame, changes: dict) -> None:
-        """
-        changes viene de st.session_state["key_del_editor"]
-        {
-            "edited_rows":  {0: {"RazonSocial": "Nuevo nombre"}, ...},
-            "added_rows":   [{"NroProv": 99, "RazonSocial": "...", ...}],
-            "deleted_rows": [2, 5]
-        }
-        """
+
+    def backup_google_sheet(self, df_viejo: pd.DataFrame, df_nuevo: pd.DataFrame) -> None:
+        """ Compara los cambios entre el DF de la google sheet y la guardada en la base de datos y hace una copia."""
+        idx_comunes = df_viejo.index.intersection(df_nuevo.index)
+
+        df_viejo_comun = df_viejo.loc[idx_comunes].astype(str).replace("nan", "")
+        df_nuevo_comun = df_nuevo.loc[idx_comunes].astype(str).replace("nan", "")
+
+        mascara_cambios = (df_viejo_comun != df_nuevo_comun).any(axis=1)
+        idx_editados = idx_comunes[mascara_cambios]
+        idx_nuevos = df_nuevo.index.difference(df_viejo.index)
+
         with self.uow as uow:
-            # Ediciones
-            for idx, cols in changes.get("edited_rows", {}).items():
-                row = df_original.iloc[idx].to_dict()
-                row.update(cols)  # aplicar los cambios encima de la fila original
+            for idx in idx_editados:
+                row = df_nuevo.loc[idx]
                 entity = Proveedores(
                     NroProv     = int(row["NroProv"]),
-                    RazonSocial = row.get("RazonSocial")    or None,
-                    CUIT        = row.get("CUIT")           or None,
-                    Localidad   = row.get("Localidad")      or None,
-                    Mail        = row.get("Mail")           or None,
-                    Telefono    = row.get("Telefono")       or None,
+                    RazonSocial = row.get("RazonSocial")    if pd.notna(row.get("RazonSocial")) else None,
+                    CUIT        = row.get("CUIT")           if pd.notna(row.get("CUIT")) else None,
+                    Localidad   = row.get("Localidad")      if pd.notna(row.get("Localidad")) else None,
+                    Mail        = row.get("Mail")           if pd.notna(row.get("Mail")) else None,
+                    Telefono    = row.get("Telefono")       if pd.notna(row.get("Telefono")) else None
                 )
                 uow.proveedor.update(entity)
 
-            # Nuevas filas
-            for row in changes.get("added_rows", []):
+            for idx in idx_nuevos:
+                row = df_nuevo.loc[idx]
                 entity = Proveedores(
                     NroProv     = int(row.get("NroProv", 0)),
-                    RazonSocial = row.get("RazonSocial"),
-                    CUIT        = row.get("CUIT"),
-                    Localidad   = row.get("Localidad"),
-                    Mail        = row.get("Mail"),
-                    Telefono    = row.get("Telefono"),
+                    RazonSocial = row.get("RazonSocial")    if pd.notna(row.get("RazonSocial")) else None,
+                    CUIT        = row.get("CUIT")           if pd.notna(row.get("CUIT")) else None,
+                    Localidad   = row.get("Localidad")      if pd.notna(row.get("Localidad")) else None,
+                    Mail        = row.get("Mail")           if pd.notna(row.get("Mail")) else None,
+                    Telefono    = row.get("Telefono")       if pd.notna(row.get("Telefono")) else None
                 )
                 uow.proveedor.insert_one(entity)
 
-            # Eliminaciones
-            for idx in changes.get("deleted_rows", []):
-                nro_prov = int(df_original.iloc[idx]["NroProv"])
-                uow.proveedor.delete_by_id(nro_prov)
 
     @staticmethod
     def get_data(entities) -> pd.DataFrame:

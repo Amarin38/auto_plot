@@ -5,10 +5,11 @@ import time
 import pandas as pd
 import streamlit as st
 
-from typing import Union, Optional, Any
+from typing import Union, Optional, Any, List
 
 from pandas import DataFrame, Series
 from streamlit.components.v1 import components
+from streamlit_gsheets import GSheetsConnection
 
 from config.constants_common import TODAY_DATE_FILE_DMY
 from config.constants_views import SELECT_BOX_HEIGHT, PLACEHOLDER, CENTERED_TITLE_HEIGHT, CENTERED_TITLE_WIDTH, \
@@ -366,3 +367,23 @@ class OtherComponents:
         if prev_filter_key not in st.session_state or st.session_state[prev_filter_key] != filtros_actuales:
             st.session_state[f"{df_key}_page"] = 0
             st.session_state[prev_filter_key] = filtros_actuales
+
+
+    @staticmethod
+    def google_sheet_conn(sheet_url: str, worksheet: str, cols: List[str]) -> pd.DataFrame:
+        conn = st.connection("gsheets", type=GSheetsConnection)
+        df_sheet = conn.read(spreadsheet=sheet_url, worksheet=worksheet, ttl=1)
+
+        df_sheet[cols] = (
+            df_sheet[cols]
+            .fillna("")
+            .astype(str)
+            .replace(r'\.0$', '', regex=True)
+        )
+
+        return df_sheet
+
+    @staticmethod
+    def update_google_sheet(sheet_url: str, worksheet: str, data: pd.DataFrame):
+        conn = st.connection("gsheets", type=GSheetsConnection)
+        conn.update(spreadsheet=sheet_url, worksheet=worksheet, data=data)

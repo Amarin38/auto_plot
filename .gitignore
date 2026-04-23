@@ -12,3 +12,5 @@ __pycache__/
 .venv/
 uv.lock
 .python-version
+
+.streamlit/secrets.toml
