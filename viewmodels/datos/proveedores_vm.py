@@ -67,6 +67,7 @@ class ProveedoresVM(ViewModel):
 
         return df_base[mask]
 
+
     def backup_google_sheet(self, df_viejo: pd.DataFrame, df_nuevo: pd.DataFrame) -> None:
         # --- 1. LIMPIEZA CLAVE: Forzamos a que solo se comparen las columnas reales ---
         columnas_base = ["NroProv", "RazonSocial", "CUIT", "Localidad", "Mail", "Telefono"]

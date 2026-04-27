@@ -66,6 +66,9 @@ class ButtonComponents:
             st.toast("Descarga enviada al navegador", icon="📥")
 
 
+
+
+
 class SelectBoxComponents:
     def __init__(self):
         ...
@@ -369,21 +372,63 @@ class OtherComponents:
             st.session_state[prev_filter_key] = filtros_actuales
 
 
-    @staticmethod
-    def google_sheet_conn(sheet_url: str, worksheet: str, cols: List[str]) -> pd.DataFrame:
-        conn = st.connection("gsheets", type=GSheetsConnection)
-        df_sheet = conn.read(spreadsheet=sheet_url, worksheet=worksheet, ttl=1)
+class GoogleSheetsComponents:
+    def __init__(self, sheet_url, worksheet, cols):
+        self.conn = st.connection("gsheets", type=GSheetsConnection)
+        self.url = sheet_url
+        self.ws = worksheet
+        self.cols = cols
 
-        df_sheet[cols] = (
-            df_sheet[cols]
+    def connect(self) -> pd.DataFrame:
+        df_sheet = self.conn.read(spreadsheet=self.url, worksheet=self.ws, ttl=1)
+
+        df_sheet[self.cols] = (
+            df_sheet[self.cols]
             .fillna("")
             .astype(str)
             .replace(r'\.0$', '', regex=True)
         )
 
+        df_sheet = CommonUtils().delete_unnamed_cols(df_sheet)
         return df_sheet
 
-    @staticmethod
-    def update_google_sheet(sheet_url: str, worksheet: str, data: pd.DataFrame) -> None:
-        conn = st.connection("gsheets", type=GSheetsConnection)
-        conn.update(spreadsheet=sheet_url, worksheet=worksheet, data=data)
+
+    def save_button(self, df_paginado, df_key, editor_key) -> None:
+        if st.button("💾 Guardar cambios"):
+            cambios = st.session_state.get(editor_key, {})
+
+            if cambios.get("edited_rows") or cambios.get("added_rows") or cambios.get("deleted_rows"):
+                # --- 2. FUSIONAR CAMBIOS CON EL DATAFRAME MAESTRO ---
+                for idx_pantalla, modificaciones in cambios.get("edited_rows", {}).items():
+                    idx_real = df_paginado.index[int(idx_pantalla)]
+
+                    for columna, nuevo_valor in modificaciones.items():
+                        st.session_state[df_key].loc[idx_real, columna] = nuevo_valor
+
+                if cambios.get("added_rows"):
+                    for fila_nueva in cambios.get("added_rows", []):
+                        df_nueva = pd.DataFrame([fila_nueva])
+                        st.session_state[df_key] = pd.concat([st.session_state[df_key], df_nueva],
+                                                             ignore_index=True)
+
+                if cambios.get("deleted_rows"):
+                    indices_a_borrar = [df_paginado.index[int(i)] for i in cambios["deleted_rows"]]
+                    st.session_state[df_key] = st.session_state[df_key].drop(indices_a_borrar)
+
+                # --- 3. ENVIAR A GOOGLE SHEETS ---
+                st.session_state[df_key] = st.session_state[df_key][
+                    [col for col in self.cols if col in st.session_state[df_key].columns]
+                ]
+
+                try:
+                    self.conn.update(spreadsheet=self.url, worksheet=self.ws, data=st.session_state[df_key])
+
+                    st.toast("¡Cambios guardados en Google Sheets!", icon="💾")
+                    del st.session_state[df_key]
+                    st.cache_data.clear()
+                    st.rerun()
+
+                except Exception as e:
+                    st.toast(f"Error al escribir en Google Sheets: {e}", icon="❌")
+            else:
+                st.toast("No hay cambios para guardar (Asegúrate de presionar ENTER tras editar una celda).", icon="⚠️")

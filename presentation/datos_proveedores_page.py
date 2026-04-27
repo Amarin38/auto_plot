@@ -1,15 +1,20 @@
-import pandas as pd
 import streamlit as st
 
 from config.constants_common import LOC_PROVEEDORES, PROVEEDORES_SHEET_URL, PROVEEDORES_COLS, PROVEEDORES_WS
-from config.constants_views import PAG_PROVEEDORES, FLOTA_CONTAINER_HEIGHT, PLACEHOLDER
+from config.constants_views import PAG_PROVEEDORES, FLOTA_CONTAINER_HEIGHT, PLACEHOLDER, PROVEEDORES_DF_KEY, \
+    PROVEEDORES_PAGER_KEY, PROVEEDORES_EDITOR_KEY
 from domain.entities.datos_proveedores import Proveedores
-from utils.common_utils import CommonUtils
 
 from utils.exception_utils import execute_safely
-from presentation.streamlit_components import OtherComponents
+from presentation.streamlit_components import OtherComponents, GoogleSheetsComponents
 from viewmodels.datos.proveedores_vm import ProveedoresVM
 
+
+google_sheet = GoogleSheetsComponents(PROVEEDORES_SHEET_URL, PROVEEDORES_WS, PROVEEDORES_COLS)
+
+@st.cache_data(ttl=200, show_spinner=True)
+def get_sheet():
+    return google_sheet.connect()
 
 @execute_safely
 def proveedores() -> None:
@@ -37,38 +42,31 @@ def proveedores() -> None:
     with der_col.container(height=FLOTA_CONTAINER_HEIGHT):
         telefono = st.text_input("Telefono", placeholder=PLACEHOLDER, icon="📞")
 
-    df_sheet = other.google_sheet_conn(
-        sheet_url=PROVEEDORES_SHEET_URL,
-        worksheet=PROVEEDORES_WS,
-        cols=PROVEEDORES_COLS
-    )
-    df_sheet = CommonUtils().delete_unnamed_cols(df_sheet)
+    df_sheet = get_sheet()
 
     if "_index" in df_sheet.columns:
         df_sheet = df_sheet.drop(columns=["_index"])
 
-    if "df_proveedores" not in st.session_state:
-        st.session_state.df_proveedores = df_sheet
+    if PROVEEDORES_DF_KEY not in st.session_state:
+        st.session_state[PROVEEDORES_DF_KEY] = df_sheet
 
-        vm.backup_google_sheet(
+        vm.backup_google_sheet( # cada vez que se recarga la página se hace un backup en google sheets
             df_viejo=vm.get_df(),
-            df_nuevo=st.session_state.df_proveedores
+            df_nuevo=st.session_state[PROVEEDORES_DF_KEY]
         )
         st.toast("Backup sincronizado correctamente.", icon="🔄")
         st.rerun()
-
-    df_key = "datos_proveedores"
 
     if nro_prov or razon_social or cuit or localidad or mail or telefono:
         repuestos_filtro = Proveedores(nro_prov, razon_social, cuit, localidad, mail, telefono)
         filtros_actuales = (nro_prov, razon_social, cuit, tuple(localidad), mail, telefono)
 
-        st.session_state.df_proveedores = vm.get_by_args(repuestos_filtro)
-        other.filter_df(df_key, filtros_actuales)
+        st.session_state[PROVEEDORES_DF_KEY] = vm.get_by_args(repuestos_filtro)
+        other.filter_df(PROVEEDORES_PAGER_KEY, filtros_actuales)
     else:
-        st.session_state.df_proveedores = df_sheet
+        st.session_state[PROVEEDORES_DF_KEY] = df_sheet
 
-    df_paginado, paginas = other.paginate(st.session_state.df_proveedores, 15, df_key)
+    df_paginado, paginas = other.paginate(st.session_state[PROVEEDORES_DF_KEY], 15, PROVEEDORES_PAGER_KEY)
 
     df_visual = df_paginado.reset_index(drop=True)
     st.data_editor(
@@ -77,7 +75,7 @@ def proveedores() -> None:
         num_rows="dynamic",
         hide_index=True,
         height=600,
-        key="editor_proveedores",
+        key=PROVEEDORES_EDITOR_KEY,
         column_order=PROVEEDORES_COLS,
         column_config={
             "NroProv": st.column_config.NumberColumn("Num. Proveedor", width=1),
@@ -89,56 +87,5 @@ def proveedores() -> None:
         }
     )
 
-    if st.button("💾 Guardar cambios"):
-        cambios = st.session_state.get("editor_proveedores", {})
-
-        if cambios.get("edited_rows") or cambios.get("added_rows") or cambios.get("deleted_rows"):
-            # --- 2. FUSIONAR CAMBIOS CON EL DATAFRAME MAESTRO ---
-            for idx_pantalla, modificaciones in cambios.get("edited_rows", {}).items():
-                idx_real = df_paginado.index[int(idx_pantalla)]
-
-                for columna, nuevo_valor in modificaciones.items():
-                    st.session_state.df_proveedores.loc[idx_real, columna] = nuevo_valor
-
-
-            if cambios.get("added_rows"):
-                # try:
-                #     ultimo_id = int(pd.to_numeric(st.session_state.df_proveedores["NroProv"]).max())
-                # except:
-                #     ultimo_id = 0
-
-                for fila_nueva in cambios.get("added_rows", []):
-                    # ultimo_id += 1
-                    # fila_nueva["NroProv"] = ultimo_id
-
-                    df_nueva = pd.DataFrame([fila_nueva])
-                    st.session_state.df_proveedores = pd.concat([st.session_state.df_proveedores, df_nueva],
-                                                                ignore_index=True)
-
-            if cambios.get("deleted_rows"):
-                indices_a_borrar = [df_paginado.index[int(i)] for i in cambios["deleted_rows"]]
-                st.session_state.df_proveedores = st.session_state.df_proveedores.drop(indices_a_borrar)
-
-            # --- 3. ENVIAR A GOOGLE SHEETS ---
-            st.session_state.df_proveedores = st.session_state.df_proveedores[
-                [col for col in PROVEEDORES_COLS if col in st.session_state.df_proveedores.columns]
-            ]
-
-            try:
-                other.update_google_sheet(
-                    sheet_url=PROVEEDORES_SHEET_URL,
-                    worksheet=PROVEEDORES_WS,
-                    data=st.session_state.df_proveedores
-                )
-
-                st.toast("¡Cambios guardados en Google Sheets!", icon="💾")
-                del st.session_state["df_proveedores"]
-                st.cache_data.clear()
-                st.rerun()
-
-            except Exception as e:
-                st.toast(f"Error al escribir en Google Sheets: {e}", icon="❌")
-        else:
-            st.toast("No hay cambios para guardar (Asegúrate de presionar ENTER tras editar una celda).", icon="⚠️")
-
-    other.paginate_buttons(paginas, key=df_key)
+    google_sheet.save_button(df_paginado, df_key=PROVEEDORES_DF_KEY, editor_key=PROVEEDORES_EDITOR_KEY)
+    other.paginate_buttons(paginas, key=PROVEEDORES_PAGER_KEY)

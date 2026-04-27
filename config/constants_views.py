@@ -122,3 +122,9 @@ DISTANTE_COLS_DUAL_SELECT   : Tuple[int, float] = (1, 0.5)
 
 DISTANCE_COLS_SELECTBIGGER_PLOT : Tuple[float, int] = (0.70, 3)
 DISTANCE_COLS_CENTER_TITLE      : Tuple[float, int, int] = (0.95, 3, 1)
+
+
+# SESSION KEYS
+PROVEEDORES_DF_KEY = "proveedores_df"
+PROVEEDORES_PAGER_KEY = "proveedores_pager"
+PROVEEDORES_EDITOR_KEY = "proveedores_editor"
