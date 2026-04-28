@@ -131,6 +131,7 @@ PROVEEDORES_WS = "Proveedores"
 
 PREVISION_SHEET_URL = "https://docs.google.com/spreadsheets/d/1v98qsIyWfvvk5jCEPSZ9FiCggv9clf8OdQk_33bUm_0/edit?gid=0#gid=0"
 PREVISION_COLS = ["Mes", "Articulo", "ConsumoMensual", "TipoRepuesto"]
+PREVISION_STOCK_COLS = ["RepuestoStock", "StockActual"]
 PREVISION_FORECAST_COLS = ["FechaPrevision", "Prevision", "RestoStock", "RepuestoPrevision", "TipoRepuestoPrevision"]
 
 # SESSION KEYS
@@ -142,5 +143,6 @@ PROVEEDORES_EDITOR_KEY = "proveedores_editor"
 
 PREVISION_DF_KEY = "prevision_df"
 PREVISION_EDITOR_KEY = "prevision_editor"
+PREVISION_STOCK_EDITOR_KEY = "prevision_stock_editor"
 PREVISION_REPUESTO_KEY = "prevision_repuesto"
 PREVISION_ULTIMO_REPUESTO_KEY = "ULTIMO_REPUESTO"

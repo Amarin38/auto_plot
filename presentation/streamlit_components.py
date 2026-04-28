@@ -16,9 +16,10 @@ from streamlit_gsheets import GSheetsConnection
 
 from config.constants_common import TODAY_DATE_FILE_DMY
 from config.constants_views import SELECT_BOX_HEIGHT, PLACEHOLDER, CENTERED_TITLE_HEIGHT, CENTERED_TITLE_WIDTH, \
-    MULTI_SELECT_BOX_HEIGHT, PREVISION_COLS
+    MULTI_SELECT_BOX_HEIGHT, PREVISION_COLS, PREVISION_DF_KEY
 from config.enums import RepuestoReparadoEnum, RepuestoEnum, CabecerasEnum, TipoDuracionEnum, IndexTypeEnum, \
     ConsumoObligatorioEnum, LoadDataEnum, RoleEnum, ConsumoComparacionRepuestoEnum, PeriodoComparacionEnum
+from domain.services.compute_consumo_prevision import create_forecast_gs
 from utils.common_utils import CommonUtils
 
 
@@ -444,43 +445,64 @@ class GoogleSheetsComponents:
                 st.toast("No hay cambios para guardar (Asegúrate de presionar ENTER tras editar una celda).", icon="⚠️")
 
 
-    def save_button_granular(self, df_modificado, df_key, editor_key) -> None:
-            df_original = st.session_state.get(df_key)
-            hubo_cambios = False
-            cambios = st.session_state.get(editor_key, {})
+    def save_and_update_forecast(self, df_modificado, df_consumo, df_stock, tipo_repuesto, df_key, editor_key,
+                                 celda_inicio, col_fin, columnas_a_guardar) -> None:
+        """
+        Guarda los cambios de una tabla específica (Stock o Consumo) y despues recalcula
+        automáticamente las previsiones usando los datos más recientes.
+        """
+        df_original = st.session_state.get(df_key)
+        hubo_cambios = False
+        cambios = st.session_state.get(editor_key, {})
 
-            if cambios.get("edited_rows") or cambios.get("added_rows") or cambios.get("deleted_rows"):
-                hubo_cambios = True
-            elif df_original is not None and len(df_modificado) != len(df_original):
-                hubo_cambios = True
+        if cambios.get("edited_rows") or cambios.get("added_rows") or cambios.get("deleted_rows"):
+            hubo_cambios = True
+        elif df_original is not None and len(df_modificado) != len(df_original):
+            hubo_cambios = True
 
-            if hubo_cambios:
-                with st.spinner("Guardando tabla en Google Sheets..."):
-                    try:
-                        df_modificado.index = range(len(df_modificado))
+        with st.spinner("Guardando datos y recalculando pronósticos..."):
+            try:
+                # --- PARTE 1: GUARDAR CAMBIOS DE LA TABLA (Si los hay) ---
+                if hubo_cambios:
+                    df_recortado = df_modificado[columnas_a_guardar]
+                    rango_a_limpiar = f"{celda_inicio}:{col_fin}"
 
-                        self.update_range_with_df(
-                            df=df_modificado[PREVISION_COLS],
-                            celda_inicial='D2',
-                            rango_tabla='D2:G'
-                        )
+                    self.update_range_with_df(
+                        df=df_recortado,
+                        celda_inicial=celda_inicio,
+                        rango_tabla=rango_a_limpiar
+                    )
 
-                        # Guardamos el DF con el índice ya corregido
-                        st.session_state[df_key] = df_modificado
+                    st.session_state[df_key] = df_modificado
+                    st.toast("¡Tabla de datos actualizada con éxito!", icon="💾")
+                else:
+                    st.toast("Calculando previsiones sin cambios manuales...", icon="ℹ️")
 
-                        st.toast("¡Tabla de consumo actualizada con éxito!", icon="💾")
+                # --- PARTE 2: RECALCULAR Y GUARDAR PREVISIONES ---
+                df_prevision = create_forecast_gs(df_consumo, df_stock, tipo_repuesto)
 
-                        st.cache_data.clear()
-                        if editor_key in st.session_state:
-                            del st.session_state[editor_key]
+                if df_prevision is not None:
+                    self.update_range_with_df(
+                        df=df_prevision,
+                        celda_inicial='I2',
+                        rango_tabla='I2:M'
+                    )
+                    st.toast(f"Previsiones de {tipo_repuesto} sincronizadas", icon="✅")
+                else:
+                    st.warning("No se pudieron calcular las previsiones (revisa si hay datos suficientes).")
 
-                        # Recarga la página
-                        st.rerun()
+                # --- PARTE 3: LIMPIEZA TOTAL Y RECARGA ---
+                st.cache_data.clear()
 
-                    except Exception as e:
-                        st.error(f"Error al guardar los datos: {e}")
-            else:
-                st.toast("No hay cambios para guardar.", icon="⚠️")
+                if editor_key in st.session_state:
+                    del st.session_state[editor_key]
+                if df_key in st.session_state:
+                    del st.session_state[df_key]
+
+                st.rerun()
+
+            except Exception as e:
+                st.error(f"Error en el proceso de actualización unificado: {e}")
 
 
     def update_range_with_df(self, df: pd.DataFrame, celda_inicial: str,

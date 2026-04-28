@@ -2,7 +2,6 @@ import pandas as pd
 import streamlit as st
 
 from config.constants_common import PAGE_STRFTIME_DMY, FILE_STRFTIME_YMD
-from domain.services.compute_consumo_prevision import create_forecast_gs
 from infrastructure.unit_of_work import SQLAlchemyUnitOfWork
 from presentation.streamlit_components import SelectBoxComponents, OtherComponents, GoogleSheetsComponents
 from utils.exception_utils import execute_safely
@@ -13,7 +12,8 @@ from viewmodels.consumo.prevision.plotter import PrevisionPlotter
 from config.constants_views import (PLOT_BOX_HEIGHT, DISTANCE_COLS_CENTER_TITLE, DISTANCE_COLS_SELECTBIGGER_PLOT,
                                     PAG_PREVISION, PREVISION_DF_KEY, PREVISION_SHEET_URL, PREVISION_COLS,
                                     PREVISION_EDITOR_KEY, PREVISION_FORECAST_COLS,
-                                    PREVISION_REPUESTO_KEY, PREVISION_ULTIMO_REPUESTO_KEY, INDEX)
+                                    PREVISION_REPUESTO_KEY, PREVISION_ULTIMO_REPUESTO_KEY, INDEX, PREVISION_STOCK_COLS,
+                                    PREVISION_STOCK_EDITOR_KEY)
 from viewmodels.consumo.prevision.vm import PrevisionVM
 
 
@@ -33,54 +33,39 @@ class ConsumoPrevision:
     @execute_safely
     def page(self):
         st.title(PAG_PREVISION)
+        config_col, _ = st.columns(DISTANCE_COLS_SELECTBIGGER_PLOT)
 
-        aux1, titulo_col, aux2 = st.columns(DISTANCE_COLS_CENTER_TITLE)
-        config_col, graficos_col = st.columns(DISTANCE_COLS_SELECTBIGGER_PLOT)
+        prevision_tab, datos_tab = st.tabs(["📈 Previsiones", "📑 Datos"])
 
         tipo_repuesto = self.select.select_box_tipo_repuesto(config_col, PREVISION_REPUESTO_KEY)
+        google_sheet = GoogleSheetsComponents(PREVISION_SHEET_URL, tipo_repuesto, PREVISION_COLS)
+        df_sheet = google_sheet.connect()
 
-        if tipo_repuesto:
-            google_sheet = GoogleSheetsComponents(PREVISION_SHEET_URL, tipo_repuesto, PREVISION_COLS)
+        with prevision_tab:
+            _, titulo_centro_col, _ = st.columns((0.5, 1, 0.5))
+            _, centro_col, _ = st.columns((0.5, 3, 0.5))
 
-            df_sheet = google_sheet.connect()
-            df_stock = df_sheet[["RepuestoStock", "StockActual"]]
+            if tipo_repuesto:
+                df_stock = df_sheet[["RepuestoStock", "StockActual"]]
 
-            if INDEX in df_sheet.columns:
-                df_sheet = df_sheet.drop(columns=[INDEX])
+                if INDEX in df_sheet.columns:
+                    df_sheet = df_sheet.drop(columns=[INDEX])
 
-            df_sheet.index = range(len(df_sheet))
+                df_sheet.index = range(len(df_sheet))
 
-            if st.session_state.get(PREVISION_ULTIMO_REPUESTO_KEY) != tipo_repuesto:
-                st.session_state[PREVISION_ULTIMO_REPUESTO_KEY] = tipo_repuesto
-                st.session_state[PREVISION_DF_KEY] = df_sheet
-            elif PREVISION_DF_KEY not in st.session_state:
-                st.session_state[PREVISION_DF_KEY] = df_sheet
+                if st.session_state.get(PREVISION_ULTIMO_REPUESTO_KEY) != tipo_repuesto:
+                    st.session_state[PREVISION_ULTIMO_REPUESTO_KEY] = tipo_repuesto
+                    st.session_state[PREVISION_DF_KEY] = df_sheet
+                elif PREVISION_DF_KEY not in st.session_state:
+                    st.session_state[PREVISION_DF_KEY] = df_sheet
 
-            # -----------------------------------------------------
+                # -----------------------------------------------------
 
-            with config_col:
                 df_data = df_sheet[PREVISION_COLS].copy()
                 df_prevision = df_sheet[PREVISION_FORECAST_COLS].copy()
 
-                def arreglar_fechas_rebeldes(fecha):
-                    try:
-                        if pd.isna(fecha) or str(fecha).strip() == "":
-                            return pd.NaT
-
-                        fecha_str = str(fecha).strip()
-
-                        if '/' in fecha_str:
-                            return pd.to_datetime(fecha_str, format=PAGE_STRFTIME_DMY, errors='coerce')
-                        elif '-' in fecha_str:
-                            fecha_str = fecha_str.split(" ")[0]
-                            return pd.to_datetime(fecha_str, format=FILE_STRFTIME_YMD, errors='coerce')
-                        else:
-                            return pd.to_datetime(fecha, errors='coerce')
-                    except Exception:
-                        return pd.NaT
-
-                df_data["Mes"] = df_data["Mes"].apply(arreglar_fechas_rebeldes)
-                df_prevision["FechaPrevision"] = df_prevision["FechaPrevision"].apply(arreglar_fechas_rebeldes)
+                df_data["Mes"] = df_data["Mes"].apply(self.arreglar_fechas)
+                df_prevision["FechaPrevision"] = df_prevision["FechaPrevision"].apply(self.arreglar_fechas)
 
                 df_data = df_data.dropna(subset=["Mes"])
                 df_prevision = df_prevision.dropna(subset=["FechaPrevision"])
@@ -88,17 +73,50 @@ class ConsumoPrevision:
                 # ------------------------------------------------
                 if not df_data.empty and not df_prevision.empty:
                     figs, titulo = PrevisionPlotter(df_data, df_prevision, tipo_repuesto).create_plot()
-                    self.other.centered_title(titulo_col, titulo)
+                    self.other.centered_title(titulo_centro_col, titulo)
 
-                    with graficos_col:
+                    with centro_col:
                         for fig in figs:
                             with st.container(height=PLOT_BOX_HEIGHT):
                                 st.plotly_chart(fig)
                 else:
-                    self.other.mensaje_falta_rep(graficos_col)
+                    self.other.mensaje_falta_rep(centro_col)
+            else:
+                with config_col:
+                    st.write("Selecciona un repuesto.")
 
-                if st.toggle("Actualizar datos"):
-                    df_modificado = st.data_editor(
+        with datos_tab:
+            if st.toggle("Actualizar datos"):
+                stock_col, consumo_col = st.columns((1,3))
+
+                with stock_col:
+                    df_modificado_stock = st.data_editor(
+                        st.session_state[PREVISION_DF_KEY],
+                        disabled=False,
+                        num_rows="dynamic",
+                        height=600,
+                        key=PREVISION_STOCK_EDITOR_KEY,
+                        column_order=PREVISION_STOCK_COLS,
+                    )
+
+                    _, centro_stock_guardar_col, _ = st.columns((1, 3, 0.5))
+
+                    with centro_stock_guardar_col:
+                        if st.button("💾 Guardar cambios de stock"):
+                            google_sheet.save_and_update_forecast(
+                                df_modificado=df_modificado_stock,
+                                df_consumo=st.session_state[PREVISION_DF_KEY],
+                                df_stock=df_modificado_stock,
+                                tipo_repuesto=tipo_repuesto,
+                                df_key=PREVISION_DF_KEY,
+                                editor_key=PREVISION_STOCK_EDITOR_KEY,
+                                celda_inicio="A2",
+                                col_fin="B",
+                                columnas_a_guardar=PREVISION_STOCK_COLS
+                            )
+
+                with consumo_col:
+                    df_modificado_consumo = st.data_editor(
                         st.session_state[PREVISION_DF_KEY],
                         disabled=False,
                         num_rows="dynamic",
@@ -107,31 +125,36 @@ class ConsumoPrevision:
                         column_order=PREVISION_COLS,
                     )
 
-                    if st.button("💾 Guardar cambios de consumo"):
-                        google_sheet.save_button_granular(df_modificado, df_key=PREVISION_DF_KEY, editor_key=PREVISION_EDITOR_KEY)
+                    _, centro_consumo_guardar_col, _ = st.columns((2.5, 3, 0.5))
 
-                    if st.button("Actualizar Google sheet"):
-                        self.save_forecast_to_sheets(df_modificado, df_stock, tipo_repuesto, google_sheet)
-
+                    with centro_consumo_guardar_col:
+                        if st.button("💾 Guardar cambios de consumo"):
+                            google_sheet.save_and_update_forecast(
+                                df_modificado=df_modificado_consumo,
+                                df_consumo=df_modificado_consumo,
+                                df_stock=df_stock,
+                                tipo_repuesto=tipo_repuesto,
+                                df_key=PREVISION_DF_KEY,
+                                editor_key=PREVISION_EDITOR_KEY,
+                                celda_inicio="D2",
+                                col_fin="G",
+                                columnas_a_guardar=PREVISION_COLS
+                            )
 
     @staticmethod
-    def save_forecast_to_sheets(df_sheet: pd.DataFrame, df_stock: pd.DataFrame, tipo_repuesto, gs) -> None:
-        with st.spinner("Calculando pronósticos y subiendo a la nube..."):
-            df_prevision = create_forecast_gs(df_sheet, df_stock, tipo_repuesto)
+    def arreglar_fechas(fecha):
+        try:
+            if pd.isna(fecha) or str(fecha).strip() == "":
+                return pd.NaT
 
-            if df_prevision is not None:
-                gs.update_range_with_df(
-                    df=df_prevision,
-                    celda_inicial='I2',
-                    rango_tabla='I2:M'
-                )
+            fecha_str = str(fecha).strip()
 
-                st.toast(f"Datos de {tipo_repuesto} sincronizados correctamente", icon="✅")
-                st.cache_data.clear()
-
-                if PREVISION_DF_KEY in st.session_state:
-                    del st.session_state[PREVISION_DF_KEY]
-
-                st.rerun()
+            if '/' in fecha_str:
+                return pd.to_datetime(fecha_str, format=PAGE_STRFTIME_DMY, errors='coerce')
+            elif '-' in fecha_str:
+                fecha_str = fecha_str.split(" ")[0]
+                return pd.to_datetime(fecha_str, format=FILE_STRFTIME_YMD, errors='coerce')
             else:
-                st.error("No se pudieron calcular las previsiones (revisa si hay datos suficientes).")
+                return pd.to_datetime(fecha, errors='coerce')
+        except Exception:
+            return pd.NaT
