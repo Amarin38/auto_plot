@@ -1,19 +1,22 @@
 import base64
+from datetime import date, datetime
 import io
 import time
 
+import gspread
 import pandas as pd
 import streamlit as st
 
 from typing import Union, Optional, Any, List
 
+from gspread import WorksheetNotFound
 from pandas import DataFrame, Series
 from streamlit.components.v1 import components
 from streamlit_gsheets import GSheetsConnection
 
 from config.constants_common import TODAY_DATE_FILE_DMY
 from config.constants_views import SELECT_BOX_HEIGHT, PLACEHOLDER, CENTERED_TITLE_HEIGHT, CENTERED_TITLE_WIDTH, \
-    MULTI_SELECT_BOX_HEIGHT
+    MULTI_SELECT_BOX_HEIGHT, PREVISION_COLS
 from config.enums import RepuestoReparadoEnum, RepuestoEnum, CabecerasEnum, TipoDuracionEnum, IndexTypeEnum, \
     ConsumoObligatorioEnum, LoadDataEnum, RoleEnum, ConsumoComparacionRepuestoEnum, PeriodoComparacionEnum
 from utils.common_utils import CommonUtils
@@ -380,17 +383,24 @@ class GoogleSheetsComponents:
         self.cols = cols
 
     def connect(self) -> pd.DataFrame:
-        df_sheet = self.conn.read(spreadsheet=self.url, worksheet=self.ws, ttl=1)
+        try:
+            df_sheet = self.conn.read(spreadsheet=self.url, worksheet=self.ws, ttl=1)
 
-        df_sheet[self.cols] = (
-            df_sheet[self.cols]
-            .fillna("")
-            .astype(str)
-            .replace(r'\.0$', '', regex=True)
-        )
+            df_sheet[self.cols] = (
+                df_sheet[self.cols]
+                .fillna("")
+                .astype(str)
+                .replace(r'\.0$', '', regex=True)
+            )
 
-        df_sheet = CommonUtils().delete_unnamed_cols(df_sheet)
-        return df_sheet
+            df_sheet = CommonUtils().delete_unnamed_cols(df_sheet)
+            return df_sheet
+        except WorksheetNotFound:
+            st.error("No existe la hoja seleccionada.")
+            return pd.DataFrame(columns=self.cols)
+        except Exception as e:
+            st.error(f"Error de conexión: {e}")
+            return pd.DataFrame(columns=self.cols)
 
 
     def save_button(self, df_paginado, df_key, editor_key) -> None:
@@ -432,3 +442,75 @@ class GoogleSheetsComponents:
                     st.toast(f"Error al escribir en Google Sheets: {e}", icon="❌")
             else:
                 st.toast("No hay cambios para guardar (Asegúrate de presionar ENTER tras editar una celda).", icon="⚠️")
+
+
+    def save_button_granular(self, df_modificado, df_key, editor_key) -> None:
+            df_original = st.session_state.get(df_key)
+            hubo_cambios = False
+            cambios = st.session_state.get(editor_key, {})
+
+            if cambios.get("edited_rows") or cambios.get("added_rows") or cambios.get("deleted_rows"):
+                hubo_cambios = True
+            elif df_original is not None and len(df_modificado) != len(df_original):
+                hubo_cambios = True
+
+            if hubo_cambios:
+                with st.spinner("Guardando tabla en Google Sheets..."):
+                    try:
+                        df_modificado.index = range(len(df_modificado))
+
+                        self.update_range_with_df(
+                            df=df_modificado[PREVISION_COLS],
+                            celda_inicial='D2',
+                            rango_tabla='D2:G'
+                        )
+
+                        # Guardamos el DF con el índice ya corregido
+                        st.session_state[df_key] = df_modificado
+
+                        st.toast("¡Tabla de consumo actualizada con éxito!", icon="💾")
+
+                        st.cache_data.clear()
+                        if editor_key in st.session_state:
+                            del st.session_state[editor_key]
+
+                        # Recarga la página
+                        st.rerun()
+
+                    except Exception as e:
+                        st.error(f"Error al guardar los datos: {e}")
+            else:
+                st.toast("No hay cambios para guardar.", icon="⚠️")
+
+
+    def update_range_with_df(self, df: pd.DataFrame, celda_inicial: str,
+                             rango_tabla: str, include_headers: bool = False) -> None:
+        if df is None or df.empty:
+            return
+
+        try:
+            creds_dict = dict(st.secrets["connections"]["gsheets"])
+            gc = gspread.service_account_from_dict(creds_dict)
+            sh = gc.open_by_url(self.url)
+            ws = sh.worksheet(self.ws)
+
+            if rango_tabla:
+                ws.batch_clear([rango_tabla])
+
+            for col in df.columns:
+                df[col] = df[col].apply(
+                    lambda x: x.strftime('%Y-%m-%d') if isinstance(x, (date, datetime, pd.Timestamp)) else x
+                )
+
+            df = df.fillna("")
+
+            if include_headers:
+                values = [df.columns.tolist()] + df.values.tolist()
+            else:
+                values = df.values.tolist()
+
+            ws.update(range_name=celda_inicial, values=values, value_input_option='USER_ENTERED')
+
+        except Exception as e:
+            st.error(f"Error genérico al escribir en Google Sheets: {e}")
+

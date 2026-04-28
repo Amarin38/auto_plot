@@ -137,10 +137,10 @@ class SliderComponents:
         ...
 
     @execute_safely
-    def range_slider(self, fig):
+    def range_slider(self, fig, min_date, max_date):
         fig.update_layout(
             xaxis=dict(
-                range=["2024-06-01", "2026-12-01"],
+                range=[str(min_date), str(max_date)],
                 rangeselector=dict(
                     buttons=list([
                         dict(count=1,

@@ -121,7 +121,8 @@ class PrevisionColorsEnum(StrEnum):
     VIOLETA         = "#485696"
     NARANJA         = "#F24C00"
     NARANJA_FUERTE  = "#FF5733"
-
+    VERDE           = "#5B8E7D"
+    VERDE_CLARO     = "#A1C181"
 
 class CustomMetricColorsEnum(StrEnum):
     VERDE       = "#5B8E7D"

@@ -2,13 +2,13 @@ import numpy as np
 import pandas as pd
 from statsmodels.tsa.holtwinters import ExponentialSmoothing
 
+from config.constants_common import FILE_STRFTIME_YMD
 from config.enums import RepuestoEnum
 from config.enums_colors import TextModsEnum, ForegroundColorsEnum
 from viewmodels.consumo.prevision.data_vm import PrevisionDataVM
 from viewmodels.consumo.prevision.vm import PrevisionVM
 
 
-# @execute_safely
 def create_forecast(df: pd.DataFrame, tipo_repuesto: RepuestoEnum):
     repuesto = df["Repuesto"].unique()
 
@@ -64,3 +64,58 @@ def create_forecast(df: pd.DataFrame, tipo_repuesto: RepuestoEnum):
         {e.with_traceback(e.__traceback__)}
         """)
             pass
+
+
+def create_forecast_gs(df: pd.DataFrame, df_stock: pd.DataFrame, tipo_repuesto: str):
+    df = df.replace("", pd.NA).dropna(subset=["Mes", "Articulo"])
+    nombre_articulos = df["Articulo"].unique()
+
+    lista_previsiones = []
+
+    for articulo in nombre_articulos:
+        df_art = df.loc[df["Articulo"] == articulo].copy()
+
+        df_art["Mes"] = pd.to_datetime(df_art["Mes"], dayfirst=True)
+        df_art["ConsumoMensual"] = pd.to_numeric(df_art["ConsumoMensual"], errors="coerce")
+
+        df_art = df_art.set_index("Mes")
+        df_art = df_art.resample("MS").sum()
+        df_art["ConsumoMensual"] = df_art["ConsumoMensual"].fillna(0).astype("float64")
+
+        df_stock_art = df_stock.loc[df_stock["RepuestoStock"] == articulo].copy()
+
+        try:
+            data: pd.Series = df_art["ConsumoMensual"]
+
+            # Modelo HoltWinters
+            fit = ExponentialSmoothing(
+                data,
+                trend="add",
+                damped_trend=True,
+                seasonal="add",
+                seasonal_periods=12,
+                initialization_method="estimated"
+            ).fit(optimized=True)
+
+            prevision: pd.Series = fit.forecast(12)
+            ultima_fecha = data.index[-1]
+            prevision.index = pd.date_range(start=ultima_fecha + pd.DateOffset(months=1), periods=12, freq='MS')
+
+            df_prev = prevision.to_frame(name="Prevision").reset_index()
+            df_prev.columns = ["FechaPrevision", "Prevision"]
+            df_prev["Prevision"] = df_prev["Prevision"].round(0).clip(lower=0).astype("float64")
+            df_prev["RestoStock"] = df_stock_art["StockActual"].iloc[0] - df_prev["Prevision"].cumsum()
+            df_prev["RepuestoPrevision"] = articulo
+            df_prev["TipoRepuestoPrevision"] = tipo_repuesto
+            df_prev["FechaPrevision"] = df_prev["FechaPrevision"].dt.strftime(FILE_STRFTIME_YMD)
+
+            lista_previsiones.append(df_prev)
+        except ValueError as e:
+            print(f"Omitiendo repuesto {articulo} por falta de datos. Detalle: {e}")
+            continue
+
+    if lista_previsiones:
+        final_prevision = pd.concat(lista_previsiones, ignore_index=True)
+        return final_prevision
+    else:
+        return None

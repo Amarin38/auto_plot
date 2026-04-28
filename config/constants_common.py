@@ -102,7 +102,4 @@ LOC_PROVEEDORES = ("CAP. FED.", "BANFIELD", "VILLA LYNCH", "LANUS", "DOCK SUD", 
                    "CORONEL DORREGO", "SAN ANDRES", "ZARATE")
 
 
-# Google Sheets
-PROVEEDORES_SHEET_URL   = "https://docs.google.com/spreadsheets/d/17mJc4DVUqxUHD-3saffT_vgxYHFgkO_vjldXvFNyv80/edit?gid=414215206#gid=414215206"
-PROVEEDORES_COLS = ["NroProv", "RazonSocial", "CUIT", "Localidad", "Mail", "Telefono"]
-PROVEEDORES_WS = "Proveedores"
+

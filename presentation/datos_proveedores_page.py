@@ -1,8 +1,8 @@
 import streamlit as st
 
-from config.constants_common import LOC_PROVEEDORES, PROVEEDORES_SHEET_URL, PROVEEDORES_COLS, PROVEEDORES_WS
+from config.constants_common import LOC_PROVEEDORES
 from config.constants_views import PAG_PROVEEDORES, FLOTA_CONTAINER_HEIGHT, PLACEHOLDER, PROVEEDORES_DF_KEY, \
-    PROVEEDORES_PAGER_KEY, PROVEEDORES_EDITOR_KEY
+    PROVEEDORES_PAGER_KEY, PROVEEDORES_EDITOR_KEY, PROVEEDORES_SHEET_URL, PROVEEDORES_COLS, PROVEEDORES_WS, INDEX
 from domain.entities.datos_proveedores import Proveedores
 
 from utils.exception_utils import execute_safely
@@ -44,8 +44,8 @@ def proveedores() -> None:
 
     df_sheet = get_sheet()
 
-    if "_index" in df_sheet.columns:
-        df_sheet = df_sheet.drop(columns=["_index"])
+    if INDEX in df_sheet.columns:
+        df_sheet = df_sheet.drop(columns=[INDEX])
 
     if PROVEEDORES_DF_KEY not in st.session_state:
         st.session_state[PROVEEDORES_DF_KEY] = df_sheet
@@ -57,6 +57,7 @@ def proveedores() -> None:
         st.toast("Backup sincronizado correctamente.", icon="🔄")
         st.rerun()
 
+    # FILTROS
     if nro_prov or razon_social or cuit or localidad or mail or telefono:
         repuestos_filtro = Proveedores(nro_prov, razon_social, cuit, localidad, mail, telefono)
         filtros_actuales = (nro_prov, razon_social, cuit, tuple(localidad), mail, telefono)

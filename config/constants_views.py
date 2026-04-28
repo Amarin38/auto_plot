@@ -124,7 +124,23 @@ DISTANCE_COLS_SELECTBIGGER_PLOT : Tuple[float, int] = (0.70, 3)
 DISTANCE_COLS_CENTER_TITLE      : Tuple[float, int, int] = (0.95, 3, 1)
 
 
+# Google Sheets
+PROVEEDORES_SHEET_URL   = "https://docs.google.com/spreadsheets/d/17mJc4DVUqxUHD-3saffT_vgxYHFgkO_vjldXvFNyv80/edit?gid=414215206#gid=414215206"
+PROVEEDORES_COLS = ["NroProv", "RazonSocial", "CUIT", "Localidad", "Mail", "Telefono"]
+PROVEEDORES_WS = "Proveedores"
+
+PREVISION_SHEET_URL = "https://docs.google.com/spreadsheets/d/1v98qsIyWfvvk5jCEPSZ9FiCggv9clf8OdQk_33bUm_0/edit?gid=0#gid=0"
+PREVISION_COLS = ["Mes", "Articulo", "ConsumoMensual", "TipoRepuesto"]
+PREVISION_FORECAST_COLS = ["FechaPrevision", "Prevision", "RestoStock", "RepuestoPrevision", "TipoRepuestoPrevision"]
+
 # SESSION KEYS
+INDEX = "_index"
+
 PROVEEDORES_DF_KEY = "proveedores_df"
 PROVEEDORES_PAGER_KEY = "proveedores_pager"
 PROVEEDORES_EDITOR_KEY = "proveedores_editor"
+
+PREVISION_DF_KEY = "prevision_df"
+PREVISION_EDITOR_KEY = "prevision_editor"
+PREVISION_REPUESTO_KEY = "prevision_repuesto"
+PREVISION_ULTIMO_REPUESTO_KEY = "ULTIMO_REPUESTO"

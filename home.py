@@ -10,7 +10,7 @@ from presentation.inicio_dashboard_page import main
 from presentation.inicio_cargar_datos_page import cargar_datos
 from presentation.datos_coches_cabecera_page import coches_cabecera
 from presentation.consumo_obligatorio_page import consumo_obligatorio
-from presentation.consumo_prevision_page import consumo_prevision
+from presentation.consumo_prevision_page import ConsumoPrevision
 from presentation.consumo_indice_page import consumo_indice
 from presentation.consumo_historial_page import consumo_historial
 from presentation.garantias_falla_equipos_page import garantias_falla_equipos
@@ -139,7 +139,7 @@ pages = {
     ],
     "Estadísticas de consumo": [
         st.Page(consumo_indice, title=PAG_INDICES),
-        st.Page(consumo_prevision, title=PAG_PREVISION),
+        st.Page(ConsumoPrevision().page, title=PAG_PREVISION),
         st.Page(duracion_repuestos, title=PAG_DURACION),
         st.Page(consumo_historial, title=PAG_HISTORIAL),
         st.Page(consumo_obligatorio, title=PAG_CONSUMO_OBLIGATORIO),

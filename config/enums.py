@@ -89,6 +89,12 @@ class RepuestoEnum(StrEnum):
     MOTOR_CONDENSADOR           = auto()
     BITURBO                     = auto()
     FILTRO_AIRE_ACONDICIONADO   = auto()
+    ECU                         = auto()
+    EMBRAGUE                    = auto()
+    VISCOSA                     = auto()
+    RADIADOR                    = auto()
+    CORREAS                     = auto()
+    GAS_AIRE_ACONDICIONADO      = auto()
 
 
 class RepuestoReparadoEnum(StrEnum):

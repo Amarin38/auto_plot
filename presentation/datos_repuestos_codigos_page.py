@@ -8,6 +8,15 @@ from utils.exception_utils import execute_safely
 from presentation.streamlit_components import OtherComponents
 from viewmodels.datos.repuestos_codigos_vm import RepuestosCodigosVM
 
+@st.cache_data(ttl=200, show_spinner=True)
+def get_df():
+    return RepuestosCodigosVM().get_df()
+
+
+@st.cache_data(ttl=200, show_spinner=True)
+def get_df_filtro(repuestos_filtro: RepuestosCodigosFiltro):
+    return RepuestosCodigosVM().get_by_args(repuestos_filtro)
+
 
 @execute_safely
 def repuestos_codigos() -> None:
@@ -26,14 +35,14 @@ def repuestos_codigos() -> None:
     with codigos_col.container(height=FLOTA_CONTAINER_HEIGHT):
         codigos = st.text_input("Códigos", placeholder=PLACEHOLDER, icon="📦")
 
-    df = RepuestosCodigosVM().get_df()
+    df = get_df()
     df_key = "codigos_repuestos"
 
     if descripcion or deposito or codigos:
         repuestos_filtro = RepuestosCodigosFiltro(descripcion, deposito, codigos)
         filtros_actuales = (descripcion, deposito, codigos)
 
-        df = RepuestosCodigosVM().get_by_args(repuestos_filtro)
+        df = get_df_filtro(repuestos_filtro)
         other.filter_df(df_key, filtros_actuales)
 
     df_paginado, paginas = other.paginate(df, 15, df_key)
