@@ -9,8 +9,6 @@ __pycache__/
 *.todo/
 
 # uv/lock
-.venv/
-uv.lock
 .python-version
 
 .streamlit/secrets.toml

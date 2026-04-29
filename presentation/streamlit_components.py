@@ -484,8 +484,8 @@ class GoogleSheetsComponents:
                 if df_prevision is not None:
                     self.update_range_with_df(
                         df=df_prevision,
-                        celda_inicial='I2',
-                        rango_tabla='I2:M'
+                        celda_inicial='J2',
+                        rango_tabla='J2:N'
                     )
                     st.toast(f"Previsiones de {tipo_repuesto} sincronizadas", icon="✅")
                 else:
@@ -505,11 +505,32 @@ class GoogleSheetsComponents:
                 st.error(f"Error en el proceso de actualización unificado: {e}")
 
 
+    @staticmethod
+    def update_filtered_df(dynamic_key: str, main_df_key: str, filtered_df: pd.DataFrame) -> pd.DataFrame:
+        cambios = st.session_state[dynamic_key]
+        df_completo = st.session_state[main_df_key].copy()
+
+        indices_a_borrar = [filtered_df.index[i] for i in cambios.get("deleted_rows", [])]
+        if indices_a_borrar:
+            df_completo = df_completo.drop(indices_a_borrar)
+
+        for fila_relativa, columnas in cambios.get("edited_rows", {}).items():
+            idx_real = filtered_df.index[fila_relativa]
+            for col, valor in columnas.items():
+                df_completo.at[idx_real, col] = valor
+
+        if cambios.get("added_rows"):
+            nuevas_filas = pd.DataFrame(cambios.get("added_rows"))
+            df_completo = pd.concat([df_completo, nuevas_filas], ignore_index=True)
+        return df_completo
+
+
     def update_range_with_df(self, df: pd.DataFrame, celda_inicial: str,
                              rango_tabla: str, include_headers: bool = False) -> None:
         if df is None or df.empty:
             return
 
+        df = df.copy()
         try:
             creds_dict = dict(st.secrets["connections"]["gsheets"])
             gc = gspread.service_account_from_dict(creds_dict)
@@ -521,7 +542,7 @@ class GoogleSheetsComponents:
 
             for col in df.columns:
                 df[col] = df[col].apply(
-                    lambda x: x.strftime('%Y-%m-%d') if isinstance(x, (date, datetime, pd.Timestamp)) else x
+                    lambda x: x.strftime('%d/%m/%Y') if isinstance(x, (date, datetime, pd.Timestamp)) else x
                 )
 
             df = df.fillna("")

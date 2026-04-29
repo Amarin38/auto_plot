@@ -121,6 +121,7 @@ DISTANCE_COLS_DUAL_PLOT     : Tuple[int, float] = (1, 1.8)
 DISTANTE_COLS_DUAL_SELECT   : Tuple[int, float] = (1, 0.5)
 
 DISTANCE_COLS_SELECTBIGGER_PLOT : Tuple[float, int] = (0.70, 3)
+DISTANCE_COLS_PREVISION: Tuple[float, ...] = (1.3, 2, 2)
 DISTANCE_COLS_CENTER_TITLE      : Tuple[float, int, int] = (0.95, 3, 1)
 
 
@@ -131,7 +132,7 @@ PROVEEDORES_WS = "Proveedores"
 
 PREVISION_SHEET_URL = "https://docs.google.com/spreadsheets/d/1v98qsIyWfvvk5jCEPSZ9FiCggv9clf8OdQk_33bUm_0/edit?gid=0#gid=0"
 PREVISION_COLS = ["Mes", "Articulo", "ConsumoMensual", "TipoRepuesto"]
-PREVISION_STOCK_COLS = ["RepuestoStock", "StockActual"]
+PREVISION_STOCK_COLS = ["FechaStock", "RepuestoStock", "StockActual"]
 PREVISION_FORECAST_COLS = ["FechaPrevision", "Prevision", "RestoStock", "RepuestoPrevision", "TipoRepuestoPrevision"]
 
 # SESSION KEYS
@@ -146,3 +147,5 @@ PREVISION_EDITOR_KEY = "prevision_editor"
 PREVISION_STOCK_EDITOR_KEY = "prevision_stock_editor"
 PREVISION_REPUESTO_KEY = "prevision_repuesto"
 PREVISION_ULTIMO_REPUESTO_KEY = "ULTIMO_REPUESTO"
+PREVISION_DF_STOCK_KEY = "df_stock"
+PREVISION_DF_CONSUMO_KEY = "df_consumo"

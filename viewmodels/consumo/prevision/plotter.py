@@ -13,7 +13,7 @@ from viewmodels.plotly_components import DefaultUpdateLayoutComponents, HoverCom
 
 
 class PrevisionPlotter:
-    def __init__(self, df_data: pd.DataFrame, df_forecast: pd.DataFrame, tipo_rep: str):
+    def __init__(self, df_data: pd.DataFrame, df_forecast: pd.DataFrame, df_stock: pd.DataFrame, tipo_rep: str):
         self.common = CommonUtils()
         self.default = DefaultUpdateLayoutComponents()
         self.hover = HoverComponents()
@@ -21,6 +21,7 @@ class PrevisionPlotter:
         self.plots = PlotComponents()
 
         self.tipo_rep = tipo_rep
+        self.df_stock = df_stock
         self.df_data = df_data
         self.df_forecast = df_forecast
 
@@ -53,11 +54,13 @@ class PrevisionPlotter:
 
             grupos_data = self.df_data.groupby('Articulo')
             grupos_forecast = self.df_forecast.groupby('RepuestoPrevision')
+            grupos_stock = self.df_stock.groupby("RepuestoStock")
 
             for repuesto in todos_repuestos:
                 try:
                     df_rep_data = grupos_data.get_group(repuesto)
                     df_rep_forecast = grupos_forecast.get_group(repuesto)
+                    df_rep_stock = grupos_stock.get_group(repuesto)
                 except KeyError:
                     continue
 
@@ -82,15 +85,15 @@ class PrevisionPlotter:
 
                 self.plots.scatter_prevision(fig, x_data, y_data, "ConsumoMensual",
                                              PrevisionColorsEnum.LILA, PrevisionColorsEnum.VIOLETA,
-                                             SymbolEnum.CIRCLE, DashEnum.SOLID, ticks_text_data)
+                                             SymbolEnum.CIRCLE, DashEnum.SOLID, ticks_text_data, "")
 
                 self.plots.scatter_prevision(fig, x_forecast, y_forecast, "Prevision",
                                              PrevisionColorsEnum.NARANJA_FUERTE, PrevisionColorsEnum.NARANJA,
-                                             SymbolEnum.SQUARE, DashEnum.DASH, ticks_text_forecast)
+                                             SymbolEnum.SQUARE, DashEnum.DASH, ticks_text_forecast, "")
 
                 self.plots.scatter_prevision(fig, x_forecast, y_forecast_stock, "RestoStock",
                                              PrevisionColorsEnum.VERDE, PrevisionColorsEnum.VERDE_CLARO,
-                                             SymbolEnum.CIRCLE, DashEnum.DOT, ticks_text_forecast)
+                                             SymbolEnum.CIRCLE, DashEnum.DOT, ticks_text_forecast, df_rep_stock["FechaStock"].iloc[0])
 
                 fig.add_hline(
                     y=0,

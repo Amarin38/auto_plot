@@ -395,11 +395,11 @@ class PlotComponents:
         )
 
     @execute_safely
-    def scatter_prevision(self, fig: Figure, x, y, name: str, color: str, color_line: str, symbol: SymbolEnum, dash: DashEnum, custom: Optional[list[str]]):
+    def scatter_prevision(self, fig: Figure, x, y, name: str, color: str, color_line: str, symbol: SymbolEnum, dash: DashEnum, custom: Optional[list[str]], fecha: str):
         fig.add_trace(go.Scatter(
             x=x,
             y=y,
-            name=name,
+            name=f"{name} ({fecha})",
             mode='lines+markers',
 
             text=y,
@@ -408,6 +408,7 @@ class PlotComponents:
                 size=19,
                 color=color
             ),
+
 
             line=dict(color=color_line, width=2, dash=dash),
             marker=dict(
@@ -424,6 +425,7 @@ class PlotComponents:
 <extra></extra>
 """.format(color=color_line, name=name),
         ))
+
 
     @execute_safely
     def bar_indice_consumo(self, fig: Figure, x, y, name: str, text, color: str, custom):
