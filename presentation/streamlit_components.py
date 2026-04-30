@@ -7,16 +7,16 @@ import gspread
 import pandas as pd
 import streamlit as st
 
-from typing import Union, Optional, Any, List
+from typing import Union, Optional, Any, List, Tuple
 
 from gspread import WorksheetNotFound
 from pandas import DataFrame, Series
 from streamlit.components.v1 import components
 from streamlit_gsheets import GSheetsConnection
 
-from config.constants_common import TODAY_DATE_FILE_DMY
+from config.constants_common import TODAY_DATE_FILE_DMY, PAGE_STRFTIME_DMY
 from config.constants_views import SELECT_BOX_HEIGHT, PLACEHOLDER, CENTERED_TITLE_HEIGHT, CENTERED_TITLE_WIDTH, \
-    MULTI_SELECT_BOX_HEIGHT, PREVISION_COLS, PREVISION_DF_KEY
+    MULTI_SELECT_BOX_HEIGHT, PREVISION_COLS, PREVISION_DF_KEY, PREVISION_DF_CONSUMO_KEY, PREVISION_DF_STOCK_KEY
 from config.enums import RepuestoReparadoEnum, RepuestoEnum, CabecerasEnum, TipoDuracionEnum, IndexTypeEnum, \
     ConsumoObligatorioEnum, LoadDataEnum, RoleEnum, ConsumoComparacionRepuestoEnum, PeriodoComparacionEnum
 from domain.services.compute_consumo_prevision import create_forecast_gs
@@ -445,7 +445,7 @@ class GoogleSheetsComponents:
                 st.toast("No hay cambios para guardar (Asegúrate de presionar ENTER tras editar una celda).", icon="⚠️")
 
 
-    def save_and_update_forecast(self, df_modificado, df_consumo, df_stock, tipo_repuesto, df_key, editor_key,
+    def save_and_update_forecast2(self, df_modificado, df_consumo, df_stock, tipo_repuesto, df_key, editor_key,
                                  celda_inicio, col_fin, columnas_a_guardar) -> None:
         """
         Guarda los cambios de una tabla específica (Stock o Consumo) y despues recalcula
@@ -503,6 +503,85 @@ class GoogleSheetsComponents:
 
             except Exception as e:
                 st.error(f"Error en el proceso de actualización unificado: {e}")
+
+
+    def save_and_update_forecast(self, df_filtrado: pd.DataFrame, celda_inicio: str, col_fin: str,
+                                       columnas_a_guardar: Union[List, Tuple], tipo_repuesto: RepuestoEnum,
+                                       dynamic_editor_key: str, button_key: str) -> None:
+        """
+        Guarda los cambios de una tabla específica (Stock o Consumo) y despues recalcula
+        automáticamente las previsiones usando los datos más recientes.
+        """
+        cols_fechas = ("Mes", "FechaStock", "FechaPrevision")
+
+
+        if st.button(f"💾 Guardar cambios", use_container_width=True, key=button_key):
+            df_completo = self.update_filtered_df(dynamic_editor_key, PREVISION_DF_KEY, df_filtrado)
+
+            df_consumo = df_completo if "Articulo" in df_completo.columns else st.session_state[PREVISION_DF_CONSUMO_KEY]
+            df_stock = df_completo if "RepuestoStock" in df_completo.columns else st.session_state[PREVISION_DF_STOCK_KEY]
+
+            for col_fecha in cols_fechas:
+                if col_fecha in df_completo.columns and col_fecha in columnas_a_guardar:
+                    df_completo[col_fecha] = pd.to_datetime(df_completo[col_fecha],
+                                                        format='mixed',
+                                                        dayfirst=True,
+                                                        errors='coerce')
+
+                    df_completo[col_fecha] = df_completo[col_fecha].dt.to_period('M').dt.to_timestamp().dt.strftime(PAGE_STRFTIME_DMY)
+
+            df_original = st.session_state.get(PREVISION_DF_KEY)
+            hubo_cambios = False
+            cambios = st.session_state.get(dynamic_editor_key, {})
+
+            if cambios.get("edited_rows") or cambios.get("added_rows") or cambios.get("deleted_rows"):
+                hubo_cambios = True
+            elif df_original is not None and len(df_completo) != len(df_original):
+                hubo_cambios = True
+
+            with st.spinner("Guardando datos y recalculando pronósticos..."):
+                try:
+                    # --- PARTE 1: GUARDAR CAMBIOS DE LA TABLA (Si los hay) ---
+                    if hubo_cambios:
+                        df_recortado = df_completo[columnas_a_guardar]
+                        rango_a_limpiar = f"{celda_inicio}:{col_fin}"
+
+                        self.update_range_with_df(
+                            df=df_recortado,
+                            celda_inicial=celda_inicio,
+                            rango_tabla=rango_a_limpiar
+                        )
+
+                        st.session_state[PREVISION_DF_KEY] = df_completo
+                        st.toast("¡Tabla de datos actualizada con éxito!", icon="💾")
+                    else:
+                        st.toast("Calculando previsiones sin cambios manuales...", icon="ℹ️")
+
+                    # --- PARTE 2: RECALCULAR Y GUARDAR PREVISIONES ---
+                    df_prevision = create_forecast_gs(df_consumo, df_stock, tipo_repuesto)
+
+                    if df_prevision is not None:
+                        self.update_range_with_df(
+                            df=df_prevision,
+                            celda_inicial='J2',
+                            rango_tabla='J2:N'
+                        )
+                        st.toast(f"Previsiones de {tipo_repuesto} sincronizadas", icon="✅")
+                    else:
+                        st.warning("No se pudieron calcular las previsiones (revisa si hay datos suficientes).")
+
+                    # --- PARTE 3: LIMPIEZA TOTAL Y RECARGA ---
+                    st.cache_data.clear()
+
+                    if dynamic_editor_key in st.session_state:
+                        del st.session_state[dynamic_editor_key]
+                    if PREVISION_DF_KEY in st.session_state:
+                        del st.session_state[PREVISION_DF_KEY]
+
+                    st.rerun()
+
+                except Exception as e:
+                    st.error(f"Error en el proceso de actualización unificado: {e}")
 
 
     @staticmethod

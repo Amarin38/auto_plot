@@ -26,31 +26,36 @@ class ConsumoPrevision:
         st.title(PAG_PREVISION)
         config_col, articulo_col, _ = st.columns(DISTANCE_COLS_PREVISION)
 
-        prevision_tab, datos_tab = st.tabs(["📈 Previsiones", "📑 Datos"])
-
         tipo_repuesto = self.select.select_box_tipo_repuesto(config_col, PREVISION_REPUESTO_KEY)
         google_sheet = GoogleSheetsComponents(PREVISION_SHEET_URL, tipo_repuesto, PREVISION_COLS)
-        df_sheet = google_sheet.connect()
 
-        with prevision_tab:
-            _, titulo_centro_col, _ = st.columns((0.5, 1, 0.5))
-            _, centro_col, _ = st.columns((0.5, 3, 0.5))
+        if tipo_repuesto:
+            df_sheet = google_sheet.connect()
+            pestaña_activa = st.segmented_control(
+                "Vistas",
+                options=["📈 Previsiones", "📑 Datos"],
+                default="📈 Previsiones",
+                label_visibility="collapsed"
+            )
 
-            if tipo_repuesto:
+            if st.session_state.get(PREVISION_ULTIMO_REPUESTO_KEY) != tipo_repuesto:
+                st.session_state[PREVISION_ULTIMO_REPUESTO_KEY] = tipo_repuesto
+                st.session_state[PREVISION_DF_KEY] = df_sheet
+                st.session_state[PREVISION_DF_STOCK_KEY] = df_sheet.copy()
+                st.session_state[PREVISION_DF_CONSUMO_KEY] = df_sheet.copy()
+            elif PREVISION_DF_KEY not in st.session_state:
+                st.session_state[PREVISION_DF_KEY] = df_sheet
+                st.session_state[PREVISION_DF_STOCK_KEY] = df_sheet.copy()
+                st.session_state[PREVISION_DF_CONSUMO_KEY] = df_sheet.copy()
+
+            if pestaña_activa == "📈 Previsiones":
+                _, titulo_centro_col, _ = st.columns((0.5, 1, 0.5))
+                _, centro_col, _ = st.columns((0.5, 3, 0.5))
+
                 if INDEX in df_sheet.columns:
                     df_sheet = df_sheet.drop(columns=[INDEX])
 
                 df_sheet.index = range(len(df_sheet))
-
-                if st.session_state.get(PREVISION_ULTIMO_REPUESTO_KEY) != tipo_repuesto:
-                    st.session_state[PREVISION_ULTIMO_REPUESTO_KEY] = tipo_repuesto
-                    st.session_state[PREVISION_DF_KEY] = df_sheet
-                    st.session_state[PREVISION_DF_STOCK_KEY] = df_sheet.copy()
-                    st.session_state[PREVISION_DF_CONSUMO_KEY] = df_sheet.copy()
-                elif PREVISION_DF_KEY not in st.session_state:
-                    st.session_state[PREVISION_DF_KEY] = df_sheet
-                    st.session_state[PREVISION_DF_STOCK_KEY] = df_sheet.copy()
-                    st.session_state[PREVISION_DF_CONSUMO_KEY] = df_sheet.copy()
                 # --------------------------------------------------------------------------
 
                 df_data = df_sheet[PREVISION_COLS].copy()
@@ -73,27 +78,23 @@ class ConsumoPrevision:
                                 st.plotly_chart(fig)
                 else:
                     self.other.mensaje_falta_rep(centro_col)
-            else:
-                with config_col:
-                    st.write("Selecciona un repuesto.")
 
-        with datos_tab:
-            if st.toggle("Actualizar datos") and tipo_repuesto:
-                with articulo_col.container(height=SELECT_BOX_HEIGHT):
+            elif pestaña_activa == "📑 Datos":
+                with articulo_col.container(height=SELECT_BOX_HEIGHT, vertical_alignment='center'):
                     repuestos = st.session_state[PREVISION_DF_KEY]["RepuestoStock"].dropna().unique()
                     articulo_seleccionado = st.selectbox("Repuestos", repuestos, placeholder=PLACEHOLDER, index=None)
 
                 if articulo_seleccionado:
                     df_stock_filtrado = st.session_state[PREVISION_DF_STOCK_KEY][
                         st.session_state[PREVISION_DF_STOCK_KEY]["RepuestoStock"] == articulo_seleccionado
-                        ]
+                        ].copy()
 
                     df_consumo_filtrado = st.session_state[PREVISION_DF_CONSUMO_KEY][
                         st.session_state[PREVISION_DF_CONSUMO_KEY]["Articulo"] == articulo_seleccionado
-                        ]
+                        ].copy()
                 else:
-                    df_stock_filtrado = st.session_state[PREVISION_DF_STOCK_KEY]
-                    df_consumo_filtrado = st.session_state[PREVISION_DF_CONSUMO_KEY]
+                    df_stock_filtrado = st.session_state[PREVISION_DF_STOCK_KEY].copy()
+                    df_consumo_filtrado = st.session_state[PREVISION_DF_CONSUMO_KEY].copy()
 
                 stock_col, consumo_col = st.columns((1.8, 3))
 
@@ -106,45 +107,36 @@ class ConsumoPrevision:
                                                                      errors='coerce').dt.date
                     df_stock_filtrado["RepuestoStock"] = df_stock_filtrado["RepuestoStock"].fillna("").astype(str)
 
-                    df_modificado_stock = st.data_editor(
-                        df_stock_filtrado,
+                    df_display_stock = df_stock_filtrado.reset_index(drop=True)
+
+                    st.data_editor(
+                        df_display_stock,
                         disabled=False,
                         num_rows="dynamic",
+                        hide_index=True,
                         height=600,
                         key=key_dinamica_stock,
                         column_order=PREVISION_STOCK_COLS,
                         column_config={
-                            "FechaStock": st.column_config.DateColumn("Fecha Stock", width=50, format="DD/MM/YYYY"),
+                            "FechaStock": st.column_config.DateColumn("Fecha Stock", width=50,
+                                                                      format="DD/MM/YYYY"),
                             "RepuestoStock": st.column_config.TextColumn("Repuesto", width=150),
                             "StockActual": st.column_config.NumberColumn("Stock Actual", width=10),
                         }
                     )
 
-                    _, centro_stock_guardar_col, _ = st.columns((1, 3, 0.5))
+                    _, centro_stock_guardar_col, _ = st.columns((1, 1.7, 1))
 
                     with centro_stock_guardar_col:
-                        if st.button("💾 Guardar cambios de stock"):
-                            df_completo = google_sheet.update_filtered_df(key_dinamica_stock,
-                                                                          PREVISION_DF_KEY,
-                                                                          df_stock_filtrado)
-
-                            if "FechaStock" in df_completo.columns:
-                                df_completo["FechaStock"] = pd.to_datetime(df_completo["FechaStock"],
-                                                                           format='mixed',
-                                                                           dayfirst=True,
-                                                                           errors='coerce').dt.strftime('%d/%m/%Y')
-
-                            google_sheet.save_and_update_forecast(
-                                df_modificado=df_completo,
-                                df_consumo=df_completo if "Articulo" in df_completo.columns else st.session_state[PREVISION_DF_CONSUMO_KEY],
-                                df_stock=df_completo if "RepuestoStock" in df_completo.columns else st.session_state[PREVISION_DF_STOCK_KEY],
-                                tipo_repuesto=tipo_repuesto,
-                                df_key=PREVISION_DF_KEY,
-                                editor_key=key_dinamica_stock,
-                                celda_inicio="A2",
-                                col_fin="C",
-                                columnas_a_guardar=PREVISION_STOCK_COLS
-                            )
+                        google_sheet.save_and_update_forecast(
+                            df_filtrado=df_stock_filtrado,
+                            celda_inicio="A2",
+                            col_fin="C",
+                            columnas_a_guardar=PREVISION_STOCK_COLS,
+                            tipo_repuesto=tipo_repuesto,
+                            dynamic_editor_key=key_dinamica_stock,
+                            button_key="button_stock_key"
+                        )
 
                 with consumo_col:
                     key_dinamica_consumo = f"{PREVISION_EDITOR_KEY}_{tipo_repuesto}_{articulo_seleccionado}"
@@ -156,48 +148,41 @@ class ConsumoPrevision:
                     df_consumo_filtrado["Articulo"] = df_consumo_filtrado["Articulo"].fillna("").astype(str)
                     df_consumo_filtrado["TipoRepuesto"] = df_consumo_filtrado["TipoRepuesto"].fillna("").astype(str)
 
-                    df_modificado_consumo = st.data_editor(
-                        df_consumo_filtrado,
+                    df_display_consumo = df_consumo_filtrado.reset_index(drop=True)
+
+                    st.data_editor(
+                        df_display_consumo,
                         disabled=False,
                         num_rows="dynamic",
+                        hide_index=True,
                         height=600,
                         key=key_dinamica_consumo,
                         column_order=PREVISION_COLS,
                         column_config={
                             "Mes": st.column_config.DateColumn("Fecha", width=50, format="MM/YYYY"),
-                            "Articulo": st.column_config.SelectboxColumn("Repuesto", width=150, options=repuestos.tolist()),
+                            "Articulo": st.column_config.SelectboxColumn("Repuesto", width=150,
+                                                                         options=repuestos.tolist()),
                             "ConsumoMensual": st.column_config.TextColumn("Consumo Mensual", width=10),
-                            "TipoRepuesto": st.column_config.TextColumn("Tipo Repuesto", width=60, default=tipo_repuesto),
+                            "TipoRepuesto": st.column_config.TextColumn("Tipo Repuesto", width=60,
+                                                                        default=tipo_repuesto),
                         }
                     )
 
-                    _, centro_consumo_guardar_col, _ = st.columns((2.5, 3, 0.5))
+                    _, centro_consumo_guardar_col, _ = st.columns((1, 0.85, 1))
 
                     with centro_consumo_guardar_col:
-                        if st.button("💾 Guardar cambios de consumo"):
-                            df_completo = google_sheet.update_filtered_df(key_dinamica_consumo,
-                                                                          PREVISION_DF_KEY,
-                                                                          df_consumo_filtrado)
-
-                            if "Mes" in df_completo.columns:
-                                df_completo["Mes"] = pd.to_datetime(df_completo["Mes"],
-                                                                    format='mixed',
-                                                                    dayfirst=True,
-                                                                    errors='coerce')
-
-                                df_completo["Mes"] = df_completo["Mes"].dt.to_period('M').dt.to_timestamp().dt.strftime('%d/%m/%Y')
-
-                            google_sheet.save_and_update_forecast(
-                                df_modificado=df_completo,
-                                df_consumo=df_completo if "Articulo" in df_completo.columns else st.session_state[PREVISION_DF_CONSUMO_KEY],
-                                df_stock=df_completo if "RepuestoStock" in df_completo.columns else st.session_state[PREVISION_DF_STOCK_KEY],
-                                tipo_repuesto=tipo_repuesto,
-                                df_key=PREVISION_DF_KEY,
-                                editor_key=key_dinamica_consumo,
-                                celda_inicio="E2",
-                                col_fin="H",
-                                columnas_a_guardar=PREVISION_COLS
-                            )
+                        google_sheet.save_and_update_forecast(
+                            df_filtrado=df_consumo_filtrado,
+                            celda_inicio="E2",
+                            col_fin="H",
+                            columnas_a_guardar=PREVISION_COLS,
+                            tipo_repuesto=tipo_repuesto,
+                            dynamic_editor_key=key_dinamica_consumo,
+                            button_key="button_consumo_key"
+                        )
+            else:
+                with config_col:
+                    st.write("Selecciona un repuesto.")
 
 
     @staticmethod
