@@ -1,3 +1,4 @@
+import numpy as np
 import pandas as pd
 
 import plotly.graph_objects as go
@@ -81,6 +82,11 @@ class PrevisionPlotter:
                 tickvals = pd.concat([x_data, x_forecast]).reset_index(drop=True)  # type: ignore
                 ticktext = pd.concat([ticks_text_data, ticks_text_forecast]).reset_index(drop=True)
 
+                valor_stock = df_rep_stock["StockActual"].iloc[0]
+                valor_fecha = df_rep_stock["FechaStock"].iloc[0]
+                fecha_obj = pd.to_datetime(valor_fecha, errors='coerce', dayfirst=True)
+                fecha_stock = fecha_obj.strftime("%m/%Y") if pd.notna(fecha_obj) else ""
+
                 fig = go.Figure()
 
                 self.plots.scatter_prevision(fig, x_data, y_data, "ConsumoMensual",
@@ -93,7 +99,7 @@ class PrevisionPlotter:
 
                 self.plots.scatter_prevision(fig, x_forecast, y_forecast_stock, "RestoStock",
                                              PrevisionColorsEnum.VERDE, PrevisionColorsEnum.VERDE_CLARO,
-                                             SymbolEnum.CIRCLE, DashEnum.DOT, ticks_text_forecast, df_rep_stock["FechaStock"].iloc[0])
+                                             SymbolEnum.CIRCLE, DashEnum.DOT, ticks_text_forecast, "")
 
                 fig.add_hline(
                     y=0,
@@ -104,8 +110,11 @@ class PrevisionPlotter:
                     annotation_position="bottom right"
                 )
 
-                self.plots.empty(fig, f"Prevision total: {total_prevision}")
-                self.plots.empty(fig, f"Valor por mes: {valor_mensual}")
+                self.plots.empty(fig, f"Prevision total: {total_prevision}", "Prevision")
+                self.plots.empty(fig, f"Valor por mes: {valor_mensual}", "Prevision")
+
+                self.plots.empty(fig, f"Fecha Ultimo Stock: {fecha_stock}", "RestoStock")
+                self.plots.empty(fig, f"Stock: {valor_stock}", "RestoStock")
 
                 step = 3
                 ticktext_all = [

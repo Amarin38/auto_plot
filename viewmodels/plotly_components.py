@@ -211,7 +211,7 @@ class PlotComponents:
         self.common = CommonUtils()
 
     @execute_safely
-    def empty(self, fig, nombre: str):
+    def empty(self, fig, nombre: str, group: str = "ConsumoPrevision"):
         fig.add_trace(go.Scatter(
             x=[None],  # nada visible
             y=[None],
@@ -219,7 +219,7 @@ class PlotComponents:
             marker=dict(color=PlotlyComponentsColorsEnum.TRANSPARENTE),  # transparente
             showlegend=True,
             name=nombre,
-            legendgroup="ConsumoPrevision"
+            legendgroup=group
         ))
 
 
@@ -396,10 +396,12 @@ class PlotComponents:
 
     @execute_safely
     def scatter_prevision(self, fig: Figure, x, y, name: str, color: str, color_line: str, symbol: SymbolEnum, dash: DashEnum, custom: Optional[list[str]], fecha: str):
+        name = name if pd.isna(fecha) or fecha is None or fecha == "" else f"{name} ({fecha})"
+
         fig.add_trace(go.Scatter(
             x=x,
             y=y,
-            name=f"{name} ({fecha})",
+            name=name,
             mode='lines+markers',
 
             text=y,

@@ -1,3 +1,5 @@
+import time
+
 import pandas as pd
 import streamlit as st
 import warnings
@@ -30,7 +32,9 @@ class ConsumoPrevision:
         google_sheet = GoogleSheetsComponents(PREVISION_SHEET_URL, tipo_repuesto, PREVISION_COLS)
 
         if tipo_repuesto:
-            df_sheet = google_sheet.connect()
+            with st.spinner("Cargando datos..."):
+                df_sheet = google_sheet.connect()
+
             pestaña_activa = st.segmented_control(
                 "Vistas",
                 options=["📈 Previsiones", "📑 Datos"],
@@ -49,35 +53,36 @@ class ConsumoPrevision:
                 st.session_state[PREVISION_DF_CONSUMO_KEY] = df_sheet.copy()
 
             if pestaña_activa == "📈 Previsiones":
-                _, titulo_centro_col, _ = st.columns((0.5, 1, 0.5))
-                _, centro_col, _ = st.columns((0.5, 3, 0.5))
+                with st.spinner("Cargando gráficos de previsión..."):
+                    _, titulo_centro_col, _ = st.columns((0.5, 1.2, 0.5))
+                    _, centro_col, _ = st.columns((0.5, 3, 0.5))
 
-                if INDEX in df_sheet.columns:
-                    df_sheet = df_sheet.drop(columns=[INDEX])
+                    if INDEX in df_sheet.columns:
+                        df_sheet = df_sheet.drop(columns=[INDEX])
 
-                df_sheet.index = range(len(df_sheet))
-                # --------------------------------------------------------------------------
+                    df_sheet.index = range(len(df_sheet))
+                    # --------------------------------------------------------------------------
 
-                df_data = df_sheet[PREVISION_COLS].copy()
-                df_prevision = df_sheet[PREVISION_FORECAST_COLS].copy()
-                df_stock = df_sheet[PREVISION_STOCK_COLS].copy()
+                    df_data = df_sheet[PREVISION_COLS].copy()
+                    df_prevision = df_sheet[PREVISION_FORECAST_COLS].copy()
+                    df_stock = df_sheet[PREVISION_STOCK_COLS].copy()
 
-                df_data["Mes"] = df_data["Mes"].apply(self.arreglar_fechas)
-                df_prevision["FechaPrevision"] = df_prevision["FechaPrevision"].apply(self.arreglar_fechas)
+                    df_data["Mes"] = df_data["Mes"].apply(self.arreglar_fechas)
+                    df_prevision["FechaPrevision"] = df_prevision["FechaPrevision"].apply(self.arreglar_fechas)
 
-                df_data = df_data.dropna(subset=["Mes"])
-                df_prevision = df_prevision.dropna(subset=["FechaPrevision"])
+                    df_data = df_data.dropna(subset=["Mes"])
+                    df_prevision = df_prevision.dropna(subset=["FechaPrevision"])
 
-                if not df_data.empty and not df_prevision.empty:
-                    figs, titulo = PrevisionPlotter(df_data, df_prevision, df_stock, tipo_repuesto).create_plot()
-                    self.other.centered_title(titulo_centro_col, titulo)
+                    if not df_data.empty and not df_prevision.empty:
+                        figs, titulo = PrevisionPlotter(df_data, df_prevision, df_stock, tipo_repuesto).create_plot()
+                        self.other.centered_title(titulo_centro_col, titulo)
 
-                    with centro_col:
-                        for fig in figs:
-                            with st.container(height=PLOT_BOX_HEIGHT):
-                                st.plotly_chart(fig)
-                else:
-                    self.other.mensaje_falta_rep(centro_col)
+                        with centro_col:
+                            for fig in figs:
+                                with st.container(height=PLOT_BOX_HEIGHT):
+                                    st.plotly_chart(fig)
+                    else:
+                        self.other.mensaje_falta_rep(centro_col)
 
             elif pestaña_activa == "📑 Datos":
                 with articulo_col.container(height=SELECT_BOX_HEIGHT, vertical_alignment='center'):
@@ -119,7 +124,7 @@ class ConsumoPrevision:
                         column_order=PREVISION_STOCK_COLS,
                         column_config={
                             "FechaStock": st.column_config.DateColumn("Fecha Stock", width=50,
-                                                                      format="DD/MM/YYYY"),
+                                                                      format="MM/YYYY"),
                             "RepuestoStock": st.column_config.TextColumn("Repuesto", width=150),
                             "StockActual": st.column_config.NumberColumn("Stock Actual", width=10),
                         }
