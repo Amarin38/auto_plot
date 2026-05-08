@@ -71,7 +71,12 @@ class PrevisionPlotter:
                 total_prevision = y_forecast.sum().astype(int)
                 valor_mensual = y_forecast.mean().astype(int)
                 valor_stock = df_rep_stock["StockActual"].iloc[0].astype(int)
-                mes_quiebre = df_rep_forecast[df_rep_forecast["RestoStock"] <= 0]["FechaPrevision"].iloc[0].strftime('%m/%Y')
+                fechas_quiebre = df_rep_forecast[df_rep_forecast["RestoStock"] <= 0]["FechaPrevision"]
+
+                if not fechas_quiebre.empty:
+                    mes_quiebre = fechas_quiebre.iloc[0].strftime('%m/%Y')
+                else:
+                    mes_quiebre = "-"
 
                 # Ticks
                 ticks_text_data = _generar_columna_ticks_español(x_data)
@@ -127,7 +132,7 @@ class PrevisionPlotter:
                         xanchor="center",  # Centrarla horizontalmente
                         x=0.206,
                         bgcolor="rgba(0,0,0,0)"  # Fondo transparente para que se integre mejor
-                    )
+                    ),
                 )
 
                 self.hover.hover_x(fig)

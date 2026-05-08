@@ -244,6 +244,8 @@ class OtherComponents:
             border-left:5px outset {border_color};
             border-bottom:2px outset {border_color};
             background:#222;
+            margin-bottom: 1.5px;
+            margin-top: 1.5px;
         ">
             <div style="color:#BBB">{label}</div>
             <div style="font-size:26px; color:{val_color}">{value}</div>

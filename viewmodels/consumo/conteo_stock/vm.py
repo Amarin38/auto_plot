@@ -73,7 +73,7 @@ class ConteoStockVM:
 
 
     # Cálculos
-    def calcular_datos(self) -> tuple:
+    def calcular_datos(self) -> dict:
         df = self.get_df()[["Recuento", "DiferenciaPrecio", "PrecioAnterior", "PrecioActual"]]
 
         df["DiferenciaPrecio"]  = df["DiferenciaPrecio"].to_numpy()
@@ -87,7 +87,18 @@ class ConteoStockVM:
         precio_actual   = df["PrecioActual"].sum().round(1)
         porcentaje_dif  = round(self.calcular_porcentaje(precio_actual, precio_anterior) - 100, 2)
 
-        return precio_faltante, precio_sobrante, precio_anterior, precio_actual, porcentaje_dif, self.calcular_contados(df)
+        contados = self.calcular_contados(df)
+
+        datos = {
+            "precio_faltante": precio_faltante,
+            "precio_sobrante": precio_sobrante,
+            "precio_anterior": precio_anterior,
+            "precio_actual": precio_actual,
+            "porcentaje_dif": porcentaje_dif,
+            "contados":contados
+        }
+
+        return datos
 
     @staticmethod
     def calcular_contados(df: pd.DataFrame) -> int:

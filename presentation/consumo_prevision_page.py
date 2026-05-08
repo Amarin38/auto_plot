@@ -85,36 +85,47 @@ class ConsumoPrevision:
                                     with grafico:
                                         st.plotly_chart(fig["figura"])
 
-                                    with metricas:
-                                        st.space()
+                                    total_prev = fig["total_prevision"]
+                                    stock = fig["valor_stock"]
+                                    mes_quiebre = fig["mes_quiebre"]
+                                    fecha_stock = fig["fecha_stock"]
+                                    diferencia = total_prev - stock
+                                    total_a_comprar = int(diferencia) if diferencia > 0 else "-"
 
                                     self.other.custom_metric(
                                         col=metricas,
                                         label="Anual previsión:",
-                                        value=fig["total_prevision"],
-                                        border_color=CustomMetricColorsEnum.NARANJA,
+                                        value=total_prev,
+                                        border_color=CustomMetricColorsEnum.NARANJA_FUERTE,
                                         val_color=CustomMetricColorsEnum.NARANJA
                                     )
                                     self.other.custom_metric(
                                         col=metricas,
                                         label="Mensual previsión:",
                                         value=fig["valor_mensual"],
-                                        border_color=CustomMetricColorsEnum.NARANJA,
+                                        border_color=CustomMetricColorsEnum.NARANJA_FUERTE,
                                         val_color=CustomMetricColorsEnum.NARANJA
                                     )
                                     self.other.custom_metric(
                                         col=metricas,
-                                        label=f"Stock ({fig["fecha_stock"]}):",
-                                        value=fig["valor_stock"],
-                                        border_color=CustomMetricColorsEnum.AZUL,
-                                        val_color=CustomMetricColorsEnum.AZUL
+                                        label=f"Stock ({fecha_stock}):",
+                                        value=stock,
+                                        border_color=CustomMetricColorsEnum.VERDE_CLARO,
+                                        val_color=CustomMetricColorsEnum.VERDE_CLARO
                                     )
                                     self.other.custom_metric(
                                         col=metricas,
                                         label=f"Mes de quiebre:",
-                                        value=fig["mes_quiebre"],
+                                        value=mes_quiebre,
                                         border_color=CustomMetricColorsEnum.ROJO,
                                         val_color=CustomMetricColorsEnum.ROJO
+                                    )
+                                    self.other.custom_metric(
+                                        col=metricas,
+                                        label=f"Total a comprar:",
+                                        value=total_a_comprar,
+                                        border_color=CustomMetricColorsEnum.AMARILLO,
+                                        val_color=CustomMetricColorsEnum.AMARILLO
                                     )
 
                     else:

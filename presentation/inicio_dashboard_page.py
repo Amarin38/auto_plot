@@ -40,12 +40,12 @@ def main():
                 st.plotly_chart(fig)
 
         with (stats.container(height=CONTEO_BOX_HEIGHT)):
-            precio_faltante_raw         = datos[0]
-            precio_sobrante_raw         = datos[1]
-            precio_abs_anterior_raw     = datos[2]
-            precio_abs_actual_raw       = datos[3]
-            porcentaje_perdida_stock    = datos[4]
-            rep_contados                = datos[5]
+            precio_faltante_raw         = datos["precio_faltante"]
+            precio_sobrante_raw         = datos["precio_sobrante"]
+            precio_abs_anterior_raw     = datos["precio_anterior"]
+            precio_abs_actual_raw       = datos["precio_actual"]
+            porcentaje_perdida_stock    = datos["porcentaje_dif"]
+            rep_contados                = datos["contados"]
 
             precio_faltante             = utils.num_parser(precio_faltante_raw)
             precio_sobrante             = utils.num_parser(precio_sobrante_raw)
@@ -56,48 +56,72 @@ def main():
                                                                        precio_sobrante_raw,
                                                                        precio_abs_actual_raw)
 
-            aux, medio, aux2 = st.columns([1, 2, 1])
+            _, medio, _ = st.columns([1, 1, 1])
 
-            with medio.container(height=CONTEO_STATS_HEIGHT):
-                aux5, interno, aux6 = st.columns([1, 1, 1])
-
-                components.custom_metric(interno, "CONTEO", rep_contados, "white", "white",
-                                         f"{porcentaje}%", "green")
-                st.progress(int(porcentaje), str(REP_TOTALES_CONTEO))
+            components.custom_metric(
+                col=medio,
+                label="CONTEO",
+                value=rep_contados,
+                border_color="white",
+                val_color="white",
+                delta=f"{porcentaje}%",
+                delta_color="green"
+            )
+            medio.space(1)
 
             # Datos de conteo
             col1, col2 = st.columns([1, 1])
 
-            components.custom_metric(col1, "Precio faltante",
-                                     precio_faltante,
-                                     CustomMetricColorsEnum.ROJO,
-                                     CustomMetricColorsEnum.ROJO)
-            components.custom_metric(col2, "Precio sobrante",
-                                     precio_sobrante,
-                                     CustomMetricColorsEnum.AZUL,
-                                     CustomMetricColorsEnum.AZUL)
+            components.custom_metric(
+                col=col1,
+                label="Precio faltante",
+                value=precio_faltante,
+                border_color=CustomMetricColorsEnum.ROJO,
+                val_color=CustomMetricColorsEnum.ROJO
+            )
+            components.custom_metric(
+                col=col2,
+                label="Precio sobrante",
+                value=precio_sobrante,
+                border_color=CustomMetricColorsEnum.AZUL,
+                val_color=CustomMetricColorsEnum.AZUL
+            )
+
             col1.divider()
             col2.divider()
-            components.custom_metric(col1, "Precio absoluto anterior",
-                                     precio_abs_anterior,
-                                     CustomMetricColorsEnum.AMARILLO,
-                                     CustomMetricColorsEnum.AMARILLO)
-            components.custom_metric(col2, "Precio absoluto actual",
-                                     precio_abs_actual,
-                                     CustomMetricColorsEnum.VIOLETA,
-                                     CustomMetricColorsEnum.VIOLETA)
 
-            st.space(3)
+            components.custom_metric(
+                col=col1,
+                label="Precio absoluto anterior",
+                value=precio_abs_anterior,
+                border_color=CustomMetricColorsEnum.AMARILLO,
+                val_color=CustomMetricColorsEnum.AMARILLO
+            )
+            components.custom_metric(
+                col=col2,
+                label="Precio absoluto actual",
+                value=precio_abs_actual,
+                border_color=CustomMetricColorsEnum.VIOLETA,
+                val_color=CustomMetricColorsEnum.VIOLETA
+            )
 
-            aux, izq, der, aux2 = st.columns([0.8, 1, 1, 0.8])
+            st.space(1)
 
-            components.custom_metric(izq, "Porcentaje perdida stock",
-                                     f"{porcentaje_perdida_stock}%",
-                                     CustomMetricColorsEnum.VERDE,
-                                     CustomMetricColorsEnum.VERDE)
-            components.custom_metric(der, "Porcentaje de error",
-                                     f"{porcentaje_error}%",
-                                     CustomMetricColorsEnum.ROJO,
-                                     CustomMetricColorsEnum.ROJO)
+            _, izq, der, _ = st.columns([0.8, 1, 1, 0.8])
+
+            components.custom_metric(
+                col=izq,
+                label="Porcentaje perdida stock",
+                value=f"{porcentaje_perdida_stock}%",
+                border_color=CustomMetricColorsEnum.VERDE,
+                val_color=CustomMetricColorsEnum.VERDE
+            )
+            components.custom_metric(
+                col=der,
+                label="Porcentaje de error",
+                value=f"{porcentaje_error}%",
+                border_color=CustomMetricColorsEnum.ROJO,
+                val_color=CustomMetricColorsEnum.ROJO
+            )
 
 

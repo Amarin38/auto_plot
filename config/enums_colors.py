@@ -125,12 +125,14 @@ class PrevisionColorsEnum(StrEnum):
     VERDE_CLARO     = "#A1C181"
 
 class CustomMetricColorsEnum(StrEnum):
-    VERDE       = "#5B8E7D"
-    ROJO        = "#BC4B51"
-    AZUL        = "#4C8DB4"
-    AMARILLO    = "#F1D764"
-    VIOLETA     = "#806FA3"
-    NARANJA     = "#F78154"
+    VERDE           = "#5B8E7D"
+    ROJO            = "#BC4B51"
+    AZUL            = "#4C8DB4"
+    AMARILLO        = "#F1D764"
+    VIOLETA         = "#806FA3"
+    NARANJA         = "#F78154"
+    VERDE_CLARO     = "#A1C181"
+    NARANJA_FUERTE  = "#F24C00"
 
     @classmethod
     def as_list(cls) -> List[str]:
