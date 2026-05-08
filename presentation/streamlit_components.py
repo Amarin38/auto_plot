@@ -218,7 +218,25 @@ class OtherComponents:
 
     @staticmethod
     def custom_metric(col, label: str, value: Union[str, int, float], border_color: str, val_color: str,
-                      delta: Optional[Union[str, int, float]] = "", delta_color: Optional[str] = ""):
+                      delta: Optional[Union[str, int, float]] = None, delta_color: Optional[str] = ""):
+
+        delta_html = ""
+
+        if delta is not None and str(delta).strip() != "":
+            delta_html = f"""
+        <div style="
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 10px;
+            border-radius: 999px;
+            background: rgba(76,175,80,.15);
+            color: #4CAF50;
+            font-weight: 600;
+            font-size: 13px;
+            ">{delta}</div>
+            """
+
         col.markdown(f"""
         <div style="
             padding:14px;
@@ -229,17 +247,7 @@ class OtherComponents:
         ">
             <div style="color:#BBB">{label}</div>
             <div style="font-size:26px; color:{val_color}">{value}</div>
-            <div style="
-                display: inline-flex;
-                align-items: center;
-                gap: 6px;
-                padding: 4px 10px;
-                border-radius: 999px;
-                background: rgba(76,175,80,.15);
-                color: #4CAF50;
-                font-weight: 600;
-                font-size: 13px;
-                ">{delta}</div>
+            {delta_html}
         </div>
         """, unsafe_allow_html=True)
 

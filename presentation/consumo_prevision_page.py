@@ -1,8 +1,9 @@
-import time
-
 import pandas as pd
 import streamlit as st
 import warnings
+
+from config.enums_colors import CustomMetricColorsEnum
+
 warnings.simplefilter(action='ignore', category=FutureWarning)
 
 from config.constants_common import PAGE_STRFTIME_DMY, FILE_STRFTIME_YMD
@@ -80,7 +81,42 @@ class ConsumoPrevision:
                         with centro_col:
                             for fig in figs:
                                 with st.container(height=PLOT_BOX_HEIGHT):
-                                    st.plotly_chart(fig)
+                                    grafico, metricas = st.columns([5,1])
+                                    with grafico:
+                                        st.plotly_chart(fig["figura"])
+
+                                    with metricas:
+                                        st.space()
+
+                                    self.other.custom_metric(
+                                        col=metricas,
+                                        label="Anual previsión:",
+                                        value=fig["total_prevision"],
+                                        border_color=CustomMetricColorsEnum.NARANJA,
+                                        val_color=CustomMetricColorsEnum.NARANJA
+                                    )
+                                    self.other.custom_metric(
+                                        col=metricas,
+                                        label="Mensual previsión:",
+                                        value=fig["valor_mensual"],
+                                        border_color=CustomMetricColorsEnum.NARANJA,
+                                        val_color=CustomMetricColorsEnum.NARANJA
+                                    )
+                                    self.other.custom_metric(
+                                        col=metricas,
+                                        label=f"Stock ({fig["fecha_stock"]}):",
+                                        value=fig["valor_stock"],
+                                        border_color=CustomMetricColorsEnum.AZUL,
+                                        val_color=CustomMetricColorsEnum.AZUL
+                                    )
+                                    self.other.custom_metric(
+                                        col=metricas,
+                                        label=f"Mes de quiebre:",
+                                        value=fig["mes_quiebre"],
+                                        border_color=CustomMetricColorsEnum.ROJO,
+                                        val_color=CustomMetricColorsEnum.ROJO
+                                    )
+
                     else:
                         self.other.mensaje_falta_rep(centro_col)
 

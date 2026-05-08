@@ -1,4 +1,3 @@
-import numpy as np
 import pandas as pd
 
 import plotly.graph_objects as go
@@ -26,9 +25,6 @@ class PrevisionPlotter:
         self.df_data = df_data
         self.df_forecast = df_forecast
 
-        if not self.df_data.empty:
-            self.fecha = self.common.devolver_fecha(self.df_data, "Mes")
-
     @execute_safely
     def create_plot(self):
         if not self.df_data.empty and not self.df_forecast.empty:
@@ -51,7 +47,7 @@ class PrevisionPlotter:
             figuras = []
             todos_repuestos = self.df_data['Articulo'].unique()
 
-            titulo = f'Prevision de {self.tipo_rep} ({self.fecha})' if self.tipo_rep else ""
+            titulo = f'Prevision de {self.tipo_rep}' if self.tipo_rep else ""
 
             grupos_data = self.df_data.groupby('Articulo')
             grupos_forecast = self.df_forecast.groupby('RepuestoPrevision')
@@ -72,8 +68,10 @@ class PrevisionPlotter:
                 y_forecast = df_rep_forecast['Prevision'].to_numpy()
                 y_forecast_stock = df_rep_forecast['RestoStock'].to_numpy()
 
-                total_prevision = y_forecast.sum()
-                valor_mensual = int(y_forecast.mean())
+                total_prevision = y_forecast.sum().astype(int)
+                valor_mensual = y_forecast.mean().astype(int)
+                valor_stock = df_rep_stock["StockActual"].iloc[0].astype(int)
+                mes_quiebre = df_rep_forecast[df_rep_forecast["RestoStock"] <= 0]["FechaPrevision"].iloc[0].strftime('%m/%Y')
 
                 # Ticks
                 ticks_text_data = _generar_columna_ticks_español(x_data)
@@ -82,14 +80,14 @@ class PrevisionPlotter:
                 tickvals = pd.concat([x_data, x_forecast]).reset_index(drop=True)  # type: ignore
                 ticktext = pd.concat([ticks_text_data, ticks_text_forecast]).reset_index(drop=True)
 
-                valor_stock = df_rep_stock["StockActual"].iloc[0]
                 valor_fecha = df_rep_stock["FechaStock"].iloc[0]
+
                 fecha_obj = pd.to_datetime(valor_fecha, errors='coerce', dayfirst=True)
                 fecha_stock = fecha_obj.strftime("%m/%Y") if pd.notna(fecha_obj) else ""
 
                 fig = go.Figure()
 
-                self.plots.scatter_prevision(fig, x_data, y_data, "ConsumoMensual",
+                self.plots.scatter_prevision(fig, x_data, y_data, "Consumo Mensual",
                                              PrevisionColorsEnum.LILA, PrevisionColorsEnum.VIOLETA,
                                              SymbolEnum.CIRCLE, DashEnum.SOLID, ticks_text_data, "")
 
@@ -97,7 +95,7 @@ class PrevisionPlotter:
                                              PrevisionColorsEnum.NARANJA_FUERTE, PrevisionColorsEnum.NARANJA,
                                              SymbolEnum.SQUARE, DashEnum.DASH, ticks_text_forecast, "")
 
-                self.plots.scatter_prevision(fig, x_forecast, y_forecast_stock, "RestoStock",
+                self.plots.scatter_prevision(fig, x_forecast, y_forecast_stock, "Resto Stock",
                                              PrevisionColorsEnum.VERDE, PrevisionColorsEnum.VERDE_CLARO,
                                              SymbolEnum.CIRCLE, DashEnum.DOT, ticks_text_forecast, "")
 
@@ -110,12 +108,6 @@ class PrevisionPlotter:
                     annotation_position="bottom right"
                 )
 
-                self.plots.empty(fig, f"Prevision total: {total_prevision}", "Prevision")
-                self.plots.empty(fig, f"Valor por mes: {valor_mensual}", "Prevision")
-
-                self.plots.empty(fig, f"Fecha Ultimo Stock: {fecha_stock}", "RestoStock")
-                self.plots.empty(fig, f"Stock: {valor_stock}", "RestoStock")
-
                 step = 3
                 ticktext_all = [
                     ticktext[i]
@@ -127,11 +119,29 @@ class PrevisionPlotter:
                 self.default.update_layout(fig, repuesto, "Fecha", "Consumo")
                 self.slider.range_slider(fig, x_data.mean(), x_forecast.max())
 
+                fig.update_layout(
+                    legend=dict(
+                        orientation="h",  # Leyenda horizontal
+                        yanchor="bottom",  # Anclar desde la parte inferior de la leyenda
+                        y=-0.332,  # Colocarla un poco por encima del gráfico
+                        xanchor="center",  # Centrarla horizontalmente
+                        x=0.206,
+                        bgcolor="rgba(0,0,0,0)"  # Fondo transparente para que se integre mejor
+                    )
+                )
+
                 self.hover.hover_x(fig)
                 self.hover.tick_array(fig, tickvals, ticktext_all)
                 self.hover.color_hover_bar(fig)
 
-                figuras.append(fig)
+                figuras.append({
+                    "figura":fig,
+                    "total_prevision":total_prevision,
+                    "valor_mensual":valor_mensual,
+                    "fecha_stock":fecha_stock,
+                    "valor_stock":valor_stock,
+                    "mes_quiebre":mes_quiebre,
+                })
 
             return figuras, titulo
 
