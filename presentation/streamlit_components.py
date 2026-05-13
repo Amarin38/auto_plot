@@ -10,13 +10,13 @@ import streamlit as st
 from typing import Union, Optional, Any, List, Tuple
 
 from gspread import WorksheetNotFound
-from pandas import DataFrame, Series
+from pandas import DataFrame
 from streamlit.components.v1 import components
 from streamlit_gsheets import GSheetsConnection
 
 from config.constants_common import TODAY_DATE_FILE_DMY, PAGE_STRFTIME_DMY
 from config.constants_views import SELECT_BOX_HEIGHT, PLACEHOLDER, CENTERED_TITLE_HEIGHT, CENTERED_TITLE_WIDTH, \
-    MULTI_SELECT_BOX_HEIGHT, PREVISION_COLS, PREVISION_DF_KEY, PREVISION_DF_CONSUMO_KEY, PREVISION_DF_STOCK_KEY
+    MULTI_SELECT_BOX_HEIGHT, PREVISION_DF_KEY, PREVISION_DF_CONSUMO_KEY, PREVISION_DF_STOCK_KEY
 from config.enums import RepuestoReparadoEnum, RepuestoEnum, CabecerasEnum, TipoDuracionEnum, IndexTypeEnum, \
     ConsumoObligatorioEnum, LoadDataEnum, RoleEnum, ConsumoComparacionRepuestoEnum, PeriodoComparacionEnum
 from domain.services.compute_consumo_prevision import create_forecast_gs
