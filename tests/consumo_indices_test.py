@@ -2,13 +2,13 @@ import pandas as pd
 from unittest.mock import patch
 from pandas.testing import assert_frame_equal
 
-from domain.services.compute_consumo_indices import Index
+from domain.services.compute_consumo_indices import ConsumoIndice
 from config.enums import IndexTypeEnum, RepuestoEnum
 
 @patch('domain.services.compute_consumo_indices.CochesCabeceraVM') # mock de los coches
 @patch('domain.services.compute_consumo_indices.IndiceConsumoVM') # mock del guardado
 def test_calcular_indices(mock_indice_vm, mock_coches_cabecera):
-    index_instance = Index()
+    index_instance = ConsumoIndice()
 
     df_vehiculos_falso = pd.DataFrame({
         'Cabecera': ['BARRACAS', 'TG CALZADA', 'TG LANUS'],

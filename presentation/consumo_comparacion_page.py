@@ -1,5 +1,6 @@
 import streamlit as st
 
+from config.constants_common import COMPARACION_CABECERA_KEY, COMPARACION_TIPO_REP_KEY, COMPARACION_PERIODO_KEY
 from config.constants_views import PAG_COMPARACION_CONSUMO, PLACEHOLDER, MULTI_SELECT_BOX_HEIGHT
 from config.enums import CabecerasEnum
 from presentation.streamlit_components import SelectBoxComponents
@@ -16,21 +17,26 @@ def consumo_comparacion():
     select = SelectBoxComponents()
     st.title(PAG_COMPARACION_CONSUMO)
 
-    a, b, c = st.columns([1.5,2.6,3])
+    izq, centro, der = st.columns([1.5,2.6,3])
 
-    with a.container(height=MULTI_SELECT_BOX_HEIGHT, vertical_alignment='center'):
-            cabecera = st.selectbox("Selecciona la cabecera:", CabecerasEnum, index=None,
-                                     placeholder=PLACEHOLDER, key="CABECERA_COMPARACION")
+    with izq.container(height=MULTI_SELECT_BOX_HEIGHT, vertical_alignment='center'):
+            cabecera = st.selectbox(
+                "Selecciona la cabecera:",
+                CabecerasEnum,
+                index=None,
+                placeholder=PLACEHOLDER,
+                key=COMPARACION_CABECERA_KEY
+            )
 
-    tipo_rep = select.multi_select_box_tipo_rep_comparacion(b, "REP_COMPARACION")
-    periodo = select.multi_select_box_periodo(c, "PERIODO")
+    tipo_rep = select.multi_select_box_tipo_rep_comparacion(centro, COMPARACION_TIPO_REP_KEY)
+    periodo = select.multi_select_box_periodo(der, COMPARACION_PERIODO_KEY)
 
     with (st.container(height=600)):
         if cabecera and tipo_rep and periodo:
             with st.spinner("Cargando comparaciones..."):
                 df = _cargar_datos(cabecera, tipo_rep, periodo)
 
-            if not df.empty:
+            if len(df):
                 plot = ConsumoComparacionPlotter(df, cabecera, tipo_rep, periodo).create_plot()
                 st.plotly_chart(plot)
             else:

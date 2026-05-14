@@ -5,13 +5,14 @@ from statsmodels.tsa.holtwinters import ExponentialSmoothing
 from config.constants_common import FILE_STRFTIME_YMD
 from config.enums import RepuestoEnum
 from config.enums_colors import TextModsEnum, ForegroundColorsEnum
-from viewmodels.consumo.prevision.data_vm import PrevisionDataVM
 from viewmodels.consumo.prevision.vm import PrevisionVM
 
 
-def create_forecast(df: pd.DataFrame, tipo_repuesto: RepuestoEnum):
+def create_forecast_local(df: pd.DataFrame, tipo_repuesto: RepuestoEnum):
+    vm = PrevisionVM()
     repuesto = df["Repuesto"].unique()
-
+    
+    
     for rep in repuesto:
         df_rep = df.loc[df["Repuesto"] == rep].copy()
 
@@ -44,7 +45,7 @@ def create_forecast(df: pd.DataFrame, tipo_repuesto: RepuestoEnum):
             data["TipoRepuesto"]    = tipo_repuesto
             data["FechaCompleta"]   = data["FechaCompleta"].dt.date
 
-            PrevisionDataVM().save_df(data)
+            vm.save_data_df(data)
 
             prevision: pd.DataFrame         = prevision.to_frame("ConsumoPrevision").reset_index()
             prevision.columns               = ["FechaCompleta", "ConsumoPrevision"]
@@ -55,7 +56,7 @@ def create_forecast(df: pd.DataFrame, tipo_repuesto: RepuestoEnum):
             prevision["TipoRepuesto"]       = tipo_repuesto
             prevision["FechaCompleta"]      = prevision["FechaCompleta"].dt.date
 
-            PrevisionVM().save_df(prevision)
+            vm.save_df(prevision)
 
         except ValueError as e:
             print(f"""
@@ -66,7 +67,7 @@ def create_forecast(df: pd.DataFrame, tipo_repuesto: RepuestoEnum):
             pass
 
 
-def create_forecast_gs(df: pd.DataFrame, df_stock: pd.DataFrame, tipo_repuesto: str):
+def create_forecast_google_sheet(df: pd.DataFrame, df_stock: pd.DataFrame, tipo_repuesto: str):
     df = df.replace("", pd.NA).dropna(subset=["Mes", "Articulo"])
     nombre_articulos = df["Articulo"].unique()
 
@@ -101,13 +102,13 @@ def create_forecast_gs(df: pd.DataFrame, df_stock: pd.DataFrame, tipo_repuesto: 
             ultima_fecha = data.index[-1]
             prevision.index = pd.date_range(start=ultima_fecha + pd.DateOffset(months=1), periods=12, freq='MS')
 
-            df_prev = prevision.to_frame(name="Prevision").reset_index()
-            df_prev.columns = ["FechaPrevision", "Prevision"]
-            df_prev["Prevision"] = df_prev["Prevision"].round(0).clip(lower=0).astype("float64")
-            df_prev["RestoStock"] = df_stock_art["StockActual"].iloc[0] - df_prev["Prevision"].cumsum()
-            df_prev["RepuestoPrevision"] = articulo
-            df_prev["TipoRepuestoPrevision"] = tipo_repuesto
-            df_prev["FechaPrevision"] = df_prev["FechaPrevision"].dt.strftime(FILE_STRFTIME_YMD)
+            df_prev                             = prevision.to_frame(name="Prevision").reset_index()
+            df_prev.columns                     = ["FechaPrevision", "Prevision"]
+            df_prev["Prevision"]                = df_prev["Prevision"].round(0).clip(lower=0).astype("float64")
+            df_prev["RestoStock"]               = df_stock_art["StockActual"].iloc[0] - df_prev["Prevision"].cumsum()
+            df_prev["RepuestoPrevision"]        = articulo
+            df_prev["TipoRepuestoPrevision"]    = tipo_repuesto
+            df_prev["FechaPrevision"]           = df_prev["FechaPrevision"].dt.strftime(FILE_STRFTIME_YMD)
 
             lista_previsiones.append(df_prev)
         except ValueError as e:

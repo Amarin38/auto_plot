@@ -116,36 +116,16 @@ PIE_FONT_SIZE: int = 24
 REP_TOTALES_CONTEO: int  = 5894
 
 # DISTANCE
-DISTANCE_COLS_SELECT_PLOT   : Tuple[int, int] = (1, 5)
-DISTANCE_COLS_DUAL_PLOT     : Tuple[int, float] = (1, 1.8)
-DISTANTE_COLS_DUAL_SELECT   : Tuple[int, float] = (1, 0.5)
+DISTANCE_COLS_SELECT_PLOT   : Tuple[float, ...] = (1, 5)
+DISTANCE_COLS_DUAL_PLOT     : Tuple[float, float] = (1, 1.8)
+DISTANTE_COLS_DUAL_SELECT   : Tuple[float, float] = (1, 0.5)
 
-DISTANCE_COLS_SELECTBIGGER_PLOT : Tuple[float, int] = (0.70, 3)
-DISTANCE_COLS_PREVISION: Tuple[float, ...] = (1.3, 2, 2)
-DISTANCE_COLS_CENTER_TITLE      : Tuple[float, int, int] = (0.95, 3, 1)
+DISTANCE_COLS_SELECTBIGGER_PLOT : Tuple[float, ...] = (0.70, 3)
+DISTANCE_COLS_PREVISION         : Tuple[float, ...] = (1.3, 2, 2)
+DISTANCE_COLS_CENTER_TITLE      : Tuple[float, ...] = (0.95, 3, 1)
 
 
-# Google Sheets
-PROVEEDORES_SHEET_URL   = "https://docs.google.com/spreadsheets/d/17mJc4DVUqxUHD-3saffT_vgxYHFgkO_vjldXvFNyv80/edit?gid=414215206#gid=414215206"
-PROVEEDORES_COLS = ["NroProv", "RazonSocial", "CUIT", "Localidad", "Mail", "Telefono"]
-PROVEEDORES_WS = "Proveedores"
-
-PREVISION_SHEET_URL = "https://docs.google.com/spreadsheets/d/1v98qsIyWfvvk5jCEPSZ9FiCggv9clf8OdQk_33bUm_0/edit?gid=0#gid=0"
-PREVISION_COLS = ["Mes", "Articulo", "ConsumoMensual", "TipoRepuesto"]
-PREVISION_STOCK_COLS = ["FechaStock", "RepuestoStock", "StockActual"]
-PREVISION_FORECAST_COLS = ["FechaPrevision", "Prevision", "RestoStock", "RepuestoPrevision", "TipoRepuestoPrevision"]
-
-# SESSION KEYS
-INDEX = "_index"
-
-PROVEEDORES_DF_KEY = "proveedores_df"
-PROVEEDORES_PAGER_KEY = "proveedores_pager"
-PROVEEDORES_EDITOR_KEY = "proveedores_editor"
-
-PREVISION_DF_KEY = "prevision_df"
-PREVISION_EDITOR_KEY = "prevision_editor"
-PREVISION_STOCK_EDITOR_KEY = "prevision_stock_editor"
-PREVISION_REPUESTO_KEY = "prevision_repuesto"
-PREVISION_ULTIMO_REPUESTO_KEY = "ULTIMO_REPUESTO"
-PREVISION_DF_STOCK_KEY = "df_stock"
-PREVISION_DF_CONSUMO_KEY = "df_consumo"
+TITULOS_GOMERIA     = ("Consumos", "", "Costos", "", "Diferencias consumos", "", "Diferencias costos")
+ANCHO_COLS_GOMERIA  = (0.30, 0.15, 0.30, 0.20, 0.20, 0.15, 0.20)
+TICK_VALS_GOMERIA   = ("2024", "2025", "DiferenciaConsumos", "DiferenciaCostos")
+TICK_TEXT_GOMERIA   = ("Año 2024", "Año 2025", "Diferencia Consumos", "Diferencia Costos")

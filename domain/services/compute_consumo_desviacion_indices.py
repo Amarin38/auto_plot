@@ -1,9 +1,11 @@
 from datetime import datetime
+from typing import List
 
 import numpy as np
 import pandas as pd
 
-from config.constants_common import TODAY_DATE_FILE_YMD, FILE_STRFTIME_YMD
+from config.constants_common import TODAY_DATE_FILE_YMD, FILE_STRFTIME_YMD, CONSUMO_DESVIACION_CAB_COLS_RENAME, \
+    CONSUMO_DESVIACION_REP_COLS_RENAME, DESVIACIONES_CHOICES
 from utils.common_utils import CommonUtils
 from utils.exception_utils import execute_safely
 from viewmodels.consumo.indice.desviacion.vm import DesviacionIndicesVM
@@ -20,15 +22,13 @@ class DeviationTrend:
     def calculate(self) -> None:
         df = self.indices.get_df()
         fecha = datetime.strptime(TODAY_DATE_FILE_YMD, FILE_STRFTIME_YMD).date()
-        choices = ("Encima", "Muy por encima", "Igual", "Debajo", "Muy por debajo")
 
-        agrupado_repuesto = df.groupby(["Cabecera", "TipoRepuesto"]).agg(
-            {"ConsumoIndice":"mean"}
-        ).rename(columns={"ConsumoIndice":"MediaRepuesto"}).reset_index()
+        agrupado_repuesto = df.groupby(["Cabecera", "TipoRepuesto"]).agg({"ConsumoIndice":"mean"}
+        ).rename(columns=CONSUMO_DESVIACION_REP_COLS_RENAME).reset_index()
 
         agrupado_cabecera = df.groupby(["Cabecera"]).agg(
             {"ConsumoIndice":"mean"}
-        ).rename(columns={"ConsumoIndice": "MediaCabecera"}).reset_index()
+        ).rename(columns=CONSUMO_DESVIACION_CAB_COLS_RENAME).reset_index()
 
 
         # Repuesto
@@ -42,32 +42,20 @@ class DeviationTrend:
         agrupado_repuesto["DesviacionRepuesto"] = self.calc_desviacion(agrupado_repuesto["DiferenciaRepuesto"],
                                                                        agrupado_repuesto["MediaDeMediasRepuesto"])
 
-        conditions = [
-            (agrupado_repuesto["DesviacionRepuesto"] > 0) & (agrupado_repuesto["DesviacionRepuesto"] <= 50),
-            (agrupado_repuesto["DesviacionRepuesto"] > 50),
-            (agrupado_repuesto["DesviacionRepuesto"] == 0),
-            (agrupado_repuesto["DesviacionRepuesto"] < 0) & (agrupado_repuesto["DesviacionRepuesto"] >= -50),
-            (agrupado_repuesto["DesviacionRepuesto"] < -50)
-        ]
-        agrupado_repuesto["DesviacionRepuestoPor"] = np.select(conditions, choices, default="Debajo")
+        conditions = self.get_conditions(agrupado_repuesto, "DesviacionRepuesto")
+        agrupado_repuesto["DesviacionRepuestoPor"] = np.select(conditions, DESVIACIONES_CHOICES, default="Debajo")
 
 
         # Cabecera
+
         agrupado_cabecera["MediaDeMediasCabecera"] = self.calc_media(agrupado_cabecera["MediaCabecera"])
         agrupado_cabecera["DiferenciaCabecera"] = self.calc_diferencia(agrupado_cabecera["MediaCabecera"],
                                                                        agrupado_cabecera["MediaDeMediasCabecera"])
         agrupado_cabecera["DesviacionCabecera"] = self.calc_desviacion(agrupado_cabecera["DiferenciaCabecera"],
                                                                        agrupado_cabecera["MediaDeMediasCabecera"])
 
-        conditions = [
-            (agrupado_cabecera["DesviacionCabecera"] > 0) & (agrupado_cabecera["DesviacionCabecera"] <= 50),
-            (agrupado_cabecera["DesviacionCabecera"] > 50),
-            (agrupado_cabecera["DesviacionCabecera"] == 0),
-            (agrupado_cabecera["DesviacionCabecera"] < 0) & (agrupado_cabecera["DesviacionCabecera"] >= -50),
-            (agrupado_cabecera["DesviacionCabecera"] < -50)
-        ]
-        agrupado_cabecera["DesviacionCabeceraPor"] = np.select(conditions, choices, default="Debajo")
-
+        conditions = self.get_conditions(agrupado_cabecera, "DesviacionCabecera")
+        agrupado_cabecera["DesviacionCabeceraPor"] = np.select(conditions, DESVIACIONES_CHOICES, default="Debajo")
 
         agrupado = pd.merge(agrupado_repuesto, agrupado_cabecera, on="Cabecera")
         agrupado["FechaCompleta"] = fecha
@@ -87,3 +75,13 @@ class DeviationTrend:
     @staticmethod
     def calc_media(a):
         return round(a.mean(),2)
+
+    @staticmethod
+    def get_conditions(df_agrupado: pd.DataFrame, col: str) -> List[bool]:
+        return [
+            (df_agrupado[col] > 0) & (df_agrupado[col] <= 50),
+            (df_agrupado[col] > 50),
+            (df_agrupado[col] == 0),
+            (df_agrupado[col] < 0) & (df_agrupado[col] >= -50),
+            (df_agrupado[col] < -50)
+        ]

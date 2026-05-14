@@ -5,7 +5,7 @@ import pandas as pd
 from pandas._testing import assert_frame_equal
 
 from config.enums import RepuestoEnum
-from domain.services.compute_consumo_prevision import create_forecast
+from domain.services.compute_consumo_prevision import create_forecast_local
 
 
 @patch('domain.services.compute_consumo_prevision.PrevisionDataVM') # mock de los coches
@@ -32,7 +32,7 @@ def test_calcular_indices(mock_prevision_vm, mock_data_vm):
         'Precio': [192744.0] * cantidad_filas_datos
     })
 
-    create_forecast(df, tipo_rep)
+    create_forecast_local(df, tipo_rep)
 
     mock_prevision_vm.return_value.save_df.assert_called_once()  # modk para que no se ejecute el guardado
     df_guardado_prev = mock_prevision_vm.return_value.save_df.call_args[0][0]

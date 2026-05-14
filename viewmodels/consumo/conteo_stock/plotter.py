@@ -19,47 +19,48 @@ class ConteoStockPlotter:
 
     @execute_safely
     def create_plot(self) -> Union[go.Figure, None]:
-        if not self.df.empty:
-            df_grouped = self.df["Resultado"].value_counts().reset_index()
-            df_grouped.columns = ["Resultado", "Cantidad"]
+        if self.df.empty:
+            return None
+
+        df_grouped = self.df["Resultado"].value_counts().reset_index()
+        df_grouped.columns = ["Resultado", "Cantidad"]
 
 
-            fig = go.Figure()
+        fig = go.Figure()
 
-            fig.add_trace(go.Pie(
-                    labels=df_grouped["Resultado"],
-                    values=df_grouped["Cantidad"],
-                    text=df_grouped["Resultado"],
-                    textfont=dict(
-                        size=PIE_FONT_SIZE
-                    ),
-                    name='Conteo',
-                    insidetextorientation='horizontal',
-                    textposition='auto',
-                    customdata=CustomMetricColorsEnum.as_list(),
-                    marker=dict(colors=CustomMetricColorsEnum.as_list()),
-                    hovertemplate="""
+        fig.add_trace(go.Pie(
+                labels=df_grouped["Resultado"],
+                values=df_grouped["Cantidad"],
+                text=df_grouped["Resultado"],
+                textfont=dict(
+                    size=PIE_FONT_SIZE
+                ),
+                name='Conteo',
+                insidetextorientation='horizontal',
+                textposition='auto',
+                customdata=CustomMetricColorsEnum.as_list(),
+                marker=dict(colors=CustomMetricColorsEnum.as_list()),
+                hovertemplate="""
 <b>
 <span style='color:%{customdata}'>%{label}</span><br>
 %{value} (<span style='color:%{customdata}'>%{percent}</span>)
 </b>
 <extra></extra>
 """,
-            ))
+        ))
 
-            self.default.update_layout(fig, "",'', '', PIE_PLOT_HEIGHT, PIE_PLOT_WIDTH)
-            self.hover.hover_x(fig)
+        self.default.update_layout(fig, "",'', '', PIE_PLOT_HEIGHT, PIE_PLOT_WIDTH)
+        self.hover.hover_x(fig)
 
-            fig.update_traces(
-                textinfo='label+percent',
-                textfont=dict(size=20),
-                showlegend=False,
+        fig.update_traces(
+            textinfo='label+percent',
+            textfont=dict(size=20),
+            showlegend=False,
+        )
+
+        fig.update_traces(
+            hoverlabel=dict(
+                align="left"
             )
-
-            fig.update_traces(
-                hoverlabel=dict(
-                    align="left"
-                )
-            )
-            return fig
-        return None
+        )
+        return fig

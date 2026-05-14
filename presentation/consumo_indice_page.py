@@ -61,7 +61,7 @@ def consumo_indice() -> None:
                 with st.spinner(text="Cargando indices..."):
                     df_indice = _cargar_datos_indice(tipo_indice, repuesto)
 
-                if not df_indice.empty:
+                if len(df_indice):
                     figs, titulo = IndexPlotter(df_indice, repuesto).create_plot()
                     other.centered_title(titulo_col, titulo)
 
@@ -90,7 +90,7 @@ def consumo_indice() -> None:
                 with st.spinner("Cargando desviaciones..."):
                     df_desviacion = _cargar_datos_desviacion(repuesto)
 
-            if not df_desviacion.empty:
+            if len(df_desviacion):
                 fig = DeviationPlotter(df_desviacion, repuesto).create_plot()
                 st.plotly_chart(fig)
 

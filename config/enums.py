@@ -139,7 +139,17 @@ class ConsumoComparacionRepuestoEnum(StrEnum):
 class PeriodoComparacionEnum(StrEnum):
     @staticmethod
     def _generate_next_value_(name, start, count, last_values):
-        return name.replace("_", " ").upper()
+        numero = int(name.split('_')[1])
+        texto = name.replace("_", " ").upper()
+
+        return numero, texto
+
+    def __new__(cls, numero, texto):
+        obj = str.__new__(cls, texto)
+        obj._value_ = texto
+
+        obj.numero = numero
+        return obj
 
     @classmethod
     def as_list(cls) -> List[str]:
@@ -192,3 +202,13 @@ class DashEnum(LowercaseStrEnum):
 class RoleEnum(LowercaseStrEnum):
     ADMIN   = auto()
     USER    = auto()
+
+
+class CambiosEnum(LowercaseStrEnum):
+    @staticmethod
+    def _generate_next_value_(name, start, count, last_values):
+        return name.replace("_", " ").capitalize()
+
+    _2_CAMBIOS = auto()
+    _4_CAMBIOS = auto()
+    _6_CAMBIOS = auto()

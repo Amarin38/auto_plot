@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 
+from config.constants_common import PROVEEDORES_COLS, PROVEEDORES_COLS_TYPE, PROVEEDORES_COLS_RENAME
 from domain.entities.datos_proveedores import Proveedores
 from infrastructure.unit_of_work import SQLAlchemyUnitOfWork
 from interfaces.viewmodel import ViewModel
@@ -12,9 +13,10 @@ class ProveedoresVM(ViewModel):
 
 
     def save_df(self, df: pd.DataFrame) -> None:
-        df = df.rename(columns={"Nro prov": "NroProv", "Razon social": "RazonSocial", "Cuit": "CUIT"})
-        df["NroProv"] = df["NroProv"].astype("int64")
-        df["Telefono"] = df["Telefono"].astype(str).replace("nan", None)
+        df = df.rename(columns=PROVEEDORES_COLS_RENAME)
+        df = pd.DataFrame(df.astype(PROVEEDORES_COLS_TYPE))
+
+        df["Telefono"] = df["Telefono"].replace("nan", None)
 
         entities = [
             Proveedores(
@@ -69,13 +71,8 @@ class ProveedoresVM(ViewModel):
 
 
     def backup_google_sheet(self, df_viejo: pd.DataFrame, df_nuevo: pd.DataFrame) -> None:
-        # --- 1. LIMPIEZA CLAVE: Forzamos a que solo se comparen las columnas reales ---
-        columnas_base = ["NroProv", "RazonSocial", "CUIT", "Localidad", "Mail", "Telefono"]
-
-        # Ignoramos cualquier columna extra (como _index) que Streamlit haya inyectado
-        df_viejo = df_viejo[[col for col in columnas_base if col in df_viejo.columns]]
-        df_nuevo = df_nuevo[[col for col in columnas_base if col in df_nuevo.columns]]
-        # -----------------------------------------------------------------------------
+        df_viejo = df_viejo[[col for col in PROVEEDORES_COLS if col in df_viejo.columns]]
+        df_nuevo = df_nuevo[[col for col in PROVEEDORES_COLS if col in df_nuevo.columns]]
 
         idx_comunes = df_viejo.index.intersection(df_nuevo.index)
 

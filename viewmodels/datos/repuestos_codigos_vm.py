@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 
+from config.constants_common import REPUESTOS_CODIGOS_COLS_RENAME, REPUESTOS_CODIGOS_COLS
 from domain.entities.datos_repuestos_codigos import RepuestosCodigos, RepuestosCodigosFiltro
 from infrastructure.unit_of_work import SQLAlchemyUnitOfWork
 from interfaces.viewmodel import ViewModel
@@ -12,7 +13,7 @@ class RepuestosCodigosVM(ViewModel):
 
     @staticmethod
     def formatear_df(df: pd.DataFrame):
-        df = df.rename(columns={"Articulo":"Descripcion", "Codigo":"Codigos"})
+        df = df.rename(columns=REPUESTOS_CODIGOS_COLS_RENAME)
 
         df[["Familia", "Articulo"]] = df["Codigos"].str.strip().str.split(".", expand=True)
 
@@ -20,7 +21,7 @@ class RepuestosCodigosVM(ViewModel):
         articulo = df["Articulo"].str.zfill(5)
         df["CodigosConCero"] = familia.str.cat(articulo, sep=".")
 
-        df = df[["Descripcion", "Deposito", "Familia", "Articulo", "Codigos", "CodigosConCero"]]
+        df = df[REPUESTOS_CODIGOS_COLS]
         return df
 
 
@@ -36,7 +37,7 @@ class RepuestosCodigosVM(ViewModel):
                 Articulo        = row['Articulo'],
                 Codigos         = row['Codigos'],
                 CodigosConCero  = row['CodigosConCero']
-            ) for index, row in df.iterrows()
+            ) for _, row in df.iterrows()
         ]
 
         with self.uow as uow:

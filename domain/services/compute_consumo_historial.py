@@ -1,11 +1,12 @@
 import pandas as pd
 
+from config.constants_common import CONSUMO_HISTORIAL_COLS
 from config.enums import RepuestoEnum
 from viewmodels.consumo.historial.vm import HistorialConsumoVM
 
 
 def compute_historial(df: pd.DataFrame, tipo_repuesto: RepuestoEnum) -> None:
-    df_historial = df.copy()[["Repuesto", "FechaCompleta", "Cantidad"]]
+    df_historial = df.copy()[CONSUMO_HISTORIAL_COLS]
     df_historial["Año"] = df["FechaCompleta"].dt.year
     df_historial["TipoRepuesto"] = tipo_repuesto
 

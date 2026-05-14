@@ -24,60 +24,61 @@ class HistorialPlotter:
 
     @execute_safely
     def create_plot(self) -> tuple[Figure, str] | list[None]:
-        if not self.df.empty:
-            fecha_min = self.df["FechaMin"].iloc()[0]
-            fecha_max = self.df["FechaMax"].iloc()[0]
+        if self.df.empty:
+            return [None, None]
 
-            titulo = f"Historial {self.tipo_rep}" if self.tipo_rep else ""
+        fecha_min = self.df["FechaMin"].iloc()[0]
+        fecha_max = self.df["FechaMax"].iloc()[0]
 
-            x_data = self.df["Año"].to_numpy()
-            y_data = self.df["TotalConsumo"].to_numpy()
+        titulo = f"Historial {self.tipo_rep}" if self.tipo_rep else ""
 
-            fig = go.Figure()
+        x_data = self.df["Año"].to_numpy()
+        y_data = self.df["TotalConsumo"].to_numpy()
 
-            fig.add_trace(go.Bar(
-                x=x_data,
-                y=y_data,
-                name="Historial de consumo",
+        fig = go.Figure()
 
-                textposition="auto",
-                textfont=dict(
-                    size=11,
-                    color='white',
-                    family='Arial'
-                ),
+        fig.add_trace(go.Bar(
+            x=x_data,
+            y=y_data,
+            name="Historial de consumo",
 
-                marker=dict(color=HistorialColorsEnum.VIOLETA),
-                customdata=[HistorialColorsEnum.LILA] * len(x_data),
-                hovertemplate="""
+            textposition="auto",
+            textfont=dict(
+                size=11,
+                color='white',
+                family='Arial'
+            ),
+
+            marker=dict(color=HistorialColorsEnum.VIOLETA),
+            customdata=[HistorialColorsEnum.LILA] * len(x_data),
+            hovertemplate="""
 <b>
 <span style='color:%{customdata}; font-size:15px'>Consumo:</span>
 %{y:.0f}
 </b>
 <extra></extra>
 """
-            ))
+        ))
 
-            fig.add_trace(go.Scatter(
-                x=x_data,
-                y=self.calcular_tendencia(x_data, y_data, self.tendencia),
-                mode="lines",
-                name=f"Tendencia {self.tendencia}",
-                line=dict(color=HistorialColorsEnum.VERDE, dash='dash'),
-                hoverinfo="skip",
-            ))
+        fig.add_trace(go.Scatter(
+            x=x_data,
+            y=self.calcular_tendencia(x_data, y_data, self.tendencia),
+            mode="lines",
+            name=f"Tendencia {self.tendencia}",
+            line=dict(color=HistorialColorsEnum.VERDE, dash='dash'),
+            hoverinfo="skip",
+        ))
 
-            fig.update_xaxes(tickmode="linear")
+        fig.update_xaxes(tickmode="linear")
 
-            self.default.update_layout(fig, f"{fecha_min} | {fecha_max}", "Año", "Historial de consumo")
-            self.hover.hover_junto(fig)
-            self.hover.color_hover_bar_colored(fig, HistorialColorsEnum.LILA)
+        self.default.update_layout(fig, f"{fecha_min} | {fecha_max}", "Año", "Historial de consumo")
+        self.hover.hover_junto(fig)
+        self.hover.color_hover_bar_colored(fig, HistorialColorsEnum.LILA)
 
-            fig.update_layout(
-                margin={"r": 0, "t": 55, "l": 0, "b": 0},
-            )
-            return fig, titulo
-        return [None, None]
+        fig.update_layout(
+            margin={"r": 0, "t": 55, "l": 0, "b": 0},
+        )
+        return fig, titulo
 
     @staticmethod
     @st.cache_data

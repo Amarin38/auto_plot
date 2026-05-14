@@ -2,6 +2,7 @@ from typing import Optional
 
 import pandas as pd
 
+from config.constants_common import MAX_MIN_COLS
 from utils.exception_utils import execute_safely
 from viewmodels.datos.maximos_minimos_vm import MaximosMinimosVM
 
@@ -22,7 +23,7 @@ class MaxMin:
             df_final["Minimo"] = round(div_seis_meses * mult_por_min, 1)
             df_final["Maximo"] = round(div_seis_meses * mult_por_max, 1)
 
-            df_final = df_final[["Familia", "Articulo", "Repuesto", "Minimo", "Maximo"]]
+            df_final = df_final[MAX_MIN_COLS]
 
             MaximosMinimosVM().save_df(df_final)
         

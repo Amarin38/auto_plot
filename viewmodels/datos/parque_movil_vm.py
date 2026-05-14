@@ -6,6 +6,7 @@ import streamlit as st
 import pandas as pd
 from pandas import DataFrame
 
+from config.constants_common import PARQUE_MOVIL_COLS, PARQUE_MOVIL_COLS_TYPE
 from domain.entities.datos_parque_movil import ParqueMovil, ParqueMovilFiltro
 from infrastructure.unit_of_work import SQLAlchemyUnitOfWork
 from interfaces.viewmodel import ViewModel
@@ -20,13 +21,10 @@ def _fetch_base_dataframe(fecha_desde: date, fecha_hasta: date, _uow: SQLAlchemy
     rows = ((
         e.id, e.FechaParqueMovil, e.Linea, e.Interno, e.Dominio, e.Asientos,
         e.Año, e.ChasisMarca, e.ChasisModelo, e.ChasisNum, e.MotorMarca,
-        e.MotorModelo, e.MotorNum, e.Carroceria) for e in entities)
+        e.MotorModelo, e.MotorNum, e.Carroceria
+    ) for e in entities)
 
-    cols = ("id", "FechaParqueMovil", "Linea", "Interno", "Dominio", "Asientos",
-            "Año", "ChasisMarca", "ChasisModelo", "ChasisNum", "MotorMarca",
-            "MotorModelo", "MotorNum", "Carroceria")
-
-    df = pd.DataFrame.from_records(rows, columns=cols)
+    df = pd.DataFrame.from_records(rows, columns=PARQUE_MOVIL_COLS)
 
     df["Linea"]         = df["Linea"].fillna(0)
     df["Interno"]       = df["Interno"].fillna(0)
@@ -41,27 +39,12 @@ def _fetch_base_dataframe(fecha_desde: date, fecha_hasta: date, _uow: SQLAlchemy
     df["MotorNum"]      = df["MotorNum"].fillna("")
     df["Carroceria"]    = df["Carroceria"].fillna("")
 
-    return pd.DataFrame(df.astype({
-            "Linea": "category",
-            "Interno": "uint16",
-            "Dominio": "string[pyarrow]",
-            "Asientos": "category",
-            "Año": "uint16",
-            "ChasisMarca": "category",
-            "ChasisModelo": "category",
-            "ChasisNum": "string[pyarrow]",
-            "MotorMarca": "category",
-            "MotorModelo": "category",
-            "MotorNum": "string[pyarrow]",
-            "Carroceria": "category",
-        })
-    )
+    return pd.DataFrame(df.astype(PARQUE_MOVIL_COLS_TYPE))
 
 
 class ParqueMovilVM(ViewModel):
     def __init__(self, uow: SQLAlchemyUnitOfWork = SQLAlchemyUnitOfWork()) -> None:
         self.uow = uow
-
 
     def save_df(self, df) -> None:
         df["FechaParqueMovil"] = pd.to_datetime(df["FechaParqueMovil"])
@@ -82,7 +65,7 @@ class ParqueMovilVM(ViewModel):
                 MotorModelo      = row['MotorModelo'],
                 MotorNum         = row['MotorNum'],
                 Carroceria       = row['Carroceria'],
-            ) for index, row in df.iterrows()
+            ) for _, row in df.iterrows()
         ]
 
         with self.uow as uow:

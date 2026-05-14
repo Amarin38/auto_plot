@@ -31,7 +31,7 @@ def consumo_historial():
         with st.spinner("Cargando historial de consumo..."):
             df = _cargar_datos(repuesto)
 
-        if not df.empty:
+        if len(df):
             fig, titulo = HistorialPlotter(df, repuesto, tendencia).create_plot()
 
             other.centered_title(titulo_col, titulo)

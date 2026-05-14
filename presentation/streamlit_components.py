@@ -14,12 +14,13 @@ from pandas import DataFrame
 from streamlit.components.v1 import components
 from streamlit_gsheets import GSheetsConnection
 
-from config.constants_common import TODAY_DATE_FILE_DMY, PAGE_STRFTIME_DMY
+from config.constants_common import TODAY_DATE_FILE_DMY, PAGE_STRFTIME_DMY, PREVISION_DF_KEY, PREVISION_DF_CONSUMO_KEY, \
+    PREVISION_DF_STOCK_KEY
 from config.constants_views import SELECT_BOX_HEIGHT, PLACEHOLDER, CENTERED_TITLE_HEIGHT, CENTERED_TITLE_WIDTH, \
-    MULTI_SELECT_BOX_HEIGHT, PREVISION_DF_KEY, PREVISION_DF_CONSUMO_KEY, PREVISION_DF_STOCK_KEY
+    MULTI_SELECT_BOX_HEIGHT
 from config.enums import RepuestoReparadoEnum, RepuestoEnum, CabecerasEnum, TipoDuracionEnum, IndexTypeEnum, \
     ConsumoObligatorioEnum, LoadDataEnum, RoleEnum, ConsumoComparacionRepuestoEnum, PeriodoComparacionEnum
-from domain.services.compute_consumo_prevision import create_forecast_gs
+from domain.services.compute_consumo_prevision import create_forecast_google_sheet
 from utils.common_utils import CommonUtils
 
 
@@ -489,7 +490,7 @@ class GoogleSheetsComponents:
                     st.toast("Calculando previsiones sin cambios manuales...", icon="ℹ️")
 
                 # --- PARTE 2: RECALCULAR Y GUARDAR PREVISIONES ---
-                df_prevision = create_forecast_gs(df_consumo, df_stock, tipo_repuesto)
+                df_prevision = create_forecast_google_sheet(df_consumo, df_stock, tipo_repuesto)
 
                 if df_prevision is not None:
                     self.update_range_with_df(
@@ -568,7 +569,7 @@ class GoogleSheetsComponents:
                         st.toast("Calculando previsiones sin cambios manuales...", icon="ℹ️")
 
                     # --- PARTE 2: RECALCULAR Y GUARDAR PREVISIONES ---
-                    df_prevision = create_forecast_gs(df_consumo, df_stock, tipo_repuesto)
+                    df_prevision = create_forecast_google_sheet(df_consumo, df_stock, tipo_repuesto)
 
                     if df_prevision is not None:
                         self.update_range_with_df(

@@ -72,7 +72,7 @@ authenticator = stauth.Authenticate(
 # -----------------------------------------------------------------------------------------------
 # LOGIN (SOLO SI NO ESTÁ AUTENTICADO)
 # -----------------------------------------------------------------------------------------------
-aux, centro, aux2 = st.columns(3)
+_, centro, _ = st.columns(3)
 
 if not st.session_state.authenticated:
     with centro:

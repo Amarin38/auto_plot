@@ -3,6 +3,7 @@ from typing import Optional
 import numpy as np
 import pandas as pd
 
+from config.constants_common import CONSUMO_INDICE_COLS, CONSUMO_INDICE_COLS_RENAME, GROUPBY_CAB_REP
 from config.enums import IndexTypeEnum, RepuestoEnum
 from utils.exception_utils import execute_safely
 from viewmodels.datos.coches_cabecera_vm import CochesCabeceraVM
@@ -10,36 +11,35 @@ from viewmodels.consumo.indice.vm import IndiceConsumoVM
 from domain.services.data_cleaner_listado import InventoryDataCleaner
 
 
-class Index:
+class ConsumoIndice:
     def __init__(self, ) -> None:
         self.cleaner = InventoryDataCleaner()
 
     @execute_safely
     def calculate(self, df: pd.DataFrame, tipo_rep: RepuestoEnum, tipo_op: IndexTypeEnum, filtro: Optional[str] = None) -> None:
         if df.empty:
-            print('El df está vacío.')
             return
 
         df['FechaCompleta'] = pd.to_datetime(df['FechaCompleta'], format="mixed", errors='coerce')
         fecha_max = df['FechaCompleta'].max()
 
         # Conversión de tipos optimizada
-        df['Cantidad'] = pd.to_numeric(df['Cantidad'], errors='coerce')
-        df['Precio'] = pd.to_numeric(df['Precio'].astype(str).str.replace(',', '.', regex=False), errors='coerce')
+        df['Cantidad']  = pd.to_numeric(df['Cantidad'], errors='coerce')
+        df['Precio']    = pd.to_numeric(df['Precio'].astype(str).str.replace(',', '.', regex=False), errors='coerce')
 
         df['Precio'] = df['Cantidad'] * df['Precio'] 
         
-        grouped = df.groupby(['Cabecera', 'Repuesto']).agg({'Cantidad':'sum', 'Precio':'sum'}).reset_index()
+        grouped = df.groupby(GROUPBY_CAB_REP).agg({'Cantidad':'sum', 'Precio':'sum'}).reset_index()
 
         df_mod = pd.DataFrame()
         if tipo_op == IndexTypeEnum.VEHICULO:
             df_vehicles = CochesCabeceraVM().get_df()
             df_mod = grouped.merge(df_vehicles, on='Cabecera', how='left')
             # Evitar división por cero
-            df_mod['ConsumoIndice'] = np.where(df_mod['CochesDuermen'] != 0, (df_mod['Cantidad'] * 100) / df_mod['CochesDuermen'], 0)
+            df_mod['ConsumoIndice'] = np.where(df_mod['CochesDuermen'] != 0,
+                                               (df_mod['Cantidad'] * 100) / df_mod['CochesDuermen'], 0)
 
-        df_rate = df_mod.rename(columns={'Cantidad':'TotalConsumo',
-                                         'Precio':'TotalCoste'})[['Cabecera', 'Repuesto', 'TotalConsumo', 'TotalCoste', 'ConsumoIndice']]
+        df_rate = df_mod.rename(columns=CONSUMO_INDICE_COLS_RENAME)[CONSUMO_INDICE_COLS]
 
         # Modificaciones
         df_rate['TotalCoste'] = df_rate['TotalCoste'].round(0)

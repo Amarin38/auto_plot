@@ -1,10 +1,8 @@
 import streamlit as st
 
-from config.enums import RepuestoEnum
 from config.enums_colors import CustomMetricColorsEnum
-from config.constants_views import PAG_PRINCIPAL, CONTEO_BOX_HEIGHT, REP_TOTALES_CONTEO, PREVISION_SHEET_URL, \
-    PREVISION_COLS, PREVISION_FORECAST_COLS
-from presentation.streamlit_components import OtherComponents, GoogleSheetsComponents
+from config.constants_views import PAG_PRINCIPAL, CONTEO_BOX_HEIGHT, REP_TOTALES_CONTEO
+from presentation.streamlit_components import OtherComponents
 from viewmodels.consumo.conteo_stock.plotter import ConteoStockPlotter
 from viewmodels.consumo.conteo_stock.vm import ConteoStockVM
 from utils.common_utils import CommonUtils
@@ -28,14 +26,6 @@ def main():
     st.title(PAG_PRINCIPAL)
 
     if "admin" in roles:
-        # with st.spinner("Cargando alertas..."):
-            # google_sheet = GoogleSheetsComponents(PREVISION_SHEET_URL, list(RepuestoEnum), PREVISION_COLS)
-            # df_sheet = google_sheet.connect()
-            # df_prevision = df_sheet[PREVISION_FORECAST_COLS].copy()
-            # print(df_sheet)
-
-        # st.subheader("Alertas de falta 🚨")
-
         with st.spinner("Cargando conteo stock..."):
             df = _cargar_df()
             datos = _cargar_datos()
@@ -45,7 +35,7 @@ def main():
         pie, stats = st.columns([0.8, 1])
 
         with pie.container(height=CONTEO_BOX_HEIGHT):
-            if not df.empty:
+            if len(df):
                 fig = ConteoStockPlotter(df).create_plot()
                 st.plotly_chart(fig)
 

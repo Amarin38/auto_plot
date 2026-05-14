@@ -1,4 +1,6 @@
 from pathlib import Path
+from typing import List
+
 from pandas import Timestamp
 
 # PATHS
@@ -15,6 +17,37 @@ FLOTA_URL               = "https://sistemasanantonio.com.ar/san_antonio/mod_flot
 LICITACIONES_URL        = "https://dota.sistemasanantonio.com.ar/licitaciones/login.aspx"
 
 
+# GOOGLE SHEETS
+PROVEEDORES_SHEET_URL   = "https://docs.google.com/spreadsheets/d/17mJc4DVUqxUHD-3saffT_vgxYHFgkO_vjldXvFNyv80/edit?gid=414215206#gid=414215206"
+PREVISION_SHEET_URL     = "https://docs.google.com/spreadsheets/d/1v98qsIyWfvvk5jCEPSZ9FiCggv9clf8OdQk_33bUm_0/edit?gid=0#gid=0"
+
+
+# WORKSHEETS
+PROVEEDORES_WS          = "Proveedores"
+
+
+# SESSION KEYS
+INDEX = "_index"
+
+PROVEEDORES_DF_KEY = "proveedores_df"
+PROVEEDORES_PAGER_KEY = "proveedores_pager"
+PROVEEDORES_EDITOR_KEY = "proveedores_editor"
+
+PREVISION_DF_KEY = "prevision_df"
+PREVISION_EDITOR_KEY = "prevision_editor"
+PREVISION_STOCK_EDITOR_KEY = "prevision_stock_editor"
+PREVISION_REPUESTO_KEY = "prevision_repuesto"
+PREVISION_ULTIMO_REPUESTO_KEY = "ULTIMO_REPUESTO"
+PREVISION_DF_STOCK_KEY = "df_stock"
+PREVISION_DF_CONSUMO_KEY = "df_consumo"
+
+COMPARACION_CABECERA_KEY = "CABECERA_COMPARACION"
+COMPARACION_TIPO_REP_KEY = "REP_COMPARACION"
+COMPARACION_PERIODO_KEY = "PERIODO"
+
+DURACION_REPUESTO_KEY = "DURACION_REPUESTO_GENERAL"
+
+
 # DATES
 PAGE_STRFTIME_DMY   = "%d/%m/%Y"
 PAGE_STRFTIME_YMD   = "%Y/%m/%d"
@@ -29,17 +62,35 @@ TODAY_DATE_FILE_DMY = Timestamp.today().strftime(FILE_STRFTIME_DMY)
 TODAY_DATE_FILE_YMD = Timestamp.today().strftime(FILE_STRFTIME_YMD)
 TODAY_FOR_DELTA     = Timestamp.today().strftime(DELTA_STRFTIME_YM)
 
-MESES_ESPAÑOL = {1: 'Ene', 2: 'Feb', 3: 'Mar',
-                 4: 'Abr', 5: 'May', 6: 'Jun',
-                 7: 'Jul', 8: 'Ago', 9: 'Sep',
-                 10: 'Oct', 11: 'Nov', 12: 'Dic'}
+MESES_ESPAÑOL = {
+    1: 'Ene', 2: 'Feb', 3: 'Mar',
+    4: 'Abr', 5: 'May', 6: 'Jun',
+    7: 'Jul', 8: 'Ago', 9: 'Sep',
+    10: 'Oct', 11: 'Nov', 12: 'Dic'
+}
 
-# Plots
-TITULOS_GOMERIA     = ("Consumos", "", "Costos", "", "Diferencias consumos", "", "Diferencias costos")
-ANCHO_COLS_GOMERIA  = (0.30, 0.15, 0.30, 0.20, 0.20, 0.15, 0.20)
-TICK_VALS_GOMERIA   = ("2024", "2025", "DiferenciaConsumos", "DiferenciaCostos")
-TICK_TEXT_GOMERIA   = ("Año 2024", "Año 2025", "Diferencia Consumos", "Diferencia Costos")
+VACIO_FECHA = "  -   -"
 
+
+# Filtro
+FILTRO_OBS = "0KM|TRANSMISIÓN|CAMBIO"
+
+# MOVS
+MOV_SALIDAS         : str = "TRD|DES"
+MOV_ENTRADAS        : str = "COM|TRA"
+MOV_DEVOLUCIONES    : str = "DEU|DEC"
+MOV_TRANSFERENCIAS  : str = "TRD"
+
+
+# LISTAS DE DATOS
+INTERNOS_DEVOLUCION: List[str] = ["C0488", "C0489", "C0500", "C0700", "C1400",
+                                  "C4500", "C4900", "C6000", "C6700", "C9500",
+                                  "C9100", "C7000", "C5000", "C9000", "C3000",
+                                  "C4800", "C4700", "U4000", "C6600", "C6400",
+                                  "C0199", "C0599", "C0799", "C1499", "C4599",
+                                  "C4999", "C6099", "C6799", "C9599", "C9199",
+                                  "C7099", "C5099", "C9099", "C3099", "C4899",
+                                  "C4799", "C5599", "C6699", "C6199", "U1111"]
 
 MODELOS_CHASIS = ("MT 12","MT 13","MT 15","MT 17","MT 17 BOOGIE","MT 27","MA 10","MA 15","MA 15" ,"MA 17",
                   "MA 27","1114","1115","1315","1316","1320","1418","1618","1621","1718","1720","1722","13000",
@@ -67,6 +118,8 @@ CARROCERIAS = ("25 DE MAYO","AGRALE","AGUATEROLONGH","AGUILA","ALASA","AUTOBOMBA
                "VAPOR","VENDIDO","VW GOL")
 
 DEPOSITOS = ("OFICINA", "FLAVIO")
+
+DESVIACIONES_CHOICES = ("Encima", "Muy por encima", "Igual", "Debajo", "Muy por debajo")
 
 LOC_PROVEEDORES = ("CAP. FED.", "BANFIELD", "VILLA LYNCH", "LANUS", "DOCK SUD", "LANUS ESTE", "TIGRE", "LOMA HERMOSA",
                    "LLAVALLOL", "OLIVOS", "LANUS OESTE", "AVELLANEDA", "SAN JUSTO", "VILLA MADERO", "VILLA INSUPERABLE",
@@ -101,5 +154,86 @@ LOC_PROVEEDORES = ("CAP. FED.", "BANFIELD", "VILLA LYNCH", "LANUS", "DOCK SUD", 
                    "ABASTO, LA PLATA", "RICARDONE (SANTA FE)", "RAFAELA (SANTA FE)", "VENADO TUERTO (SANTA FE)",
                    "CORONEL DORREGO", "SAN ANDRES", "ZARATE")
 
+# GROUPBY
+GROUPBY_CAB_REP = ["Cabecera", "Repuesto"]
 
 
+# COLUMNAS 
+PARQUE_MOVIL_COLS           = ("id", "FechaParqueMovil", "Linea", "Interno", "Dominio", "Asientos",
+                               "Año", "ChasisMarca", "ChasisModelo", "ChasisNum", "MotorMarca",
+                               "MotorModelo", "MotorNum", "Carroceria")
+CONSUMO_COMPARACION_COLS    = ("Familia", "Articulo", "Repuesto", "movnom",
+                               "Cantidad", "Precio", "FechaCompleta")
+CONSUMO_INDICE_COLS         = ('Cabecera', 'Repuesto', 'TotalConsumo', 'TotalCoste', 'ConsumoIndice')
+CONSUMO_HISTORIAL_COLS      = ("Repuesto", "FechaCompleta", "Cantidad")
+CONSUMO_GARANTIAS_COLS      = ("Cabecera", "Repuesto", "Garantia", "Transferencia")
+
+PREVISION_COLS              = ["Mes", "Articulo", "ConsumoMensual", "TipoRepuesto"]
+PREVISION_STOCK_COLS        = ["FechaStock", "RepuestoStock", "StockActual"]
+PREVISION_FORECAST_COLS     = ["FechaPrevision", "Prevision", "RestoStock", "RepuestoPrevision", "TipoRepuestoPrevision"]
+PREVISION_LOCAL_COLS: List[str] = ["Repuesto", "TipoRepuesto", "FechaCompleta",
+                                   "Año", "Mes", "Tendencia", "TendenciaEstacional"]
+
+PREVISION_LOCAL_DATA_COLS: List[str] = ["Repuesto", "TipoRepuesto", "FechaCompleta", "Año", "Mes",
+                                        "TotalAño", "TotalMes", "Promedio", "IndiceAnual", "IndiceEstacional"]
+
+PROVEEDORES_COLS            = ["NroProv", "RazonSocial", "CUIT", "Localidad", "Mail", "Telefono"]
+REPUESTOS_CODIGOS_COLS      = ("Descripcion", "Deposito", "Familia", "Articulo", "Codigos", "CodigosConCero")
+MAX_MIN_COLS                = ("Familia", "Articulo", "Repuesto", "Minimo", "Maximo")
+
+DEL_COLUMNS_MOVNOM: List[str] = ["artipo", "ficdep", "fictra", "movnom", "ficpro", "pronom",
+                                 "ficrem", "ficfac","corte", "signo", "transfe"]
+
+DEL_COLUMNS_FICMOV: List[str] = ["artipo", "ficdep", "fictra", "ficmov", "ficpro", "pronom",
+                                 "ficrem", "ficfac","corte", "signo", "transfe"]
+
+
+
+# COLUMNAS TIPO
+PARQUE_MOVIL_COLS_TYPE = {
+    "Linea": "category",
+    "Interno": "uint16",
+    "Dominio": "string[pyarrow]",
+    "Asientos": "category",
+    "Año": "uint16",
+    "ChasisMarca": "category",
+    "ChasisModelo": "category",
+    "ChasisNum": "string[pyarrow]",
+    "MotorMarca": "category",
+    "MotorModelo": "category",
+    "MotorNum": "string[pyarrow]",
+    "Carroceria": "category",
+}
+
+CONSUMO_COMPARACION_COLS_TYPE = {
+    "Familia": "uint16",
+    "Articulo": "uint32",
+    "Repuesto": "category",
+    "TipoRepuesto": "category",
+    "Cabecera": str,
+    "Consumo": str,
+    "Gasto": str,
+    "PeriodoID": "category",
+    "FechaTitulo": "category"
+}
+
+PROVEEDORES_COLS_TYPE = {
+    "NroProv": "int64",
+    "RazonSocial": str,
+    "CUIT": str,
+    "Localidad": "category",
+    "Mail": str,
+    "Telefono": str
+}
+
+
+# COLUMNAS RENAME
+CONSUMO_INDICE_COLS_RENAME = {'Cantidad':'TotalConsumo','Precio':'TotalCoste'}
+CONSUMO_COMPARACION_COLS_RENAME = {"movnom": "Cabecera", "Cantidad":"Consumo", "Precio": "Gasto"}
+CONSUMO_GARANTIAS_COLS_RENAME = {"Cantidad": "Garantia"}
+CONSUMO_TRANSFERENCIAS_COLS_RENAME = {"Cantidad": "Transferencia"}
+CONSUMO_FALLAS_GARANTIAS_COLS_RENAME = {"DiasColocado": "PromedioTiempoFalla"}
+PROVEEDORES_COLS_RENAME = {"Nro prov": "NroProv", "Razon social": "RazonSocial", "Cuit": "CUIT"}
+REPUESTOS_CODIGOS_COLS_RENAME = {"Articulo":"Descripcion", "Codigo":"Codigos"}
+CONSUMO_DESVIACION_REP_COLS_RENAME = {"ConsumoIndice":"MediaRepuesto"}
+CONSUMO_DESVIACION_CAB_COLS_RENAME = {"ConsumoIndice": "MediaCabecera"}

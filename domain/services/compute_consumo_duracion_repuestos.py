@@ -2,10 +2,9 @@ import numpy as np
 import pandas as pd
 from scipy.stats import norm
 
-from config.constants_cleaner import FILTRO_OBS
+from config.constants_common import FILTRO_OBS
 from utils.exception_utils import execute_safely
-from viewmodels.consumo.duracion_rep.distri_normal_vm import DistribucionNormalVM
-from viewmodels.consumo.duracion_rep.duracion_vm import DuracionRepuestosVM
+from viewmodels.consumo.duracion_rep.vm import DuracionRepuestosVM
 
 
 class DuracionRepuestos:
@@ -14,6 +13,7 @@ class DuracionRepuestos:
         self.repuesto   = repuesto_rep
         self.tipo_rep   = tipo_duracion
 
+        self.vm = DuracionRepuestosVM()
         self.patentes   = self.df["Patente"].unique()
         self.cabeceras  = self.df["Cabecera"].unique()
 
@@ -48,8 +48,8 @@ class DuracionRepuestos:
         else:
             df_distribucion_normal = self.calcular_distribucion_normal_cabecera(df_duracion, cambios)
 
-        DuracionRepuestosVM().save_df(df_duracion)
-        DistribucionNormalVM().save_df(df_distribucion_normal)
+        self.vm.save_df(df_duracion)
+        self.vm.save_distribucion_df(df_distribucion_normal)
 
 
     @execute_safely

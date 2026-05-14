@@ -2,9 +2,8 @@ from typing import Union, List, Tuple
 
 import pandas as pd
 
-from config.constants_cleaner import INTERNOS_DEVOLUCION, MOV_SALIDAS, MOV_ENTRADAS, MOV_DEVOLUCIONES, \
-    DEL_COLUMNS_MOVNOM, \
-    MOV_TRANSFERENCIAS, DEL_COLUMNS_FICMOV
+from config.constants_common import VACIO_FECHA, DEL_COLUMNS_MOVNOM, DEL_COLUMNS_FICMOV, INTERNOS_DEVOLUCION, \
+    MOV_SALIDAS, MOV_ENTRADAS, MOV_DEVOLUCIONES, MOV_TRANSFERENCIAS
 from config.enums import MovimientoEnum
 from utils.common_utils import CommonUtils
 from utils.exception_utils import execute_safely
@@ -25,19 +24,18 @@ class InventoryDataCleaner:
         """
         df: pd.DataFrame = self.common.concat_dataframes(df_directory)
 
+        if df.empty:
+            return pd.DataFrame()
 
-        if not df.empty:
-            try:
-                df = self.common.delete_by_content(df, "ficfec", ["  -   -"])
-            except (KeyError, IndexError):
-                df = self.common.delete_by_content(df, "FechaCompleta", ["  -   -"])
+        try:
+            df = self.common.delete_by_content(df, "ficfec", [VACIO_FECHA])
+        except (KeyError, IndexError):
+            df = self.common.delete_by_content(df, "FechaCompleta", [VACIO_FECHA])
 
-            df = self._transform(df, tipo)
+        df = self._transform(df, tipo)
+        df = self.common.delete_unnamed_cols(df)
 
-            df = self.common.delete_unnamed_cols(df)
-
-            return self.filter_mov(df, tipo)
-        return pd.DataFrame()
+        return self.filter_mov(df, tipo)
 
 
     @execute_safely

@@ -66,10 +66,10 @@ class FleetDataCleaner:
         mask_maxxforce  = self.df["Motor modelo"].str.contains("MAXFOR 6", na=False)
         mask_mwm        = self.df["Motor modelo"].str.contains("MWM 4", na=False)
 
-        self.df.loc[mask_mt27, "Motor modelo"] = "CUMMINS ISL MT27 6C"
-        self.df.loc[mask_e3, "Motor modelo"] = "CUMMINS 4C/6C E3"
-        self.df.loc[mask_euro_v, "Motor modelo"] = "CUMMINS 6C EURO V"
+        self.df.loc[mask_mt27, "Motor modelo"]      = "CUMMINS ISL MT27 6C"
+        self.df.loc[mask_e3, "Motor modelo"]        = "CUMMINS 4C/6C E3"
+        self.df.loc[mask_euro_v, "Motor modelo"]    = "CUMMINS 6C EURO V"
         self.df.loc[mask_maxxforce, "Motor modelo"] = "MAXXFORCE 6C"
-        self.df.loc[mask_mwm, "Motor modelo"] = "MWM 4C"
+        self.df.loc[mask_mwm, "Motor modelo"]       = "MWM 4C"
 
         return self.df

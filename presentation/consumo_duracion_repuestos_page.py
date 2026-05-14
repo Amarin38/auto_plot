@@ -1,29 +1,33 @@
-from typing import Any
+from typing import Any, Dict
 
 import pandas as pd
 import streamlit as st
 
+from config.constants_common import DURACION_REPUESTO_KEY
+from config.enums import CambiosEnum
 from config.enums_colors import CustomMetricColorsEnum
 from config.constants_views import PAG_DURACION, DURACION_TAB_BOX_HEIGHT, SELECT_BOX_HEIGHT
 from infrastructure.unit_of_work import SQLAlchemyUnitOfWork
-from viewmodels.consumo.duracion_rep.distri_normal_vm import DistribucionNormalVM
-from viewmodels.consumo.duracion_rep.duracion_vm import DuracionRepuestosVM
+from viewmodels.consumo.duracion_rep.vm import DuracionRepuestosVM
 from viewmodels.consumo.duracion_rep.plotter import DuracionRepuestosPlotter
 from utils.exception_utils import execute_safely
 from presentation.streamlit_components import SelectBoxComponents, OtherComponents
 
 
 @st.cache_data(ttl=200, show_spinner=False)
-def _cargar_datos(repuesto):
-    uow = SQLAlchemyUnitOfWork()
+def _cargar_datos(repuesto) -> Dict[str, Any]:
+    vm = DuracionRepuestosVM(uow=SQLAlchemyUnitOfWork())
 
-    duracion = DuracionRepuestosVM(uow=uow).get_df_by_repuesto(repuesto)
-    distribucion = DistribucionNormalVM(uow=uow).get_df_by_repuesto(repuesto)
+    duracion = vm.get_df_by_repuesto(repuesto)
+    distribucion = vm.get_distribucion_df_by_repuesto(repuesto)
 
-    return (duracion, distribucion,
-            calcular_sin_cambios(duracion, "2015"),
-            calcular_sin_cambios(duracion, "2016"),
-            calcular_sin_cambios(duracion, "2017"))
+    return {
+        "duracion": duracion,
+        "distribucion": distribucion,
+        "2015": calcular_sin_cambios(duracion, "2015"),
+        "2016": calcular_sin_cambios(duracion, "2016"),
+        "2017": calcular_sin_cambios(duracion, "2017")
+    }
 
 
 @execute_safely
@@ -58,33 +62,56 @@ def duracion_repuestos():
 
     aux1, filas_col, rep_col, aux3 = st.columns((0.8, 0.5, 0.75, 0.8))
 
-    select_rep = select.select_box_repuesto(rep_col, "DURACION_REPUESTO_GENERAL")
+    select_rep = select.select_box_repuesto(rep_col, DURACION_REPUESTO_KEY)
 
     with filas_col.container(height=SELECT_BOX_HEIGHT, vertical_alignment='center'):
-        select_filas = st.selectbox("Seleccione la cantidad de cambios:", ["2 cambios", "4 cambios", "6 cambios"])
+        select_filas = st.selectbox("Seleccione la cantidad de cambios:", CambiosEnum)
 
-    if select_filas == "4 cambios": filas = 2
-    elif select_filas == "6 cambios": filas = 3
-    else: filas = 1
+    match select_filas:
+        case CambiosEnum._4_CAMBIOS: filas = 2
+        case CambiosEnum._6_CAMBIOS: filas = 3
+        case _: filas = 1
 
     with st.container(height=DURACION_TAB_BOX_HEIGHT):
         if select_rep:
             with st.spinner("Cargando duraciones..."):
-                df_duracion, df_distribucion, cambios_2015, cambios_2016, cambios_2017 = _cargar_datos(select_rep)
+                datos = _cargar_datos(select_rep)
 
-            if not df_duracion.empty and not df_distribucion.empty:
+                df_duracion     = datos["duracion"]
+                df_distribucion = datos["distribucion"]
+                d_2015 = datos["2015"]
+                d_2016 = datos["2016"]
+                d_2017 = datos["2017"]
+
+            if len(df_duracion) and len(df_distribucion):
                 fig = DuracionRepuestosPlotter(df_duracion, df_distribucion, filas).create_plot()
 
-                aux5, col_2015, col_2016, col_2017, aux6 = st.columns((1, 1, 1, 1, 1))
+                _, col_2015, col_2016, col_2017, _ = st.columns((1, 1, 1, 1, 1))
 
-                components.custom_metric(col_2015, "Sin cambios 2015", cambios_2015,
-                                         CustomMetricColorsEnum.ROJO, CustomMetricColorsEnum.ROJO)
+                if any([d_2015, d_2016, d_2017]):
+                    components.custom_metric(
+                        col_2015,
+                        "Sin cambios 2015",
+                        d_2015,
+                        CustomMetricColorsEnum.ROJO,
+                        CustomMetricColorsEnum.ROJO
+                    )
 
-                components.custom_metric(col_2016, "Sin cambios 2016", cambios_2016,
-                                         CustomMetricColorsEnum.AZUL, CustomMetricColorsEnum.AZUL)
+                    components.custom_metric(
+                        col_2016,
+                        "Sin cambios 2016",
+                        d_2016,
+                        CustomMetricColorsEnum.AZUL,
+                        CustomMetricColorsEnum.AZUL
+                    )
 
-                components.custom_metric(col_2017, "Sin cambios 2017", cambios_2017,
-                                         CustomMetricColorsEnum.AMARILLO, CustomMetricColorsEnum.AMARILLO)
+                    components.custom_metric(
+                        col_2017,
+                        "Sin cambios 2017",
+                        d_2017,
+                        CustomMetricColorsEnum.AMARILLO,
+                        CustomMetricColorsEnum.AMARILLO
+                    )
 
                 st.plotly_chart(fig)
 

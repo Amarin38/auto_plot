@@ -6,17 +6,16 @@ from config.enums_colors import CustomMetricColorsEnum
 
 warnings.simplefilter(action='ignore', category=FutureWarning)
 
-from config.constants_common import PAGE_STRFTIME_DMY, FILE_STRFTIME_YMD
+from config.constants_common import PAGE_STRFTIME_DMY, FILE_STRFTIME_YMD, PREVISION_REPUESTO_KEY, PREVISION_SHEET_URL, \
+    PREVISION_COLS, PREVISION_ULTIMO_REPUESTO_KEY, PREVISION_DF_KEY, PREVISION_DF_STOCK_KEY, PREVISION_DF_CONSUMO_KEY, \
+    INDEX, PREVISION_FORECAST_COLS, PREVISION_STOCK_COLS, PREVISION_STOCK_EDITOR_KEY, PREVISION_EDITOR_KEY
 from presentation.streamlit_components import SelectBoxComponents, OtherComponents, GoogleSheetsComponents
 from utils.exception_utils import execute_safely
 
 from viewmodels.consumo.prevision.plotter import PrevisionPlotter
 
-from config.constants_views import (PLOT_BOX_HEIGHT, PAG_PREVISION, PREVISION_DF_KEY, PREVISION_SHEET_URL, PREVISION_COLS,
-                                    PREVISION_EDITOR_KEY, PREVISION_FORECAST_COLS, PREVISION_REPUESTO_KEY,
-                                    PREVISION_ULTIMO_REPUESTO_KEY, INDEX, PREVISION_STOCK_COLS,
-                                    PREVISION_STOCK_EDITOR_KEY, SELECT_BOX_HEIGHT, DISTANCE_COLS_PREVISION, PLACEHOLDER,
-                                    PREVISION_DF_CONSUMO_KEY, PREVISION_DF_STOCK_KEY)
+from config.constants_views import (PLOT_BOX_HEIGHT, PAG_PREVISION, SELECT_BOX_HEIGHT,
+                                    DISTANCE_COLS_PREVISION, PLACEHOLDER)
 
 
 class ConsumoPrevision:
@@ -74,7 +73,7 @@ class ConsumoPrevision:
                     df_data = df_data.dropna(subset=["Mes"])
                     df_prevision = df_prevision.dropna(subset=["FechaPrevision"])
 
-                    if not df_data.empty and not df_prevision.empty:
+                    if len(df_data) and len(df_prevision):
                         figs, titulo = PrevisionPlotter(df_data, df_prevision, df_stock, tipo_repuesto).create_plot()
                         self.other.centered_title(titulo_centro_col, titulo)
 
@@ -127,7 +126,6 @@ class ConsumoPrevision:
                                         border_color=CustomMetricColorsEnum.AMARILLO,
                                         val_color=CustomMetricColorsEnum.AMARILLO
                                     )
-
                     else:
                         self.other.mensaje_falta_rep(centro_col)
 

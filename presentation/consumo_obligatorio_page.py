@@ -23,6 +23,6 @@ def consumo_obligatorio():
         with st.spinner("Cargando consumo obligatorio..."):
             df = _cargar_datos(repuesto)
 
-        if not df.empty:
+        if len(df):
             fig = ConsumoObligatorioPlotter(df).create()
             st.container(height=555).plotly_chart(fig)

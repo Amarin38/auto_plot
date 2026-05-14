@@ -1,8 +1,8 @@
 import streamlit as st
 
-from config.constants_common import LOC_PROVEEDORES
-from config.constants_views import PAG_PROVEEDORES, FLOTA_CONTAINER_HEIGHT, PLACEHOLDER, PROVEEDORES_DF_KEY, \
-    PROVEEDORES_PAGER_KEY, PROVEEDORES_EDITOR_KEY, PROVEEDORES_SHEET_URL, PROVEEDORES_COLS, PROVEEDORES_WS, INDEX
+from config.constants_common import LOC_PROVEEDORES, PROVEEDORES_SHEET_URL, PROVEEDORES_WS, PROVEEDORES_COLS, INDEX, \
+    PROVEEDORES_DF_KEY, PROVEEDORES_PAGER_KEY, PROVEEDORES_EDITOR_KEY
+from config.constants_views import PAG_PROVEEDORES, FLOTA_CONTAINER_HEIGHT, PLACEHOLDER
 from domain.entities.datos_proveedores import Proveedores
 
 from utils.exception_utils import execute_safely
@@ -22,7 +22,7 @@ def proveedores() -> None:
     vm = ProveedoresVM()
     st.title(PAG_PROVEEDORES)
 
-    aux, izq_col, centro_col, der_col, aux2 = st.columns([1, 0.65, 0.70, 0.65, 1])
+    _, izq_col, centro_col, der_col, _ = st.columns([1, 0.65, 0.70, 0.65, 1])
 
     with izq_col.container(height=FLOTA_CONTAINER_HEIGHT):
         nro_prov = st.text_input("Número proveedor", placeholder=PLACEHOLDER, icon="👤")

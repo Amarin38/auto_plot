@@ -14,12 +14,11 @@ from viewmodels.datos.usuarios_codigos_vm import UsuariosCodigosVM
 
 from viewmodels.consumo.conteo_stock.vm import ConteoStockVM
 from viewmodels.datos.parque_movil_vm import ParqueMovilVM
-from viewmodels.gomeria.diferencia_mov_dep_vm import DiferenciaMovimientosEntreDepositosVM
-from viewmodels.gomeria.transferencias_dep_vm import TransferenciasEntreDepositosVM
+from viewmodels.gomeria.transferencias_dep.vm import TransferenciasEntreDepositosVM
 
 from domain.services.compute_consumo_historial import compute_historial
-from domain.services.compute_consumo_prevision import create_forecast
-from domain.services.compute_consumo_indices import Index
+from domain.services.compute_consumo_prevision import create_forecast_local
+from domain.services.compute_consumo_indices import ConsumoIndice
 from domain.services.compute_datos_maximos_minimos import MaxMin
 from domain.services.compute_consumo_duracion_repuestos import DuracionRepuestos
 from domain.services.data_cleaner_listado import InventoryDataCleaner
@@ -83,7 +82,7 @@ def cargar_datos():
                             select_tipo_indice = select.select_box_tipo_indice(st, "LOAD_DATA_TIPO_INDICE_INDICE")
 
                             if select_repuesto and select_tipo_indice:
-                                datos = lambda: Index().calculate(load_data(select_load, uploaded_files),
+                                datos = lambda: ConsumoIndice().calculate(load_data(select_load, uploaded_files),
                                                                   select_repuesto.upper(),
                                                                   select_tipo_indice.upper())
 
@@ -91,7 +90,7 @@ def cargar_datos():
                             select_prevision = select.select_box_tipo_repuesto(st, "LOAD_DATA_TIPO_PREVISION_CONSUMO")
 
                             if select_prevision:
-                                datos = lambda: create_forecast(load_data(select_load, uploaded_files),
+                                datos = lambda: create_forecast_local(load_data(select_load, uploaded_files),
                                                                 select_prevision.upper())
 
                         case LoadDataEnum.HISTORIAL_CONSUMO:
@@ -147,11 +146,11 @@ def cargar_datos():
                                                                   ).calcular_duracion()
 
                         case LoadDataEnum.TRANSFERENCIAS_ENTRE_DEPOSITOS:
-                            datos = lambda: TransferenciasEntreDepositosVM().save_df(
+                            datos = lambda: TransferenciasEntreDepositosVM().save_transferencias_df(
                                             load_data(select_load, uploaded_files))
 
                         case LoadDataEnum.DIFERENCIA_MOVIMIENTOS_ENTRE_DEPOSITOS:
-                            datos = lambda: DiferenciaMovimientosEntreDepositosVM().save_df(
+                            datos = lambda: TransferenciasEntreDepositosVM().save_diferencia_df(
                                             load_data(select_load, uploaded_files))
 
                         case LoadDataEnum.PARQUE_MOVIL:
