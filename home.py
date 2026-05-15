@@ -29,7 +29,7 @@ from config.constants_views import (PAG_PRINCIPAL, PAG_CARGAR_DATOS, PAG_INDICES
                                     PAG_TRANSFERENCIAS_ENTRE_DEPOSITOS, PAG_HISTORIAL, PAG_CONSUMO_OBLIGATORIO,
                                     PAG_COCHES_CABECERA, PAG_PARQUE_MOVIL, PAG_SISSSA, PAG_DOTA_LICITACIONES,
                                     PAG_COMPARACION_CONSUMO, PAG_NUEVO_USUARIO, PAG_USUARIOS_CODIGOS, PAG_REP_CODIGOS,
-                                    PAG_PROVEEDORES)
+                                    PAG_PROVEEDORES, TITULO_LOGIN_HTML, SUBTITULO_LOGIN_HTML, OCULTAR_LOGIN_CSS)
 
 
 # -----------------------------------------------------------------------------------------------
@@ -75,19 +75,28 @@ authenticator = stauth.Authenticate(
 _, centro, _ = st.columns(3)
 
 if not st.session_state.authenticated:
+    st.markdown(OCULTAR_LOGIN_CSS, unsafe_allow_html=True)
+
     with centro:
-        try:
-            authenticator.login(location="main",
-                            clear_on_submit=True,
-                            fields={
-                                "Form name": "Iniciar sesión",
-                                "Username": "Usuario",
-                                "Password": "Contraseña",
-                                "Login": "Entrar"
-                            }
+        with st.container(border=True):
+
+            # 4. Agregamos un encabezado atractivo
+            st.markdown(TITULO_LOGIN_HTML, unsafe_allow_html=True)
+            st.markdown(SUBTITULO_LOGIN_HTML, unsafe_allow_html=True)
+            st.divider()
+
+            try:
+                authenticator.login(location="main",
+                                clear_on_submit=True,
+                                fields={
+                                    "Form name": "Iniciar sesión",
+                                    "Username": "Usuario",
+                                    "Password": "Contraseña",
+                                    "Login": "Entrar"
+                                }
                             )
-        except Exception as e:
-            st.error(e)
+            except Exception as e:
+                st.error(e)
 
         auth_status = st.session_state.get("authentication_status")
 
@@ -102,7 +111,7 @@ if not st.session_state.authenticated:
             st.stop()
 
         else:
-            st.warning("Ingrese sus credenciales.")
+            # st.warning("Ingrese sus credenciales.")
             st.stop()
 
 

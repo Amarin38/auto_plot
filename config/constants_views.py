@@ -68,6 +68,16 @@ CSS_CONTEO = """
             </style>
              """
 
+TITULO_LOGIN_HTML = "<h2 style='text-align: center;'>🚌 Estadísticas Dota</h2>"
+SUBTITULO_LOGIN_HTML = "<p style='text-align: center; color: gray;'>Bienvenido. Ingrese sus credenciales para continuar.</p>"
+
+OCULTAR_LOGIN_CSS = """
+                    <style>
+                    #MainMenu {visibility: hidden;}
+                    footer {visibility: hidden;}
+                    header {visibility: hidden;}
+                    </style>
+                    """
 
 # HEIGHT
 PIE_PLOT_HEIGHT                 : int = 585

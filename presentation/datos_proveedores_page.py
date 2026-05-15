@@ -79,12 +79,12 @@ def proveedores() -> None:
         key=PROVEEDORES_EDITOR_KEY,
         column_order=PROVEEDORES_COLS,
         column_config={
-            "NroProv": st.column_config.NumberColumn("Num. Proveedor", width=1),
-            "RazonSocial": st.column_config.TextColumn("R. Social", width=150),
-            "CUIT": st.column_config.TextColumn("CUIT", width=10),
-            "Localidad": st.column_config.TextColumn("Localidad", width=60),
-            "Mail": st.column_config.TextColumn("Mail", width=60),
-            "Telefono": st.column_config.TextColumn("Telefono", width=10),
+            "NroProv"       : st.column_config.NumberColumn("Num. Proveedor", width=1),
+            "RazonSocial"   : st.column_config.TextColumn("R. Social", width=150),
+            "CUIT"          : st.column_config.TextColumn("CUIT", width=10),
+            "Localidad"     : st.column_config.TextColumn("Localidad", width=60),
+            "Mail"          : st.column_config.TextColumn("Mail", width=60),
+            "Telefono"      : st.column_config.TextColumn("Telefono", width=10),
         }
     )
 
