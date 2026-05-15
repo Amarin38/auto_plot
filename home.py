@@ -1,3 +1,5 @@
+import time
+
 import streamlit as st
 import streamlit_authenticator as stauth
 
@@ -29,7 +31,7 @@ from config.constants_views import (PAG_PRINCIPAL, PAG_CARGAR_DATOS, PAG_INDICES
                                     PAG_TRANSFERENCIAS_ENTRE_DEPOSITOS, PAG_HISTORIAL, PAG_CONSUMO_OBLIGATORIO,
                                     PAG_COCHES_CABECERA, PAG_PARQUE_MOVIL, PAG_SISSSA, PAG_DOTA_LICITACIONES,
                                     PAG_COMPARACION_CONSUMO, PAG_NUEVO_USUARIO, PAG_USUARIOS_CODIGOS, PAG_REP_CODIGOS,
-                                    PAG_PROVEEDORES, TITULO_LOGIN_HTML, SUBTITULO_LOGIN_HTML, OCULTAR_LOGIN_CSS)
+                                    PAG_PROVEEDORES, OCULTAR_LOGIN_CSS, TITULO_SUBTITULO_LOGIN_HTML)
 
 
 # -----------------------------------------------------------------------------------------------
@@ -66,62 +68,63 @@ authenticator = stauth.Authenticate(
     st.session_state.credentials,
     "cookie",
     "4rfVgy7#",
-    cookie_expiry_days=0,
+    cookie_expiry_days=1,
 )
 
 # -----------------------------------------------------------------------------------------------
 # LOGIN (SOLO SI NO ESTÁ AUTENTICADO)
 # -----------------------------------------------------------------------------------------------
-_, centro, _ = st.columns(3)
 
 if not st.session_state.authenticated:
     st.markdown(OCULTAR_LOGIN_CSS, unsafe_allow_html=True)
+    _, centro, _ = st.columns([1, 1.2, 1])
 
     with centro:
-        with st.container(border=True):
+        st.markdown(TITULO_SUBTITULO_LOGIN_HTML, unsafe_allow_html=True)
+        st.divider()
+        try:
+            authenticator.login(
+                location="main",
+                clear_on_submit=True,
+                fields={
+                    "Form name": "",
+                    "Username": "Usuario",
+                    "Password": "Contraseña",
+                    "Login": "Entrar"
+                }
+            )
+        except Exception as e:
+            st.error(e)
 
-            # 4. Agregamos un encabezado atractivo
-            st.markdown(TITULO_LOGIN_HTML, unsafe_allow_html=True)
-            st.markdown(SUBTITULO_LOGIN_HTML, unsafe_allow_html=True)
-            st.divider()
+    auth_status = st.session_state.get("authentication_status")
+    if auth_status is True:
+        st.session_state.authenticated = True
+        st.session_state.username = st.session_state.get("username")
+        st.session_state.name = st.session_state.get("name")
+        st.rerun()
+    elif auth_status is False:
+        OtherComponents().flash_alert_error("Usuario o contraseña incorrectos.")
+        st.stop()
+    else:
+        st.stop()
 
-            try:
-                authenticator.login(location="main",
-                                clear_on_submit=True,
-                                fields={
-                                    "Form name": "Iniciar sesión",
-                                    "Username": "Usuario",
-                                    "Password": "Contraseña",
-                                    "Login": "Entrar"
-                                }
-                            )
-            except Exception as e:
-                st.error(e)
 
-        auth_status = st.session_state.get("authentication_status")
+# import traceback
 
-        if auth_status is True:
-            st.session_state.authenticated = True
-            st.session_state.username = st.session_state.get("username")
-            st.session_state.name = st.session_state.get("name")
-            st.rerun()
-
-        elif auth_status is False:
-            OtherComponents().flash_alert_error("Usuario o contraseña incorrectos.")
-            st.stop()
-
-        else:
-            # st.warning("Ingrese sus credenciales.")
-            st.stop()
-
+            # with open("debug_log.txt", "a") as f:
+            #     f.write("=== with centro ejecutado ===\n")
+            #     traceback.print_stack(file=f)
 
 # -----------------------------------------------------------------------------------------------
 # POST LOGIN (NO SE REEJECUTA)
 # -----------------------------------------------------------------------------------------------
-with centro:
-    if not st.session_state.welcome_shown:
-        OtherComponents().flash_alert_success("Accedió correctamente.")
-        st.session_state.welcome_shown = True
+else:
+    _, centro, _ = st.columns([1, 1.2, 1])
+
+    with centro:
+        if not st.session_state.welcome_shown:
+            OtherComponents().flash_alert_success("Accedió correctamente.")
+            st.session_state.welcome_shown = True
 
 
 # Cargar roles solo una vez
