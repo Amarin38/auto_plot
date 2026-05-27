@@ -57,6 +57,7 @@ class ConsumoPrevision:
                     _, titulo_centro_col, _ = st.columns((0.5, 1.2, 0.5))
                     _, centro_col, _ = st.columns((0.5, 3, 0.5))
 
+                    # Ajusto el índice
                     if INDEX in df_sheet.columns:
                         df_sheet = df_sheet.drop(columns=[INDEX])
 

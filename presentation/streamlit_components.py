@@ -1,4 +1,5 @@
 import base64
+import re
 from datetime import date, datetime
 import io
 import time
@@ -7,7 +8,7 @@ import gspread
 import pandas as pd
 import streamlit as st
 
-from typing import Union, Optional, Any, List, Tuple
+from typing import Union, Optional, Any, List, Tuple, Callable
 
 from gspread import WorksheetNotFound
 from pandas import DataFrame
@@ -49,8 +50,13 @@ class ButtonComponents:
 
 
     @st.fragment
-    def download_df(self, df, file_name: str, col = None):
-        boton = st.button("Descargar Excel 💾", type="primary", use_container_width=True)
+    def download_df(self, df, key, file_name: str, col = None):
+        boton = st.button(
+            "Descargar Excel 💾",
+            type="primary",
+            use_container_width=True,
+            key=key
+        )
 
         if boton:
             with st.spinner("Descargando archivo..."):
@@ -69,9 +75,6 @@ class ButtonComponents:
                     """
                 st.components.v1.html(js, height=0)
             st.toast("Descarga enviada al navegador", icon="📥")
-
-
-
 
 
 class SelectBoxComponents:
@@ -277,7 +280,7 @@ class OtherComponents:
         boton_descargar, aux1, aux2 = st.columns([1, 2, 2])
 
         with boton_descargar:
-            ButtonComponents().download_df(df, f"{key.replace("_", " ")} {TODAY_DATE_FILE_DMY}.xlsx")
+            ButtonComponents().download_df(df, key, f"{key.replace("_", " ")} {TODAY_DATE_FILE_DMY}.xlsx")
 
         df_key = f"{key}_df"
         page_key = f"{key}_page"
@@ -456,71 +459,11 @@ class GoogleSheetsComponents:
                 st.toast("No hay cambios para guardar (Asegúrate de presionar ENTER tras editar una celda).", icon="⚠️")
 
 
-    def save_and_update_forecast2(self, df_modificado, df_consumo, df_stock, tipo_repuesto, df_key, editor_key,
-                                 celda_inicio, col_fin, columnas_a_guardar) -> None:
-        """
-        Guarda los cambios de una tabla específica (Stock o Consumo) y despues recalcula
-        automáticamente las previsiones usando los datos más recientes.
-        """
-        df_original = st.session_state.get(df_key)
-        hubo_cambios = False
-        cambios = st.session_state.get(editor_key, {})
-
-        if cambios.get("edited_rows") or cambios.get("added_rows") or cambios.get("deleted_rows"):
-            hubo_cambios = True
-        elif df_original is not None and len(df_modificado) != len(df_original):
-            hubo_cambios = True
-
-        with st.spinner("Guardando datos y recalculando pronósticos..."):
-            try:
-                # --- PARTE 1: GUARDAR CAMBIOS DE LA TABLA (Si los hay) ---
-                if hubo_cambios:
-                    df_recortado = df_modificado[columnas_a_guardar]
-                    rango_a_limpiar = f"{celda_inicio}:{col_fin}"
-
-                    self.update_range_with_df(
-                        df=df_recortado,
-                        celda_inicial=celda_inicio,
-                        rango_tabla=rango_a_limpiar
-                    )
-
-                    st.session_state[df_key] = df_modificado
-                    st.toast("¡Tabla de datos actualizada con éxito!", icon="💾")
-                else:
-                    st.toast("Calculando previsiones sin cambios manuales...", icon="ℹ️")
-
-                # --- PARTE 2: RECALCULAR Y GUARDAR PREVISIONES ---
-                df_prevision = create_forecast_google_sheet(df_consumo, df_stock, tipo_repuesto)
-
-                if df_prevision is not None:
-                    self.update_range_with_df(
-                        df=df_prevision,
-                        celda_inicial='J2',
-                        rango_tabla='J2:N'
-                    )
-                    st.toast(f"Previsiones de {tipo_repuesto} sincronizadas", icon="✅")
-                else:
-                    st.warning("No se pudieron calcular las previsiones (revisa si hay datos suficientes).")
-
-                # --- PARTE 3: LIMPIEZA TOTAL Y RECARGA ---
-                st.cache_data.clear()
-
-                if editor_key in st.session_state:
-                    del st.session_state[editor_key]
-                if df_key in st.session_state:
-                    del st.session_state[df_key]
-
-                st.rerun()
-
-            except Exception as e:
-                st.error(f"Error en el proceso de actualización unificado: {e}")
-
-
     def save_and_update_forecast(self, df_filtrado: pd.DataFrame, celda_inicio: str, col_fin: str,
                                        columnas_a_guardar: Union[List, Tuple], tipo_repuesto: RepuestoEnum,
                                        dynamic_editor_key: str, button_key: str) -> None:
         """
-        Guarda los cambios de una tabla específica (Stock o Consumo) y despues recalcula
+        Guarda los cambios de una tabla específica y despues recalcula
         automáticamente las previsiones usando los datos más recientes.
         """
         cols_fechas = ("Mes", "FechaStock", "FechaPrevision")
@@ -594,6 +537,245 @@ class GoogleSheetsComponents:
                 except Exception as e:
                     st.error(f"Error en el proceso de actualización unificado: {e}")
 
+    def save_partial(
+            self,
+            df_paginado: pd.DataFrame,
+            df_key: str,
+            editor_key: str,
+            rango: str = "A2:Z",  # ej: "B3:D2000" — define cols y fila de inicio
+            date_cols: Union[List, Tuple] = (),
+            date_fmt: str = "%Y-%m-%d",
+            after_save: Callable | None = None,
+            button_label: str = "💾 Guardar cambios",
+            button_col = st,
+            button_key: str | None = None,
+    ) -> None:
+        """
+        Guarda cambios escribiendo por rango en Google Sheets.
+
+        - Ediciones/adiciones → batch_update solo con las filas afectadas.
+        - Eliminaciones       → reescritura completa del rango (inevitable).
+
+        Params:
+            rango       : Rango A1 que abarca los datos, ej. "B3:D2000".
+                          La columna inicial y la fila inicial se extraen de aquí.
+                          La columna final define qué columnas del DataFrame se guardan.
+        """
+
+        def _parse_rango(rango: str) -> tuple[str, int, str, int | None]:
+            """'B3:D2000' → (col_ini='B', fila_ini=3, col_fin='D', fila_fin=2000)"""
+            match = re.fullmatch(
+                r"([A-Z]+)(\d+):([A-Z]+)(\d*)", rango.upper().replace(" ", "")
+            )
+            if not match:
+                raise ValueError(f"Formato de rango inválido: {rango!r}  (esperado ej. 'B3:D2000')")
+            col_ini, fila_ini, col_fin, fila_fin = match.groups()
+            return col_ini, int(fila_ini), col_fin, int(fila_fin) if fila_fin else None
+
+        def _col_a_num(col: str) -> int:
+            """'A'→1, 'B'→2, 'AA'→27"""
+            n = 0
+            for ch in col.upper():
+                n = n * 26 + (ord(ch) - 64)
+            return n
+
+        def _num_a_col(n: int) -> str:
+            """1→'A', 27→'AA'"""
+            s = ""
+            while n > 0:
+                n, r = divmod(n - 1, 26)
+                s = chr(65 + r) + s
+            return s
+
+        def _fmt(valor, col_name: str) -> str:
+            if col_name in date_cols:
+                if isinstance(valor, (date, datetime, pd.Timestamp)):
+                    return valor.strftime(date_fmt)
+                if isinstance(valor, str) and valor:
+                    try:
+                        return pd.to_datetime(valor, dayfirst=True).strftime(date_fmt)
+                    except Exception:
+                        pass
+            if pd.isna(valor) if not isinstance(valor, str) else False:
+                return ""
+            if isinstance(valor, float) and valor == int(valor):
+                return str(int(valor))
+            return str(valor)
+
+        def _fila_a_values(df_maestro: pd.DataFrame, idx_real: int, columnas: list[str]) -> list:
+            return [_fmt(df_maestro.loc[idx_real, col], col) for col in columnas]
+
+        # ── Botón ────────────────────────────────────────────────────────────────
+
+        kwargs = {"key": button_key} if button_key else {}
+        if not button_col.button(button_label, **kwargs):
+            return
+
+        cambios = st.session_state.get(editor_key, {})
+        edited = cambios.get("edited_rows", {})
+        added = cambios.get("added_rows", [])
+        deleted = cambios.get("deleted_rows", [])
+
+        if not (edited or added or deleted):
+            st.toast(
+                "No hay cambios para guardar "
+                "(Asegúrate de presionar ENTER tras editar una celda).",
+                icon="⚠️",
+            )
+
+            if after_save:
+                after_save(st.session_state[df_key].copy())
+
+            st.toast(
+                "Recalculando máximos y mínimos...",
+                icon="🔃",
+            )
+
+            return
+
+        # ── Parsear rango ────────────────────────────────────────────────────────
+
+        col_ini_letra, fila_ini, col_fin_letra, _ = _parse_rango(rango)
+        col_ini_num = _col_a_num(col_ini_letra)
+        col_fin_num = _col_a_num(col_fin_letra)
+        n_cols = col_fin_num - col_ini_num + 1  # cantidad de columnas del rango
+
+        df_maestro: pd.DataFrame = st.session_state[df_key].copy()
+        # Solo las columnas que entran en el rango definido
+        columnas = df_maestro.columns.tolist()[:n_cols]
+
+        with st.spinner("Guardando cambios..."):
+            try:
+                creds_dict = dict(st.secrets["connections"]["gsheets"])
+                gc = gspread.service_account_from_dict(creds_dict)
+                sh = gc.open_by_url(self.url)
+                ws = sh.worksheet(self.ws)
+
+                batch = []  # [{"range": "B5:D5", "values": [[v1, v2, v3]]}, ...]
+
+                # ── 1. EDICIONES ─────────────────────────────────────────────
+                if edited:
+                    for idx_pantalla, modificaciones in edited.items():
+                        idx_real = df_paginado.index[int(idx_pantalla)]
+                        fila_sheet = fila_ini + int(idx_real)
+
+                        # Aplicar cambio al maestro en memoria
+                        for col, valor in modificaciones.items():
+                            df_maestro.loc[idx_real, col] = valor
+
+                        # Reconstruir la fila completa dentro del rango de columnas
+                        values = _fila_a_values(df_maestro, idx_real, columnas)
+                        rango_fila = f"{col_ini_letra}{fila_sheet}:{col_fin_letra}{fila_sheet}"
+                        batch.append({"range": rango_fila, "values": [values]})
+
+                    ws.batch_update(batch, value_input_option="USER_ENTERED")
+                    batch = []
+
+                # ── 2. ADICIONES ─────────────────────────────────────────────
+                if added:
+                    primer_idx = len(df_maestro)
+                    nuevas = pd.DataFrame(added)
+                    df_maestro = pd.concat([df_maestro, nuevas], ignore_index=True)
+
+                    for offset in range(len(added)):
+                        idx_real = primer_idx + offset
+                        fila_sheet = fila_ini + idx_real
+                        values = _fila_a_values(df_maestro, idx_real, columnas)
+                        rango_fila = f"{col_ini_letra}{fila_sheet}:{col_fin_letra}{fila_sheet}"
+                        batch.append({"range": rango_fila, "values": [values]})
+
+                    ws.batch_update(batch, value_input_option="USER_ENTERED")
+
+                # ── 3. ELIMINACIONES (reescritura completa del rango) ─────────
+                if deleted:
+                    indices_reales = [df_paginado.index[int(i)] for i in deleted]
+                    df_maestro = df_maestro.drop(indices_reales).reset_index(drop=True)
+
+                    # Formatear y construir values completos
+                    df_export = df_maestro[columnas].copy()
+                    for col in columnas:
+                        if col in date_cols:
+                            df_export[col] = df_export[col].apply(
+                                lambda x: x.strftime(date_fmt)
+                                if isinstance(x, (date, datetime, pd.Timestamp)) else x
+                            )
+                    df_export = df_export.fillna("").astype(str)
+                    # Limpiar .0 residuales
+                    df_export = df_export.replace(r"\.0$", "", regex=True)
+
+                    values_data = df_export.values.tolist()
+
+                    ws.batch_clear([rango])
+                    if values_data:
+                        celda_inicio = f"{col_ini_letra}{fila_ini}"
+                        ws.update(
+                            range_name=celda_inicio,
+                            values=values_data,
+                            value_input_option="USER_ENTERED",
+                        )
+
+                # ── 4. PERSISTIR Y RECARGAR ───────────────────────────────────
+                st.session_state[df_key] = df_maestro
+                st.toast("¡Cambios guardados en Google Sheets!", icon="💾")
+
+                if after_save:
+                    after_save(df_maestro)
+
+                if editor_key in st.session_state:
+                    del st.session_state[editor_key]
+                st.cache_data.clear()
+                st.rerun()
+
+            except Exception as e:
+                st.toast(f"Error al escribir en Google Sheets: {e}", icon="❌")
+
+    def save_full(self, df: pd.DataFrame, rango: str, date_cols: list = None) -> None:
+        """
+        Sobrescribe un rango completo en Google Sheets con el DataFrame proporcionado.
+        Ideal para guardar datos calculados por código de forma automática.
+        """
+        # Por defecto, asumimos que estas dos pueden venir como fecha en tu app
+        if date_cols is None:
+            date_cols = ["Fecha", "FechaStock"]
+
+        with st.spinner("Guardando tabla calculada en Google Sheets..."):
+            try:
+                creds_dict = dict(st.secrets["connections"]["gsheets"])
+                gc = gspread.service_account_from_dict(creds_dict)
+                sh = gc.open_by_url(self.url)
+                ws = sh.worksheet(self.ws)
+
+                df_export = df.copy()
+
+                for col in date_cols:
+                    if col in df_export.columns:
+                        df_export[col] = pd.to_datetime(df_export[col], errors='coerce')
+                        df_export[col] = df_export[col].dt.strftime('%Y-%m-%d')
+                        df_export[col] = df_export[col].fillna("")
+
+                df_export = df_export.fillna("").astype(str)
+                df_export = df_export.replace(r"\.0$", "", regex=True)
+                df_export = df_export.replace("nan", "")
+                df_export = df_export.replace("NaT", "")
+
+                values_data = df_export.values.tolist()
+
+                match = re.fullmatch(r"([A-Z]+)(\d+):.*", rango.upper().replace(" ", ""))
+                if not match:
+                    raise ValueError(f"Formato de rango inválido: {rango}")
+                celda_inicio = f"{match.group(1)}{match.group(2)}"
+
+                ws.batch_clear([rango])
+                if values_data:
+                    ws.update(
+                        range_name=celda_inicio,
+                        values=values_data,
+                        value_input_option="USER_ENTERED",
+                    )
+                st.toast("¡Cálculos guardados correctamente!", icon="✅")
+
+            except Exception as e:
+                st.toast(f"Error al escribir los cálculos en Google Sheets: {e}", icon="❌")
 
     @staticmethod
     def update_filtered_df(dynamic_key: str, main_df_key: str, filtered_df: pd.DataFrame) -> pd.DataFrame:

@@ -20,14 +20,14 @@ LICITACIONES_URL        = "https://dota.sistemasanantonio.com.ar/licitaciones/lo
 # GOOGLE SHEETS
 PROVEEDORES_SHEET_URL   = "https://docs.google.com/spreadsheets/d/17mJc4DVUqxUHD-3saffT_vgxYHFgkO_vjldXvFNyv80/edit?gid=414215206#gid=414215206"
 PREVISION_SHEET_URL     = "https://docs.google.com/spreadsheets/d/1v98qsIyWfvvk5jCEPSZ9FiCggv9clf8OdQk_33bUm_0/edit?gid=0#gid=0"
-
+MAX_MIN_SHEET_URL       = "https://docs.google.com/spreadsheets/d/1LKY8enH8MzIuQexQsih2LwHVe2pSGX4mkJMWZC1oKcE/edit?gid=0#gid=0"
 
 # WORKSHEETS
 PROVEEDORES_WS          = "Proveedores"
 
 
 # SESSION KEYS
-INDEX = "_index"
+INDEX = "_index_prev"
 
 PROVEEDORES_DF_KEY = "proveedores_df"
 PROVEEDORES_PAGER_KEY = "proveedores_pager"
@@ -47,6 +47,13 @@ COMPARACION_PERIODO_KEY = "PERIODO"
 
 DURACION_REPUESTO_KEY = "DURACION_REPUESTO_GENERAL"
 
+MAX_MIN_CABECERA_KEY    = "MAX_MIN_CABECERA"
+MAX_MIN_DF_KEY          = "MAX_MIN_DF"
+MAX_MIN_DF_STOCK_KEY     = "MAX_MIN_DF_DATA"
+MAX_MIN_TABLE_KEY       = "MAX_MIN_TABLE"
+MAX_MIN_EDITOR_KEY      = "MAX_MIN_EDITOR"
+MAX_MIN_PAGER_KEY       = "MAX_MIN_PAGER"
+MAX_MIN_DATA_PAGER_KEY   = "MAX_MIN_DATA_PAGER"
 
 # DATES
 PAGE_STRFTIME_DMY   = "%d/%m/%Y"
@@ -174,12 +181,15 @@ PREVISION_FORECAST_COLS     = ["FechaPrevision", "Prevision", "RestoStock", "Rep
 PREVISION_LOCAL_COLS: List[str] = ["Repuesto", "TipoRepuesto", "FechaCompleta",
                                    "Año", "Mes", "Tendencia", "TendenciaEstacional"]
 
+MAX_MIN_STOCK_COLS           = ["FamiliaStock", "ArticuloStock", "DescripcionStock", "CabeceraStock", "FechaStock", "Stock"]
+MAX_MIN_SHEET_COLS           = ["Familia", "Articulo", "Descripcion", "Cabecera", "Fecha", "Minimo", "Maximo"]
+
+
 PREVISION_LOCAL_DATA_COLS: List[str] = ["Repuesto", "TipoRepuesto", "FechaCompleta", "Año", "Mes",
                                         "TotalAño", "TotalMes", "Promedio", "IndiceAnual", "IndiceEstacional"]
 
 PROVEEDORES_COLS            = ["NroProv", "RazonSocial", "CUIT", "Localidad", "Mail", "Telefono"]
 REPUESTOS_CODIGOS_COLS      = ("Descripcion", "Deposito", "Familia", "Articulo", "Codigos", "CodigosConCero")
-MAX_MIN_COLS                = ("Familia", "Articulo", "Repuesto", "Minimo", "Maximo")
 
 DEL_COLUMNS_MOVNOM: List[str] = ["artipo", "ficdep", "fictra", "movnom", "ficpro", "pronom",
                                  "ficrem", "ficfac","corte", "signo", "transfe"]

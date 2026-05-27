@@ -1,29 +1,36 @@
+import datetime
 from typing import Optional
 
+import numpy as np
 import pandas as pd
 
-from config.constants_common import MAX_MIN_COLS
 from utils.exception_utils import execute_safely
-from viewmodels.datos.maximos_minimos_vm import MaximosMinimosVM
 
-"""
-- Se descargan los consumos de x fecha hacia atrás de los productos que se queira evaluar el  maximos_minimos.
-- Se procesa el file y quedan solo las salidas.
-- Se pasa por el programa
-"""
+@execute_safely
+def calculate_maxmin(df: Optional[pd.DataFrame] = None, mult_por_min: float = 1, mult_por_max: float = 2) -> pd.DataFrame:
+    if df is None or df.empty:
+        return pd.DataFrame()
 
+    keys = ["FamiliaStock", "ArticuloStock", "DescripcionStock", "CabeceraStock"]
+    df["Stock"] = pd.to_numeric(df["Stock"], errors="coerce")
+    df_copy = df.copy()[keys + ["FechaStock", "Stock"]]
 
-class MaxMin:
-    @execute_safely
-    def calculate(self, df: Optional[pd.DataFrame] = None, mult_por_min: float = 2, mult_por_max: float = 3) -> None:
-        if df is not None:
-            df_final = df.groupby(["Familia", "Articulo", "Repuesto"]).agg({"Cantidad":"sum"}).reset_index()
-            div_seis_meses = round(df_final["Cantidad"] / 6, 1)
+    df_grouped = df_copy.groupby(keys).agg({"Stock":"mean"}).reset_index()
+    df_grouped = df_grouped.rename(columns={
+        "FamiliaStock": "Familia",
+        "ArticuloStock": "Articulo",
+        "DescripcionStock": "Descripcion",
+        "CabeceraStock": "Cabecera",
+        "FechaStock": "Fecha",
+    })
 
-            df_final["Minimo"] = round(div_seis_meses * mult_por_min, 1)
-            df_final["Maximo"] = round(div_seis_meses * mult_por_max, 1)
+    df_grouped["Fecha"] = pd.to_datetime(datetime.date.today(), errors="coerce", format="%Y-%m-%d")
+    div_seis_meses = round(df_grouped["Stock"] / 1, 1)
+    df_grouped["Minimo"] = np.ceil(div_seis_meses * mult_por_min)
+    df_grouped["Maximo"] = np.ceil(div_seis_meses * mult_por_max)
+    df_grouped["Cabecera"] = df_grouped["Cabecera"].fillna("").astype(str)
+    df_grouped["Descripcion"] = df_grouped["Descripcion"].fillna("").astype(str)
+    df_grouped = df_grouped.drop("Stock", axis=1)
+    #df_grouped.
 
-            df_final = df_final[MAX_MIN_COLS]
-
-            MaximosMinimosVM().save_df(df_final)
-        
+    return df_grouped

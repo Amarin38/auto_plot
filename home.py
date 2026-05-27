@@ -1,5 +1,3 @@
-import time
-
 import streamlit as st
 import streamlit_authenticator as stauth
 
@@ -107,7 +105,6 @@ if not st.session_state.authenticated:
         st.stop()
     else:
         st.stop()
-
 
 # import traceback
 

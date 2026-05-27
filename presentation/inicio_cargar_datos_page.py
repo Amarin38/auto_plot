@@ -19,7 +19,6 @@ from viewmodels.gomeria.transferencias_dep.vm import TransferenciasEntreDeposito
 from domain.services.compute_consumo_historial import compute_historial
 from domain.services.compute_consumo_prevision import create_forecast_local
 from domain.services.compute_consumo_indices import ConsumoIndice
-from domain.services.compute_datos_maximos_minimos import MaxMin
 from domain.services.compute_consumo_duracion_repuestos import DuracionRepuestos
 from domain.services.data_cleaner_listado import InventoryDataCleaner
 
