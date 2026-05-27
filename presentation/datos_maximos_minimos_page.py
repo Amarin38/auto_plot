@@ -52,36 +52,54 @@ def maximos_minimos():
         dynamic_key_max_min         = f"{MAX_MIN_TABLE_KEY}_{cabecera_seleccionada}"
         dynamic_key_stock_max_min   = f"{MAX_MIN_EDITOR_KEY}_{cabecera_seleccionada}"
 
+        # -------------------------------------------------------------------------------
+
         df_max_min_filtrado = st.session_state[MAX_MIN_DF_KEY][
             st.session_state[MAX_MIN_DF_KEY]["Cabecera"] == cabecera_seleccionada
         ].copy()
 
-        df_stock_filtrado = st.session_state[MAX_MIN_DF_STOCK_KEY][
-            st.session_state[MAX_MIN_DF_STOCK_KEY]["CabeceraStock"] == cabecera_seleccionada
-        ].copy()
-
-        df_max_min_filtrado["Fecha"] = pd.to_datetime(
+        df_max_min_filtrado["Descripcion"]  = df_max_min_filtrado["Descripcion"].fillna("").astype(str)
+        df_max_min_filtrado["Cabecera"]     = df_max_min_filtrado["Cabecera"].astype("category")
+        df_max_min_filtrado["Familia"]      = df_max_min_filtrado["Familia"].astype("uint16")
+        df_max_min_filtrado["Articulo"]     = df_max_min_filtrado["Articulo"].astype("uint32")
+        df_max_min_filtrado["Fecha"]        = pd.to_datetime(
             df_max_min_filtrado["Fecha"],
             format='mixed',
             dayfirst=True,
             errors='coerce'
         ).dt.date
 
-        df_stock_filtrado["FechaStock"] = pd.to_datetime(
+        df_max_min_filtrado = df_max_min_filtrado.sort_values(
+            by=["Familia", "Articulo", "Fecha"],
+            ascending=[True, True, True]
+        ).copy()
+
+        # -------------------------------------------------------------------------------
+
+        df_stock_filtrado = st.session_state[MAX_MIN_DF_STOCK_KEY][
+            st.session_state[MAX_MIN_DF_STOCK_KEY]["CabeceraStock"] == cabecera_seleccionada
+        ].copy()
+
+        df_stock_filtrado["DescripcionStock"]   = df_stock_filtrado["DescripcionStock"].fillna("").astype(str)
+        df_stock_filtrado["CabeceraStock"]      = df_stock_filtrado["CabeceraStock"].astype("category")
+        df_stock_filtrado["FamiliaStock"]       = df_stock_filtrado["FamiliaStock"].astype("uint16")
+        df_stock_filtrado["ArticuloStock"]      = df_stock_filtrado["ArticuloStock"].astype("uint32")
+        df_stock_filtrado["FechaStock"]         = pd.to_datetime(
             df_stock_filtrado["FechaStock"],
             format='mixed',
             dayfirst=True,
             errors='coerce'
         ).dt.date
 
+        df_stock_filtrado = df_stock_filtrado.sort_values(
+            by=["FamiliaStock", "ArticuloStock", "FechaStock"],
+            ascending=[True, True, True]
+        ).copy()
+
+        # -------------------------------------------------------------------------------
+
         df_display_max_min       = df_max_min_filtrado.reset_index(drop=True)
         df_display_stock_max_min = df_stock_filtrado.reset_index(drop=True)
-
-        df_display_max_min["Cabecera"] = df_display_max_min["Cabecera"].fillna("").astype(str)
-        df_display_max_min["Descripcion"] = df_display_max_min["Descripcion"].fillna("").astype(str)
-
-        df_display_stock_max_min["CabeceraStock"] = df_display_stock_max_min["CabeceraStock"].fillna("").astype(str)
-        df_display_stock_max_min["DescripcionStock"] = df_display_stock_max_min["DescripcionStock"].fillna("").astype(str)
 
         if pestaña_activa == "↕️ Máximos y Mínimos":
             if len(df_max_min):
@@ -145,20 +163,22 @@ def maximos_minimos():
                             ].copy()
 
                             df_final_actualizado = pd.concat([df_maestro_limpio, df_calculado_nuevo], ignore_index=True)
+
                             st.session_state[MAX_MIN_DF_KEY] = df_final_actualizado
-                            df_para_guardar = df_final_actualizado[MAX_MIN_SHEET_COLS]
-                            df_para_guardar["Fecha"] = pd.to_datetime(df_para_guardar["Fecha"], errors="coerce", format=DATE_FMT)
+
+                            df_para_guardar = df_final_actualizado[MAX_MIN_SHEET_COLS].copy()
+                            df_para_guardar.loc[:, "Fecha"] = pd.to_datetime(df_para_guardar["Fecha"], errors="coerce", format=DATE_FMT)
 
                             google_sheet.save_full(
                                 df=df_para_guardar,
-                                rango="H2:N100000",
+                                rango="H2:N",
                             )
 
                 google_sheet.save_partial(
                     df_paginado=df_stock_filtrado,
                     df_key=MAX_MIN_DF_STOCK_KEY,
                     editor_key=dynamic_key_stock_max_min,
-                    rango="A2:F100000",
+                    rango="A2:F",
                     button_col=boton_guardar,
                     button_key="STOCK_BUTTON",
                     after_save=guardar_calculos_automaticos,

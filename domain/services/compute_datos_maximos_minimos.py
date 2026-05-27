@@ -12,6 +12,11 @@ def calculate_maxmin(df: Optional[pd.DataFrame] = None, mult_por_min: float = 1,
         return pd.DataFrame()
 
     keys = ["FamiliaStock", "ArticuloStock", "DescripcionStock", "CabeceraStock"]
+
+    for key in keys:
+        if key in df.columns:
+            df[key] = df[key].astype(str).replace(r'\.0$', '', regex=True).str.strip()
+
     df["Stock"] = pd.to_numeric(df["Stock"], errors="coerce")
     df_copy = df.copy()[keys + ["FechaStock", "Stock"]]
 
