@@ -3,7 +3,6 @@ import streamlit as st
 import warnings
 
 from config.enums_colors import CustomMetricColorsEnum
-
 warnings.simplefilter(action='ignore', category=FutureWarning)
 
 from config.constants_common import PAGE_STRFTIME_DMY, FILE_STRFTIME_YMD, PREVISION_REPUESTO_KEY, PREVISION_SHEET_URL, \
@@ -17,6 +16,10 @@ from viewmodels.consumo.prevision.plotter import PrevisionPlotter
 from config.constants_views import (PLOT_BOX_HEIGHT, PAG_PREVISION, SELECT_BOX_HEIGHT,
                                     DISTANCE_COLS_PREVISION, PLACEHOLDER)
 
+@st.cache_data(ttl=200, show_spinner=True)
+def obtener_datos_prevision(tipo_repuesto):
+    google_sheet = GoogleSheetsComponents(PREVISION_SHEET_URL, tipo_repuesto, PREVISION_COLS)
+    return google_sheet.connect()
 
 class ConsumoPrevision:
     def __init__(self):
@@ -33,7 +36,7 @@ class ConsumoPrevision:
 
         if tipo_repuesto:
             with st.spinner("Cargando datos..."):
-                df_sheet = google_sheet.connect()
+                df_sheet = obtener_datos_prevision(tipo_repuesto)
 
             pestaña_activa = st.segmented_control(
                 "Vistas",
@@ -179,7 +182,7 @@ class ConsumoPrevision:
                     _, centro_stock_guardar_col, _ = st.columns((1, 1.7, 1))
 
                     with centro_stock_guardar_col:
-                        google_sheet.save_and_update_forecast(
+                        if google_sheet.save_and_update_forecast(
                             df_filtrado=df_stock_filtrado,
                             celda_inicio="A2",
                             col_fin="C",
@@ -187,8 +190,9 @@ class ConsumoPrevision:
                             tipo_repuesto=tipo_repuesto,
                             dynamic_editor_key=key_dinamica_stock,
                             button_key="button_stock_key"
-                        )
-
+                        ):
+                            obtener_datos_prevision.clear()
+                            st.rerun()
                 with consumo_col:
                     key_dinamica_consumo = f"{PREVISION_EDITOR_KEY}_{tipo_repuesto}_{articulo_seleccionado}"
 
@@ -222,7 +226,7 @@ class ConsumoPrevision:
                     _, centro_consumo_guardar_col, _ = st.columns((1, 0.85, 1))
 
                     with centro_consumo_guardar_col:
-                        google_sheet.save_and_update_forecast(
+                        if google_sheet.save_and_update_forecast(
                             df_filtrado=df_consumo_filtrado,
                             celda_inicio="E2",
                             col_fin="H",
@@ -230,7 +234,9 @@ class ConsumoPrevision:
                             tipo_repuesto=tipo_repuesto,
                             dynamic_editor_key=key_dinamica_consumo,
                             button_key="button_consumo_key"
-                        )
+                        ):
+                            obtener_datos_prevision.clear()
+                            st.rerun()
             else:
                 with config_col:
                     st.write("Selecciona un repuesto.")

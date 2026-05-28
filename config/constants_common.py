@@ -18,12 +18,12 @@ LICITACIONES_URL        = "https://dota.sistemasanantonio.com.ar/licitaciones/lo
 
 
 # GOOGLE SHEETS
-PROVEEDORES_SHEET_URL   = "https://docs.google.com/spreadsheets/d/17mJc4DVUqxUHD-3saffT_vgxYHFgkO_vjldXvFNyv80/edit?gid=414215206#gid=414215206"
+PROVEEDORES_SHEET_URL   = "https://docs.google.com/spreadsheets/d/1pm3sEx1Ww1rkn4fJaulICRsH2BRvQmAqwDp4rNACmKA/edit?gid=1467417956#gid=1467417956"
 PREVISION_SHEET_URL     = "https://docs.google.com/spreadsheets/d/1v98qsIyWfvvk5jCEPSZ9FiCggv9clf8OdQk_33bUm_0/edit?gid=0#gid=0"
 MAX_MIN_SHEET_URL       = "https://docs.google.com/spreadsheets/d/1LKY8enH8MzIuQexQsih2LwHVe2pSGX4mkJMWZC1oKcE/edit?gid=0#gid=0"
 
 # WORKSHEETS
-PROVEEDORES_WS          = "Proveedores"
+PROVEEDORES_WS          = "Hoja 1"
 
 
 # SESSION KEYS

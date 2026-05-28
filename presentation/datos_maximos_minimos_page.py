@@ -5,33 +5,37 @@ import streamlit as st
 import pandas as pd
 
 from config.constants_common import MAX_MIN_SHEET_URL, MAX_MIN_SHEET_COLS, MAX_MIN_CABECERA_KEY, MAX_MIN_DF_KEY, \
-    MAX_MIN_DF_STOCK_KEY, INDEX, MAX_MIN_STOCK_COLS, MAX_MIN_TABLE_KEY, MAX_MIN_EDITOR_KEY
+    MAX_MIN_DF_STOCK_KEY, INDEX, MAX_MIN_STOCK_COLS, MAX_MIN_TABLE_KEY, MAX_MIN_EDITOR_KEY, MAX_MIN_PAGER_KEY
 from config.constants_views import PAG_MAXIMOS_MINIMOS, PLACEHOLDER, SELECT_BOX_HEIGHT
 from config.enums import CabecerasEnum
 from domain.services.compute_datos_maximos_minimos import calculate_maxmin
 
 from utils.exception_utils import execute_safely
-from presentation.streamlit_components import SelectBoxComponents, GoogleSheetsComponents
+from presentation.streamlit_components import SelectBoxComponents, GoogleSheetsComponents, OtherComponents
 
 
 class Filtros:
     pass
 
+google_sheet = GoogleSheetsComponents(MAX_MIN_SHEET_URL, "Hoja 1", MAX_MIN_STOCK_COLS)
+
+@st.cache_data(ttl=200, show_spinner=True)
+def get_sheet():
+    return google_sheet.connect()
+
 @execute_safely
 def maximos_minimos():
     DATE_FMT = "%Y-%m-%d"
     select = SelectBoxComponents()
+    other = OtherComponents()
+
 
     st.title(PAG_MAXIMOS_MINIMOS)
 
     cabecera_col, familia_col, articulo_col, descripcion_col = st.columns([1, 1, 1, 1])
     cabecera_seleccionada = select.select_box_cabecera(cabecera_col, "MAX_MIN_CABECERA")
-    google_sheet = GoogleSheetsComponents(MAX_MIN_SHEET_URL, "Hoja 1", MAX_MIN_STOCK_COLS)
 
     if cabecera_seleccionada:
-        with st.spinner("Cargando datos..."):
-            df_sheet = google_sheet.connect()
-
         pestaña_activa = st.segmented_control(
             "Vistas",
             options=["↕️ Máximos y Mínimos", "📑 Datos"],
@@ -48,6 +52,7 @@ def maximos_minimos():
         with descripcion_col.container(height=SELECT_BOX_HEIGHT):
             descripcion = st.text_input("Descripción", placeholder=PLACEHOLDER, icon="📑")
 
+        df_sheet = get_sheet()
         filtros = Filtros()
 
         filtros.familia = familia
@@ -110,6 +115,8 @@ def maximos_minimos():
             ascending=[True, True, True]
         ).copy()
 
+        other.actualizar_filtros_paginate(filtros, "maxmin", MAX_MIN_PAGER_KEY)
+
         # -------------------------------------------------------------------------------
 
         df_stock_filtrado = st.session_state[MAX_MIN_DF_STOCK_KEY][
@@ -148,11 +155,13 @@ def maximos_minimos():
 
         # -------------------------------------------------------------------------------
 
-        df_display_max_min       = df_max_min_filtrado.reset_index(drop=True)
         df_display_stock_max_min = df_stock_filtrado.reset_index(drop=True)
 
         if pestaña_activa == "↕️ Máximos y Mínimos":
             if len(df_max_min):
+                df_paginado, paginas = other.paginate(df_max_min_filtrado, 15, MAX_MIN_PAGER_KEY, False)
+                df_display_max_min = df_paginado.reset_index(drop=True)
+
                 st.data_editor(
                     df_display_max_min,
                     disabled=True,
@@ -170,6 +179,8 @@ def maximos_minimos():
                         "Maximo": st.column_config.NumberColumn("Máximo"),
                     }
                 )
+
+                other.paginate_buttons(paginas, key=MAX_MIN_PAGER_KEY)
 
         elif pestaña_activa == "📑 Datos":
             if len(df_stock):
@@ -193,8 +204,8 @@ def maximos_minimos():
 
                 boton_guardar, min_input, max_input, _ = st.columns((1.1, 1, 1, 6))
 
-                minimo = min_input.number_input("Mínimo", min_value=1, value=1)
-                maximo = max_input.number_input("Máximo", min_value=1, value=2)
+                minimo = min_input.number_input("Mínimo", min_value=0.1, value=1.0)
+                maximo = max_input.number_input("Máximo", min_value=0.1, value=2.0)
 
                 def guardar_calculos_automaticos(df_stock_actualizado):
                     with st.spinner("Recalculando Máximos y Mínimos..."):
@@ -223,6 +234,8 @@ def maximos_minimos():
                                 df=df_para_guardar,
                                 rango="H2:N",
                             )
+
+                            get_sheet.clear()
 
                 google_sheet.save_partial(
                     df_paginado=df_stock_filtrado,

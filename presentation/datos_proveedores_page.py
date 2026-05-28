@@ -1,14 +1,16 @@
+import numpy as np
 import streamlit as st
 
 from config.constants_common import LOC_PROVEEDORES, PROVEEDORES_SHEET_URL, PROVEEDORES_WS, PROVEEDORES_COLS, INDEX, \
     PROVEEDORES_DF_KEY, PROVEEDORES_PAGER_KEY, PROVEEDORES_EDITOR_KEY
 from config.constants_views import PAG_PROVEEDORES, FLOTA_CONTAINER_HEIGHT, PLACEHOLDER
-from domain.entities.datos_proveedores import Proveedores
 
 from utils.exception_utils import execute_safely
 from presentation.streamlit_components import OtherComponents, GoogleSheetsComponents
-from viewmodels.datos.proveedores_vm import ProveedoresVM
 
+
+class Proveedores:
+    pass
 
 google_sheet = GoogleSheetsComponents(PROVEEDORES_SHEET_URL, PROVEEDORES_WS, PROVEEDORES_COLS)
 
@@ -19,7 +21,6 @@ def get_sheet():
 @execute_safely
 def proveedores() -> None:
     other = OtherComponents()
-    vm = ProveedoresVM()
     st.title(PAG_PROVEEDORES)
 
     _, izq_col, centro_col, der_col, _ = st.columns([1, 0.65, 0.70, 0.65, 1])
@@ -47,27 +48,45 @@ def proveedores() -> None:
     if INDEX in df_sheet.columns:
         df_sheet = df_sheet.drop(columns=[INDEX])
 
+    prov = Proveedores()
+
+    prov.nro_prov = nro_prov
+    prov.razon_social = razon_social
+    prov.cuit = cuit
+    prov.localidad = localidad
+    prov.mail = mail
+    prov.telefono = telefono
+
     if PROVEEDORES_DF_KEY not in st.session_state:
         st.session_state[PROVEEDORES_DF_KEY] = df_sheet
 
-        vm.backup_google_sheet( # cada vez que se recarga la página se hace un backup en google sheets
-            df_viejo=vm.get_df(),
-            df_nuevo=st.session_state[PROVEEDORES_DF_KEY]
-        )
-        st.toast("Backup sincronizado correctamente.", icon="🔄")
-        st.rerun()
+    df_prov = st.session_state[PROVEEDORES_DF_KEY]
 
     # FILTROS
-    if nro_prov or razon_social or cuit or localidad or mail or telefono:
-        repuestos_filtro = Proveedores(nro_prov, razon_social, cuit, localidad, mail, telefono)
-        filtros_actuales = (nro_prov, razon_social, cuit, tuple(localidad), mail, telefono)
+    mask = np.ones(len(df_prov), dtype=bool)
 
-        st.session_state[PROVEEDORES_DF_KEY] = vm.get_by_args(repuestos_filtro)
-        other.filter_df(PROVEEDORES_PAGER_KEY, filtros_actuales)
-    else:
-        st.session_state[PROVEEDORES_DF_KEY] = df_sheet
+    if prov.nro_prov:
+        mask &= df_prov["NroProv"] == prov.nro_prov
 
-    df_paginado, paginas = other.paginate(st.session_state[PROVEEDORES_DF_KEY], 15, PROVEEDORES_PAGER_KEY)
+    if prov.razon_social:
+        mask &= df_prov["RazonSocial"].str.startswith(prov.razon_social.strip().upper())
+
+    if prov.cuit:
+        mask &= df_prov["CUIT"].str.startswith(prov.cuit.strip())
+
+    if prov.localidad:
+        mask &= df_prov["Localidad"].isin(prov.localidad)
+
+    if prov.mail:
+        mask &= df_prov["Mail"].str.contains(prov.mail.strip())
+
+    if prov.telefono:
+        mask &= df_prov["Telefono"].str.contains(prov.telefono.strip())
+
+    other.actualizar_filtros_paginate(prov, "proveedores", PROVEEDORES_PAGER_KEY)
+
+    # -----------------------------------------------------------------------------------------------
+    df_paginado, paginas = other.paginate(df_prov[mask], 15, PROVEEDORES_PAGER_KEY)
 
     df_visual = df_paginado.reset_index(drop=True)
     st.data_editor(
