@@ -1,14 +1,21 @@
+from operator import index
+
+import numpy as np
 import streamlit as st
 import pandas as pd
 
 from config.constants_common import MAX_MIN_SHEET_URL, MAX_MIN_SHEET_COLS, MAX_MIN_CABECERA_KEY, MAX_MIN_DF_KEY, \
     MAX_MIN_DF_STOCK_KEY, INDEX, MAX_MIN_STOCK_COLS, MAX_MIN_TABLE_KEY, MAX_MIN_EDITOR_KEY
-from config.constants_views import PAG_MAXIMOS_MINIMOS
+from config.constants_views import PAG_MAXIMOS_MINIMOS, PLACEHOLDER, SELECT_BOX_HEIGHT
 from config.enums import CabecerasEnum
 from domain.services.compute_datos_maximos_minimos import calculate_maxmin
 
 from utils.exception_utils import execute_safely
 from presentation.streamlit_components import SelectBoxComponents, GoogleSheetsComponents
+
+
+class Filtros:
+    pass
 
 @execute_safely
 def maximos_minimos():
@@ -17,8 +24,8 @@ def maximos_minimos():
 
     st.title(PAG_MAXIMOS_MINIMOS)
 
-    cabecera, _ = st.columns([0.6, 2])
-    cabecera_seleccionada = select.select_box_cabecera(cabecera, "MAX_MIN_CABECERA")
+    cabecera_col, familia_col, articulo_col, descripcion_col = st.columns([1, 1, 1, 1])
+    cabecera_seleccionada = select.select_box_cabecera(cabecera_col, "MAX_MIN_CABECERA")
     google_sheet = GoogleSheetsComponents(MAX_MIN_SHEET_URL, "Hoja 1", MAX_MIN_STOCK_COLS)
 
     if cabecera_seleccionada:
@@ -31,6 +38,21 @@ def maximos_minimos():
             default="↕️ Máximos y Mínimos",
             label_visibility="collapsed"
         )
+
+        with familia_col.container(height=SELECT_BOX_HEIGHT):
+            familia = st.text_input("Familia", placeholder=PLACEHOLDER, icon="🛠️")
+
+        with articulo_col.container(height=SELECT_BOX_HEIGHT):
+            articulo = st.text_input("Artículo", placeholder=PLACEHOLDER, icon="🪛")
+
+        with descripcion_col.container(height=SELECT_BOX_HEIGHT):
+            descripcion = st.text_input("Descripción", placeholder=PLACEHOLDER, icon="📑")
+
+        filtros = Filtros()
+
+        filtros.familia = familia
+        filtros.articulo = articulo
+        filtros.descripcion = descripcion
 
         if st.session_state.get(MAX_MIN_CABECERA_KEY) != cabecera_seleccionada:
             st.session_state[MAX_MIN_CABECERA_KEY] = cabecera_seleccionada
@@ -45,8 +67,8 @@ def maximos_minimos():
 
         df_sheet.index = range(len(df_sheet))
 
-        # --------------------------------------------------------------------------
-        df_max_min  = df_sheet[MAX_MIN_SHEET_COLS].copy()
+        # -------------------------------------------------------------------------------
+        df_max_min   = df_sheet[MAX_MIN_SHEET_COLS].copy()
         df_stock     = df_sheet[MAX_MIN_STOCK_COLS].copy()
 
         dynamic_key_max_min         = f"{MAX_MIN_TABLE_KEY}_{cabecera_seleccionada}"
@@ -58,16 +80,30 @@ def maximos_minimos():
             st.session_state[MAX_MIN_DF_KEY]["Cabecera"] == cabecera_seleccionada
         ].copy()
 
-        df_max_min_filtrado["Descripcion"]  = df_max_min_filtrado["Descripcion"].fillna("").astype(str)
-        df_max_min_filtrado["Cabecera"]     = df_max_min_filtrado["Cabecera"].astype("category")
-        df_max_min_filtrado["Familia"]      = df_max_min_filtrado["Familia"].astype("uint16")
-        df_max_min_filtrado["Articulo"]     = df_max_min_filtrado["Articulo"].astype("uint32")
-        df_max_min_filtrado["Fecha"]        = pd.to_datetime(
+        df_max_min_filtrado["Descripcion"] = df_max_min_filtrado["Descripcion"].fillna("").astype(str)
+        df_max_min_filtrado["Cabecera"] = df_max_min_filtrado["Cabecera"].astype("category")
+        df_max_min_filtrado["Familia"] = df_max_min_filtrado["Familia"].astype("uint16")
+        df_max_min_filtrado["Articulo"] = df_max_min_filtrado["Articulo"].astype("uint32")
+        df_max_min_filtrado["Fecha"] = pd.to_datetime(
             df_max_min_filtrado["Fecha"],
             format='mixed',
             dayfirst=True,
             errors='coerce'
         ).dt.date
+
+        # Filtros
+        mask_max_min = np.ones(len(df_max_min_filtrado), dtype=bool)
+
+        if filtros.familia:
+            mask_max_min &= df_max_min_filtrado["Familia"] == int(filtros.familia.strip())
+
+        if filtros.articulo:
+            mask_max_min &= df_max_min_filtrado["Articulo"] == int(filtros.articulo.strip())
+
+        if filtros.descripcion:
+            mask_max_min &= df_max_min_filtrado["Descripcion"].str.startswith(str(filtros.descripcion.strip().upper()))
+
+        df_max_min_filtrado = df_max_min_filtrado[mask_max_min]
 
         df_max_min_filtrado = df_max_min_filtrado.sort_values(
             by=["Familia", "Articulo", "Fecha"],
@@ -80,16 +116,30 @@ def maximos_minimos():
             st.session_state[MAX_MIN_DF_STOCK_KEY]["CabeceraStock"] == cabecera_seleccionada
         ].copy()
 
-        df_stock_filtrado["DescripcionStock"]   = df_stock_filtrado["DescripcionStock"].fillna("").astype(str)
-        df_stock_filtrado["CabeceraStock"]      = df_stock_filtrado["CabeceraStock"].astype("category")
-        df_stock_filtrado["FamiliaStock"]       = df_stock_filtrado["FamiliaStock"].astype("uint16")
-        df_stock_filtrado["ArticuloStock"]      = df_stock_filtrado["ArticuloStock"].astype("uint32")
-        df_stock_filtrado["FechaStock"]         = pd.to_datetime(
+        df_stock_filtrado["DescripcionStock"] = df_stock_filtrado["DescripcionStock"].fillna("").astype(str)
+        df_stock_filtrado["CabeceraStock"] = df_stock_filtrado["CabeceraStock"].astype("category")
+        df_stock_filtrado["FamiliaStock"] = df_stock_filtrado["FamiliaStock"].astype("uint16")
+        df_stock_filtrado["ArticuloStock"] = df_stock_filtrado["ArticuloStock"].astype("uint32")
+        df_stock_filtrado["FechaStock"] = pd.to_datetime(
             df_stock_filtrado["FechaStock"],
             format='mixed',
             dayfirst=True,
             errors='coerce'
         ).dt.date
+
+        # Filtros
+        mask_max_min_stock = np.ones(len(df_stock_filtrado), dtype=bool)
+
+        if filtros.familia:
+            mask_max_min_stock &= df_stock_filtrado["FamiliaStock"] == int(filtros.familia.strip())
+
+        if filtros.articulo:
+            mask_max_min_stock &= df_stock_filtrado["ArticuloStock"] == int(filtros.articulo.strip())
+
+        if filtros.descripcion:
+            mask_max_min_stock &= df_stock_filtrado["DescripcionStock"].str.startswith(str(filtros.descripcion.strip().upper()))
+
+        df_stock_filtrado = df_stock_filtrado[mask_max_min_stock]
 
         df_stock_filtrado = df_stock_filtrado.sort_values(
             by=["FamiliaStock", "ArticuloStock", "FechaStock"],

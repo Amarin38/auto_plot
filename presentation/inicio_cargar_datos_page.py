@@ -38,7 +38,7 @@ def cargar_datos():
 
     st.title(PAG_CARGAR_DATOS)
 
-    select_cargar, datos = st.columns([1, 4])
+    select_cargar, datos_col = st.columns([1, 4])
 
     with select_cargar:
         select_load = select.select_box_load_data(st, "LOAD_DATA_LOAD_CENTRO")
@@ -46,7 +46,7 @@ def cargar_datos():
             with st.expander("Ejemplo de excel a insertar"):
                 st.image(f"{IMG_PATH}{str(select_load).lower()}.png", caption="Como se debe ver la tabla a insertar")
 
-    with datos:
+    with datos_col:
         tipo, cargar = st.columns([2, 2])
         datos = None
 
@@ -120,19 +120,19 @@ def cargar_datos():
                                 datos = lambda: compute_consumo_garantias(load_data(select_load, uploaded_files),
                                                                           select_tipo_repuesto)
 
-                        case LoadDataEnum.MAXIMOS_Y_MINIMOS:
-                            with st.container(height=INPUT_HEIGHT):
-                                mult_por_min = st.text_input("Multiplicar al mínimo por: ", 2)
-
-                            with st.container(height=INPUT_HEIGHT):
-                                mult_por_max = st.text_input("Multiplicar al máximo por: ", 3)
-
-                            if mult_por_min not in ("0", '', ' ') and mult_por_max not in ("0", '', ' '):
-                                datos = lambda: MaxMin().calculate(load_data(select_load, uploaded_files),
-                                                                   float(mult_por_min),
-                                                                   float(mult_por_max))
-                            else:
-                                dialog.error_dialog("No se puede multiplicar por 0, por 1 o por None")
+                        # case LoadDataEnum.MAXIMOS_Y_MINIMOS:
+                        #     with st.container(height=INPUT_HEIGHT):
+                        #         mult_por_min = st.text_input("Multiplicar al mínimo por: ", 2)
+                        #
+                        #     with st.container(height=INPUT_HEIGHT):
+                        #         mult_por_max = st.text_input("Multiplicar al máximo por: ", 3)
+                        #
+                        #     if mult_por_min not in ("0", '', ' ') and mult_por_max not in ("0", '', ' '):
+                        #         datos = lambda: MaxMin().calculate(load_data(select_load, uploaded_files),
+                        #                                            float(mult_por_min),
+                        #                                            float(mult_por_max))
+                        #     else:
+                        #         dialog.error_dialog("No se puede multiplicar por 0, por 1 o por None")
 
                         case LoadDataEnum.DURACION_REPUESTOS:
                             select_repuesto = select.select_box_repuesto(st, "LOAD_DATA_REPUESTO_DURACION")

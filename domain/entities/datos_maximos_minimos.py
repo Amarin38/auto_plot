@@ -1,12 +1,17 @@
+from datetime import date
 from dataclasses import dataclass
-from typing import Optional
 
 
 @dataclass
 class MaximosMinimos:
-    id: Optional[int]
-    Familia: int
-    Articulo: int
-    Repuesto: str
-    Minimo: float
-    Maximo: float
+    Familia: str
+    Articulo: str
+    Descripcion: str
+
+@dataclass
+class MaximosMinimosStock:
+    FamiliaStock: str
+    ArticuloStock: str
+    DescripcionStock: str
+
+

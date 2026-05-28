@@ -5,6 +5,7 @@ from config.constants_common import REPUESTOS_CODIGOS_COLS_RENAME, REPUESTOS_COD
 from domain.entities.datos_repuestos_codigos import RepuestosCodigos, RepuestosCodigosFiltro
 from infrastructure.unit_of_work import SQLAlchemyUnitOfWork
 from interfaces.viewmodel import ViewModel
+from utils.exception_utils import execute_safely
 
 
 class RepuestosCodigosVM(ViewModel):
@@ -12,19 +13,18 @@ class RepuestosCodigosVM(ViewModel):
         self.uow = uow
 
     @staticmethod
+    @execute_safely
     def formatear_df(df: pd.DataFrame):
         df = df.rename(columns=REPUESTOS_CODIGOS_COLS_RENAME)
-
         df[["Familia", "Articulo"]] = df["Codigos"].str.strip().str.split(".", expand=True)
 
         familia = df["Familia"].str.zfill(3)
         articulo = df["Articulo"].str.zfill(5)
         df["CodigosConCero"] = familia.str.cat(articulo, sep=".")
 
-        df = df[REPUESTOS_CODIGOS_COLS]
         return df
 
-
+    @execute_safely
     def save_df(self, df: pd.DataFrame) -> None:
         df = self.formatear_df(df)
 

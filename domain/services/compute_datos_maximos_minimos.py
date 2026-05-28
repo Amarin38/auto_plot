@@ -36,6 +36,5 @@ def calculate_maxmin(df: Optional[pd.DataFrame] = None, mult_por_min: float = 1,
     df_grouped["Cabecera"] = df_grouped["Cabecera"].fillna("").astype(str)
     df_grouped["Descripcion"] = df_grouped["Descripcion"].fillna("").astype(str)
     df_grouped = df_grouped.drop("Stock", axis=1)
-    #df_grouped.
 
     return df_grouped
