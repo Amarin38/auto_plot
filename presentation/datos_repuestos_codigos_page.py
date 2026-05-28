@@ -1,12 +1,17 @@
+import numpy as np
 import streamlit as st
 
-from config.constants_common import DEPOSITOS
+from config.constants_common import DEPOSITOS, REPUESTOS_CODIGOS_PAGER_KEY
 from config.constants_views import PAG_REP_CODIGOS, FLOTA_CONTAINER_HEIGHT, PLACEHOLDER
 from domain.entities.datos_repuestos_codigos import RepuestosCodigosFiltro
 
 from utils.exception_utils import execute_safely
-from presentation.streamlit_components import OtherComponents
+from presentation.streamlit_components import Paginate
 from viewmodels.datos.repuestos_codigos_vm import RepuestosCodigosVM
+
+class Filtros:
+    pass
+
 
 @st.cache_data(ttl=200, show_spinner=True)
 def get_df():
@@ -20,11 +25,12 @@ def get_df_filtro(repuestos_filtro: RepuestosCodigosFiltro):
 
 @execute_safely
 def repuestos_codigos() -> None:
-    other = OtherComponents()
+    paginate = Paginate()
+    filtros = Filtros()
 
     st.title(PAG_REP_CODIGOS)
 
-    aux, descrip_col, deposito_col, codigos_col, aux2 = st.columns([1, 0.65, 0.70, 0.65, 1])
+    _, descrip_col, deposito_col, codigos_col, _ = st.columns([1, 0.65, 0.70, 0.65, 1])
 
     with descrip_col.container(height=FLOTA_CONTAINER_HEIGHT):
         descripcion = st.text_input("Descripción", placeholder=PLACEHOLDER, icon="📑")
@@ -35,17 +41,43 @@ def repuestos_codigos() -> None:
     with codigos_col.container(height=FLOTA_CONTAINER_HEIGHT):
         codigos = st.text_input("Códigos", placeholder=PLACEHOLDER, icon="📦")
 
+    filtros.descripcion = descripcion
+    filtros.deposito = deposito
+    filtros.codigos = codigos
+
     df = get_df()
-    df_key = "codigos_repuestos"
 
-    if descripcion or deposito or codigos:
-        repuestos_filtro = RepuestosCodigosFiltro(descripcion, deposito, codigos)
-        filtros_actuales = (descripcion, deposito, codigos)
+    mask = np.ones(len(df), dtype=bool)
 
-        df = get_df_filtro(repuestos_filtro)
-        other.filter_df(df_key, filtros_actuales)
+    if filtros.descripcion:
+        mask &= (
+            df["Descripcion"]
+                .str.upper()
+                .str.startswith(str(filtros.descripcion.strip().upper()), na=False)
+        )
 
-    df_paginado, paginas = other.paginate(df, 15, df_key)
+    if filtros.deposito:
+        mask &= (
+            df["Deposito"]
+                .astype(str)
+                .str.strip()
+                .str.upper()
+                .isin(filtros.deposito)
+        )
+
+    if filtros.codigos:
+        mask &= (
+            df["CodigosConCero"]
+                .str.replace(r'\.0$', '', regex=True)
+                .str.strip()
+                .str.startswith(str(filtros.codigos.strip()), na=False)
+        )
+
+    df = df[mask]
+
+    paginate.update_filters(filtros, "codigos_repuestos", REPUESTOS_CODIGOS_PAGER_KEY)
+
+    df_paginado, paginas = paginate.create_pagination(df, 15, REPUESTOS_CODIGOS_PAGER_KEY)
 
     st.data_editor(
         df_paginado,
@@ -60,4 +92,4 @@ def repuestos_codigos() -> None:
         }
     )
 
-    other.paginate_buttons(paginas, key=df_key)
+    paginate.create_buttons(paginas, key=REPUESTOS_CODIGOS_PAGER_KEY)

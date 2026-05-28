@@ -6,7 +6,7 @@ from config.constants_common import LOC_PROVEEDORES, PROVEEDORES_SHEET_URL, PROV
 from config.constants_views import PAG_PROVEEDORES, FLOTA_CONTAINER_HEIGHT, PLACEHOLDER
 
 from utils.exception_utils import execute_safely
-from presentation.streamlit_components import OtherComponents, GoogleSheetsComponents
+from presentation.streamlit_components import OtherComponents, GoogleSheetsComponents, Paginate
 
 
 class Proveedores:
@@ -20,7 +20,8 @@ def get_sheet():
 
 @execute_safely
 def proveedores() -> None:
-    other = OtherComponents()
+    paginate = Paginate()
+
     st.title(PAG_PROVEEDORES)
 
     _, izq_col, centro_col, der_col, _ = st.columns([1, 0.65, 0.70, 0.65, 1])
@@ -83,12 +84,12 @@ def proveedores() -> None:
     if prov.telefono:
         mask &= df_prov["Telefono"].str.contains(prov.telefono.strip())
 
-    other.actualizar_filtros_paginate(prov, "proveedores", PROVEEDORES_PAGER_KEY)
+    paginate.update_filters(prov, "proveedores", PROVEEDORES_PAGER_KEY)
 
     # -----------------------------------------------------------------------------------------------
-    df_paginado, paginas = other.paginate(df_prov[mask], 15, PROVEEDORES_PAGER_KEY)
-
+    df_paginado, paginas = paginate.create_pagination(df_prov[mask], 15, PROVEEDORES_PAGER_KEY)
     df_visual = df_paginado.reset_index(drop=True)
+
     st.data_editor(
         df_visual,
         disabled=False,
@@ -108,4 +109,4 @@ def proveedores() -> None:
     )
 
     google_sheet.save_button(df_paginado, df_key=PROVEEDORES_DF_KEY, editor_key=PROVEEDORES_EDITOR_KEY)
-    other.paginate_buttons(paginas, key=PROVEEDORES_PAGER_KEY)
+    paginate.create_buttons(paginas, key=PROVEEDORES_PAGER_KEY)

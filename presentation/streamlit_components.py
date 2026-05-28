@@ -26,9 +26,6 @@ from utils.common_utils import CommonUtils
 
 
 class ButtonComponents:
-    def __init__(self):
-        ...
-
     @staticmethod
     def load_data_bttn(func, key: Optional[str] = None):
         st.button(
@@ -277,128 +274,6 @@ class OtherComponents:
 
 
     @staticmethod
-    def paginate(df: pd.DataFrame, filas_por_pagina: int, key: str, boton_descargar: bool = True) -> tuple[DataFrame, int] | tuple[Any, int] | None:
-        """Pagina un dataframe y devuelve el df paginado y el total de páginas."""
-        boton_descargar_col, aux1, aux2 = st.columns([1, 2, 2])
-
-        if boton_descargar:
-            with boton_descargar_col:
-                ButtonComponents().download_df(df, key, f"{key.replace("_", " ")} {TODAY_DATE_FILE_DMY}.xlsx")
-
-        df_key = f"{key}_df"
-        page_key = f"{key}_page"
-        mostrar_completo_toggle_key = f"{key}_ver_completos"
-
-        mostrar_completo = st.toggle('Ver datos completos', key=mostrar_completo_toggle_key)
-
-        if mostrar_completo:
-            return df, 1
-
-        if df_key not in st.session_state:
-            st.session_state[df_key] = df
-
-        if page_key not in st.session_state:
-            st.session_state[page_key] = 0
-
-        if st.session_state[df_key] is not None:
-            # Config de la paginacion:
-            total_items = len(df)
-            total_paginas = max(1, (total_items + filas_por_pagina - 1) // filas_por_pagina)
-
-            # Calcular indices
-            inicio = st.session_state[page_key] * filas_por_pagina
-            fin = min(inicio + filas_por_pagina, total_items)
-
-            return df[inicio:fin], total_paginas
-        return None
-
-
-    @staticmethod
-    def paginate_buttons(total_paginas: int, key: str):
-        """Botones útiles para la paginación de dataframes"""
-
-        if total_paginas <= 1:
-            return
-
-        page_key = f"{key}_page"
-        anterior_bttn_key = f"{key}_bttn_ant"
-        siguiente_bttn_key = f"{key}_bttn_sig"
-        inicio_bttn_key = f"{key}_bttn_inicio"
-        fin_bttn_key = f"{key}_bttn_fin"
-        input_page_key = f"{key}_input_pag"
-
-        disabled_ant_bttn = st.session_state[page_key] == 0
-        diabled_sig_bttn = st.session_state[page_key] >= total_paginas - 1
-
-        if input_page_key not in st.session_state:
-            st.session_state[input_page_key] = st.session_state[page_key] + 1
-
-        # Callbacks
-        def ant_page():
-            st.session_state[page_key] -= 1
-            st.session_state[input_page_key] = st.session_state[page_key] + 1
-
-        def sig_page():
-            st.session_state[page_key] += 1
-            st.session_state[input_page_key] = st.session_state[page_key] + 1
-
-        def inicio_page():
-            st.session_state[page_key] = 0
-            st.session_state[input_page_key] = 1
-
-        def fin_page():
-            st.session_state[page_key] = total_paginas - 1
-            st.session_state[input_page_key] = total_paginas
-
-        def ir_a_pagina():
-            st.session_state[page_key] = st.session_state[input_page_key] - 1
-
-
-        ant_bttn, inicio_bttn, num_input, label, fin_bttn, siguiente_bttn = st.columns([0.25, 1.30, 0.25, 1, 0.155, 0.3],
-                                                                                       vertical_alignment="bottom",
-                                                                                       )
-
-        with ant_bttn:
-            st.button('← Anterior', disabled=disabled_ant_bttn, key=anterior_bttn_key, on_click=ant_page)
-
-        with inicio_bttn:
-            st.button('Inicio', key=inicio_bttn_key, on_click=inicio_page)
-
-        with num_input:
-            st.number_input("Número de página",
-                min_value=1,
-                max_value=total_paginas,
-                step=1,
-                key=input_page_key,
-                on_change=ir_a_pagina,
-                label_visibility="collapsed"
-            )
-
-        with label:
-            st.write(f'de {total_paginas}')
-
-        with fin_bttn:
-            st.button('Fin', key=fin_bttn_key, on_click=fin_page)
-
-        with siguiente_bttn:
-            st.button('Siguiente →', disabled=diabled_sig_bttn, key=siguiente_bttn_key, width=150, on_click=sig_page)
-
-
-    @staticmethod
-    def actualizar_filtros_paginate(filtros_class, anteriores_key: str, pager_key: str) -> None:
-        # Para que el paginado funcione bien una vez que filtra
-        if f"filtros_anteriores_{anteriores_key}" not in st.session_state:
-            st.session_state[f"filtros_anteriores_{anteriores_key}"] = vars(filtros_class)
-
-        if vars(filtros_class) != st.session_state[f"filtros_anteriores_{anteriores_key}"]:
-            # Vuelve al inicio para mostrar todos los filtros bien
-            st.session_state[f"{pager_key}_page"] = 0
-            st.session_state[f"{pager_key}_input_pag"] = 1
-
-            st.session_state[f"filtros_anteriores_{anteriores_key}"] = vars(filtros_class)
-
-
-    @staticmethod
     def filter_df(df_key: str, filtros_actuales: Any):
         prev_filter_key = f"filtros_previos_{df_key}"
 
@@ -407,7 +282,6 @@ class OtherComponents:
             st.session_state[prev_filter_key] = filtros_actuales
 
 
-# TODO reemplazar la clase other por esta
 class Paginate:
     @staticmethod
     def create_pagination(

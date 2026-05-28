@@ -79,40 +79,14 @@ class ParqueMovilVM(ViewModel):
             return self.get_data(entities) if entities else pd.DataFrame()
 
 
-    def get_by_args(self, fecha_desde: date, fecha_hasta: date, parque: ParqueMovilFiltro) -> Optional[Any]:
+    def get_by_fechas(self, fecha_desde: date, fecha_hasta: date) -> pd.DataFrame:
         with self.uow as uow:
             df_base = _fetch_base_dataframe(fecha_desde, fecha_hasta, uow)
 
         if df_base.empty:
             return pd.DataFrame()
 
-        mask = np.ones(len(df_base), dtype=bool)
-
-        if parque.Linea:
-           mask &= df_base["Linea"] == int(parque.Linea)
-
-        if parque.Interno:
-            mask &= df_base["Interno"] == int(parque.Interno)
-
-        if parque.Dominio:
-            mask &= df_base["Dominio"].str.startswith(parque.Dominio)
-
-        if parque.ChasisMarca:
-            mask &= df_base["ChasisMarca"].isin(parque.ChasisMarca)
-
-        if parque.ChasisModelo:
-            mask &= df_base["ChasisModelo"].isin(parque.ChasisModelo)
-
-        if parque.MotorMarca:
-            mask &= df_base["MotorMarca"].isin(parque.MotorMarca)
-
-        if parque.MotorModelo:
-            mask &= df_base["MotorModelo"].isin(parque.MotorModelo)
-
-        if parque.Carroceria:
-            mask &= df_base["Carroceria"].isin(parque.Carroceria)
-
-        return df_base[mask]
+        return df_base
 
 
     @staticmethod

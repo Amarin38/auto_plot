@@ -3,19 +3,19 @@ import streamlit as st
 from config.constants_views import PAG_USUARIOS_CODIGOS
 
 from utils.exception_utils import execute_safely
-from presentation.streamlit_components import OtherComponents
+from presentation.streamlit_components import OtherComponents, Paginate
 from viewmodels.datos.usuarios_codigos_vm import UsuariosCodigosVM
 
 
 @execute_safely
 def usuarios_codigos() -> None:
-    other = OtherComponents()
+    paginate = Paginate()
 
     st.title(PAG_USUARIOS_CODIGOS)
     df = UsuariosCodigosVM().get_df()
     key="codigos_usuarios"
 
-    df_paginado, paginas = other.paginate(df, 15, key)
+    df_paginado, paginas = paginate.create_pagination(df, 15, key)
 
     st.data_editor(
         df_paginado,
@@ -31,4 +31,4 @@ def usuarios_codigos() -> None:
         }
     )
 
-    other.paginate_buttons(paginas, key=key)
+    paginate.create_buttons(paginas, key=key)
