@@ -94,6 +94,7 @@ class RepuestoEnum(StrEnum):
     RADIADOR                    = auto()
     CORREAS                     = auto()
     GAS_AIRE_ACONDICIONADO      = auto()
+    BOMBA_AGUA                  = auto()
 
 
 class RepuestoReparadoEnum(StrEnum):
