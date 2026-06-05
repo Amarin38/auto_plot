@@ -56,6 +56,23 @@ class CommonUtils:
         return pd.to_datetime(df[columna].unique()).strftime(FILE_STRFTIME_DMY)[0]
 
 
+    @staticmethod
+    def arreglar_codigos(codigos) -> str:
+        texto = str(codigos)
+
+        if re.findall(r'\b[Yy]\b', texto):
+            return texto
+
+        if not texto or texto.lower() == 'nan':
+            return ''
+
+        familia, articulo = texto.split(".", 1)
+
+        familia = familia.zfill(3)
+        articulo = articulo.zfill(5)
+
+        return f"{familia}.{articulo}"
+
     # ------------------------------------------------------ DELETE ------------------------------------------------------
     @staticmethod
     @execute_safely

@@ -5,6 +5,7 @@ from statsmodels.tsa.holtwinters import ExponentialSmoothing
 from config.constants_common import FILE_STRFTIME_YMD
 from config.enums import RepuestoEnum
 from config.enums_colors import TextModsEnum, ForegroundColorsEnum
+from utils.common_utils import CommonUtils
 from viewmodels.consumo.prevision.vm import PrevisionVM
 
 
@@ -67,7 +68,7 @@ def create_forecast_local(df: pd.DataFrame, tipo_repuesto: RepuestoEnum):
             pass
 
 
-def create_forecast_google_sheet(df: pd.DataFrame, df_stock: pd.DataFrame, tipo_repuesto: str):
+def create_forecast_google_sheet(df: pd.DataFrame, df_stock: pd.DataFrame):
     df = df.replace("", pd.NA).dropna(subset=["Mes", "Articulo"])
     nombre_articulos = df["Articulo"].unique()
 
@@ -84,6 +85,7 @@ def create_forecast_google_sheet(df: pd.DataFrame, df_stock: pd.DataFrame, tipo_
         df_art["ConsumoMensual"] = df_art["ConsumoMensual"].fillna(0).astype("float64")
 
         df_stock_art = df_stock.loc[df_stock["RepuestoStock"] == articulo].copy()
+        codigo_actual = df.loc[df["Articulo"] == articulo,"Codigo"].iloc[0]
 
         try:
             data: pd.Series = df_art["ConsumoMensual"]
@@ -104,10 +106,10 @@ def create_forecast_google_sheet(df: pd.DataFrame, df_stock: pd.DataFrame, tipo_
 
             df_prev                             = prevision.to_frame(name="Prevision").reset_index()
             df_prev.columns                     = ["FechaPrevision", "Prevision"]
+            df_prev.insert(0, "CodigoPrevision", CommonUtils().arreglar_codigos(codigo_actual))
             df_prev["Prevision"]                = df_prev["Prevision"].round(0).clip(lower=0).astype("float64")
             df_prev["RestoStock"]               = df_stock_art["StockActual"].iloc[0] - df_prev["Prevision"].cumsum()
             df_prev["RepuestoPrevision"]        = articulo
-            df_prev["TipoRepuestoPrevision"]    = tipo_repuesto
             df_prev["FechaPrevision"]           = df_prev["FechaPrevision"].dt.strftime(FILE_STRFTIME_YMD)
 
             lista_previsiones.append(df_prev)

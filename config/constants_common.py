@@ -179,11 +179,12 @@ CONSUMO_INDICE_COLS         = ('Cabecera', 'Repuesto', 'TotalConsumo', 'TotalCos
 CONSUMO_HISTORIAL_COLS      = ("Repuesto", "FechaCompleta", "Cantidad")
 CONSUMO_GARANTIAS_COLS      = ("Cabecera", "Repuesto", "Garantia", "Transferencia")
 
-PREVISION_COLS              = ["Mes", "Articulo", "ConsumoMensual", "TipoRepuesto"]
-PREVISION_STOCK_COLS        = ["FechaStock", "RepuestoStock", "StockActual"]
-PREVISION_FORECAST_COLS     = ["FechaPrevision", "Prevision", "RestoStock", "RepuestoPrevision", "TipoRepuestoPrevision"]
-PREVISION_LOCAL_COLS: List[str] = ["Repuesto", "TipoRepuesto", "FechaCompleta",
-                                   "Año", "Mes", "Tendencia", "TendenciaEstacional"]
+PREVISION_COLS              = ["Codigo", "Mes", "Articulo", "ConsumoMensual"]
+PREVISION_STOCK_COLS        = ["CodigoStock", "FechaStock", "RepuestoStock", "StockActual"]
+PREVISION_FORECAST_COLS     = ["CodigoPrevision", "FechaPrevision", "Prevision", "RestoStock", "RepuestoPrevision"]
+PREVISION_LOCAL_COLS        = ["Repuesto", "TipoRepuesto", "FechaCompleta",
+                               "Año", "Mes", "Tendencia", "TendenciaEstacional"]
+PREVISION_FECHAS_COLS       = ["Mes", "FechaStock", "FechaPrevision"]
 
 MAX_MIN_STOCK_COLS           = ["FamiliaStock", "ArticuloStock", "DescripcionStock", "CabeceraStock", "FechaStock", "Stock"]
 MAX_MIN_SHEET_COLS           = ["Familia", "Articulo", "Descripcion", "Cabecera", "Fecha", "Minimo", "Maximo"]

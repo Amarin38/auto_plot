@@ -16,7 +16,7 @@ from streamlit.components.v1 import components
 from streamlit_gsheets import GSheetsConnection
 
 from config.constants_common import TODAY_DATE_FILE_DMY, PAGE_STRFTIME_DMY, PREVISION_DF_KEY, PREVISION_DF_CONSUMO_KEY, \
-    PREVISION_DF_STOCK_KEY
+    PREVISION_DF_STOCK_KEY, PREVISION_FECHAS_COLS
 from config.constants_views import SELECT_BOX_HEIGHT, PLACEHOLDER, CENTERED_TITLE_HEIGHT, CENTERED_TITLE_WIDTH, \
     MULTI_SELECT_BOX_HEIGHT
 from config.enums import RepuestoReparadoEnum, RepuestoEnum, CabecerasEnum, TipoDuracionEnum, IndexTypeEnum, \
@@ -480,14 +480,12 @@ class GoogleSheetsComponents:
 
 
     def save_and_update_forecast(self, df_filtrado: pd.DataFrame, celda_inicio: str, col_fin: str,
-                                       columnas_a_guardar: Union[List, Tuple], tipo_repuesto: RepuestoEnum,
+                                       columnas_a_guardar: Union[List, Tuple],
                                        dynamic_editor_key: str, button_key: str) -> None:
         """
         Guarda los cambios de una tabla específica y despues recalcula
         automáticamente las previsiones usando los datos más recientes.
         """
-        cols_fechas = ("Mes", "FechaStock", "FechaPrevision")
-
 
         if st.button(f"💾 Guardar cambios", use_container_width=True, key=button_key):
             df_completo = self.update_filtered_df(dynamic_editor_key, PREVISION_DF_KEY, df_filtrado)
@@ -495,12 +493,12 @@ class GoogleSheetsComponents:
             df_consumo = df_completo if "Articulo" in df_completo.columns else st.session_state[PREVISION_DF_CONSUMO_KEY]
             df_stock = df_completo if "RepuestoStock" in df_completo.columns else st.session_state[PREVISION_DF_STOCK_KEY]
 
-            for col_fecha in cols_fechas:
+            for col_fecha in PREVISION_FECHAS_COLS:
                 if col_fecha in df_completo.columns and col_fecha in columnas_a_guardar:
                     df_completo[col_fecha] = pd.to_datetime(df_completo[col_fecha],
-                                                        format='mixed',
-                                                        dayfirst=True,
-                                                        errors='coerce')
+                                                            format='mixed',
+                                                            dayfirst=True,
+                                                            errors='coerce')
 
                     df_completo[col_fecha] = df_completo[col_fecha].dt.to_period('M').dt.to_timestamp().dt.strftime(PAGE_STRFTIME_DMY)
 
@@ -532,15 +530,15 @@ class GoogleSheetsComponents:
                         st.toast("Calculando previsiones sin cambios manuales...", icon="ℹ️")
 
                     # --- PARTE 2: RECALCULAR Y GUARDAR PREVISIONES ---
-                    df_prevision = create_forecast_google_sheet(df_consumo, df_stock, tipo_repuesto)
+                    df_prevision = create_forecast_google_sheet(df_consumo, df_stock)
 
                     if df_prevision is not None:
                         self.update_range_with_df(
                             df=df_prevision,
-                            celda_inicial='J2',
-                            rango_tabla='J2:N'
+                            celda_inicial='K2',
+                            rango_tabla='K2:O'
                         )
-                        st.toast(f"Previsiones de {tipo_repuesto} sincronizadas", icon="✅")
+                        st.toast(f"Previsiones sincronizadas", icon="✅")
                     else:
                         st.warning("No se pudieron calcular las previsiones (revisa si hay datos suficientes).")
 
@@ -815,7 +813,6 @@ class GoogleSheetsComponents:
             nuevas_filas = pd.DataFrame(cambios.get("added_rows"))
             df_completo = pd.concat([df_completo, nuevas_filas], ignore_index=True)
         return df_completo
-
 
     def update_range_with_df(self, df: pd.DataFrame, celda_inicial: str,
                              rango_tabla: str, include_headers: bool = False) -> None:

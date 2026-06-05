@@ -2,7 +2,11 @@ import pandas as pd
 import streamlit as st
 import warnings
 
+from pandas import options
+
 from config.enums_colors import CustomMetricColorsEnum
+from utils.common_utils import CommonUtils
+
 warnings.simplefilter(action='ignore', category=FutureWarning)
 
 from config.constants_common import PAGE_STRFTIME_DMY, FILE_STRFTIME_YMD, PREVISION_REPUESTO_KEY, PREVISION_SHEET_URL, \
@@ -25,6 +29,7 @@ class ConsumoPrevision:
     def __init__(self):
         self.select = SelectBoxComponents()
         self.other = OtherComponents()
+        self.common = CommonUtils()
 
     @execute_safely
     def page(self):
@@ -135,7 +140,11 @@ class ConsumoPrevision:
 
             elif pestaña_activa == "📑 Datos":
                 with articulo_col.container(height=SELECT_BOX_HEIGHT, vertical_alignment='center'):
-                    repuestos = st.session_state[PREVISION_DF_KEY]["RepuestoStock"].dropna().unique()
+                    repuestos = st.session_state[PREVISION_DF_KEY]["RepuestoStock"].dropna().unique().tolist()
+                    codigos_crudos = st.session_state[PREVISION_DF_KEY]["CodigoStock"].fillna("").astype(str).unique().tolist()
+
+                    codigos = [self.common.arreglar_codigos(c) for c in codigos_crudos if c.strip() != '']
+
                     articulo_seleccionado = st.selectbox("Repuestos", repuestos, placeholder=PLACEHOLDER, index=None)
 
                 if articulo_seleccionado:
@@ -150,7 +159,7 @@ class ConsumoPrevision:
                     df_stock_filtrado = st.session_state[PREVISION_DF_STOCK_KEY].copy()
                     df_consumo_filtrado = st.session_state[PREVISION_DF_CONSUMO_KEY].copy()
 
-                stock_col, consumo_col = st.columns((1.8, 3))
+                stock_col, consumo_col = st.columns((2.5, 3))
 
                 with stock_col:
                     key_dinamica_stock = f"{PREVISION_STOCK_EDITOR_KEY}_{tipo_repuesto}_{articulo_seleccionado}"
@@ -159,6 +168,7 @@ class ConsumoPrevision:
                                                                      format='mixed',
                                                                      dayfirst=True,
                                                                      errors='coerce').dt.date
+                    df_stock_filtrado["CodigoStock"] = df_stock_filtrado["CodigoStock"].fillna("").astype(str).apply(self.common.arreglar_codigos)
                     df_stock_filtrado["RepuestoStock"] = df_stock_filtrado["RepuestoStock"].fillna("").astype(str)
 
                     df_display_stock = df_stock_filtrado.reset_index(drop=True)
@@ -172,7 +182,8 @@ class ConsumoPrevision:
                         key=key_dinamica_stock,
                         column_order=PREVISION_STOCK_COLS,
                         column_config={
-                            "FechaStock": st.column_config.DateColumn("Fecha Stock", width=50,
+                            "CodigoStock": st.column_config.TextColumn("Codigo", width=20),
+                            "FechaStock": st.column_config.DateColumn("Fecha Stock", width=1,
                                                                       format="MM/YYYY"),
                             "RepuestoStock": st.column_config.TextColumn("Repuesto", width=150),
                             "StockActual": st.column_config.NumberColumn("Stock Actual", width=10),
@@ -185,9 +196,8 @@ class ConsumoPrevision:
                         if google_sheet.save_and_update_forecast(
                             df_filtrado=df_stock_filtrado,
                             celda_inicio="A2",
-                            col_fin="C",
+                            col_fin="D",
                             columnas_a_guardar=PREVISION_STOCK_COLS,
-                            tipo_repuesto=tipo_repuesto,
                             dynamic_editor_key=key_dinamica_stock,
                             button_key="button_stock_key"
                         ):
@@ -200,8 +210,8 @@ class ConsumoPrevision:
                                                                 format='mixed',
                                                                 dayfirst=True,
                                                                 errors='coerce').dt.date
+                    df_consumo_filtrado["Codigo"] = df_consumo_filtrado["Codigo"].fillna("").astype(str).apply(self.common.arreglar_codigos)
                     df_consumo_filtrado["Articulo"] = df_consumo_filtrado["Articulo"].fillna("").astype(str)
-                    df_consumo_filtrado["TipoRepuesto"] = df_consumo_filtrado["TipoRepuesto"].fillna("").astype(str)
 
                     df_display_consumo = df_consumo_filtrado.reset_index(drop=True)
 
@@ -214,12 +224,11 @@ class ConsumoPrevision:
                         key=key_dinamica_consumo,
                         column_order=PREVISION_COLS,
                         column_config={
+                            "Codigo": st.column_config.SelectboxColumn("Codigo", width=50, options=codigos),
                             "Mes": st.column_config.DateColumn("Fecha", width=50, format="MM/YYYY"),
                             "Articulo": st.column_config.SelectboxColumn("Repuesto", width=150,
-                                                                         options=repuestos.tolist()),
+                                                                         options=repuestos),
                             "ConsumoMensual": st.column_config.TextColumn("Consumo Mensual", width=10),
-                            "TipoRepuesto": st.column_config.TextColumn("Tipo Repuesto", width=60,
-                                                                        default=tipo_repuesto),
                         }
                     )
 
@@ -228,10 +237,9 @@ class ConsumoPrevision:
                     with centro_consumo_guardar_col:
                         if google_sheet.save_and_update_forecast(
                             df_filtrado=df_consumo_filtrado,
-                            celda_inicio="E2",
-                            col_fin="H",
+                            celda_inicio="F2",
+                            col_fin="I",
                             columnas_a_guardar=PREVISION_COLS,
-                            tipo_repuesto=tipo_repuesto,
                             dynamic_editor_key=key_dinamica_consumo,
                             button_key="button_consumo_key"
                         ):
@@ -259,3 +267,4 @@ class ConsumoPrevision:
                 return pd.to_datetime(fecha, errors='coerce')
         except Exception:
             return pd.NaT
+

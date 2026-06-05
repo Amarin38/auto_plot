@@ -117,7 +117,9 @@ class PrevisionPlotter:
                 for i in range(len(ticktext))
             ]
 
-            self.default.update_layout(fig, repuesto, "Fecha", "Consumo")
+            codigo_formateado = CommonUtils().arreglar_codigos(df_rep_stock["CodigoStock"].iloc[0])
+
+            self.default.update_layout(fig, f"{repuesto} ({codigo_formateado})", "Fecha", "Consumo")
             self.slider.range_slider(fig, x_data.mean(), x_forecast.max())
 
             fig.update_layout(
