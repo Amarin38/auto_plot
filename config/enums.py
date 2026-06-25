@@ -107,6 +107,10 @@ class RepuestoReparadoEnum(StrEnum):
     RETEN_RUEDA_EJE_CENTRAL_MT27_INTERIOR   = auto()
     RULEMAN_RUEDA_EJE_CENTRAL_MT27          = auto()
     MAZA_RUEDA_EJE_CENTRAL_MT27             = auto()
+    BOMBA_AGUA_CUMM_6C_EURO_V_MT17          = auto()
+    BOMBA_AGUA_CUMM_6C_EURO_V_INDISA        = auto()
+    BOMBA_AGUA_CUMM_AIRE_ACOND_FRIO_CALOR   = auto()
+    BOMBA_AGUA_CUMM_SIN_AIRE_ACOND_FRIO     = auto()
 
 
 class TipoDuracionEnum(StrEnum):
@@ -118,6 +122,8 @@ class TipoDuracionEnum(StrEnum):
     RETEN           = auto()
     RULEMAN         = auto()
     MAZA            = auto()
+    BOMBAS_AGUA     = auto()
+    
 
 
 class ConsumoObligatorioEnum(StrEnum):

@@ -17,11 +17,10 @@ class DuracionRepuestosPlotter:
         self.df_duracion        = df_duracion
         self.df_distribucion    = df_distribucion
 
-
-
     def create_plot(self):
         fecha_min   = self.df_duracion["FechaCambio"].min().strftime(FILE_STRFTIME_YMD)
         fecha_max   = self.df_duracion["FechaCambio"].max().strftime(FILE_STRFTIME_YMD)
+
         cambios     = self.df_distribucion["Cambio"].unique()
         positions   = list(product(range(1, self.rows + 1), range(1, self.cols + 1)))
         specs       = [[{"secondary_y": True}, {"secondary_y": True}] for _ in range(self.rows)]
@@ -78,6 +77,7 @@ class DuracionRepuestosPlotter:
 
         fig.update_yaxes(title_text="", secondary_y=False) # Histograma
         fig.update_yaxes(title_text="Distribución en %", secondary_y=True) # Campana de gauss
+        fig.update_xaxes(dtick=1, tick0=0)
 
         self.default.update_layout(fig, f"Duración repuestos ({fecha_min} | {fecha_max})",  height=725)
 
