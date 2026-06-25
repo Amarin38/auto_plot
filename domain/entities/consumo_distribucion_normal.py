@@ -7,7 +7,6 @@ class DistribucionNormal:
     id: Optional[int]
     Años: int
     Cambio: int
-    Cabecera: str
     Repuesto: str
     TipoRepuesto: str
     AñoPromedio: float

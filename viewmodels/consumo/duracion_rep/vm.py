@@ -16,8 +16,6 @@ class DuracionRepuestosVM:
                 Patente             = row['Patente'],
                 FechaCambio         = row['FechaCambio'],
                 Cambio              = row['Cambio'],
-                Cabecera            = row['Cabecera'],
-                Observaciones       = row['Observaciones'],
                 Repuesto            = row['Repuesto'],
                 TipoRepuesto        = row['TipoRepuesto'],
                 DuracionEnDias      = row['DuracionEnDias'],
@@ -37,7 +35,6 @@ class DuracionRepuestosVM:
                 id                  = None,
                 Años                = row['Años'],
                 Cambio              = row['Cambio'],
-                Cabecera            = row['Cabecera'],
                 Repuesto            = row['Repuesto'],
                 TipoRepuesto        = row['TipoRepuesto'],
                 AñoPromedio         = row['AñoPromedio'],
@@ -66,13 +63,20 @@ class DuracionRepuestosVM:
             entities = uow.duracion_repuestos.get_by_repuesto(repuesto)
             df = self.get_data(entities) if entities else pd.DataFrame()
 
-            df["FechaCambio"] = pd.to_datetime(df["FechaCambio"], errors="coerce")
+            if not df.empty:
+                df["FechaCambio"] = pd.to_datetime(df["FechaCambio"], errors="coerce")
             return df
+
 
     def get_distribucion_df_by_repuesto(self, repuesto: str) -> pd.DataFrame:
         with self.uow as uow:
             entities = uow.distribucion_normal.get_by_repuesto(repuesto)
             return self.get_distribucion_data(entities) if entities else pd.DataFrame()
+
+
+    def get_repuestos(self) -> pd.Series:
+        with self.uow as uow:
+            return uow.duracion_repuestos.get_repuestos()
 
 
     @staticmethod
@@ -84,8 +88,6 @@ class DuracionRepuestosVM:
                     "Patente": e.Patente,
                     "FechaCambio": e.FechaCambio,
                     "Cambio": e.Cambio,
-                    "Cabecera": e.Cabecera,
-                    "Observaciones": e.Observaciones,
                     "Repuesto": e.Repuesto,
                     "TipoRepuesto": e.TipoRepuesto,
                     "DuracionEnDias": e.DuracionEnDias,
@@ -106,7 +108,6 @@ class DuracionRepuestosVM:
                     "id": e.id,
                     "Años": e.Años,
                     "Cambio": e.Cambio,
-                    "Cabecera": e.Cabecera,
                     "Repuesto": e.Repuesto,
                     "TipoRepuesto": e.TipoRepuesto,
                     "AñoPromedio": e.AñoPromedio,

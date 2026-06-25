@@ -2,7 +2,7 @@ import pandas as pd
 import streamlit as st
 
 from config.constants_common import IMG_PATH
-from config.constants_views import PAG_CARGAR_DATOS, CARGAR_DATOS_BASIC_HEIGHT, CARGAR_DATOS_MULTI_HEIGHT, INPUT_HEIGHT
+from config.constants_views import PAG_CARGAR_DATOS, CARGAR_DATOS_BASIC_HEIGHT, CARGAR_DATOS_MULTI_HEIGHT
 from config.enums import LoadDataEnum, TipoCargarEnum, MovimientoEnum
 
 from domain.services.compute_garantias import compute_consumo_garantias, compute_fallas_garantias
@@ -31,7 +31,6 @@ from presentation.streamlit_components import ButtonComponents, SelectBoxCompone
 def cargar_datos():
     buttons = ButtonComponents()
     select = SelectBoxComponents()
-    dialog = DialogComponents()
 
     if "height_izq" not in st.session_state:
         st.session_state.height_izq = CARGAR_DATOS_BASIC_HEIGHT
@@ -71,7 +70,6 @@ def cargar_datos():
 
                 case _:
                     uploaded_files = None
-
 
         with cargar:
             if select_load and uploaded_files is not None:
@@ -120,29 +118,12 @@ def cargar_datos():
                                 datos = lambda: compute_consumo_garantias(load_data(select_load, uploaded_files),
                                                                           select_tipo_repuesto)
 
-                        # case LoadDataEnum.MAXIMOS_Y_MINIMOS:
-                        #     with st.container(height=INPUT_HEIGHT):
-                        #         mult_por_min = st.text_input("Multiplicar al mínimo por: ", 2)
-                        #
-                        #     with st.container(height=INPUT_HEIGHT):
-                        #         mult_por_max = st.text_input("Multiplicar al máximo por: ", 3)
-                        #
-                        #     if mult_por_min not in ("0", '', ' ') and mult_por_max not in ("0", '', ' '):
-                        #         datos = lambda: MaxMin().calculate(load_data(select_load, uploaded_files),
-                        #                                            float(mult_por_min),
-                        #                                            float(mult_por_max))
-                        #     else:
-                        #         dialog.error_dialog("No se puede multiplicar por 0, por 1 o por None")
-
                         case LoadDataEnum.DURACION_REPUESTOS:
-                            select_repuesto = select.select_box_repuesto(st, "LOAD_DATA_REPUESTO_DURACION")
                             select_tipo = select.select_box_tipo_duracion(st, "LOAD_DATA_TIPO_DURACION")
 
-                            if select_repuesto and select_tipo:
+                            if select_tipo:
                                 datos = lambda: DuracionRepuestos(load_data(select_load, uploaded_files),
-                                                                  select_repuesto,
-                                                                  select_tipo
-                                                                  ).calcular_duracion()
+                                                                  select_tipo).calcular_duracion()
 
                         case LoadDataEnum.TRANSFERENCIAS_ENTRE_DEPOSITOS:
                             datos = lambda: TransferenciasEntreDepositosVM().save_transferencias_df(

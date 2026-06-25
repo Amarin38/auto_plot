@@ -6,18 +6,21 @@ import streamlit as st
 from config.constants_common import DURACION_REPUESTO_KEY
 from config.enums import CambiosEnum
 from config.enums_colors import CustomMetricColorsEnum
-from config.constants_views import PAG_DURACION, DURACION_TAB_BOX_HEIGHT, SELECT_BOX_HEIGHT
+from config.constants_views import PAG_DURACION, DURACION_TAB_BOX_HEIGHT, SELECT_BOX_HEIGHT, PLACEHOLDER
 from infrastructure.unit_of_work import SQLAlchemyUnitOfWork
 from viewmodels.consumo.duracion_rep.vm import DuracionRepuestosVM
 from viewmodels.consumo.duracion_rep.plotter import DuracionRepuestosPlotter
 from utils.exception_utils import execute_safely
 from presentation.streamlit_components import SelectBoxComponents, OtherComponents
 
+vm = DuracionRepuestosVM(uow=SQLAlchemyUnitOfWork())
+
+@st.cache_data(ttl=200, show_spinner=False)
+def _obtener_repuestos() -> pd.Series:
+    return vm.get_repuestos()
 
 @st.cache_data(ttl=200, show_spinner=False)
 def _cargar_datos(repuesto) -> Dict[str, Any]:
-    vm = DuracionRepuestosVM(uow=SQLAlchemyUnitOfWork())
-
     duracion = vm.get_df_by_repuesto(repuesto)
     distribucion = vm.get_distribucion_df_by_repuesto(repuesto)
 
@@ -55,14 +58,18 @@ def calcular_sin_cambios(df_duracion: pd.DataFrame, year_str: str) -> Any:
 
 @execute_safely
 def duracion_repuestos():
-    select = SelectBoxComponents()
     components = OtherComponents()
 
     st.title(PAG_DURACION)
 
     aux1, filas_col, rep_col, aux3 = st.columns((0.8, 0.5, 0.75, 0.8))
 
-    select_rep = select.select_box_repuesto(rep_col, DURACION_REPUESTO_KEY)
+    with rep_col.container(height=SELECT_BOX_HEIGHT, vertical_alignment='center'):
+        select_rep = st.selectbox("Selecciona el repuesto: ",
+                                  options=_obtener_repuestos(),
+                                  key=DURACION_REPUESTO_KEY,
+                                  index=None,
+                                  placeholder=PLACEHOLDER)
 
     with filas_col.container(height=SELECT_BOX_HEIGHT, vertical_alignment='center'):
         select_filas = st.selectbox("Seleccione la cantidad de cambios:", CambiosEnum)

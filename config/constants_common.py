@@ -5,8 +5,8 @@ from pandas import Timestamp
 
 # PATHS
 MAIN_PATH = Path().cwd()
-RESOURCES_PATH  : str = "resources/"
-IMG_PATH        : str = f"{RESOURCES_PATH}images/"
+ASSETS_PATH  : str = "assets/"
+IMG_PATH        : str = f"{ASSETS_PATH}images/"
 JSON_PATH       : str = f"{MAIN_PATH}/data/json_data"
 COMMON_DB_PATH  : str = f"{MAIN_PATH}/infrastructure/db/common_data.db"
 SERV_DB_PATH    : str = f"{MAIN_PATH}/infrastructure/db/services_data.db"

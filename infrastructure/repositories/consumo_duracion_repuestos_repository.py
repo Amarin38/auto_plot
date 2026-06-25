@@ -1,5 +1,6 @@
 from typing import List
 
+import pandas as pd
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
@@ -42,6 +43,10 @@ class DuracionRepuestosRepository:
 
         return [DuracionRepuestosMapper.to_entity(m) for m in models]
 
+
+    def get_repuestos(self) -> pd.Series:
+        model = self.session.scalars(select(DuracionRepuestosModel.Repuesto).distinct()).all()
+        return pd.Series(model)
 
     # Delete -------------------------------------------
     def delete_by_id(self, _id: int) -> None:

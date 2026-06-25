@@ -1,5 +1,6 @@
 from typing import List
 
+import pandas as pd
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 

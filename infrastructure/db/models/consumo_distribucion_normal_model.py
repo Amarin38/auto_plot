@@ -10,7 +10,6 @@ class DistribucionNormalModel(BaseModelMixin, DBBase):
 
     Años:               Mapped[int]
     Cambio:             Mapped[int]
-    Cabecera:           Mapped[str] = mapped_column(String(40), index=True, nullable=True)
     Repuesto:           Mapped[str] = mapped_column(String(150), index=True)
     TipoRepuesto:       Mapped[str]
     AñoPromedio:        Mapped[float]

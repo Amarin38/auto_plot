@@ -9,8 +9,6 @@ class DuracionRepuestos:
     Patente: str
     FechaCambio: date
     Cambio: int
-    Cabecera: str
-    Observaciones: str
     Repuesto: str
     TipoRepuesto: str
     DuracionEnDias: int
