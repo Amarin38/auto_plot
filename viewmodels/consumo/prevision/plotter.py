@@ -117,19 +117,19 @@ class PrevisionPlotter:
                 for i in range(len(ticktext))
             ]
 
-            codigo_formateado = CommonUtils().arreglar_codigos(df_rep_stock["CodigoStock"].iloc[0])
+            codigo_formateado = df_rep_stock["CodigoStock"].iloc[0]
 
-            self.default.update_layout(fig, f"{repuesto} ({codigo_formateado})", "Fecha", "Consumo")
+            self.default.update_layout(fig, f"{repuesto} ({codigo_formateado.replace("-",".")})", "Fecha", "Consumo")
             self.slider.range_slider(fig, x_data.mean(), x_forecast.max())
 
             fig.update_layout(
                 legend=dict(
-                    orientation="h",  # Leyenda horizontal
-                    yanchor="bottom",  # Anclar desde la parte inferior de la leyenda
-                    y=-0.332,  # Colocarla un poco por encima del gráfico
-                    xanchor="center",  # Centrarla horizontalmente
+                    orientation="h",
+                    yanchor="bottom",
+                    y=-0.332,
+                    xanchor="center",
                     x=0.206,
-                    bgcolor="rgba(0,0,0,0)"  # Fondo transparente para que se integre mejor
+                    bgcolor="rgba(0,0,0,0)"
                 ),
             )
 

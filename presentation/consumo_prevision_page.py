@@ -1,8 +1,8 @@
+from datetime import date
+
 import pandas as pd
 import streamlit as st
 import warnings
-
-from pandas import options
 
 from config.enums_colors import CustomMetricColorsEnum
 from utils.common_utils import CommonUtils
@@ -143,7 +143,7 @@ class ConsumoPrevision:
                     repuestos = st.session_state[PREVISION_DF_KEY]["RepuestoStock"].dropna().unique().tolist()
                     codigos_crudos = st.session_state[PREVISION_DF_KEY]["CodigoStock"].fillna("").astype(str).unique().tolist()
 
-                    codigos = [self.common.arreglar_codigos(c) for c in codigos_crudos if c.strip() != '']
+                    codigos = [c for c in codigos_crudos if c.strip() != '']
 
                     articulo_seleccionado = st.selectbox("Repuestos", repuestos, placeholder=PLACEHOLDER, index=None)
 
@@ -168,7 +168,7 @@ class ConsumoPrevision:
                                                                      format='mixed',
                                                                      dayfirst=True,
                                                                      errors='coerce').dt.date
-                    df_stock_filtrado["CodigoStock"] = df_stock_filtrado["CodigoStock"].fillna("").astype(str).apply(self.common.arreglar_codigos)
+                    df_stock_filtrado["CodigoStock"] = df_stock_filtrado["CodigoStock"].fillna("").astype(str)
                     df_stock_filtrado["RepuestoStock"] = df_stock_filtrado["RepuestoStock"].fillna("").astype(str)
 
                     df_display_stock = df_stock_filtrado.reset_index(drop=True)
@@ -210,10 +210,11 @@ class ConsumoPrevision:
                                                                 format='mixed',
                                                                 dayfirst=True,
                                                                 errors='coerce').dt.date
-                    df_consumo_filtrado["Codigo"] = df_consumo_filtrado["Codigo"].fillna("").astype(str).apply(self.common.arreglar_codigos)
+                    df_consumo_filtrado["Codigo"] = df_consumo_filtrado["Codigo"].fillna("").astype(str)
                     df_consumo_filtrado["Articulo"] = df_consumo_filtrado["Articulo"].fillna("").astype(str)
 
                     df_display_consumo = df_consumo_filtrado.reset_index(drop=True)
+                    fecha_mes = pd.Timestamp.now().replace(day=1) - pd.DateOffset(months=1)
 
                     st.data_editor(
                         df_display_consumo,
@@ -225,7 +226,7 @@ class ConsumoPrevision:
                         column_order=PREVISION_COLS,
                         column_config={
                             "Codigo": st.column_config.SelectboxColumn("Codigo", width=50, options=codigos),
-                            "Mes": st.column_config.DateColumn("Fecha", width=50, format="MM/YYYY"),
+                            "Mes": st.column_config.DateColumn("Fecha", width=50, default=fecha_mes.date(), format="MM/YYYY"),
                             "Articulo": st.column_config.SelectboxColumn("Repuesto", width=150,
                                                                          options=repuestos),
                             "ConsumoMensual": st.column_config.TextColumn("Consumo Mensual", width=10),

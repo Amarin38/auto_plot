@@ -5,7 +5,6 @@ from statsmodels.tsa.holtwinters import ExponentialSmoothing
 from config.constants_common import FILE_STRFTIME_YMD
 from config.enums import RepuestoEnum
 from config.enums_colors import TextModsEnum, ForegroundColorsEnum
-from utils.common_utils import CommonUtils
 from viewmodels.consumo.prevision.vm import PrevisionVM
 
 
@@ -70,7 +69,7 @@ def create_forecast_local(df: pd.DataFrame, tipo_repuesto: RepuestoEnum):
 
 def create_forecast_google_sheet(df: pd.DataFrame, df_stock: pd.DataFrame):
     df = df.replace("", pd.NA).dropna(subset=["Mes", "Articulo"])
-    nombre_articulos = df["Articulo"].unique()
+    nombre_articulos = [a.strip() for a in df["Articulo"].unique()]
 
     lista_previsiones = []
 
@@ -89,6 +88,7 @@ def create_forecast_google_sheet(df: pd.DataFrame, df_stock: pd.DataFrame):
 
         try:
             data: pd.Series = df_art["ConsumoMensual"]
+            data.index.freq = 'MS'
 
             # Modelo HoltWinters
             fit = ExponentialSmoothing(
@@ -97,7 +97,7 @@ def create_forecast_google_sheet(df: pd.DataFrame, df_stock: pd.DataFrame):
                 damped_trend=True,
                 seasonal="add",
                 seasonal_periods=12,
-                initialization_method="estimated"
+                initialization_method="heuristic"
             ).fit(optimized=True)
 
             prevision: pd.Series = fit.forecast(12)
@@ -106,7 +106,9 @@ def create_forecast_google_sheet(df: pd.DataFrame, df_stock: pd.DataFrame):
 
             df_prev                             = prevision.to_frame(name="Prevision").reset_index()
             df_prev.columns                     = ["FechaPrevision", "Prevision"]
-            df_prev.insert(0, "CodigoPrevision", CommonUtils().arreglar_codigos(codigo_actual))
+
+            df_prev.insert(0, "CodigoPrevision", codigo_actual)
+
             df_prev["Prevision"]                = df_prev["Prevision"].round(0).clip(lower=0).astype("float64")
             df_prev["RestoStock"]               = df_stock_art["StockActual"].iloc[0] - df_prev["Prevision"].cumsum()
             df_prev["RepuestoPrevision"]        = articulo
