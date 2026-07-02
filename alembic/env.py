@@ -13,6 +13,16 @@ from config.constants_common import DB_PATH
 from infrastructure import DBBase
 
 import infrastructure.db.models
+from infrastructure.db.models.parque_movil import CARROCERIA_MODEL
+from infrastructure.db.models.parque_movil import CHASIS_MODEL
+from infrastructure.db.models.parque_movil import CHASIS_MARCA_MODEL
+from infrastructure.db.models.parque_movil import CHASIS_MODELO_MODEL
+from infrastructure.db.models.parque_movil import MOTOR_MODEL
+from infrastructure.db.models.parque_movil import MOTOR_MARCA_MODEL
+from infrastructure.db.models.parque_movil import MOTOR_MODELO_MODEL
+from infrastructure.db.models.parque_movil import PARQUE_MOVIL_MODEL
+from infrastructure.db.models.parque_movil import PARQUE_MOVIL_HISTORIAL_MODEL
+from infrastructure.db.models.parque_movil import REGISTRO_KM_MODEL
 
 # Comando para alembic
 # uv run alembic revision --autogenerate -m "nombre del commit"

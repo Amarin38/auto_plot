@@ -11,4 +11,4 @@ class MotorModeloModel(DBBase):
     IDMotorMarca:     Mapped[int]     = mapped_column(ForeignKey("MOTOR_MARCA.IDMotorMarca"))
     Nombre:           Mapped[str]     = mapped_column(String(50), nullable=False)
 
-    __table_args__ = (UniqueConstraint("IDMotorMarca", "Nombre", name="unique_motor_marca_modelo"))
+    __table_args__ = (UniqueConstraint("IDMotorMarca", "Nombre", name="unique_motor_marca_modelo"),)

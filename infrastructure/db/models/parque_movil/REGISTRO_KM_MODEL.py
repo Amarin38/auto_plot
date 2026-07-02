@@ -11,6 +11,6 @@ class RegistroKMModel(DBBase):
     __tablename__ = "REGISTRO_KM"
 
     IDRegistroKM:       Mapped[int]         = mapped_column(primary_key=True)
-    IDParqueMovil:      Mapped[int]         = mapped_column(ForeignKey("PARQUE_MOVIL.IDRegistroKM"))
+    IDParqueMovil:      Mapped[int]         = mapped_column(ForeignKey("PARQUE_MOVIL.IDParqueMovil"))
     FechaLectura:       Mapped[date]        = mapped_column(Date, nullable=False)
     KMTotal:            Mapped[Decimal]     = mapped_column(DECIMAL(10, 2), nullable=False)

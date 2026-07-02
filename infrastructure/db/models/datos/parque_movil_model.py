@@ -7,7 +7,7 @@ from infrastructure import DBBase
 
 
 class ParqueMovilModel(DBBase):
-    __tablename__ = "PARQUE_MOVIL"
+    __tablename__ = "PARQUE_MOVIL_VIEJO"
 
     id:                     Mapped[int]     = mapped_column(primary_key=True)
     FechaParqueMovil:       Mapped[date]    = mapped_column(Date, nullable=True)
