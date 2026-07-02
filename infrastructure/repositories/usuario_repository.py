@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 
 from domain.entities.usuario import Usuario
 from infrastructure.db.models.usuario_model import UsuarioModel
-from infrastructure.mappers.usuario_mapper import UsuarioMapper
+from infrastructure.mapper import Mapper
 
 
 class UsuarioRepository:
@@ -14,7 +14,7 @@ class UsuarioRepository:
 
     # Create -------------------------------------------
     def insert_many(self, entities: List[Usuario]) -> None:
-        models = [UsuarioMapper.to_model(e) for e in entities]
+        models = [Mapper.to_model(entity, UsuarioModel) for entity in entities]
         self.session.add_all(models)
 
 
@@ -24,7 +24,7 @@ class UsuarioRepository:
             select(UsuarioModel)
         ).all()
 
-        return [UsuarioMapper.to_entity(m) for m in models]
+        return [Mapper.to_entity(model, Usuario) for model in models]
 
 
     def get_by_nombre(self, nombre: str) -> Usuario:
@@ -32,7 +32,7 @@ class UsuarioRepository:
             select(UsuarioModel).where(UsuarioModel.Nombre == nombre)
         ).first()
 
-        return UsuarioMapper.to_entity(model)
+        return Mapper.to_entity(model, Usuario)
 
 
     # Delete -------------------------------------------

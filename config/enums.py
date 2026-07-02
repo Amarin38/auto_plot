@@ -207,8 +207,8 @@ class DashEnum(LowercaseStrEnum):
 
 
 class RoleEnum(LowercaseStrEnum):
-    ADMIN   = auto()
-    USER    = auto()
+    admin   = auto()
+    user    = auto()
 
 
 class CambiosEnum(LowercaseStrEnum):

@@ -1,7 +1,7 @@
 import pandas as pd
 from pandas import DataFrame
 
-from domain.entities.datos_usuarios_codigos import UsuariosCodigos
+from domain.entities.datos.usuarios_codigos import UsuariosCodigos
 from infrastructure.unit_of_work import SQLAlchemyUnitOfWork
 
 

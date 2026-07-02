@@ -1,15 +1,13 @@
 from datetime import date
-from typing import Optional, Any
 
-import numpy as np
 import streamlit as st
 import pandas as pd
 from pandas import DataFrame
 
 from config.constants_common import PARQUE_MOVIL_COLS, PARQUE_MOVIL_COLS_TYPE
-from domain.entities.datos_parque_movil import ParqueMovil, ParqueMovilFiltro
+from domain.entities.datos.parque_movil import ParqueMovil
 from infrastructure.unit_of_work import SQLAlchemyUnitOfWork
-from interfaces.viewmodel import ViewModel
+
 
 @st.cache_data(ttl=3600, show_spinner="Consultando a la base de datos...", show_time=True)
 def _fetch_base_dataframe(fecha_desde: date, fecha_hasta: date, _uow: SQLAlchemyUnitOfWork):
@@ -25,24 +23,15 @@ def _fetch_base_dataframe(fecha_desde: date, fecha_hasta: date, _uow: SQLAlchemy
     ) for e in entities)
 
     df = pd.DataFrame.from_records(rows, columns=PARQUE_MOVIL_COLS)
+    valores_na = {"Linea":0, "Interno":0, "Dominio":"", "Asientos":0, "Año":0,
+                  "ChasisMarca":"", "ChasisModelo":"", "ChasisNum":"",
+                  "MotorMarca":"", "MotorModelo":"", "MotorNum":"", "Carroceria":""}
 
-    df["Linea"]         = df["Linea"].fillna(0)
-    df["Interno"]       = df["Interno"].fillna(0)
-    df["Dominio"]       = df["Dominio"].fillna("")
-    df["Asientos"]      = df["Asientos"].fillna(0)
-    df["Año"]           = df["Año"].fillna(0)
-    df["ChasisMarca"]   = df["ChasisMarca"].fillna("")
-    df["ChasisModelo"]  = df["ChasisModelo"].fillna("")
-    df["ChasisNum"]     = df["ChasisNum"].fillna("")
-    df["MotorMarca"]    = df["MotorMarca"].fillna("")
-    df["MotorModelo"]   = df["MotorModelo"].fillna("")
-    df["MotorNum"]      = df["MotorNum"].fillna("")
-    df["Carroceria"]    = df["Carroceria"].fillna("")
-
-    return pd.DataFrame(df.astype(PARQUE_MOVIL_COLS_TYPE))
+    df = df.fillna(value=valores_na).astype(PARQUE_MOVIL_COLS_TYPE)
+    return df
 
 
-class ParqueMovilVM(ViewModel):
+class ParqueMovilVM:
     def __init__(self, uow: SQLAlchemyUnitOfWork = SQLAlchemyUnitOfWork()) -> None:
         self.uow = uow
 
@@ -58,6 +47,7 @@ class ParqueMovilVM(ViewModel):
                 Dominio          = row['Dominio'],
                 Asientos         = row['Asientos'],
                 Año              = row['Año'],
+                Fecha0KM         = row['Fecha0KM'],
                 ChasisMarca      = row['ChasisMarca'],
                 ChasisModelo     = row['ChasisModelo'],
                 ChasisNum        = row['ChasisNum'],
@@ -100,6 +90,7 @@ class ParqueMovilVM(ViewModel):
                 "Dominio"               : e.Dominio,
                 "Asientos"              : e.Asientos,
                 "Año"                   : e.Año,
+                "Fecha0KM"              : e.Fecha0KM,
                 "ChasisMarca"           : e.ChasisMarca,
                 "ChasisModelo"          : e.ChasisModelo,
                 "ChasisNum"             : e.ChasisNum,

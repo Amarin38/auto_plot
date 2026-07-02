@@ -7,10 +7,10 @@ from pandas import DataFrame
 
 from domain.entities.json_config import JSONConfig
 from infrastructure.unit_of_work import SQLAlchemyUnitOfWork
-from interfaces.viewmodel import ViewModel
 
 
-class JSONConfigVM(ViewModel):
+
+class JSONConfigVM:
     def __init__(self, uow: SQLAlchemyUnitOfWork = SQLAlchemyUnitOfWork()) -> None:
         self.uow = uow
 

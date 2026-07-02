@@ -81,10 +81,10 @@ class ConteoStockVM:
         df["PrecioActual"]      = df["PrecioActual"].to_numpy()
 
 
-        precio_faltante = df.loc[df["DiferenciaPrecio"] < 0, "DiferenciaPrecio"].sum().round(1)
-        precio_sobrante = df.loc[df["DiferenciaPrecio"] > 0, "DiferenciaPrecio"].sum().round(1)
-        precio_anterior = df["PrecioAnterior"].sum().round(1)
-        precio_actual   = df["PrecioActual"].sum().round(1)
+        precio_faltante = df.loc[df["DiferenciaPrecio"] < 0, "DiferenciaPrecio"].sum()
+        precio_sobrante = df.loc[df["DiferenciaPrecio"] > 0, "DiferenciaPrecio"].sum()
+        precio_anterior = df["PrecioAnterior"].sum()
+        precio_actual   = df["PrecioActual"].sum()
         porcentaje_dif  = round(self.calcular_porcentaje(precio_actual, precio_anterior) - 100, 2)
 
         contados = self.calcular_contados(df)

@@ -1,9 +1,10 @@
-from dataclasses import dataclass
-from typing import Dict, Any, Optional
+from pydantic import BaseModel, ConfigDict
+from typing import Any, Optional
 
 
-@dataclass
-class JSONConfig:
-    id: Optional[int]
-    nombre: str
-    data: Dict[str, Any]
+class JSONConfig(BaseModel):
+    id      : Optional[int] = None
+    nombre  : str
+    data    : dict[str, Any]
+
+    model_config = ConfigDict(from_attributes=True)

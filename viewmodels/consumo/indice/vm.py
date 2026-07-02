@@ -1,6 +1,6 @@
 import pandas as pd
 
-from domain.entities.consumo_indice import ConsumoIndice
+from domain.entities.consumo.indice import ConsumoIndice
 from infrastructure.unit_of_work import SQLAlchemyUnitOfWork
 
 class IndiceConsumoVM:

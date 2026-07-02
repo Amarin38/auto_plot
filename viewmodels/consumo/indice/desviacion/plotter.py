@@ -35,7 +35,7 @@ class DeviationPlotter:
             agrupado = self.df.groupby("Cabecera").agg({"Desviacion": "mean"}).reset_index()
 
             x_data = agrupado["Cabecera"]
-            y_data = agrupado["Desviacion"].round(1)
+            y_data = agrupado["Desviacion"]
 
         y_porcentual = y_data.astype(str) + "%"
 

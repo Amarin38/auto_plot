@@ -3,7 +3,7 @@ from typing import List
 import pandas as pd
 
 from config.enums import PeriodoComparacionEnum, CabecerasEnum, ConsumoComparacionRepuestoEnum
-from domain.entities.consumo_comparacion import ConsumoComparacion
+from domain.entities.consumo.comparacion import ConsumoComparacion
 from infrastructure.unit_of_work import SQLAlchemyUnitOfWork
 
 

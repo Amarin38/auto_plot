@@ -1,7 +1,7 @@
 import pandas as pd
 
-from domain.entities.consumo_distribucion_normal import DistribucionNormal
-from domain.entities.consumo_duracion_repuestos import DuracionRepuestos
+from domain.entities.consumo.distribucion_normal import DistribucionNormal
+from domain.entities.consumo.duracion_repuestos import DuracionRepuestos
 from infrastructure.unit_of_work import SQLAlchemyUnitOfWork
 
 

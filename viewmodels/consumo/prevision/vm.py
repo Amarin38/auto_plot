@@ -1,8 +1,8 @@
 import pandas as pd
 
 from config.constants_common import FILE_STRFTIME_YMD
-from domain.entities.consumo_prevision import ConsumoPrevision
-from domain.entities.consumo_prevision_data import ConsumoPrevisionData
+from domain.entities.consumo.prevision import ConsumoPrevision
+from domain.entities.consumo.prevision_data import ConsumoPrevisionData
 from infrastructure.unit_of_work import SQLAlchemyUnitOfWork
 
 

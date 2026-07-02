@@ -1,9 +1,9 @@
 import pandas as pd
 
 from config.constants_common import PAGE_STRFTIME_YMD
-from domain.entities.garantias_consumo import GarantiasConsumo
-from domain.entities.garantias_datos import GarantiasDatos
-from domain.entities.garantias_falla import GarantiasFalla
+from domain.entities.garantias.consumo import GarantiasConsumo
+from domain.entities.garantias.datos import GarantiasDatos
+from domain.entities.garantias.falla import GarantiasFalla
 from infrastructure.unit_of_work import SQLAlchemyUnitOfWork
 
 

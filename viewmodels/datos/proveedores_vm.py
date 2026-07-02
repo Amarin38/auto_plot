@@ -2,12 +2,12 @@ import numpy as np
 import pandas as pd
 
 from config.constants_common import PROVEEDORES_COLS, PROVEEDORES_COLS_TYPE, PROVEEDORES_COLS_RENAME
-from domain.entities.datos_proveedores import Proveedores
+from domain.entities.datos.proveedores import Proveedores
 from infrastructure.unit_of_work import SQLAlchemyUnitOfWork
-from interfaces.viewmodel import ViewModel
 
 
-class ProveedoresVM(ViewModel):
+
+class ProveedoresVM:
     def __init__(self, uow: SQLAlchemyUnitOfWork = SQLAlchemyUnitOfWork()) -> None:
         self.uow = uow
 

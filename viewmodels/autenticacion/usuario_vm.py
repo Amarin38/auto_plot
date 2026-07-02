@@ -12,7 +12,11 @@ class UsuarioVM:
 
     def save_user(self, nombre: str, contraseña: str, rol: RoleEnum) -> None:
         contraseña_hasheada = Hasher().hash(contraseña)
-        usuario = Usuario(nombre, contraseña_hasheada, rol)
+        usuario = Usuario(
+            Nombre=nombre,
+            Contraseña=contraseña_hasheada,
+            Rol=rol
+        )
 
         with self.uow as uow:
             uow.usuario.insert_many([usuario])

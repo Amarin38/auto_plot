@@ -6,17 +6,16 @@ from sqlalchemy.orm import Session
 
 from domain.entities.json_config import JSONConfig
 from infrastructure.db.models.json_config_model import JSONConfigModel
-from infrastructure.mappers.json_config_mapper import JSONConfigMapper
-from interfaces.repository import Repository
+from infrastructure.mapper import Mapper
 
 
-class JSONConfigRepository(Repository):
+class JSONConfigRepository:
     def __init__(self, session: Session) -> None:
         self.session = session
 
     # Create -------------------------------------------
     def insert_many(self, entities: List[JSONConfig]) -> None:
-        models = [JSONConfigMapper.to_model(e) for e in entities]
+        models = [Mapper.to_model(entity, JSONConfigModel) for entity in entities]
         self.session.add_all(models)
 
     # Read -------------------------------------------
@@ -25,7 +24,7 @@ class JSONConfigRepository(Repository):
             select(JSONConfigModel)
         ).all()
 
-        return [JSONConfigMapper.to_entity(m) for m in models]
+        return [Mapper.to_entity(model, JSONConfig) for model in models]
 
 
     @dispatch(int)
@@ -34,7 +33,7 @@ class JSONConfigRepository(Repository):
             select(JSONConfigModel).where(JSONConfigModel.id == _id)
         ).first()
 
-        return JSONConfigMapper.to_entity(model)
+        return Mapper.to_entity(model, JSONConfig)
 
 
     @dispatch(str)
@@ -43,7 +42,7 @@ class JSONConfigRepository(Repository):
             select(JSONConfigModel).where(JSONConfigModel.nombre == nombre)
         ).first()
 
-        return JSONConfigMapper.to_entity(model)
+        return Mapper.to_entity(model, JSONConfig)
 
 
     # Delete -------------------------------------------

@@ -1,12 +1,12 @@
 import pandas as pd
 from pandas import DataFrame
 
-from domain.entities.datos_coches_cabecera import CochesCabecera
+from domain.entities.datos.coches_cabecera import CochesCabecera
 from infrastructure.unit_of_work import SQLAlchemyUnitOfWork
-from interfaces.viewmodel import ViewModel
 
 
-class CochesCabeceraVM(ViewModel):
+
+class CochesCabeceraVM:
     def __init__(self, uow: SQLAlchemyUnitOfWork = SQLAlchemyUnitOfWork()) -> None:
         self.uow = uow
 

@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 
 from domain.entities.inicio_conteo_stock import ConteoStock
 from infrastructure.db.models.inicio_conteo_stock_model import ConteoStockModel
-from infrastructure.mappers.inicio_conteo_stock_mapper import ConteoStockMapper
+from infrastructure.mapper import Mapper
 
 
 class ConteoStockRepository:
@@ -14,7 +14,7 @@ class ConteoStockRepository:
 
     # Create -------------------------------------------
     def insert_many(self, entities: List[ConteoStock]) -> None:
-        models = [ConteoStockMapper.to_model(e) for e in entities]
+        models = [Mapper.to_model(entity, ConteoStockModel) for entity in entities]
         self.session.add_all(models)
 
 
@@ -24,7 +24,7 @@ class ConteoStockRepository:
             select(ConteoStockModel)
         ).all()
 
-        return [ConteoStockMapper.to_entity(m) for m in models]
+        return [Mapper.to_entity(model, ConteoStock) for model in models]
 
 
     def get_by_id(self, _id: int) -> ConteoStock:
@@ -32,7 +32,7 @@ class ConteoStockRepository:
             select(ConteoStockModel).where(ConteoStockModel.id == _id)
         ).first()
 
-        return ConteoStockMapper.to_entity(model)
+        return Mapper.to_entity(model, ConteoStock)
 
 
     # Delete -------------------------------------------

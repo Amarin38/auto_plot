@@ -25,6 +25,8 @@ class IndexPlotter:
         if self.df.empty:
             return None, None
 
+        self.df["ConsumoIndice"] = self.df["ConsumoIndice"].astype(float)
+
         titulo = f"Indice {self.tipo_rep} ({self.common.devolver_fecha(self.df, "UltimaFecha")})" \
                   if self.tipo_rep else ""
 

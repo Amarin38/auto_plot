@@ -1,11 +1,11 @@
 import pandas as pd
 
-from domain.entities.datos_maximos_minimos import MaximosMinimos
+from domain.entities.datos.maximos_minimos import MaximosMinimos
 from infrastructure.unit_of_work import SQLAlchemyUnitOfWork
-from interfaces.viewmodel import ViewModel
 
 
-class MaximosMinimosVM(ViewModel):
+
+class MaximosMinimosVM:
     def __init__(self, uow: SQLAlchemyUnitOfWork = SQLAlchemyUnitOfWork()) -> None:
         self.uow = uow
 

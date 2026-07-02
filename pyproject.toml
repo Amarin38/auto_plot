@@ -12,6 +12,7 @@ dependencies = [
     "openpyxl>=3.1.5",
     "pandas>=2.3.3",
     "plotly>=6.5.1",
+    "pydantic>=2.13.4",
     "pytest>=9.0.2",
     "scipy>=1.17.0",
     "sqlalchemy>=2.0.45",

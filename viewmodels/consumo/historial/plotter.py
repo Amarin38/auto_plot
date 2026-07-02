@@ -27,6 +27,8 @@ class HistorialPlotter:
         if self.df.empty:
             return [None, None]
 
+        self.df["TotalConsumo"] = self.df["TotalConsumo"].astype(float)
+
         fecha_min = self.df["FechaMin"].iloc()[0]
         fecha_max = self.df["FechaMax"].iloc()[0]
 

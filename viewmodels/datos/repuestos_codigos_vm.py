@@ -1,14 +1,14 @@
 import numpy as np
 import pandas as pd
 
-from config.constants_common import REPUESTOS_CODIGOS_COLS_RENAME, REPUESTOS_CODIGOS_COLS
-from domain.entities.datos_repuestos_codigos import RepuestosCodigos, RepuestosCodigosFiltro
+from config.constants_common import REPUESTOS_CODIGOS_COLS_RENAME
+from domain.entities.datos.repuestos_codigos import RepuestosCodigos, RepuestosCodigosFiltro
 from infrastructure.unit_of_work import SQLAlchemyUnitOfWork
-from interfaces.viewmodel import ViewModel
+
 from utils.exception_utils import execute_safely
 
 
-class RepuestosCodigosVM(ViewModel):
+class RepuestosCodigosVM:
     def __init__(self, uow: SQLAlchemyUnitOfWork = SQLAlchemyUnitOfWork()) -> None:
         self.uow = uow
 

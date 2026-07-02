@@ -1,7 +1,7 @@
 import pandas as pd
 
 from config.enums import RepuestoEnum
-from domain.entities.consumo_historial import ConsumoHistorial
+from domain.entities.consumo.historial import ConsumoHistorial
 from infrastructure.unit_of_work import SQLAlchemyUnitOfWork
 
 

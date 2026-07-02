@@ -1,12 +1,10 @@
 import pandas as pd
 
 from config.enums import ConsumoObligatorioEnum
-from domain.entities.consumo_obligatorio import ConsumoObligatorio
+from domain.entities.consumo.obligatorio import ConsumoObligatorio
 from infrastructure.unit_of_work import SQLAlchemyUnitOfWork
-from interfaces.viewmodel import ViewModel
 
-
-class ConsumoObligatorioVM(ViewModel):
+class ConsumoObligatorioVM:
     def __init__(self, uow: SQLAlchemyUnitOfWork = SQLAlchemyUnitOfWork()) -> None:
         self.uow = uow
 

@@ -1,7 +1,7 @@
 import pandas as pd
 
 from config.enums import RepuestoEnum
-from domain.entities.consumo_desviacion_indices import ConsumoDesviacionIndices
+from domain.entities.consumo.desviacion_indices import ConsumoDesviacionIndices
 from infrastructure.unit_of_work import SQLAlchemyUnitOfWork
 
 

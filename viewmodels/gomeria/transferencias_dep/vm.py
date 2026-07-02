@@ -1,7 +1,7 @@
 import pandas as pd
 
-from domain.entities.gomeria_diferencia_mov_dep import GomeriaDiferenciaMovEntreDep
-from domain.entities.gomeria_transferencias_dep import GomeriaTransferenciasEntreDep
+from domain.entities.gomeria.diferencia_mov_dep import GomeriaDiferenciaMovEntreDep
+from domain.entities.gomeria.transferencias_dep import GomeriaTransferenciasEntreDep
 from infrastructure.unit_of_work import SQLAlchemyUnitOfWork
 
 
