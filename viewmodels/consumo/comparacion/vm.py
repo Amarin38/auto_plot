@@ -9,7 +9,7 @@ from infrastructure.unit_of_work import SQLAlchemyUnitOfWork
 
 class ConsumoComparacionVM:
     def __init__(self, uow: SQLAlchemyUnitOfWork = SQLAlchemyUnitOfWork()) -> None:
-        self.uow = uow
+        self.uow = uow if uow is not None else SQLAlchemyUnitOfWork()
 
     def save_df(self, df) -> None:
         entities = [
