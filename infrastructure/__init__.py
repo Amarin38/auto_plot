@@ -15,6 +15,7 @@ def get_db_engine_sqlite():
 def get_db_engine_postgres():
     return create_engine(
         DB_PATH_POSTGRES,
+        pool_pre_put=True,
         echo=False,
         connect_args={'options': '-csearch_path=estadisticas,datos'}
     )
