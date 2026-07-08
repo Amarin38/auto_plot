@@ -1,13 +1,12 @@
 from datetime import date
-
+from decimal import Decimal
 from sqlalchemy import ForeignKey, Date, DECIMAL
 from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column
-from infrastructure import DBBase
-from decimal import Decimal
+from infrastructure import dbbase_postrgres
 
 
-class RegistroKMModel(DBBase):
+class RegistroKMModel(dbbase_postrgres):
     __tablename__ = "REGISTRO_KM"
 
     IDRegistroKM:       Mapped[int]         = mapped_column(primary_key=True)

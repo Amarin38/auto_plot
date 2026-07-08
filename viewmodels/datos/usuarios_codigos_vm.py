@@ -32,13 +32,13 @@ class UsuariosCodigosVM:
 
     def get_df_by_usuario_antiguo(self, usuario_antiguo: str) -> pd.DataFrame:
         with self.uow as uow:
-            entities = uow.usuarios_codigos.get_by_usuario_antiguo(usuario_antiguo)
+            entities = uow.usuarios_codigos.get_by_n_columns({"UsuariosAntiguos": usuario_antiguo})
             return self.get_data(entities) if entities else pd.DataFrame()
 
 
     def get_df_by_usuario_nuevo(self, usuario_nuevo: str) -> pd.DataFrame:
         with self.uow as uow:
-            entities = uow.usuarios_codigos.get_by_usuario_nuevo(usuario_nuevo)
+            entities = uow.usuarios_codigos.get_by_n_columns({"UsuariosNuevos": usuario_nuevo})
             return self.get_data(entities) if entities else pd.DataFrame()
 
 

@@ -7,12 +7,13 @@ from sqlalchemy import pool
 
 from alembic import context
 
+from config.constants_common import DB_PATH_POSTGRES
+
 sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 
-from config.constants_common import DB_PATH
-from infrastructure import DBBase
+from infrastructure import dbbase_postrgres
 
-import infrastructure.db.models
+# import infrastructure.db.models
 from infrastructure.db.models.parque_movil import CARROCERIA_MODEL
 from infrastructure.db.models.parque_movil import CHASIS_MODEL
 from infrastructure.db.models.parque_movil import CHASIS_MARCA_MODEL
@@ -23,6 +24,7 @@ from infrastructure.db.models.parque_movil import MOTOR_MODELO_MODEL
 from infrastructure.db.models.parque_movil import PARQUE_MOVIL_MODEL
 from infrastructure.db.models.parque_movil import PARQUE_MOVIL_HISTORIAL_MODEL
 from infrastructure.db.models.parque_movil import REGISTRO_KM_MODEL
+from infrastructure.db.models.gomeria.movimientos_model import GomeriaMovimientosModel
 
 # Comando para alembic
 # uv run alembic revision --autogenerate -m "nombre del commit"
@@ -35,7 +37,7 @@ config = context.config
 
 # --- PASO 3: URL DINÁMICA ---
 # Forzamos a Alembic a usar tu constante en lugar de leer el alembic.ini
-config.set_main_option("sqlalchemy.url", DB_PATH)
+config.set_main_option("sqlalchemy.url", DB_PATH_POSTGRES)
 
 # Interpret the config file for Python logging.
 # This line sets up loggers basically.
@@ -43,7 +45,7 @@ if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
 
-target_metadata = DBBase.metadata
+target_metadata = dbbase_postrgres.metadata
 
 # other values from the config, defined by the needs of env.py,
 # can be acquired:
@@ -93,7 +95,9 @@ def run_migrations_online() -> None:
             connection=connection,
             target_metadata=target_metadata,
             compare_type = True,
-            render_as_batch = True
+            render_as_batch = True,
+            version_table_schema='estadisticas',
+            include_schemas=True,
         )
 
         with context.begin_transaction():

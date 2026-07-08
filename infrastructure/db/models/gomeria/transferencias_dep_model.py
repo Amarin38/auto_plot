@@ -1,10 +1,10 @@
 from sqlalchemy import String
 from sqlalchemy.orm import Mapped, mapped_column
-from infrastructure import DBBase
+from infrastructure import dbbase_sqlite
 
 
-class GomeriaTransferenciasEntreDepModel(DBBase):
-    __tablename__ = "GOMERIA_TRANSFERENCIAS_DEP"
+class GomeriaTransferenciasEntreDepModel(dbbase_sqlite):
+    __tablename__ = "stats_gomeria_transferencias_dep"
 
     id:         Mapped[int] = mapped_column(primary_key=True)
     Repuesto:   Mapped[str] = mapped_column(String(150), index=True)

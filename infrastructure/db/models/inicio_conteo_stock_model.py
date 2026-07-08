@@ -3,11 +3,11 @@ from decimal import Decimal
 from sqlalchemy import Date, String, DECIMAL
 from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column
-from infrastructure import DBBase
+from infrastructure import dbbase_sqlite
 
 
-class ConteoStockModel(DBBase):
-    __tablename__ = "CONTEO_STOCK"
+class ConteoStockModel(dbbase_sqlite):
+    __tablename__ = "data_conteo_stock"
 
     id:                 Mapped[int]     = mapped_column(primary_key=True)
     Codigo:             Mapped[str]     = mapped_column(String(15))

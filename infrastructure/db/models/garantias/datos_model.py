@@ -3,11 +3,11 @@ from sqlalchemy import Integer, String
 from sqlalchemy import DateTime
 from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column
-from infrastructure import DBBase
+from infrastructure import dbbase_sqlite
 
 
-class GarantiasDatosModel(DBBase):
-    __tablename__ = "GARANTIAS_DATOS"
+class GarantiasDatosModel(dbbase_sqlite):
+    __tablename__ = "stats_garantias_datos"
 
     id:                 Mapped[int]         = mapped_column(primary_key=True)
     Año:                Mapped[int]         = mapped_column(Integer, nullable=True)

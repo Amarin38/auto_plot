@@ -33,9 +33,9 @@ class IndiceConsumoVM:
             return self.get_data(entities) if entities else pd.DataFrame()
 
 
-    def get_df_tipo_repuesto_and_tipo_indice(self, tipo_repuesto: str, tipo_indice: str) -> pd.DataFrame:
+    def get_df_tipo_repuesto_and_tipo_indice(self, tipo_repuesto: str, tipo_operacion: str) -> pd.DataFrame:
         with self.uow as uow:
-            entities = uow.consumo_indice.get_by_tipo_rep_and_tipo_indice(tipo_repuesto, tipo_indice)
+            entities = uow.consumo_indice.get_by_n_columns({"TipoRepuesto":tipo_repuesto, "TipoOperacion":tipo_operacion})
             return self.get_data(entities) if entities else pd.DataFrame()
 
 

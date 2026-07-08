@@ -1,11 +1,11 @@
 from sqlalchemy import String
 from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column
-from infrastructure import DBBase
+from infrastructure import dbbase_sqlite
 
 
-class RepuestosCodigosModel(DBBase):
-    __tablename__ = "REPUESTOS_CODIGOS"
+class RepuestosCodigosModel(dbbase_sqlite):
+    __tablename__ = "data_repuestos_codigos"
 
     id:             Mapped[int] = mapped_column(primary_key=True)
     Descripcion:    Mapped[str]

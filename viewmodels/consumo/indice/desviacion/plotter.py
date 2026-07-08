@@ -29,11 +29,14 @@ class DeviationPlotter:
     @execute_safely
     def create_plot(self) -> go.Figure:
         if self.tipo_rep:
+            self.df["Desviacion"] = pd.to_numeric(self.df["Desviacion"]).round(2)
+
             x_data = self.df["Cabecera"]
             y_data = self.df["Desviacion"]
         else:
             agrupado = self.df.groupby("Cabecera").agg({"Desviacion": "mean"}).reset_index()
-
+            agrupado["Desviacion"] = pd.to_numeric(agrupado["Desviacion"]).round(2)
+            
             x_data = agrupado["Cabecera"]
             y_data = agrupado["Desviacion"]
 

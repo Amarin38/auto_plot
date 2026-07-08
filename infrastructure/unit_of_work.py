@@ -1,30 +1,22 @@
 from sqlalchemy.orm import Session
-from typing import Type, Optional
-from infrastructure import SessionDB
+from typing import Type, Optional, Dict
+from infrastructure import session_sqlite_db
 
-from infrastructure.repositories.usuario_repository import UsuarioRepository
-from infrastructure.repositories.json_config_repository import JSONConfigRepository
-from infrastructure.repositories.inicio_conteo_stock_repository import ConteoStockRepository
-from infrastructure.repositories.datos.parque_movil_repository import ParqueMovilRepository
-from infrastructure.repositories.consumo.indice_repository import ConsumoIndiceRepository
-from infrastructure.repositories.datos.coches_cabecera_repository import CochesCabeceraRepository
-from infrastructure.repositories.garantias.datos_repository import GarantiasDatosRepository
-from infrastructure.repositories.garantias.falla_repository import GarantiasFallaRepository
-from infrastructure.repositories.datos.maximos_minimos_repository import MaximosMinimosRepository
-from infrastructure.repositories.consumo.historial_repository import ConsumoHistorialRepository
-from infrastructure.repositories.consumo.prevision_repository import ConsumoPrevisionRepository
-from infrastructure.repositories.garantias.consumo_repository import GarantiasConsumoRepository
-from infrastructure.repositories.consumo.duracion_repuestos_repository import DuracionRepuestosRepository
-from infrastructure.repositories.consumo.comparacion_repository import ConsumoComparacionRepository
-from infrastructure.repositories.consumo.obligatorio_repository import ConsumoObligatorioRepository
-from infrastructure.repositories.consumo.distribucion_normal_repository import DistribucionNormalRepository
-from infrastructure.repositories.consumo.prevision_data_repository import ConsumoPrevisionDataRepository
-from infrastructure.repositories.consumo.desviacion_indices_repository import ConsumoDesviacionIndicesRepository
-from infrastructure.repositories.gomeria.diferencia_mov_dep_repository import GomeriaDiferenciaMovEntreDepRepository
-from infrastructure.repositories.gomeria.transferencias_dep_repository import GomeriaTransferenciasEntreDepRepository
-from infrastructure.repositories.datos.usuarios_codigos_repository import UsuariosCodigosRepository
-from infrastructure.repositories.datos.repuestos_codigos_repository import RepuestosCodigosRepository
-from infrastructure.repositories.datos.proveedores_repository import ProveedoresRepository
+from infrastructure.repositories.consumo_repository import ConteoStockRepository, ConsumoIndiceRepository, \
+    ConsumoHistorialRepository, ConsumoPrevisionRepository, DuracionRepuestosRepository, ConsumoComparacionRepository, \
+    ConsumoObligatorioRepository, DistribucionNormalRepository, ConsumoPrevisionDataRepository, \
+    ConsumoDesviacionIndicesRepository
+
+from infrastructure.repositories.datos_repository import UsuarioRepository, JSONConfigRepository, ParqueMovilRepository, \
+    CochesCabeceraRepository, MaximosMinimosRepository, UsuariosCodigosRepository, RepuestosCodigosRepository, \
+    ProveedoresRepository
+
+from infrastructure.repositories.garantias_repository import GarantiasDatosRepository, GarantiasFallaRepository, \
+    GarantiasConsumoRepository
+
+from infrastructure.repositories.gomeria_repository import GomeriaDiferenciaMovEntreDepRepository, \
+    GomeriaTransferenciasEntreDepRepository
+
 
 class AbstractUnitOfWork:
     def __enter__(self) -> 'AbstractUnitOfWork':
@@ -133,65 +125,45 @@ class AbstractUnitOfWork:
 
 
 class SQLAlchemyUnitOfWork(AbstractUnitOfWork):
-    def __init__(self, session_factory: Type[Session] = SessionDB):
+    REPOSITORY_MAP: Dict[str, Type] = {
+        "usuario": UsuarioRepository,
+        "json_config": JSONConfigRepository,
+        "conteo_stock": ConteoStockRepository,
+        "parque_movil": ParqueMovilRepository,
+        "consumo_indice": ConsumoIndiceRepository,
+        "coches_cabecera": CochesCabeceraRepository,
+        "garantias_datos": GarantiasDatosRepository,
+        "garantias_falla": GarantiasFallaRepository,
+        "maximos_minimos": MaximosMinimosRepository,
+        "usuarios_codigos": UsuariosCodigosRepository,
+        "consumo_historial": ConsumoHistorialRepository,
+        "consumo_prevision": ConsumoPrevisionRepository,
+        "garantias_consumo": GarantiasConsumoRepository,
+        "duracion_repuestos": DuracionRepuestosRepository,
+        "consumo_comparacion": ConsumoComparacionRepository,
+        "consumo_obligatorio": ConsumoObligatorioRepository,
+        "distribucion_normal": DistribucionNormalRepository,
+        "consumo_prevision_data": ConsumoPrevisionDataRepository,
+        "consumo_desviacion_indices": ConsumoDesviacionIndicesRepository,
+        "gomeria_diferencia_mov": GomeriaDiferenciaMovEntreDepRepository,
+        "gomeria_transferencias": GomeriaTransferenciasEntreDepRepository,
+        "repuestos_codigos": RepuestosCodigosRepository,
+        "proveedor": ProveedoresRepository,
+    }
+
+    def __init__(self, session_factory: Type[Session] = session_sqlite_db):
         self.session_factory = session_factory
         self._session: Optional[Session] = None
-
-        self._usuario                       : Optional[UsuarioRepository]                           = None
-        self._json_config                   : Optional[JSONConfigRepository]                        = None
-        self._conteo_stock                  : Optional[ConteoStockRepository]                       = None
-        self._parque_movil                  : Optional[ParqueMovilRepository]                       = None
-        self._consumo_indice                : Optional[ConsumoIndiceRepository]                     = None
-        self._coches_cabecera               : Optional[CochesCabeceraRepository]                    = None
-        self._garantias_datos               : Optional[GarantiasDatosRepository]                    = None
-        self._maximos_minimos               : Optional[MaximosMinimosRepository]                    = None
-        self._garantias_fallas              : Optional[GarantiasFallaRepository]                    = None
-        self._usuarios_codigos              : Optional[UsuariosCodigosRepository]                   = None
-        self._consumo_historial             : Optional[ConsumoHistorialRepository]                  = None
-        self._consumo_prevision             : Optional[ConsumoPrevisionRepository]                  = None
-        self._garantias_consumo             : Optional[GarantiasConsumoRepository]                  = None
-        self._duracion_repuestos            : Optional[DuracionRepuestosRepository]                 = None
-        self._consumo_comparacion           : Optional[ConsumoComparacionRepository]                = None
-        self._consumo_obligatorio           : Optional[ConsumoObligatorioRepository]                = None
-        self._distribucion_normal           : Optional[DistribucionNormalRepository]                = None
-        self._consumo_prevision_data        : Optional[ConsumoPrevisionDataRepository]              = None
-        self._consumo_desviacion_indices    : Optional[ConsumoDesviacionIndicesRepository]          = None
-        self._gomeria_diferencia_mov        : Optional[GomeriaDiferenciaMovEntreDepRepository]      = None
-        self._gomeria_transferencias        : Optional[GomeriaTransferenciasEntreDepRepository]     = None
-        self._repuestos_codigos             : Optional[RepuestosCodigosRepository]                  = None
-        self._proveedor                     : Optional[ProveedoresRepository]                         = None
+        self._repos: Dict[str, object] = {}
 
     def __enter__(self) -> 'SQLAlchemyUnitOfWork':
-        self._session: Session = self.session_factory()
-
-        self._usuario                   : Optional[UsuarioRepository]                       = UsuarioRepository(self._session)
-        self._json_config               : Optional[JSONConfigRepository]                    = JSONConfigRepository(self._session)
-        self._conteo_stock              : Optional[ConteoStockRepository]                   = ConteoStockRepository(self._session)
-        self._parque_movil              : Optional[ParqueMovilRepository]                   = ParqueMovilRepository(self._session)
-        self._consumo_indice            : Optional[ConsumoIndiceRepository]                 = ConsumoIndiceRepository(self._session)
-        self._coches_cabecera           : Optional[CochesCabeceraRepository]                = CochesCabeceraRepository(self._session)
-        self._garantias_datos           : Optional[GarantiasDatosRepository]                = GarantiasDatosRepository(self._session)
-        self._garantias_fallas          : Optional[GarantiasFallaRepository]                = GarantiasFallaRepository(self._session)
-        self._maximos_minimos           : Optional[MaximosMinimosRepository]                = MaximosMinimosRepository(self._session)
-        self._usuarios_codigos          : Optional[UsuariosCodigosRepository]               = UsuariosCodigosRepository(self._session)
-        self._consumo_historial         : Optional[ConsumoHistorialRepository]              = ConsumoHistorialRepository(self._session)
-        self._consumo_prevision         : Optional[ConsumoPrevisionRepository]              = ConsumoPrevisionRepository(self._session)
-        self._garantias_consumo         : Optional[GarantiasConsumoRepository]              = GarantiasConsumoRepository(self._session)
-        self._duracion_repuestos        : Optional[DuracionRepuestosRepository]             = DuracionRepuestosRepository(self._session)
-        self._consumo_comparacion       : Optional[ConsumoComparacionRepository]            = ConsumoComparacionRepository(self._session)
-        self._consumo_obligatorio       : Optional[ConsumoObligatorioRepository]            = ConsumoObligatorioRepository(self._session)
-        self._distribucion_normal       : Optional[DistribucionNormalRepository]            = DistribucionNormalRepository(self._session)
-        self._consumo_prevision_data    : Optional[ConsumoPrevisionDataRepository]          = ConsumoPrevisionDataRepository(self._session)
-        self._consumo_desviacion_indices: Optional[ConsumoDesviacionIndicesRepository]      = ConsumoDesviacionIndicesRepository(self._session)
-        self._gomeria_diferencia_mov    : Optional[GomeriaDiferenciaMovEntreDepRepository]  = GomeriaDiferenciaMovEntreDepRepository(self._session)
-        self._gomeria_transferencias    : Optional[GomeriaTransferenciasEntreDepRepository] = GomeriaTransferenciasEntreDepRepository(self._session)
-        self._repuestos_codigos         : Optional[RepuestosCodigosRepository]              = RepuestosCodigosRepository(self._session)
-        self._proveedor                 : Optional[ProveedoresRepository]                   = ProveedoresRepository(self._session)
-
-        # Ejemplo:
-        # from infrastructure.repositories.consumo_indice_repository import ConsumoIndiceRepository
-        # self.consumo_indices = ConsumoIndiceRepository(self.session)
+        self._session = self.session_factory()
+        self._repos = {
+            name: repo_cls(self._session)
+            for name, repo_cls in self.REPOSITORY_MAP.items()
+        }
         return self
+
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         if exc_type:  # Si hubo una excepción, hacemos rollback
@@ -223,92 +195,92 @@ class SQLAlchemyUnitOfWork(AbstractUnitOfWork):
     # implemento las propiedades para cada repositorio
     @property
     def usuario(self) -> UsuarioRepository:
-        return self._usuario
+        return self._repos["usuario"]
 
     @property
     def json_config(self) -> JSONConfigRepository:
-        return self._json_config
+        return self._repos["json_config"]
 
     @property
     def conteo_stock(self) -> ConteoStockRepository:
-        return self._conteo_stock
+        return self._repos["conteo_stock"]
 
     @property
     def parque_movil(self) -> ParqueMovilRepository:
-        return self._parque_movil
+        return self._repos["parque_movil"]
 
     @property
     def consumo_indice(self) -> ConsumoIndiceRepository:
-        return self._consumo_indice
+        return self._repos["consumo_indice"]
 
     @property
     def coches_cabecera(self) -> CochesCabeceraRepository:
-        return self._coches_cabecera
+        return self._repos["coches_cabecera"]
 
     @property
     def garantias_datos(self) -> GarantiasDatosRepository:
-        return self._garantias_datos
+        return self._repos["garantias_datos"]
 
     @property
     def garantias_falla(self) -> GarantiasFallaRepository:
-        return self._garantias_fallas
+        return self._repos["garantias_falla"]
 
     @property
     def maximos_minimos(self) -> MaximosMinimosRepository:
-        return self._maximos_minimos
+        return self._repos["maximos_minimos"]
 
     @property
     def consumo_historial(self) -> ConsumoHistorialRepository:
-        return self._consumo_historial
+        return self._repos["consumo_historial"]
 
     @property
     def consumo_prevision(self) -> ConsumoPrevisionRepository:
-        return self._consumo_prevision
+        return self._repos["consumo_prevision"]
 
     @property
     def garantias_consumo(self) -> GarantiasConsumoRepository:
-        return self._garantias_consumo
+        return self._repos["garantias_consumo"]
 
     @property
     def duracion_repuestos(self) -> DuracionRepuestosRepository:
-        return self._duracion_repuestos
+        return self._repos["duracion_repuestos"]
 
     @property
     def consumo_comparacion(self) -> ConsumoComparacionRepository:
-        return self._consumo_comparacion
+        return self._repos["consumo_comparacion"]
 
     @property
     def consumo_obligatorio(self) -> ConsumoObligatorioRepository:
-        return self._consumo_obligatorio
+        return self._repos["consumo_obligatorio"]
 
     @property
     def distribucion_normal(self) -> DistribucionNormalRepository:
-        return self._distribucion_normal
+        return self._repos["distribucion_normal"]
 
     @property
     def consumo_prevision_data(self) -> ConsumoPrevisionDataRepository:
-        return self._consumo_prevision_data
+        return self._repos["consumo_prevision_data"]
 
     @property
     def consumo_desviacion_indices(self) -> ConsumoDesviacionIndicesRepository:
-        return self._consumo_desviacion_indices
+        return self._repos["consumo_desviacion_indices"]
 
     @property
     def gomeria_diferencia_mov(self) -> GomeriaDiferenciaMovEntreDepRepository:
-        return self._gomeria_diferencia_mov
+        return self._repos["gomeria_diferencia_mov"]
 
     @property
     def gomeria_transferencias(self) -> GomeriaTransferenciasEntreDepRepository:
-        return self._gomeria_transferencias
+        return self._repos["gomeria_transferencias"]
 
     @property
     def usuarios_codigos(self) -> UsuariosCodigosRepository:
-        return self._usuarios_codigos
+        return self._repos["usuarios_codigos"]
 
     @property
     def repuestos_codigos(self) -> RepuestosCodigosRepository:
-        return self._repuestos_codigos
+        return self._repos["repuestos_codigos"]
 
     @property
     def proveedor(self) -> ProveedoresRepository:
-        return self._proveedor
+        return self._repos["proveedor"]

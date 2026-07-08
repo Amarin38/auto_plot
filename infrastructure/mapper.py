@@ -1,11 +1,11 @@
-from typing import TypeVar, Type
+from typing import TypeVar, Type, Generic
 
 from pydantic import BaseModel
 
 SQLALCH = TypeVar("SQLALCH") # Clase de SQLAlchemy
 PYD     = TypeVar("PYD", bound=BaseModel) # Clase de Pydantic
 
-class Mapper:
+class Mapper(Generic[SQLALCH, PYD]):
     @staticmethod
     def to_entity(model: SQLALCH, entity: Type[PYD]) -> PYD:
         return entity.model_validate(model)

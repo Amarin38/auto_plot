@@ -11,7 +11,7 @@ from infrastructure.unit_of_work import SQLAlchemyUnitOfWork
 
 @st.cache_data(ttl=3600, show_spinner="Consultando a la base de datos...", show_time=True)
 def _fetch_base_dataframe(fecha_desde: date, fecha_hasta: date, _uow: SQLAlchemyUnitOfWork):
-    entities = _uow.parque_movil.get_by_args(fecha_desde, fecha_hasta)
+    entities = _uow.parque_movil.get_between_dates("FechaParqueMovil", fecha_desde, fecha_hasta)
 
     if not entities:
         return pd.DataFrame()

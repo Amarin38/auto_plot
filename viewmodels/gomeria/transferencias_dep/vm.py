@@ -60,7 +60,7 @@ class TransferenciasEntreDepositosVM:
 
     def get_transferencias_df_by_cabecera(self, cabecera: str) -> pd.DataFrame:
         with self.uow as uow:
-            entities = uow.gomeria_transferencias.get_by_cabecera(cabecera)
+            entities = uow.gomeria_transferencias.get_by_n_columns({"Cabecera": cabecera})
             return self.get_transferencias_data(entities) if entities else pd.DataFrame()
 
 

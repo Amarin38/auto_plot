@@ -3,10 +3,10 @@ from decimal import Decimal
 from sqlalchemy import Date, DECIMAL, String
 from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column
-from infrastructure import DBBase
+from infrastructure import dbbase_sqlite
 
-class ConsumoDesviacionIndicesModel(DBBase):
-    __tablename__ = "CONSUMO_DESVIACION_INDICES"
+class ConsumoDesviacionIndicesModel(dbbase_sqlite):
+    __tablename__ = "stats_consumo_desviacion_indices"
 
     id                      : Mapped[int] = mapped_column(primary_key=True)
     Cabecera                : Mapped[str] = mapped_column(String(40), index=True)

@@ -1,10 +1,10 @@
 from sqlalchemy import String
 from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column
-from infrastructure import DBBase
+from infrastructure import dbbase_postrgres
 
 
-class ChasisMarcaModel(DBBase):
+class ChasisMarcaModel(dbbase_postrgres):
     __tablename__ = "CHASIS_MARCA"
 
     IDChasisMarca:    Mapped[int]     = mapped_column(primary_key=True)

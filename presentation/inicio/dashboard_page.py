@@ -65,7 +65,6 @@ def main():
                 border_color="white",
                 val_color="white",
                 delta=f"{porcentaje}%",
-                delta_color="green"
             )
             medio.space(1)
 
@@ -107,7 +106,7 @@ def main():
 
             st.space(1)
 
-            _, izq, der, _ = st.columns([0.8, 1, 1, 0.8])
+            _, izq, der, _ = st.columns([0.6, 1, 1, 0.6])
 
             components.custom_metric(
                 col=izq,

@@ -1,12 +1,12 @@
 from sqlalchemy import String, DECIMAL
 from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column
-from infrastructure import DBBase
+from infrastructure import dbbase_sqlite
 from decimal import Decimal
 
 
-class DistribucionNormalModel(DBBase):
-    __tablename__ = "DISTRIBUCION_NORMAL"
+class DistribucionNormalModel(dbbase_sqlite):
+    __tablename__ = "stats_consumo_distribucion_normal"
 
     id:                 Mapped[int] = mapped_column(primary_key=True)
     Años:               Mapped[Decimal] = mapped_column(DECIMAL(10, 2))

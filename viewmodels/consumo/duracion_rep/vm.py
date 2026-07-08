@@ -60,7 +60,7 @@ class DuracionRepuestosVM:
 
     def get_df_by_repuesto(self, repuesto: str) -> pd.DataFrame:
         with self.uow as uow:
-            entities = uow.duracion_repuestos.get_by_repuesto(repuesto)
+            entities = uow.duracion_repuestos.get_by_n_columns({"Repuesto":repuesto})
             df = self.get_data(entities) if entities else pd.DataFrame()
 
             if not df.empty:
@@ -70,13 +70,13 @@ class DuracionRepuestosVM:
 
     def get_distribucion_df_by_repuesto(self, repuesto: str) -> pd.DataFrame:
         with self.uow as uow:
-            entities = uow.distribucion_normal.get_by_repuesto(repuesto)
+            entities = uow.distribucion_normal.get_by_n_columns({"Repuesto":repuesto})
             return self.get_distribucion_data(entities) if entities else pd.DataFrame()
 
 
     def get_repuestos(self) -> pd.Series:
         with self.uow as uow:
-            return uow.duracion_repuestos.get_repuestos()
+            return uow.duracion_repuestos.get_distinct_series("Repuesto")
 
 
     @staticmethod
