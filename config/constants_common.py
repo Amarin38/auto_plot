@@ -1,6 +1,6 @@
 from pathlib import Path
 from typing import List
-
+import streamlit as st
 from pandas import Timestamp
 
 # PATHS
@@ -11,7 +11,7 @@ JSON_PATH           : str = f"{MAIN_PATH}/data/json_data"
 COMMON_DB_PATH      : str = f"{MAIN_PATH}/infrastructure/db/common_data.db"
 SERV_DB_PATH        : str = f"{MAIN_PATH}/infrastructure/db/services_data.db"
 DB_PATH_SQLITE      : str = f"sqlite:///{MAIN_PATH}/infrastructure/db/data.db"
-DB_PATH_POSTGRES    : str = "postgresql://avnadmin:AVNS_UG19uRol9tLvcbyO-uX@estadisticas-dota-db-agustinmarino38-d89f.i.aivencloud.com:24486/defaultdb"
+DB_PATH_POSTGRES    : str = st.secrets["DB_PATH_POSTGRES"]
 
 
 # PAGINAS
