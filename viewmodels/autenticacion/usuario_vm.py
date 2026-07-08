@@ -24,12 +24,12 @@ class UsuarioVM:
 
     def get_by_name(self, nombre: str) -> Usuario:
         with self.uow as uow:
-            return uow.usuario.get_by_nombre(nombre)
+            return uow.usuario.get_by_n_columns({"Nombre": nombre})[0]
 
 
     def get_credentials_by_name(self, nombre: str) -> Optional[tuple[dict, str]]:
         with self.uow as uow:
-            user = uow.usuario.get_by_nombre(nombre)
+            user = uow.usuario.get_by_n_columns({"Nombre": nombre})[0]
             credentials = {
                 "usernames": {
                     user.Nombre: {

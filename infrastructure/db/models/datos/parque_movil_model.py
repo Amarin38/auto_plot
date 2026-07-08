@@ -3,11 +3,11 @@ from datetime import date
 from sqlalchemy import Date, String
 from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column
-from infrastructure import DBBase
+from infrastructure import dbbase_sqlite
 
 
-class ParqueMovilModel(DBBase):
-    __tablename__ = "PARQUE_MOVIL_VIEJO"
+class ParqueMovilModel(dbbase_sqlite):
+    __tablename__ = "data_parque_movil_viejo"
 
     id:                     Mapped[int]     = mapped_column(primary_key=True)
     FechaParqueMovil:       Mapped[date]    = mapped_column(Date, nullable=True)

@@ -5,12 +5,14 @@ from pandas import Timestamp
 
 # PATHS
 MAIN_PATH = Path().cwd()
-ASSETS_PATH  : str = "assets/"
-IMG_PATH        : str = f"{ASSETS_PATH}images/"
-JSON_PATH       : str = f"{MAIN_PATH}/data/json_data"
-COMMON_DB_PATH  : str = f"{MAIN_PATH}/infrastructure/db/common_data.db"
-SERV_DB_PATH    : str = f"{MAIN_PATH}/infrastructure/db/services_data.db"
-DB_PATH         : str = f"sqlite:///{MAIN_PATH}/infrastructure/db/data.db"
+ASSETS_PATH         : str = "assets/"
+IMG_PATH            : str = f"{ASSETS_PATH}images/"
+JSON_PATH           : str = f"{MAIN_PATH}/data/json_data"
+COMMON_DB_PATH      : str = f"{MAIN_PATH}/infrastructure/db/common_data.db"
+SERV_DB_PATH        : str = f"{MAIN_PATH}/infrastructure/db/services_data.db"
+DB_PATH_SQLITE      : str = f"sqlite:///{MAIN_PATH}/infrastructure/db/data.db"
+DB_PATH_POSTGRES    : str = "postgresql://avnadmin:AVNS_UG19uRol9tLvcbyO-uX@estadisticas-dota-db-agustinmarino38-d89f.i.aivencloud.com:24486/defaultdb"
+
 
 # PAGINAS
 FLOTA_URL               = "https://sistemasanantonio.com.ar/san_antonio/mod_flota/Grilla_ParqueMovil.aspx"

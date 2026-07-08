@@ -11,7 +11,7 @@ import streamlit as st
 from typing import Union, Optional, Any, List, Tuple, Callable
 
 from gspread import WorksheetNotFound
-from pandas import DataFrame
+from pandas import DataFrame, Index
 from streamlit.components.v1 import components
 from streamlit_gsheets import GSheetsConnection
 
@@ -47,7 +47,7 @@ class ButtonComponents:
 
 
     @st.fragment
-    def download_df(self, df, key, file_name: str, col = None):
+    def download_df(self, df, key, file_name: str):
         boton = st.button(
             "Descargar Excel 💾",
             type="primary",
@@ -221,7 +221,7 @@ class OtherComponents:
 
     @staticmethod
     def custom_metric(col, label: str, value: Union[str, int, float], border_color: str, val_color: str,
-                      delta: Optional[Union[str, int, float]] = None, delta_color: Optional[str] = ""):
+                      delta: Optional[Union[str, int, float]] = None):
 
         delta_html = ""
 
@@ -597,15 +597,8 @@ class GoogleSheetsComponents:
                 n = n * 26 + (ord(ch) - 64)
             return n
 
-        def _num_a_col(n: int) -> str:
-            """1→'A', 27→'AA'"""
-            s = ""
-            while n > 0:
-                n, r = divmod(n - 1, 26)
-                s = chr(65 + r) + s
-            return s
 
-        def _fmt(valor, col_name: str) -> str:
+        def _fmt(valor, col_name: str) -> str | Index:
             if col_name in date_cols:
                 if isinstance(valor, (date, datetime, pd.Timestamp)):
                     return valor.strftime(date_fmt)

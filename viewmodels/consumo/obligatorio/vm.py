@@ -35,7 +35,7 @@ class ConsumoObligatorioVM:
 
     def get_df_repuesto(self, repuesto: ConsumoObligatorioEnum) -> pd.DataFrame:
         with self.uow as uow:
-            entities = uow.consumo_obligatorio.get_by_repuesto(repuesto)
+            entities = uow.consumo_obligatorio.get_by_n_columns({"Repuesto": repuesto})
             return self.get_data(entities) if entities else pd.DataFrame()
 
 

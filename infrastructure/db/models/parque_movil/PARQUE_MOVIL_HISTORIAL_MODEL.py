@@ -2,10 +2,10 @@ from datetime import datetime
 from sqlalchemy import String, ForeignKey, DateTime, func
 from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column
-from infrastructure import DBBase
+from infrastructure import dbbase_postrgres
 
 
-class ParqueMovilHistorialModel(DBBase):
+class ParqueMovilHistorialModel(dbbase_postrgres):
     __tablename__ = "PARQUE_MOVIL_HISTORIAL"
 
     IDParqueHistorial:      Mapped[int]         = mapped_column(primary_key=True)

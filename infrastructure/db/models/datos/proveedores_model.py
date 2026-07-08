@@ -1,11 +1,11 @@
 from sqlalchemy import String
 from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column
-from infrastructure import DBBase
+from infrastructure import dbbase_sqlite
 
 
-class ProveedoresModel(DBBase):
-    __tablename__ = "PROVEEDORES"
+class ProveedoresModel(dbbase_sqlite):
+    __tablename__ = "data_proveedores"
 
     NroProv         : Mapped[int] = mapped_column(primary_key=True)
     RazonSocial     : Mapped[str]

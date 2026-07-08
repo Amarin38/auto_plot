@@ -4,14 +4,14 @@ import pandas as pd
 import streamlit as st
 
 from config.constants_common import DURACION_REPUESTO_KEY
+from config.constants_views import PAG_DURACION, DURACION_TAB_BOX_HEIGHT, SELECT_BOX_HEIGHT, PLACEHOLDER
 from config.enums import CambiosEnum
 from config.enums_colors import CustomMetricColorsEnum
-from config.constants_views import PAG_DURACION, DURACION_TAB_BOX_HEIGHT, SELECT_BOX_HEIGHT, PLACEHOLDER
 from infrastructure.unit_of_work import SQLAlchemyUnitOfWork
-from viewmodels.consumo.duracion_rep.vm import DuracionRepuestosVM
-from viewmodels.consumo.duracion_rep.plotter import DuracionRepuestosPlotter
+from presentation.streamlit_components import OtherComponents
 from utils.exception_utils import execute_safely
-from presentation.streamlit_components import SelectBoxComponents, OtherComponents
+from viewmodels.consumo.duracion_rep.plotter import DuracionRepuestosPlotter
+from viewmodels.consumo.duracion_rep.vm import DuracionRepuestosVM
 
 vm = DuracionRepuestosVM(uow=SQLAlchemyUnitOfWork())
 
@@ -72,7 +72,7 @@ def duracion_repuestos():
                                   placeholder=PLACEHOLDER)
 
     with filas_col.container(height=SELECT_BOX_HEIGHT, vertical_alignment='center'):
-        select_filas = st.selectbox("Seleccione la cantidad de cambios:", CambiosEnum)
+        select_filas = st.selectbox("Seleccione la cantidad de cambios:", CambiosEnum, index=1)
 
     match select_filas:
         case CambiosEnum._4_CAMBIOS: filas = 2

@@ -2,12 +2,12 @@ from datetime import date
 from sqlalchemy import Date, String, DECIMAL
 from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column
-from infrastructure import DBBase
+from infrastructure import dbbase_sqlite
 from decimal import Decimal
 
 
-class DuracionRepuestosModel(DBBase):
-    __tablename__ = "DURACION_REPUESTOS"
+class DuracionRepuestosModel(dbbase_sqlite):
+    __tablename__ = "stats_consumo_duracion_repuestos"
 
     id:                 Mapped[int] = mapped_column(primary_key=True)
     Patente:            Mapped[str] = mapped_column(String(8))

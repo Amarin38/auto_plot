@@ -42,7 +42,9 @@ class ConsumoComparacionVM:
                                                        tipo_repuesto: List[ConsumoComparacionRepuestoEnum],
                                                        periodo: List[PeriodoComparacionEnum]) -> pd.DataFrame:
         with self.uow as uow:
-            entities = uow.consumo_comparacion.get_by_cabecera_and_tipo_rep_and_periodo(cabecera, tipo_repuesto, periodo)
+            entities = uow.consumo_comparacion.get_by_n_columns({"Cabecera": cabecera,
+                                                                 "TipoRepuesto": tipo_repuesto,
+                                                                 "PeriodoID": periodo})
             return self.get_data(entities) if entities else pd.DataFrame()
 
 

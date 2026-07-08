@@ -42,7 +42,7 @@ class DesviacionIndicesVM:
 
     def get_df_by_tipo_rep(self, tipo_rep: RepuestoEnum) -> pd.DataFrame:
         with self.uow as uow:
-            entities = uow.consumo_desviacion_indices.get_by_tipo_rep(tipo_rep)
+            entities = uow.consumo_desviacion_indices.get_by_n_columns({"TipoRepuesto": tipo_rep})
             return self.get_data(entities) if entities else pd.DataFrame()
 
 

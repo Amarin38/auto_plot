@@ -37,8 +37,7 @@ class DeviationTrend:
             .transform(lambda x: round(x.mean(), 2))
         )
 
-        agrupado_repuesto["DiferenciaRepuesto"] = self.calc_diferencia(agrupado_repuesto["MediaRepuesto"],
-                                                                       agrupado_repuesto["MediaDeMediasRepuesto"])
+        agrupado_repuesto["DiferenciaRepuesto"] = agrupado_repuesto["MediaRepuesto"] - agrupado_repuesto["MediaDeMediasRepuesto"]
         agrupado_repuesto["DesviacionRepuesto"] = self.calc_desviacion(agrupado_repuesto["DiferenciaRepuesto"],
                                                                        agrupado_repuesto["MediaDeMediasRepuesto"])
 
@@ -47,10 +46,8 @@ class DeviationTrend:
 
 
         # Cabecera
-
-        agrupado_cabecera["MediaDeMediasCabecera"] = self.calc_media(agrupado_cabecera["MediaCabecera"])
-        agrupado_cabecera["DiferenciaCabecera"] = self.calc_diferencia(agrupado_cabecera["MediaCabecera"],
-                                                                       agrupado_cabecera["MediaDeMediasCabecera"])
+        agrupado_cabecera["MediaDeMediasCabecera"] = agrupado_cabecera["MediaCabecera"].mean()
+        agrupado_cabecera["DiferenciaCabecera"] = agrupado_cabecera["MediaCabecera"] - agrupado_cabecera["MediaDeMediasCabecera"]
         agrupado_cabecera["DesviacionCabecera"] = self.calc_desviacion(agrupado_cabecera["DiferenciaCabecera"],
                                                                        agrupado_cabecera["MediaDeMediasCabecera"])
 
@@ -65,16 +62,9 @@ class DeviationTrend:
 
 
     @staticmethod
-    def calc_diferencia(a, b):
-        return round(a - b, 2)
-
-    @staticmethod
     def calc_desviacion(c, b):
-        return round((c / b) * 100, 2)
+        return round(c / b) * 100
 
-    @staticmethod
-    def calc_media(a):
-        return round(a.mean(),2)
 
     @staticmethod
     def get_conditions(df_agrupado: pd.DataFrame, col: str) -> List[bool]:

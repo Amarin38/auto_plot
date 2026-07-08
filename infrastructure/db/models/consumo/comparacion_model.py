@@ -3,11 +3,11 @@ from sqlalchemy import Date, String, DECIMAL
 from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column
 from decimal import Decimal
-from infrastructure import DBBase
+from infrastructure import dbbase_sqlite
 
 
-class ConsumoComparacionModel(DBBase):
-    __tablename__ = "CONSUMO_COMPARACION"
+class ConsumoComparacionModel(dbbase_sqlite):
+    __tablename__ = "stats_consumo_comparacion"
 
     id              : Mapped[int] = mapped_column(primary_key=True)
     Familia         : Mapped[int]

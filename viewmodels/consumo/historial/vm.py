@@ -33,7 +33,7 @@ class HistorialConsumoVM:
 
     def get_df_tipo_repuesto(self, tipo_repuesto: RepuestoEnum) -> pd.DataFrame:
         with self.uow as uow:
-            entities = uow.consumo_historial.get_by_tipo_rep(tipo_repuesto)
+            entities = uow.consumo_historial.get_by_n_columns({"TipoRepuesto": tipo_repuesto})
             return self.get_data(entities) if entities else pd.DataFrame()
 
 

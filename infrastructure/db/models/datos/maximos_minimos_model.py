@@ -1,10 +1,10 @@
 from sqlalchemy import String, DECIMAL
 from sqlalchemy.orm import Mapped, mapped_column
-from infrastructure import DBBase
+from infrastructure import dbbase_sqlite
 from decimal import Decimal
 
-class MaximosMinimosModel(DBBase):
-    __tablename__ = "MAXIMOS_MINIMOS"
+class MaximosMinimosModel(dbbase_sqlite):
+    __tablename__ = "data_maximos_minimos"
 
     id:         Mapped[int] = mapped_column(primary_key=True)
     Familia:    Mapped[int]

@@ -85,22 +85,23 @@ class FallaGarantiasVM:
 
     def get_df_by_tipo_rep_and_cabecera(self, tipo_repuesto: str, cabecera: str) -> pd.DataFrame:
         with self.uow as uow:
-            entities = uow.garantias_falla.get_by_tipo_rep_and_cabecera(tipo_repuesto, cabecera)
+            entities = uow.garantias_falla.get_by_n_columns({"TipoRepuesto": tipo_repuesto, "Cabecera": cabecera})
             return self.get_data(entities) if entities else pd.DataFrame()
+
 
     def get_consumo_df_by_tipo_rep_and_cabecera(self, tipo_repuesto: str, cabecera: str) -> pd.DataFrame:
         with self.uow as uow:
-            entities = uow.garantias_consumo.get_by_tipo_rep_and_cabecera(tipo_repuesto, cabecera)
+            entities = uow.garantias_consumo.get_by_n_columns({"TipoRepuesto": tipo_repuesto, "Cabecera": cabecera})
             return self.get_consumo_data(entities) if entities else pd.DataFrame()
 
 
     def get_datos_min_date(self) -> str:
         with self.uow as uow:
-            return uow.garantias_datos.get_min_date().strftime(PAGE_STRFTIME_YMD)
+            return uow.garantias_datos.get_min_date("FechaIngreso").strftime(PAGE_STRFTIME_YMD)
 
     def get_datos_max_date(self) -> str:
         with self.uow as uow:
-            return uow.garantias_datos.get_max_date().strftime(PAGE_STRFTIME_YMD)
+            return uow.garantias_datos.get_max_date("FechaIngreso").strftime(PAGE_STRFTIME_YMD)
 
 
     @staticmethod

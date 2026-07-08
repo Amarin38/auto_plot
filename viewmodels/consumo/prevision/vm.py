@@ -55,7 +55,7 @@ class PrevisionVM:
 
     def get_df_by_tipo_repuesto(self, tipo_rep: str) -> pd.DataFrame:
         with self.uow as uow:
-            entities = uow.consumo_prevision.get_by_tipo_repuesto(tipo_rep)
+            entities = uow.consumo_prevision.get_by_n_columns({"TipoRepuesto":tipo_rep})
             df = self.get_data(entities) if entities else pd.DataFrame()
 
             df['FechaCompleta'] = pd.to_datetime(df['FechaCompleta'], format=FILE_STRFTIME_YMD)
@@ -63,7 +63,7 @@ class PrevisionVM:
 
     def get_data_df_by_tipo_repuesto(self, tipo_rep: str) -> pd.DataFrame:
         with self.uow as uow:
-            entities = uow.consumo_prevision_data.get_by_tipo_repuesto(tipo_rep)
+            entities = uow.consumo_prevision_data.get_by_n_columns({"TipoRepuesto":tipo_rep})
             df = self.get_data_data(entities) if entities else pd.DataFrame()
 
             df['FechaCompleta'] = pd.to_datetime(df['FechaCompleta'], format=FILE_STRFTIME_YMD)

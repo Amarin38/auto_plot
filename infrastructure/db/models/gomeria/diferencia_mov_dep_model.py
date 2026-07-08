@@ -2,11 +2,11 @@ from decimal import Decimal
 from sqlalchemy import String, DECIMAL
 from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column
-from infrastructure import DBBase
+from infrastructure import dbbase_sqlite
 
 
-class GomeriaDiferenciaMovEntreDepModel(DBBase):
-    __tablename__ = "GOMERIA_DIFERENCIA_MOV_DEP"
+class GomeriaDiferenciaMovEntreDepModel(dbbase_sqlite):
+    __tablename__ = "stats_gomeria_diferencia_mov_rep"
 
     id:                 Mapped[int] = mapped_column(primary_key=True)
     Familia:            Mapped[int]
