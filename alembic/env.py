@@ -26,8 +26,6 @@ sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 
 from infrastructure import dbbase_postgres
 from infrastructure import dbbase_sqlite
-import infrastructure.db.models
-from infrastructure.db.models.gomeria.movimientos_model import GomeriaMovimientosModel
 
 config = context.config
 

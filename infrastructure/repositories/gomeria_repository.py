@@ -3,8 +3,8 @@ from infrastructure.repositories.base_repository import BaseRepository
 from domain.entities.gomeria.diferencia_mov_dep import GomeriaDiferenciaMovEntreDep
 from domain.entities.gomeria.movimientos import GomeriaMovimientos
 from domain.entities.gomeria.transferencias_dep import GomeriaTransferenciasEntreDep
-from infrastructure.db.models import GomeriaDiferenciaMovEntreDepModel, GomeriaTransferenciasEntreDepModel
-from infrastructure.db.models.gomeria.movimientos_model import GomeriaMovimientosModel
+from infrastructure.models import GomeriaDiferenciaMovEntreDepModel, GomeriaTransferenciasEntreDepModel
+from infrastructure.models.gomeria.movimientos_model import GomeriaMovimientosModel
 
 
 class GomeriaMovimientosRepository(BaseRepository[GomeriaMovimientos, GomeriaMovimientosModel]):

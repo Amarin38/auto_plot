@@ -3,7 +3,7 @@ from infrastructure.repositories.base_repository import BaseRepository
 from domain.entities.garantias.consumo import GarantiasConsumo
 from domain.entities.garantias.datos import GarantiasDatos
 from domain.entities.garantias.falla import GarantiasFalla
-from infrastructure.db.models import GarantiasConsumoModel, GarantiasDatosModel, GarantiasFallaModel
+from infrastructure.models import GarantiasConsumoModel, GarantiasDatosModel, GarantiasFallaModel
 
 
 class GarantiasConsumoRepository(BaseRepository[GarantiasConsumo, GarantiasConsumoModel]):

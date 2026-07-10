@@ -8,7 +8,7 @@ from domain.entities.datos.repuestos_codigos import RepuestosCodigos
 from domain.entities.datos.usuarios_codigos import UsuariosCodigos
 from domain.entities.json_config import JSONConfig
 from domain.entities.usuario import UserAuth
-from infrastructure.db.models import CochesCabeceraModel, MaximosMinimosModel, ParqueMovilModel, ProveedoresModel, \
+from infrastructure.models import CochesCabeceraModel, MaximosMinimosModel, ParqueMovilModel, ProveedoresModel, \
     RepuestosCodigosModel, UsuariosCodigosModel, JSONConfigModel, UserAuthModel
 
 
