@@ -9,7 +9,7 @@ from domain.entities.datos.maximos_minimos import MaximosMinimos
 from domain.entities.datos.proveedores import Proveedores
 from domain.entities.datos.repuestos_codigos import RepuestosCodigos
 from domain.entities.datos.usuarios_codigos import UsuariosCodigos
-from domain.entities.json_config import JSONConfig
+from domain.entities.datos.json_config import JSONConfig
 from domain.entities.parque_movil.PARQUE_MOVIL import ParqueMovil
 from viewmodels.base_vm import BaseVM
 
@@ -70,10 +70,8 @@ class JSONConfigVM(BaseVM[JSONConfig]):
 
 
     def get_df_by_name(self, nombre: str):
-        return self.get_df_by_filters({"nombre": nombre})
-
-
-
+        df = self.get_df_by_filters({"nombre": nombre})
+        return df["data"].iloc[0]
 
 
 class ParqueMovilVM(BaseVM[ParqueMovil]):

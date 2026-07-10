@@ -169,7 +169,7 @@ def load_data(select_load: LoadDataEnum, uploaded_files):
             return CommonUtils().concat_dataframes(uploaded_files)
         case _:
             if uploaded_files and select_load:
-                if LoadDataEnum.COMPARACION_CONSUMO:
+                if select_load == LoadDataEnum.COMPARACION_CONSUMO:
                     return InventoryDataCleaner().run_all(uploaded_files, MovimientoEnum.TRANSFERENCIAS)
                 return InventoryDataCleaner().run_all(uploaded_files, MovimientoEnum.SALIDAS)
             return pd.DataFrame()

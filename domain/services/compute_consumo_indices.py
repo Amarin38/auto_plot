@@ -36,17 +36,17 @@ class ConsumoIndice:
             df_vehicles = CochesCabeceraVM().get_df()
             df_mod = grouped.merge(df_vehicles, on='Cabecera', how='left')
             # Evitar división por cero
-            df_mod['ConsumoIndice'] = np.where(df_mod['CochesDuermen'] != 0,
+            df_mod['IndiceConsumo'] = np.where(df_mod['CochesDuermen'] != 0,
                                                (df_mod['Cantidad'] * 100) / df_mod['CochesDuermen'], 0)
 
         df_rate = df_mod.rename(columns=CONSUMO_INDICE_COLS_RENAME)[CONSUMO_INDICE_COLS]
 
         # Modificaciones
         df_rate['TotalCoste'] = df_rate['TotalCoste'].round(0)
-        df_rate['ConsumoIndice'] = df_rate['ConsumoIndice'].replace([np.inf, -np.inf], np.nan).round(1)
+        df_rate['IndiceConsumo'] = df_rate['IndiceConsumo'].replace([np.inf, -np.inf], np.nan).round(1)
         df_rate['UltimaFecha'] = fecha_max.date() if pd.notna(fecha_max) else None
 
-        df_rate.dropna(subset=['ConsumoIndice'], inplace=True)
+        df_rate.dropna(subset=['IndiceConsumo'], inplace=True)
         df_rate.insert(2, 'TipoRepuesto', tipo_rep)
         df_rate['TipoOperacion'] = tipo_op
 

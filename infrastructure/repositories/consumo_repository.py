@@ -9,7 +9,7 @@ from domain.entities.consumo.historial import ConsumoHistorial
 from domain.entities.consumo.indice import ConsumoIndice
 from domain.entities.consumo.obligatorio import ConsumoObligatorio
 from domain.entities.consumo.prevision_data import ConsumoPrevisionData
-from domain.entities.inicio_conteo_stock import ConteoStock
+from domain.entities.consumo.inicio_conteo_stock import ConteoStock
 from infrastructure.models import ConsumoComparacionModel, ConsumoDesviacionIndicesModel, DistribucionNormalModel, \
     DuracionRepuestosModel, ConsumoHistorialModel, ConsumoIndiceModel, ConteoStockModel, ConsumoObligatorioModel, \
     ConsumoPrevisionDataModel, ConsumoPrevisionModel

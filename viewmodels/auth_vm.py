@@ -1,6 +1,6 @@
 from typing import Optional
 
-from domain.entities.usuario import UserAuth
+from domain.entities.datos.usuario import UserAuth
 from viewmodels.base_vm import BaseVM
 
 

@@ -3,7 +3,7 @@ from typing import Union, List, Tuple
 import pandas as pd
 
 from config.constants_common import VACIO_FECHA, DEL_COLUMNS_MOVNOM, DEL_COLUMNS_FICMOV, INTERNOS_DEVOLUCION, \
-    MOV_SALIDAS, MOV_ENTRADAS, MOV_DEVOLUCIONES, MOV_TRANSFERENCIAS
+                                    MOV_SALIDAS_LIST, MOV_ENTRADAS_LIST, MOV_DEVOLUCIONES_LIST, MOV_TRANSFERENCIAS_LIST
 from config.enums import MovimientoEnum
 from utils.common_utils import CommonUtils
 from utils.exception_utils import execute_safely
@@ -96,13 +96,18 @@ class InventoryDataCleaner:
     
     @execute_safely
     def filter_mov(self, df: pd.DataFrame, tipo: MovimientoEnum) -> pd.DataFrame:
+        df = df.copy()
         df = self.common.delete_by_content(df, "Interno", INTERNOS_DEVOLUCION)
+        df["Movimiento"] = df["Movimiento"].astype(str).str.strip()
+
+        mask = False
 
         match tipo:
-            case MovimientoEnum.SALIDAS         : df = df.loc[df["Movimiento"].str.contains(MOV_SALIDAS, regex=True, na=False)]
-            case MovimientoEnum.ENTRADAS        : df = df.loc[df["Movimiento"].str.contains(MOV_ENTRADAS, regex=True, na=False)]
-            case MovimientoEnum.DEVOLUCIONES    : df = df.loc[df["Movimiento"].str.contains(MOV_DEVOLUCIONES, regex=True, na=False)]
-            case MovimientoEnum.TRANSFERENCIAS  : df = df.loc[df["Movimiento"].str.contains(MOV_TRANSFERENCIAS, regex=True, na=False)]
-        df = self.common.delete_unnamed_cols(df)
+            case MovimientoEnum.SALIDAS:        mask = df["Movimiento"].isin(MOV_SALIDAS_LIST)
+            case MovimientoEnum.ENTRADAS:       mask = df["Movimiento"].isin(MOV_ENTRADAS_LIST)
+            case MovimientoEnum.DEVOLUCIONES:   mask = df["Movimiento"].isin(MOV_DEVOLUCIONES_LIST)
+            case MovimientoEnum.TRANSFERENCIAS: mask = df["Movimiento"].isin(MOV_TRANSFERENCIAS_LIST)
+
+        df = self.common.delete_unnamed_cols(df.loc[mask])
 
         return df

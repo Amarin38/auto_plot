@@ -6,7 +6,7 @@ from streamlit_authenticator import Hasher
 
 from config.enums import RoleEnum
 from config.constants_views import PAG_NUEVO_USUARIO, INPUT_HEIGHT, NUEVO_USUARIO_RADIO_HEIGHT
-from domain.entities.usuario import UserAuth
+from domain.entities.datos.usuario import UserAuth
 from presentation.streamlit_components import ButtonComponents
 from viewmodels.auth_vm import UserAuthVM
 

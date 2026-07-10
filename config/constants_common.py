@@ -89,10 +89,10 @@ VACIO_FECHA = "  -   -"
 FILTRO_OBS = "0KM|TRANSMISIÓN|CAMBIO"
 
 # MOVS
-MOV_SALIDAS         : str = "TRD|DES"
-MOV_ENTRADAS        : str = "COM|TRA"
-MOV_DEVOLUCIONES    : str = "DEU|DEC"
-MOV_TRANSFERENCIAS  : str = "TRD"
+MOV_SALIDAS_LIST        : List[str] = ["TRD", "DES"]
+MOV_ENTRADAS_LIST       : List[str] = ["COM", "TRA"]
+MOV_DEVOLUCIONES_LIST   : List[str] = ["DEU", "DEC"]
+MOV_TRANSFERENCIAS_LIST : List[str] = ["TRD", "TRA"]
 
 
 # LISTAS DE DATOS
@@ -177,7 +177,7 @@ PARQUE_MOVIL_COLS           = ("id", "FechaParqueMovil", "Linea", "Interno", "Do
                                "MotorModelo", "MotorNum", "Carroceria")
 CONSUMO_COMPARACION_COLS    = ("Familia", "Articulo", "Repuesto", "movnom",
                                "Cantidad", "Precio", "FechaCompleta")
-CONSUMO_INDICE_COLS         = ('Cabecera', 'Repuesto', 'TotalConsumo', 'TotalCoste', 'ConsumoIndice')
+CONSUMO_INDICE_COLS         = ['Cabecera', 'Repuesto', 'TotalConsumo', 'TotalCoste', 'IndiceConsumo']
 CONSUMO_HISTORIAL_COLS      = ("Repuesto", "FechaCompleta", "Cantidad")
 CONSUMO_GARANTIAS_COLS      = ("Cabecera", "Repuesto", "Garantia", "Transferencia")
 
@@ -245,7 +245,7 @@ PROVEEDORES_COLS_TYPE = {
 
 
 # COLUMNAS RENAME
-CONSUMO_INDICE_COLS_RENAME = {'Cantidad':'TotalConsumo','Precio':'TotalCoste'}
+CONSUMO_INDICE_COLS_RENAME = {'Cantidad':'TotalConsumo','Precio':'TotalCoste', 'ConsumoIndice':'IndiceConsumo'}
 CONSUMO_COMPARACION_COLS_RENAME = {"movnom": "Cabecera", "Cantidad":"Consumo", "Precio": "Gasto"}
 CONSUMO_GARANTIAS_COLS_RENAME = {"Cantidad": "Garantia"}
 CONSUMO_TRANSFERENCIAS_COLS_RENAME = {"Cantidad": "Transferencia"}

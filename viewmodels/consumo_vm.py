@@ -12,7 +12,7 @@ from domain.entities.consumo.indice import ConsumoIndice
 from domain.entities.consumo.obligatorio import ConsumoObligatorio
 from domain.entities.consumo.prevision import ConsumoPrevision
 from domain.entities.consumo.prevision_data import ConsumoPrevisionData
-from domain.entities.inicio_conteo_stock import ConteoStock
+from domain.entities.consumo.inicio_conteo_stock import ConteoStock
 from viewmodels.base_vm import BaseVM
 
 
