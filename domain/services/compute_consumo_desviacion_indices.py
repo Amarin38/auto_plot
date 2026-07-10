@@ -8,15 +8,14 @@ from config.constants_common import TODAY_DATE_FILE_YMD, FILE_STRFTIME_YMD, CONS
     CONSUMO_DESVIACION_REP_COLS_RENAME, DESVIACIONES_CHOICES
 from utils.common_utils import CommonUtils
 from utils.exception_utils import execute_safely
-from viewmodels.consumo.indice.desviacion.vm import DesviacionIndicesVM
-from viewmodels.consumo.indice.vm import IndiceConsumoVM
+from viewmodels.consumo_vm import ConsumoIndiceVM, ConsumoDesviacionIndicesVM
 
 
 class DeviationTrend:
     def __init__(self) -> None:
         self.common = CommonUtils()
-        self.indices = IndiceConsumoVM()
-        self.desviacion = DesviacionIndicesVM()
+        self.indices = ConsumoIndiceVM()
+        self.desviacion = ConsumoDesviacionIndicesVM()
 
     @execute_safely
     def calculate(self) -> None:
@@ -58,7 +57,7 @@ class DeviationTrend:
         agrupado["FechaCompleta"] = fecha
 
         self.desviacion.delete_all()
-        self.desviacion.save_df(agrupado)
+        self.desviacion.save(agrupado)
 
 
     @staticmethod

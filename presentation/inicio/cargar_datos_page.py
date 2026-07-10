@@ -8,13 +8,6 @@ from config.enums import LoadDataEnum, TipoCargarEnum, MovimientoEnum
 from domain.services.compute_garantias import compute_consumo_garantias, compute_fallas_garantias
 from domain.services.compute_consumo_comparacion import compute_comparacion_consumo
 from domain.services.compute_consumo_obligatorio import compute_consumo_obligatorio
-from viewmodels.datos.proveedores_vm import ProveedoresVM
-from viewmodels.datos.repuestos_codigos_vm import RepuestosCodigosVM
-from viewmodels.datos.usuarios_codigos_vm import UsuariosCodigosVM
-
-from viewmodels.consumo.conteo_stock.vm import ConteoStockVM
-from viewmodels.datos.parque_movil_vm import ParqueMovilVM
-from viewmodels.gomeria.transferencias_dep.vm import TransferenciasEntreDepositosVM
 
 from domain.services.compute_consumo_historial import compute_historial
 from domain.services.compute_consumo_prevision import create_forecast_local
@@ -24,8 +17,10 @@ from domain.services.data_cleaner_listado import InventoryDataCleaner
 
 from utils.common_utils import CommonUtils
 from utils.exception_utils import execute_safely
-from presentation.streamlit_components import ButtonComponents, SelectBoxComponents, DialogComponents
-
+from presentation.streamlit_components import ButtonComponents, SelectBoxComponents
+from viewmodels.consumo_vm import ConteoStockVM
+from viewmodels.datos_vm import ParqueMovilVM, ProveedoresVM, RepuestosCodigosVM, UsuariosCodigosVM
+from viewmodels.gomeria_vm import TransferenciasGomeriaVM, DiferenciasGomeriaVM
 
 
 def cargar_datos():
@@ -126,18 +121,16 @@ def cargar_datos():
                                                                   select_tipo).calcular_duracion()
 
                         case LoadDataEnum.TRANSFERENCIAS_ENTRE_DEPOSITOS:
-                            datos = lambda: TransferenciasEntreDepositosVM().save_transferencias_df(
-                                            load_data(select_load, uploaded_files))
+                            datos = lambda: TransferenciasGomeriaVM().save(load_data(select_load, uploaded_files))
 
                         case LoadDataEnum.DIFERENCIA_MOVIMIENTOS_ENTRE_DEPOSITOS:
-                            datos = lambda: TransferenciasEntreDepositosVM().save_diferencia_df(
-                                            load_data(select_load, uploaded_files))
+                            datos = lambda: DiferenciasGomeriaVM().save(load_data(select_load, uploaded_files))
 
                         case LoadDataEnum.PARQUE_MOVIL:
-                            datos = lambda: ParqueMovilVM().save_df(load_data(select_load, uploaded_files))
+                            datos = lambda: ParqueMovilVM().save(load_data(select_load, uploaded_files))
 
                         case LoadDataEnum.CONTEO_STOCK:
-                            datos = lambda: ConteoStockVM().save_df(load_data(select_load, uploaded_files))
+                            datos = lambda: ConteoStockVM().save(load_data(select_load, uploaded_files))
 
                         case LoadDataEnum.COMPARACION_CONSUMO:
                             select_repuesto = select.select_box_tipo_rep_comparacion(st, "LOAD_DATA_TIPO_COMPARACION")
@@ -147,13 +140,18 @@ def cargar_datos():
                                                                             select_repuesto)
 
                         case LoadDataEnum.USUARIOS_CODIGOS:
-                            datos = lambda: UsuariosCodigosVM().save_df(load_data(select_load, uploaded_files))
+                            datos = lambda: UsuariosCodigosVM().save(load_data(select_load, uploaded_files))
 
                         case LoadDataEnum.REPUESTOS_CODIGOS:
-                            datos = lambda: RepuestosCodigosVM().save_df(load_data(select_load, uploaded_files))
+                            vm = RepuestosCodigosVM()
+                            df = vm.formatear_df(load_data(select_load, uploaded_files))
+                            datos = lambda: vm.save(df)
 
                         case LoadDataEnum.PROVEEDORES:
-                            datos = lambda: ProveedoresVM().save_df(load_data(select_load, uploaded_files))
+                            datos = lambda: ProveedoresVM().save(load_data(select_load, uploaded_files))
+
+                        case LoadDataEnum.GOMERIA_MOVIMIENTOS:
+                            ...
     with tipo:
         if datos is not None and uploaded_files not in ([None], []):
             buttons.load_data_bttn(datos)

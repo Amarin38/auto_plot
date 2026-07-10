@@ -13,7 +13,7 @@ from config.constants_common import PAGE_STRFTIME_DMY, FILE_STRFTIME_YMD, PREVIS
 from presentation.streamlit_components import SelectBoxComponents, OtherComponents, GoogleSheetsComponents
 from utils.exception_utils import execute_safely
 
-from viewmodels.consumo.prevision.plotter import PrevisionPlotter
+from plotters.consumo_prevision_plotter import PrevisionPlotter
 
 from config.constants_views import (PLOT_BOX_HEIGHT, PAG_PREVISION, SELECT_BOX_HEIGHT,
                                     DISTANCE_COLS_PREVISION, PLACEHOLDER)

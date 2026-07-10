@@ -10,7 +10,7 @@ from typing import List, Optional
 
 from config.constants_common import FILE_STRFTIME_DMY
 from utils.exception_utils import execute_safely
-from viewmodels.common.json_config_vm import JSONConfigVM
+from viewmodels.datos_vm import JSONConfigVM
 
 
 class CommonUtils:
@@ -111,9 +111,7 @@ class CommonUtils:
     @execute_safely
     def update_columns(df: pd.DataFrame, json_col: str) -> pd.DataFrame:
         """ Updates all the columns by the json file indicated. """
-        return df.rename(
-            columns=JSONConfigVM().get_df_by_id(json_col)
-        )
+        return df.rename(columns=JSONConfigVM().get_df_by_name(json_col))
 
 
     @staticmethod
@@ -121,7 +119,7 @@ class CommonUtils:
     def update_rows_by_dict(df: pd.DataFrame, json_col: str, column: str) -> pd.DataFrame:
         """ Updates rows in the column specified by the json file indicated. """
         df[column] = df[column].replace(
-            JSONConfigVM().get_df_by_id(json_col)
+            JSONConfigVM().get_df_by_name(json_col)
         )
         return df
 

@@ -1,10 +1,10 @@
 from sqlalchemy import String, ForeignKey
 from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column
-from infrastructure import dbbase_postrgres
+from infrastructure import dbbase_postgres
 
 
-class MotorModel(dbbase_postrgres):
+class MotorModel(dbbase_postgres):
     __tablename__ = "MOTOR"
 
     IDMotor:           Mapped[int]     = mapped_column(primary_key=True)

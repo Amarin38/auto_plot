@@ -3,7 +3,8 @@ import pandas as pd
 from scipy.stats import norm
 
 from utils.exception_utils import execute_safely
-from viewmodels.consumo.duracion_rep.vm import DuracionRepuestosVM
+from viewmodels.consumo_vm import ConsumoDuracionRepuestosVM, ConsumoDistribucionNormalDuracionVM
+
 
 class DuracionRepuestos:
     def __init__(self, df: pd.DataFrame, tipo_duracion: str) -> None:
@@ -11,7 +12,6 @@ class DuracionRepuestos:
         self.repuesto   = self.df["Repuesto"][0]
         self.tipo_rep   = tipo_duracion
 
-        self.vm                 = DuracionRepuestosVM()
         if "FechaCambio" in self.df.columns and not self.df.empty:
             self.df["FechaCambio"] = pd.to_datetime(self.df["FechaCambio"])
         else:
@@ -47,7 +47,7 @@ class DuracionRepuestos:
         self.df["AñoPromedio"] = df_cambio.transform("mean").round(1).fillna(0)
         self.df["DesviacionEstandar"] = df_cambio.transform("std").round(1).fillna(0)
 
-        self.vm.save_df(self.df)
+        ConsumoDuracionRepuestosVM().save(self.df)
 
 
     @execute_safely
@@ -85,4 +85,4 @@ class DuracionRepuestos:
 
             df_list.append(df_final)
 
-        self.vm.save_distribucion_df(pd.concat(df_list))
+        ConsumoDistribucionNormalDuracionVM().save(pd.concat(df_list))

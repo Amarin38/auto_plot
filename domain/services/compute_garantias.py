@@ -2,11 +2,10 @@ import pandas as pd
 
 from config.constants_common import CONSUMO_GARANTIAS_COLS_RENAME, CONSUMO_TRANSFERENCIAS_COLS_RENAME, \
     CONSUMO_FALLAS_GARANTIAS_COLS_RENAME, GROUPBY_CAB_REP, CONSUMO_GARANTIAS_COLS
-from viewmodels.garantias.falla.vm import FallaGarantiasVM
 
 from utils.exception_utils import execute_safely
+from viewmodels.garantias_vm import ConsumoGarantiasVM, FallaGarantiasVM
 
-fallas = FallaGarantiasVM()
 
 @execute_safely
 def compute_consumo_garantias(df: pd.DataFrame, tipo_repuesto: str) -> None:
@@ -25,7 +24,7 @@ def compute_consumo_garantias(df: pd.DataFrame, tipo_repuesto: str) -> None:
     df_final["PorcentajeTransferencia"] = str_porcentaje(df_final["Transferencia"], df_final["PorcentajeTransferencia"])
     df_final["PorcentajeGarantia"] = str_porcentaje(df_final["Garantia"], df_final["PorcentajeGarantia"])
 
-    fallas.save_consumo_df(df_final)
+    ConsumoGarantiasVM().save(df_final)
 
 
 @execute_safely
@@ -40,7 +39,8 @@ def compute_fallas_garantias(df: pd.DataFrame, tipo_repuesto: str) -> None:
     df["PromedioTiempoFalla"] = df["PromedioTiempoFalla"].round(0)
 
     df.insert(3, "TipoRepuesto", tipo_repuesto)
-    fallas.save_df(df)
+
+    FallaGarantiasVM().save(df)
 
 
 def str_porcentaje(col_norm, col_porc) -> str:

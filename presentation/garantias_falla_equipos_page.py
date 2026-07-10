@@ -3,28 +3,30 @@ from typing import Any, Dict
 import pandas as pd
 import streamlit as st
 
-from infrastructure.unit_of_work import SQLAlchemyUnitOfWork
 from utils.exception_utils import execute_safely
 from presentation.streamlit_components import SelectBoxComponents
 
 from config.constants_views import FALLA_TAB_BOX_HEIGHT, PAG_FALLA_GARANTIAS, FALLA_GARANTIAS_BOX_HEIGHT
 
-from viewmodels.garantias.falla.plotter import FallaGarantiasPlotter
-from viewmodels.garantias.falla.vm import FallaGarantiasVM
+from plotters.garantias_fallas_plotter import FallaGarantiasPlotter
+from viewmodels.garantias_vm import ConsumoGarantiasVM, FallaGarantiasVM, DatosGarantiasVM
 
-vm = FallaGarantiasVM(uow=SQLAlchemyUnitOfWork())
+
 
 @st.cache_data(ttl=200, show_spinner=False)
 def _cargar_datos_pie(tipo_repuesto, cabecera) -> Dict[str, Any]:
+    vm_datos = DatosGarantiasVM()
+
     return {
-        "rep_cabecera": vm.get_df_by_tipo_rep_and_cabecera(tipo_repuesto, cabecera),
-        "min_d": vm.get_datos_min_date(),
-        "max_d": vm.get_datos_max_date()
+        "rep_cabecera": FallaGarantiasVM().get_df_by_tipo_and_cabecera(tipo_repuesto, cabecera),
+        "min_d": vm_datos.get_min_date("FechaIngreso"),
+        "max_d": vm_datos.get_max_date("FechaIngreso")
     }
+
 
 @st.cache_data(ttl=200, show_spinner=False)
 def _cargar_datos_bar(tipo_repuesto, cabecera) -> pd.DataFrame:
-    return vm.get_consumo_df_by_tipo_rep_and_cabecera(tipo_repuesto, cabecera)
+    return ConsumoGarantiasVM().get_df_by_tipo_and_cabecera(tipo_repuesto, cabecera)
 
 
 @execute_safely

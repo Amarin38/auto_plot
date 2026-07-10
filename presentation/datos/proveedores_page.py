@@ -9,7 +9,7 @@ from utils.exception_utils import execute_safely
 from presentation.streamlit_components import OtherComponents, GoogleSheetsComponents, Paginate
 
 
-class Proveedores:
+class Filtros:
     pass
 
 google_sheet = GoogleSheetsComponents(PROVEEDORES_SHEET_URL, PROVEEDORES_WS, PROVEEDORES_COLS)
@@ -21,6 +21,8 @@ def get_sheet():
 @execute_safely
 def proveedores() -> None:
     paginate = Paginate()
+    filtros = Filtros()
+
 
     st.title(PAG_PROVEEDORES)
 
@@ -49,42 +51,20 @@ def proveedores() -> None:
     if INDEX in df_sheet.columns:
         df_sheet = df_sheet.drop(columns=[INDEX])
 
-    prov = Proveedores()
 
-    prov.nro_prov = nro_prov
-    prov.razon_social = razon_social
-    prov.cuit = cuit
-    prov.localidad = localidad
-    prov.mail = mail
-    prov.telefono = telefono
+    filtros.nro_prov = nro_prov
+    filtros.razon_social = razon_social
+    filtros.cuit = cuit
+    filtros.localidad = localidad
+    filtros.mail = mail
+    filtros.telefono = telefono
 
     if PROVEEDORES_DF_KEY not in st.session_state:
         st.session_state[PROVEEDORES_DF_KEY] = df_sheet
 
     df_prov = st.session_state[PROVEEDORES_DF_KEY]
-
-    # FILTROS
-    mask = np.ones(len(df_prov), dtype=bool)
-
-    if prov.nro_prov:
-        mask &= df_prov["NroProv"] == prov.nro_prov
-
-    if prov.razon_social:
-        mask &= df_prov["RazonSocial"].str.startswith(prov.razon_social.strip().upper())
-
-    if prov.cuit:
-        mask &= df_prov["CUIT"].str.startswith(prov.cuit.strip())
-
-    if prov.localidad:
-        mask &= df_prov["Localidad"].isin(prov.localidad)
-
-    if prov.mail:
-        mask &= df_prov["Mail"].str.contains(prov.mail.strip())
-
-    if prov.telefono:
-        mask &= df_prov["Telefono"].str.contains(prov.telefono.strip())
-
-    paginate.update_filters(prov, "proveedores", PROVEEDORES_PAGER_KEY)
+    mask = filtros_proveedores(df_prov, filtros)
+    paginate.update_filters(filtros, "proveedores", PROVEEDORES_PAGER_KEY)
 
     # -----------------------------------------------------------------------------------------------
     df_paginado, paginas = paginate.create_pagination(df_prov[mask], 15, PROVEEDORES_PAGER_KEY)
@@ -110,3 +90,27 @@ def proveedores() -> None:
 
     google_sheet.save_button(df_paginado, df_key=PROVEEDORES_DF_KEY, editor_key=PROVEEDORES_EDITOR_KEY)
     paginate.create_buttons(paginas, key=PROVEEDORES_PAGER_KEY)
+
+
+def filtros_proveedores(df, filtros):
+    mask = np.ones(len(df), dtype=bool)
+
+    if filtros.nro_prov:
+        mask &= df["NroProv"] == filtros.nro_prov
+
+    if filtros.razon_social:
+        mask &= df["RazonSocial"].str.startswith(filtros.razon_social.strip().upper())
+
+    if filtros.cuit:
+        mask &= df["CUIT"].str.startswith(filtros.cuit.strip())
+
+    if filtros.localidad:
+        mask &= df["Localidad"].isin(filtros.localidad)
+
+    if filtros.mail:
+        mask &= df["Mail"].str.contains(filtros.mail.strip())
+
+    if filtros.telefono:
+        mask &= df["Telefono"].str.contains(filtros.telefono.strip())
+
+    return mask

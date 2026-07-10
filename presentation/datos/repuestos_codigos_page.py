@@ -1,4 +1,5 @@
 import numpy as np
+import pandas as pd
 import streamlit as st
 
 from config.constants_common import DEPOSITOS, REPUESTOS_CODIGOS_PAGER_KEY
@@ -7,7 +8,8 @@ from domain.entities.datos.repuestos_codigos import RepuestosCodigosFiltro
 
 from utils.exception_utils import execute_safely
 from presentation.streamlit_components import Paginate
-from viewmodels.datos.repuestos_codigos_vm import RepuestosCodigosVM
+from viewmodels.datos_vm import RepuestosCodigosVM
+
 
 class Filtros:
     pass
@@ -16,11 +18,6 @@ class Filtros:
 @st.cache_data(ttl=200, show_spinner=True)
 def get_df():
     return RepuestosCodigosVM().get_df()
-
-
-@st.cache_data(ttl=200, show_spinner=True)
-def get_df_filtro(repuestos_filtro: RepuestosCodigosFiltro):
-    return RepuestosCodigosVM().get_by_args(repuestos_filtro)
 
 
 @execute_safely
@@ -46,38 +43,10 @@ def repuestos_codigos() -> None:
     filtros.codigos = codigos
 
     df = get_df()
-
-    mask = np.ones(len(df), dtype=bool)
-
-    if filtros.descripcion:
-        mask &= (
-            df["Descripcion"]
-                .str.upper()
-                .str.startswith(str(filtros.descripcion.strip().upper()), na=False)
-        )
-
-    if filtros.deposito:
-        mask &= (
-            df["Deposito"]
-                .astype(str)
-                .str.strip()
-                .str.upper()
-                .isin(filtros.deposito)
-        )
-
-    if filtros.codigos:
-        mask &= (
-            df["CodigosConCero"]
-                .str.replace(r'\.0$', '', regex=True)
-                .str.strip()
-                .str.startswith(str(filtros.codigos.strip()), na=False)
-        )
-
-    df = df[mask]
-
+    mask = filtros_repuestos_codigos(df, filtros)
     paginate.update_filters(filtros, "codigos_repuestos", REPUESTOS_CODIGOS_PAGER_KEY)
 
-    df_paginado, paginas = paginate.create_pagination(df, 15, REPUESTOS_CODIGOS_PAGER_KEY)
+    df_paginado, paginas = paginate.create_pagination(df[mask], 15, REPUESTOS_CODIGOS_PAGER_KEY)
 
     st.data_editor(
         df_paginado,
@@ -93,3 +62,33 @@ def repuestos_codigos() -> None:
     )
 
     paginate.create_buttons(paginas, key=REPUESTOS_CODIGOS_PAGER_KEY)
+
+
+def filtros_repuestos_codigos(df: pd.DataFrame, filtros):
+    mask = np.ones(len(df), dtype=bool)
+
+    if filtros.descripcion:
+        mask &= (
+            df["Descripcion"]
+            .str.upper()
+            .str.startswith(str(filtros.descripcion.strip().upper()), na=False)
+        )
+
+    if filtros.deposito:
+        mask &= (
+            df["Deposito"]
+            .astype(str)
+            .str.strip()
+            .str.upper()
+            .isin(filtros.deposito)
+        )
+
+    if filtros.codigos:
+        mask &= (
+            df["CodigosConCero"]
+            .str.replace(r'\.0$', '', regex=True)
+            .str.strip()
+            .str.startswith(str(filtros.codigos.strip()), na=False)
+        )
+
+    return mask

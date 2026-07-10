@@ -4,6 +4,7 @@ import streamlit_authenticator as stauth
 from presentation.consumo.comparacion_page import consumo_comparacion
 from presentation.datos.proveedores_page import proveedores
 from presentation.datos.repuestos_codigos_page import repuestos_codigos
+from presentation.datos.usuarios_codigos_page import usuarios_codigos
 from presentation.inicio.dota_licitaciones_page import dota_licitaciones_page
 
 from presentation.inicio.dashboard_page import main
@@ -21,8 +22,6 @@ from presentation.inicio.nuevo_usuario_page import nuevo_usuario
 from presentation.datos.parque_movil_page import parque_movil
 from presentation.inicio.sisssa_page import sissa_page
 from presentation.streamlit_components import OtherComponents
-from presentation.datos.usuarios_codigos_page import usuarios_codigos
-from viewmodels.autenticacion.usuario_vm import UsuarioVM
 
 from config.constants_views import (PAG_PRINCIPAL, PAG_CARGAR_DATOS, PAG_INDICES, PAG_PREVISION,
                                     PAG_FALLA_GARANTIAS, PAG_MAXIMOS_MINIMOS, PAG_DURACION,
@@ -30,12 +29,12 @@ from config.constants_views import (PAG_PRINCIPAL, PAG_CARGAR_DATOS, PAG_INDICES
                                     PAG_COCHES_CABECERA, PAG_PARQUE_MOVIL, PAG_SISSSA, PAG_DOTA_LICITACIONES,
                                     PAG_COMPARACION_CONSUMO, PAG_NUEVO_USUARIO, PAG_USUARIOS_CODIGOS, PAG_REP_CODIGOS,
                                     PAG_PROVEEDORES, OCULTAR_LOGIN_CSS, TITULO_SUBTITULO_LOGIN_HTML)
-
+from viewmodels.auth_vm import UserAuthVM
 
 # -----------------------------------------------------------------------------------------------
 # CONFIG STREAMLIT
 # -----------------------------------------------------------------------------------------------
-vm = UsuarioVM()
+vm = UserAuthVM()
 
 st.set_page_config(
     page_title="Estadísticas Dota",
@@ -127,6 +126,7 @@ else:
 # Cargar roles solo una vez
 if not st.session_state.roles and st.session_state.username:
     user_entity = vm.get_by_name(st.session_state.username)
+
     if user_entity and user_entity.Rol:
         st.session_state.roles = [user_entity.Rol]
     else:

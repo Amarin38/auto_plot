@@ -7,9 +7,9 @@ from domain.entities.datos.proveedores import Proveedores
 from domain.entities.datos.repuestos_codigos import RepuestosCodigos
 from domain.entities.datos.usuarios_codigos import UsuariosCodigos
 from domain.entities.json_config import JSONConfig
-from domain.entities.usuario import Usuario
+from domain.entities.usuario import UserAuth
 from infrastructure.db.models import CochesCabeceraModel, MaximosMinimosModel, ParqueMovilModel, ProveedoresModel, \
-    RepuestosCodigosModel, UsuariosCodigosModel, JSONConfigModel, UsuarioModel
+    RepuestosCodigosModel, UsuariosCodigosModel, JSONConfigModel, UserAuthModel
 
 
 class CochesCabeceraRepository(BaseRepository[CochesCabecera, CochesCabeceraModel]):
@@ -40,6 +40,6 @@ class JSONConfigRepository(BaseRepository[JSONConfig, JSONConfigModel]):
     entity_cls = JSONConfig
     model_cls = JSONConfigModel
 
-class UsuarioRepository(BaseRepository[Usuario, UsuarioModel]):
-    entity_cls = Usuario
-    model_cls = UsuarioModel
+class UsuarioRepository(BaseRepository[UserAuth, UserAuthModel]):
+    entity_cls = UserAuth
+    model_cls = UserAuthModel

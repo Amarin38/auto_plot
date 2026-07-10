@@ -7,22 +7,22 @@ from config.constants_common import DURACION_REPUESTO_KEY
 from config.constants_views import PAG_DURACION, DURACION_TAB_BOX_HEIGHT, SELECT_BOX_HEIGHT, PLACEHOLDER
 from config.enums import CambiosEnum
 from config.enums_colors import CustomMetricColorsEnum
-from infrastructure.unit_of_work import SQLAlchemyUnitOfWork
 from presentation.streamlit_components import OtherComponents
 from utils.exception_utils import execute_safely
-from viewmodels.consumo.duracion_rep.plotter import DuracionRepuestosPlotter
-from viewmodels.consumo.duracion_rep.vm import DuracionRepuestosVM
+from plotters.consumo_duracion_plotter import DuracionRepuestosPlotter
+from viewmodels.consumo_vm import ConsumoDuracionRepuestosVM, ConsumoDistribucionNormalDuracionVM
 
-vm = DuracionRepuestosVM(uow=SQLAlchemyUnitOfWork())
+consumo_vm = ConsumoDuracionRepuestosVM()
+distri_vm = ConsumoDistribucionNormalDuracionVM()
 
 @st.cache_data(ttl=200, show_spinner=False)
 def _obtener_repuestos() -> pd.Series:
-    return vm.get_repuestos()
+    return consumo_vm.get_distinct_repuestos()
 
 @st.cache_data(ttl=200, show_spinner=False)
 def _cargar_datos(repuesto) -> Dict[str, Any]:
-    duracion = vm.get_df_by_repuesto(repuesto)
-    distribucion = vm.get_distribucion_df_by_repuesto(repuesto)
+    duracion = consumo_vm.get_df_by_repuesto(repuesto)
+    distribucion = distri_vm.get_df_by_repuesto(repuesto)
 
     return {
         "duracion": duracion,

@@ -2,7 +2,7 @@ from pydantic import BaseModel, ConfigDict
 from config.enums import RoleEnum
 
 
-class Usuario(BaseModel):
+class UserAuth(BaseModel):
     Nombre      : str
     Contraseña  : str
     Rol         : RoleEnum

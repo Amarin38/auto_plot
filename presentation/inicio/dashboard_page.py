@@ -3,9 +3,9 @@ import streamlit as st
 from config.enums_colors import CustomMetricColorsEnum
 from config.constants_views import PAG_PRINCIPAL, CONTEO_BOX_HEIGHT, REP_TOTALES_CONTEO
 from presentation.streamlit_components import OtherComponents
-from viewmodels.consumo.conteo_stock.plotter import ConteoStockPlotter
-from viewmodels.consumo.conteo_stock.vm import ConteoStockVM
+from plotters.conteo_stock_plotter import ConteoStockPlotter
 from utils.common_utils import CommonUtils
+from viewmodels.consumo_vm import ConteoStockVM
 
 vm = ConteoStockVM()
 

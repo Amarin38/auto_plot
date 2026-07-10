@@ -2,7 +2,7 @@ import pandas as pd
 
 from config.constants_common import CONSUMO_HISTORIAL_COLS
 from config.enums import RepuestoEnum
-from viewmodels.consumo.historial.vm import HistorialConsumoVM
+from viewmodels.consumo_vm import ConsumoHistorialVM
 
 
 def compute_historial(df: pd.DataFrame, tipo_repuesto: RepuestoEnum) -> None:
@@ -20,4 +20,4 @@ def compute_historial(df: pd.DataFrame, tipo_repuesto: RepuestoEnum) -> None:
     agrupado["FechaMin"] = df_historial["FechaCompleta"].min()
     agrupado["FechaMax"] = df_historial["FechaCompleta"].max()
 
-    HistorialConsumoVM().save_df(agrupado)
+    ConsumoHistorialVM().save(agrupado)

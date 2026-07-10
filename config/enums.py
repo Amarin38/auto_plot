@@ -191,7 +191,7 @@ class LoadDataEnum(StrEnum):
     USUARIOS_CODIGOS                        = auto()
     REPUESTOS_CODIGOS                       = auto()
     PROVEEDORES                             = auto()
-
+    GOMERIA_MOVIMIENTOS                     = auto()
 
 class SymbolEnum(LowercaseStrEnum):
     X               = auto()

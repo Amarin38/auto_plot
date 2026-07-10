@@ -36,7 +36,7 @@ session_sqlite_db   = get_db_session(db_engine_sqlite)
 schema_estadisticas = MetaData(schema="estadisticas")
 schema_datos        = MetaData(schema="datos")
 
-dbbase_postrgres        = declarative_base(metadata=schema_datos)
+dbbase_postgres        = declarative_base(metadata=schema_datos)
 db_engine_postgres      = get_db_engine_postgres()
 session_postgres_db     = get_db_session(db_engine_postgres)
 

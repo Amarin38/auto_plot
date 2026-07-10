@@ -5,7 +5,8 @@ from config.constants_common import MODELOS_CHASIS, NORMAL_DATE_YMD, MARCAS_CHAS
     CARROCERIAS, PARQUE_MOVIL_PAGER_KEY
 from config.constants_views import PAG_PARQUE_MOVIL, PLACEHOLDER, FLOTA_CONTAINER_HEIGHT
 from presentation.streamlit_components import Paginate
-from viewmodels.datos.parque_movil_vm import ParqueMovilVM
+from viewmodels.datos_vm import ParqueMovilVM
+
 
 class Filtros:
     pass
@@ -61,33 +62,7 @@ def parque_movil():
     filtros.carroceria = carroceria
 
     df = ParqueMovilVM().get_by_fechas(fecha_desde, fecha_hasta)
-
-    mask = np.ones(len(df), dtype=bool)
-
-    if filtros.linea:
-        mask &= df["Linea"] == int(filtros.linea)
-
-    if filtros.interno:
-        mask &= df["Interno"] == int(filtros.interno)
-
-    if filtros.dominio:
-        mask &= df["Dominio"].str.startswith(filtros.dominio.strip().upper())
-
-    if filtros.marca_chasis:
-        mask &= df["ChasisMarca"].isin(filtros.marca_chasis)
-
-    if filtros.modelo_chasis:
-        mask &= df["ChasisModelo"].isin(filtros.modelo_chasis)
-
-    if filtros.marca_motor:
-        mask &= df["MotorMarca"].isin(filtros.marca_motor)
-
-    if filtros.modelo_motor:
-        mask &= df["MotorModelo"].isin(filtros.modelo_motor)
-
-    if filtros.carroceria:
-        mask &= df["Carroceria"].isin(filtros.carroceria)
-
+    mask = filtros_parque_movil(df, filtros)
     paginate.update_filters(filtros, "parque_movil", PARQUE_MOVIL_PAGER_KEY)
 
     df_paginado, paginas = paginate.create_pagination(df[mask], 15, PARQUE_MOVIL_PAGER_KEY)
@@ -120,3 +95,32 @@ def parque_movil():
 
     paginate.create_buttons(paginas, key=PARQUE_MOVIL_PAGER_KEY)
 
+
+def filtros_parque_movil(df, filtros):
+    mask = np.ones(len(df), dtype=bool)
+
+    if filtros.linea:
+        mask &= df["Linea"] == int(filtros.linea)
+
+    if filtros.interno:
+        mask &= df["Interno"] == int(filtros.interno)
+
+    if filtros.dominio:
+        mask &= df["Dominio"].str.startswith(filtros.dominio.strip().upper())
+
+    if filtros.marca_chasis:
+        mask &= df["ChasisMarca"].isin(filtros.marca_chasis)
+
+    if filtros.modelo_chasis:
+        mask &= df["ChasisModelo"].isin(filtros.modelo_chasis)
+
+    if filtros.marca_motor:
+        mask &= df["MotorMarca"].isin(filtros.marca_motor)
+
+    if filtros.modelo_motor:
+        mask &= df["MotorModelo"].isin(filtros.modelo_motor)
+
+    if filtros.carroceria:
+        mask &= df["Carroceria"].isin(filtros.carroceria)
+
+    return mask

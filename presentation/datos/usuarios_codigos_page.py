@@ -3,8 +3,8 @@ import streamlit as st
 from config.constants_views import PAG_USUARIOS_CODIGOS
 
 from utils.exception_utils import execute_safely
-from presentation.streamlit_components import OtherComponents, Paginate
-from viewmodels.datos.usuarios_codigos_vm import UsuariosCodigosVM
+from presentation.streamlit_components import Paginate
+from viewmodels.datos_vm import UsuariosCodigosVM
 
 
 @execute_safely

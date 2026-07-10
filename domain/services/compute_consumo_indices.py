@@ -6,9 +6,9 @@ import pandas as pd
 from config.constants_common import CONSUMO_INDICE_COLS, CONSUMO_INDICE_COLS_RENAME, GROUPBY_CAB_REP
 from config.enums import IndexTypeEnum, RepuestoEnum
 from utils.exception_utils import execute_safely
-from viewmodels.datos.coches_cabecera_vm import CochesCabeceraVM
-from viewmodels.consumo.indice.vm import IndiceConsumoVM
 from domain.services.data_cleaner_listado import InventoryDataCleaner
+from viewmodels.consumo_vm import ConsumoIndiceVM
+from viewmodels.datos_vm import CochesCabeceraVM
 
 
 class ConsumoIndice:
@@ -53,4 +53,4 @@ class ConsumoIndice:
         if filtro:
             df_rate = self.cleaner.filter(df_rate, 'Repuesto', filtro, 'startswith')
 
-        IndiceConsumoVM().save_df(df_rate)
+        ConsumoIndiceVM().save(df_rate)

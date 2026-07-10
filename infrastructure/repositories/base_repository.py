@@ -2,10 +2,12 @@ from datetime import date
 from typing import Generic, TypeVar, List, Type, Any, Dict
 
 import pandas as pd
+import streamlit as st
 from sqlalchemy import select, func
 from sqlalchemy.orm import Session
 
 from infrastructure.mapper import Mapper
+
 
 TEntity = TypeVar("TEntity")
 TModel = TypeVar("TModel")
@@ -46,10 +48,10 @@ class BaseRepository(Generic[TEntity, TModel]):
         return Mapper.to_entity(model, self.entity_cls)
 
 
-    def get_by_n_columns(self, columns: Dict[str, Any]) -> List[TEntity]:
+    def get_by_n_columns(self, columns_filters: Dict[str, Any]) -> List[TEntity]:
         conditions = []
 
-        for column_name, value in columns.items():
+        for column_name, value in columns_filters.items():
             found_column = self.col_exists(column_name)
 
             if value is None:

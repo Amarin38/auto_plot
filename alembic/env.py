@@ -1,70 +1,50 @@
+# Comando para alembic
+# uv run alembic revision --autogenerate -m "nombre del commit"
+
+# Para SQLITE
+# $env:DB_ENGINE="sqlite"; uv run alembic revision --autogenerate -m ""
+# $env:DB_ENGINE="sqlite"; uv run alembic upgrade head
+
+# Para POSTGRES
+# $env:DB_ENGINE="postgres"; uv run alembic revision --autogenerate -m ""
+# $env:DB_ENGINE="postgres"; uv run alembic upgrade head
+
+# uv run alembic upgrade head
+# uv run alembic downgrade -1
 import os
 import sys
 from logging.config import fileConfig
 
 from sqlalchemy import engine_from_config
 from sqlalchemy import pool
-
 from alembic import context
 
-from config.constants_common import DB_PATH_POSTGRES
+# Asegúrate de importar también el path de SQLite
+from config.constants_common import DB_PATH_POSTGRES, DB_PATH_SQLITE
 
 sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 
-from infrastructure import dbbase_postrgres
-
-# import infrastructure.db.models
-from infrastructure.db.models.parque_movil import CARROCERIA_MODEL
-from infrastructure.db.models.parque_movil import CHASIS_MODEL
-from infrastructure.db.models.parque_movil import CHASIS_MARCA_MODEL
-from infrastructure.db.models.parque_movil import CHASIS_MODELO_MODEL
-from infrastructure.db.models.parque_movil import MOTOR_MODEL
-from infrastructure.db.models.parque_movil import MOTOR_MARCA_MODEL
-from infrastructure.db.models.parque_movil import MOTOR_MODELO_MODEL
-from infrastructure.db.models.parque_movil import PARQUE_MOVIL_MODEL
-from infrastructure.db.models.parque_movil import PARQUE_MOVIL_HISTORIAL_MODEL
-from infrastructure.db.models.parque_movil import REGISTRO_KM_MODEL
+from infrastructure import dbbase_postgres
+from infrastructure import dbbase_sqlite
+import infrastructure.db.models
 from infrastructure.db.models.gomeria.movimientos_model import GomeriaMovimientosModel
 
-# Comando para alembic
-# uv run alembic revision --autogenerate -m "nombre del commit"
-# uv run alembic upgrade head
-# uv run alembic downgrade -1
-
-# this is the Alembic Config object, which provides
-# access to the values within the .ini file in use.
 config = context.config
 
-# --- PASO 3: URL DINÁMICA ---
-# Forzamos a Alembic a usar tu constante en lugar de leer el alembic.ini
-config.set_main_option("sqlalchemy.url", DB_PATH_POSTGRES)
+db_engine = os.environ.get("DB_ENGINE", "postgres")
 
-# Interpret the config file for Python logging.
-# This line sets up loggers basically.
+if db_engine == "sqlite":
+    config.set_main_option("sqlalchemy.url", DB_PATH_SQLITE)
+    target_metadata = dbbase_sqlite.metadata
+else:
+    config.set_main_option("sqlalchemy.url", DB_PATH_POSTGRES)
+    target_metadata = dbbase_postgres.metadata
+
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
 
-target_metadata = dbbase_postrgres.metadata
-
-# other values from the config, defined by the needs of env.py,
-# can be acquired:
-# my_important_option = config.get_main_option("my_important_option")
-# ... etc.
-
-
 def run_migrations_offline() -> None:
-    """Run migrations in 'offline' mode.
-
-    This configures the context with just a URL
-    and not an Engine, though an Engine is acceptable
-    here as well.  By skipping the Engine creation
-    we don't even need a DBAPI to be available.
-
-    Calls to context.execute() here emit the given string to the
-    script output.
-
-    """
     url = config.get_main_option("sqlalchemy.url")
     context.configure(
         url=url,
@@ -78,12 +58,6 @@ def run_migrations_offline() -> None:
 
 
 def run_migrations_online() -> None:
-    """Run migrations in 'online' mode.
-
-    In this scenario we need to create an Engine
-    and associate a connection with the context.
-
-    """
     connectable = engine_from_config(
         config.get_section(config.config_ini_section, {}),
         prefix="sqlalchemy.",
@@ -91,14 +65,19 @@ def run_migrations_online() -> None:
     )
 
     with connectable.connect() as connection:
-        context.configure(
-            connection=connection,
-            target_metadata=target_metadata,
-            compare_type = True,
-            render_as_batch = True,
-            version_table_schema='estadisticas',
-            include_schemas=True,
-        )
+        # Configuramos los parámetros base
+        context_kwargs = {
+            "connection": connection,
+            "target_metadata": target_metadata,
+            "compare_type": True,
+            "render_as_batch": True,
+        }
+
+        if db_engine == "postgres":
+            context_kwargs["version_table_schema"] = 'estadisticas'
+            context_kwargs["include_schemas"] = True
+
+        context.configure(**context_kwargs)
 
         with context.begin_transaction():
             context.run_migrations()

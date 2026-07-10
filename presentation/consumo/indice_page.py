@@ -1,39 +1,32 @@
 import streamlit as st
 
-from infrastructure.unit_of_work import SQLAlchemyUnitOfWork
 from presentation.streamlit_components import SelectBoxComponents, OtherComponents
 from utils.exception_utils import execute_safely
 
 from domain.services.compute_consumo_desviacion_indices import DeviationTrend
-from viewmodels.consumo.indice.desviacion.vm import DesviacionIndicesVM
-from viewmodels.consumo.indice.vm import IndiceConsumoVM
 
-from viewmodels.consumo.indice.plotter import  IndexPlotter
-from viewmodels.consumo.indice.desviacion.plotter import DeviationPlotter
+from plotters.consumo_indices_plotter import  IndexPlotter
+from plotters.consumo_desviacion_indices_plotter import DeviationPlotter
 
 from config.enums_colors import IndiceColorsEnum
 from config.constants_views import (PLOT_BOX_HEIGHT, DISTANCE_COLS_CENTER_TITLE, DISTANCE_COLS_SELECTBIGGER_PLOT,
                                     PAG_INDICES, FULL_PLOT_BOX_HEIGHT, DESVIACION_BOX_HEIGHT)
+from viewmodels.consumo_vm import ConsumoIndiceVM, ConsumoDesviacionIndicesVM
 
-
-uow = SQLAlchemyUnitOfWork()
 
 @st.cache_data(ttl=200, show_spinner=False, show_time=True)
 def _cargar_datos_indice(tipo_indice, repuesto):
-    return IndiceConsumoVM(uow=uow).get_df_tipo_repuesto_and_tipo_indice(repuesto, tipo_indice)
+    return ConsumoIndiceVM().get_df_tipo_repuesto_and_tipo_operacion(repuesto, tipo_indice)
 
 
 @st.cache_data(ttl=200, show_spinner=False, show_time=True)
 def _cargar_datos_desviacion(repuesto):
-    vm = DesviacionIndicesVM(uow=uow)
+    vm = ConsumoDesviacionIndicesVM()
 
     if repuesto:
         return vm.get_df_by_tipo_rep(repuesto)
     else:
-        return vm.get_df().drop_duplicates(subset=[
-            "Cabecera", "MediaCabecera", "MediaDeMedias",
-            "Diferencia", "Desviacion", "DesviacionPor", "FechaCompleta"
-        ])
+        return vm.get_df()
 
 
 @execute_safely

@@ -5,11 +5,10 @@ from statsmodels.tsa.holtwinters import ExponentialSmoothing
 from config.constants_common import FILE_STRFTIME_YMD
 from config.enums import RepuestoEnum
 from config.enums_colors import TextModsEnum, ForegroundColorsEnum
-from viewmodels.consumo.prevision.vm import PrevisionVM
+from viewmodels.consumo_vm import ConsumoPrevisionDataVM, ConsumoPrevisionVM
 
 
 def create_forecast_local(df: pd.DataFrame, tipo_repuesto: RepuestoEnum):
-    vm = PrevisionVM()
     repuesto = df["Repuesto"].unique()
     
     
@@ -45,7 +44,7 @@ def create_forecast_local(df: pd.DataFrame, tipo_repuesto: RepuestoEnum):
             data["TipoRepuesto"]    = tipo_repuesto
             data["FechaCompleta"]   = data["FechaCompleta"].dt.date
 
-            vm.save_data_df(data)
+            ConsumoPrevisionDataVM().save(data)
 
             prevision: pd.DataFrame         = prevision.to_frame("ConsumoPrevision").reset_index()
             prevision.columns               = ["FechaCompleta", "ConsumoPrevision"]
@@ -56,7 +55,7 @@ def create_forecast_local(df: pd.DataFrame, tipo_repuesto: RepuestoEnum):
             prevision["TipoRepuesto"]       = tipo_repuesto
             prevision["FechaCompleta"]      = prevision["FechaCompleta"].dt.date
 
-            vm.save_df(prevision)
+            ConsumoPrevisionVM().save(prevision)
 
         except ValueError as e:
             print(f"""

@@ -3,8 +3,8 @@ from datetime import date
 import pandas as pd
 
 from config.enums import ConsumoObligatorioEnum
-from viewmodels.datos.coches_cabecera_vm import CochesCabeceraVM
-from viewmodels.consumo.obligatorio.vm import ConsumoObligatorioVM
+from viewmodels.consumo_vm import ConsumoObligatorioVM
+from viewmodels.datos_vm import CochesCabeceraVM
 
 
 def compute_consumo_obligatorio(df: pd.DataFrame, repuesto: ConsumoObligatorioEnum) -> None:
@@ -36,5 +36,5 @@ def compute_consumo_obligatorio(df: pd.DataFrame, repuesto: ConsumoObligatorioEn
 
     df_final["UltimaFecha"] = date.today()
 
-    ConsumoObligatorioVM().save_df(df_final)
+    ConsumoObligatorioVM().save(df_final)
 

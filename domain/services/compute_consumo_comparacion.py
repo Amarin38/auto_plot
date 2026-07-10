@@ -4,8 +4,8 @@ import pandas as pd
 
 from config.constants_common import CONSUMO_COMPARACION_COLS_TYPE, CONSUMO_COMPARACION_COLS, CONSUMO_COMPARACION_COLS_RENAME
 from config.enums import ConsumoComparacionRepuestoEnum, PeriodoComparacionEnum
-from viewmodels.common.json_config_vm import JSONConfigVM
-from viewmodels.consumo.comparacion.vm import ConsumoComparacionVM
+from viewmodels.consumo_vm import ConsumoComparacionVM
+from viewmodels.datos_vm import JSONConfigVM
 
 
 def compute_comparacion_consumo(df: pd.DataFrame, tipo_rep: ConsumoComparacionRepuestoEnum) -> None:
@@ -13,11 +13,11 @@ def compute_comparacion_consumo(df: pd.DataFrame, tipo_rep: ConsumoComparacionRe
         return None
 
     df: pd.DataFrame = df.copy()[CONSUMO_COMPARACION_COLS]
-    df = df.rename(columns=CONSUMO_COMPARACION_COLS_RENAME)
+    df = df.rename(columns=CONSUMO_COMPARACION_COLS_RENAME) # type: ignore
     df.insert(3, "TipoRepuesto", tipo_rep)
 
     df["Cabecera"] = df["Cabecera"].str[-2:].str.strip()
-    df["Cabecera"] = df["Cabecera"].map(JSONConfigVM().get_df_by_id("transferencias"))
+    df["Cabecera"] = df["Cabecera"].map(JSONConfigVM().get_df_by_name("transferencias"))
 
     df["FechaCompleta"] = pd.to_datetime(df["FechaCompleta"], dayfirst=True, format='mixed')
 
@@ -37,5 +37,5 @@ def compute_comparacion_consumo(df: pd.DataFrame, tipo_rep: ConsumoComparacionRe
     df["Consumo"]   = df["Consumo"].str.replace(",", ".").astype("float64").round(1)
     df["Gasto"]     = df["Gasto"].str.replace(",", ".").astype("float64").round(1)
 
-    ConsumoComparacionVM().save_df(df)
+    ConsumoComparacionVM().save(df)
     return None

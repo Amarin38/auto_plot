@@ -3,14 +3,14 @@ import streamlit as st
 from config.constants_views import PAG_HISTORIAL, DISTANCE_COLS_SELECTBIGGER_PLOT, DISTANCE_COLS_CENTER_TITLE, \
     PLOT_BOX_HEIGHT, SELECT_BOX_HEIGHT
 from config.enums import RepuestoEnum, TendenciaEnum
-from viewmodels.consumo.historial.plotter import HistorialPlotter
+from plotters.consumo_historial_plotter import HistorialPlotter
 from presentation.streamlit_components import SelectBoxComponents, OtherComponents
-from viewmodels.consumo.historial.vm import HistorialConsumoVM
+from viewmodels.consumo_vm import ConsumoHistorialVM
 
 
 @st.cache_data(ttl=200, show_spinner=False, show_time=True)
 def _cargar_datos(repuesto: RepuestoEnum):
-    return HistorialConsumoVM().get_df_tipo_repuesto(repuesto)
+    return ConsumoHistorialVM().get_df_tipo_repuesto(repuesto)
 
 
 def consumo_historial():

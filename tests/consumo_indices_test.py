@@ -35,9 +35,9 @@ def test_calcular_indices(mock_indice_vm, mock_coches_cabecera):
 
     index_instance.calculate(df_input, tipo_rep, tipo_op)
 
-    mock_indice_vm.return_value.save_df.assert_called_once() # modk para que no se ejecute el guardado
+    mock_indice_vm.return_value.save.assert_called_once() # modk para que no se ejecute el guardado
 
-    df_guardado = mock_indice_vm.return_value.save_df.call_args[0][0]
+    df_guardado = mock_indice_vm.return_value.save.call_args[0][0]
 
     df_esperado = pd.DataFrame({
         'Cabecera':['BARRACAS', 'TG CALZADA', 'TG LANUS'],

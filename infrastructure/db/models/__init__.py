@@ -16,7 +16,7 @@ from infrastructure.db.models.datos.maximos_minimos_model import MaximosMinimosM
 from .json_config_model import JSONConfigModel
 from infrastructure.db.models.datos.parque_movil_model import ParqueMovilModel
 from .inicio_conteo_stock_model import ConteoStockModel
-from .usuario_model import UsuarioModel
+from .usuario_model import UserAuthModel
 from infrastructure.db.models.consumo.comparacion_model import ConsumoComparacionModel
 from infrastructure.db.models.datos.usuarios_codigos_model import UsuariosCodigosModel
 from infrastructure.db.models.datos.repuestos_codigos_model import RepuestosCodigosModel

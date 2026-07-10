@@ -1,10 +1,10 @@
 from sqlalchemy import String, ForeignKey
 from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column
-from infrastructure import dbbase_postrgres
+from infrastructure import dbbase_postgres
 
 
-class ChasisModel(dbbase_postrgres):
+class ChasisModel(dbbase_postgres):
     __tablename__ = "CHASIS"
 
     IDChasis:           Mapped[int]     = mapped_column(primary_key=True)

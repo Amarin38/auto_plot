@@ -34,8 +34,8 @@ def test_calcular_indices(mock_prevision_vm, mock_data_vm):
 
     create_forecast_local(df, tipo_rep)
 
-    mock_prevision_vm.return_value.save_df.assert_called_once()  # modk para que no se ejecute el guardado
-    df_guardado_prev = mock_prevision_vm.return_value.save_df.call_args[0][0]
+    mock_prevision_vm.return_value.save.assert_called_once()  # modk para que no se ejecute el guardado
+    df_guardado_prev = mock_prevision_vm.return_value.save.call_args[0][0]
 
     df_esperado_prev = pd.DataFrame({
         'FechaCompleta': fechas_prevision.date,
@@ -44,8 +44,8 @@ def test_calcular_indices(mock_prevision_vm, mock_data_vm):
         'TipoRepuesto': ['BURRO'] * cantidad_filas_prevision
     })
 
-    mock_data_vm.return_value.save_df.assert_called_once()  # modk para que no se ejecute el guardado
-    df_guardado_data = mock_data_vm.return_value.save_df.call_args[0][0]
+    mock_data_vm.return_value.save.assert_called_once()  # modk para que no se ejecute el guardado
+    df_guardado_data = mock_data_vm.return_value.save.call_args[0][0]
 
     df_esperado_data = pd.DataFrame({
         'FechaCompleta': fechas_datos.date,

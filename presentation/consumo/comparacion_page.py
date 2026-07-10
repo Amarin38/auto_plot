@@ -4,8 +4,8 @@ from config.constants_common import COMPARACION_CABECERA_KEY, COMPARACION_TIPO_R
 from config.constants_views import PAG_COMPARACION_CONSUMO, PLACEHOLDER, MULTI_SELECT_BOX_HEIGHT
 from config.enums import CabecerasEnum
 from presentation.streamlit_components import SelectBoxComponents
-from viewmodels.consumo.comparacion.plotter import ConsumoComparacionPlotter
-from viewmodels.consumo.comparacion.vm import ConsumoComparacionVM
+from plotters.consumo_comparacion_plotter import ConsumoComparacionPlotter
+from viewmodels.consumo_vm import ConsumoComparacionVM
 
 
 @st.cache_data(ttl=200, show_spinner=False, show_time=True)

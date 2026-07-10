@@ -2,7 +2,7 @@ import streamlit as st
 
 from config.constants_views import PAG_COCHES_CABECERA
 from presentation.streamlit_components import Paginate
-from viewmodels.datos.coches_cabecera_vm import CochesCabeceraVM
+from viewmodels.datos_vm import CochesCabeceraVM
 
 
 def coches_cabecera():

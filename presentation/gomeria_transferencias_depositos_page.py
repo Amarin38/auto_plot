@@ -2,20 +2,18 @@ import streamlit as st
 
 from config.constants_views import PAG_TRANSFERENCIAS_ENTRE_DEPOSITOS, \
     GOMERIA_DIFERENCIA_BOX_HEIGHT, GOMERIA_TRANSFER_BOX_HEIGHT
-from infrastructure.unit_of_work import SQLAlchemyUnitOfWork
 from presentation.streamlit_components import SelectBoxComponents
-from viewmodels.gomeria.transferencias_dep.plotter import TransferenciasEntreDepositosPlotter
-from viewmodels.gomeria.transferencias_dep.vm import TransferenciasEntreDepositosVM
+from plotters.gomeria_transferencias_plotter import TransferenciasEntreDepositosPlotter
+from viewmodels.gomeria_vm import TransferenciasGomeriaVM, DiferenciasGomeriaVM
 
-vm = TransferenciasEntreDepositosVM(uow=SQLAlchemyUnitOfWork())
 
 @st.cache_data(ttl=200, show_spinner=False)
 def _cargar_datos_transferencias(cabecera):
-    return vm.get_transferencias_df_by_cabecera(cabecera)
+    return TransferenciasGomeriaVM().get_df_by_cabecera(cabecera)
 
 @st.cache_data(ttl=200, show_spinner=False)
 def _cargar_datos_diferencias():
-    return vm.get_diferencia_df()
+    return DiferenciasGomeriaVM().get_df()
 
 
 def gomeria_transferencias_entre_depositos() -> None:
